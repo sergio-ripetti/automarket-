@@ -147,67 +147,33 @@ export default function AdminAI() {
     try {
       const context = await getBusinessContext()
 
-      const systemPrompt = `You are AutoMarket AI Assistant, a helpful business intelligence assistant for an automotive dealership in New Zealand. You have access to the following real-time business data:
-
-INVENTORY: ${context.totalCars} cars in stock
-- Available cars: ${context.availableCars}
-- Featured cars: ${context.featuredCars}
-- Cars on sale: ${context.carsOnSale}
-- Recent additions: ${context.recentCars} (last 5 cars as JSON)
-
-SALES: ${context.totalSales} total sales recorded
-- Total revenue: NZD ${context.totalRevenue.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })}
-- Cash sales: ${context.cashSales}
-- Financed sales: ${context.financedSales}
-- Completed sales: ${context.completedSales}
-- Recent sales: ${context.recentSalesJSON} (last 10 sales as JSON)
-
-FINANCING: ${context.totalFinancing} financing requests
-- Pending: ${context.pendingFinancing}
-- Approved: ${context.approvedFinancing}
-- Active (paying): ${context.activeFinancing}
-- Recent requests: ${context.recentFinancingJSON} (last 5 as JSON)
-
-MESSAGES: ${context.totalMessages} total messages
-- Unread: ${context.unreadMessages}
-- Offers: ${context.offerMessages}
-- Contact inquiries: ${context.contactMessages}
-
-Today's date: ${new Date().toLocaleDateString('en-NZ')}
-
-Answer questions about this business data in a helpful, professional manner. Format numbers as NZD currency where appropriate. Be concise but informative. If asked about specific customers or cars, reference the actual data provided.`
-
       const conversationHistory = messages.map((m) => ({
         role: m.role,
         content: m.content,
       }))
-      conversationHistory.push({ role: 'user', content: userMessage.content })
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/aiAssistant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_ANTHROPIC_API_KEY || '',
-          'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: 'claude-haiku-4-5-20251001',
-          max_tokens: 1024,
-          system: systemPrompt,
-          messages: conversationHistory,
+          message: userMessage.content,
+          businessContext: context,
+          conversationHistory,
         }),
       })
 
       if (!response.ok) {
         const error = await response.json()
         console.error('API error:', error)
-        throw new Error(error.error?.message || 'Failed to get response from AI')
+        throw new Error(error.error || 'Failed to get response from AI')
       }
 
       const data = await response.json()
       const assistantMessage: ChatMessage = {
         role: 'assistant',
-        content: data.content[0]?.text || 'Sorry, I could not process your request.',
+        content: data.reply || 'Sorry, I could not process your request.',
         timestamp: new Date(),
       }
 
