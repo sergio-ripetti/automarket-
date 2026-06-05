@@ -1,0 +1,787 @@
+import { useEffect, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { ArrowLeft, ArrowRight, CheckCircle, Clock, AlertCircle, Download, Edit } from 'lucide-react'
+import { doc, updateDoc } from 'firebase/firestore'
+import { getSaleById, markPaymentPaid, markPaymentUnpaid, type Sale } from '../../lib/salesService'
+import { generateInvoice } from '../../lib/invoiceService'
+import { showToast } from '../../lib/toast'
+import { db } from '../../lib/firebase'
+
+function fmt(price: number) {
+  return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
+}
+
+function fmtDate(dateStr: string) {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+export default function AdminSaleDetail() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const [sale, setSale] = useState<Sale | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [markingPayment, setMarkingPayment] = useState<string | null>(null)
+  const [undoPaymentId, setUndoPaymentId] = useState<string | null>(null)
+  const [undoConfirmId, setUndoConfirmId] = useState<string | null>(null)
+  const [paymentPage, setPaymentPage] = useState(0)
+
+  useEffect(() => {
+    const load = async () => {
+      if (!id) return
+      try {
+        const data = await getSaleById(id)
+        setSale(data)
+      } catch (err) {
+        console.error('Failed to load sale:', err)
+        showToast('Failed to load sale', 'error')
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [id])
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
+        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)' }}>Loading...</p>
+      </div>
+    )
+  }
+
+  if (!sale) {
+    return (
+      <div style={{ textAlign: 'center', padding: '3rem' }}>
+        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', marginBottom: '1rem' }}>Sale not found</p>
+        <button onClick={() => navigate('/admin/sales')} style={{
+          padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
+          background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white',
+          fontFamily: 'Outfit', cursor: 'pointer', border: 'none',
+        }}>
+          Back to Sales
+        </button>
+      </div>
+    )
+  }
+
+  const handleMarkPaid = async (paymentId: string) => {
+    if (!id) return
+    setMarkingPayment(paymentId)
+    try {
+      await markPaymentPaid(id, paymentId)
+      const updated = await getSaleById(id)
+      if (updated) {
+        setSale(updated)
+        const allPaid = updated.payments.every((p) => p.status === 'paid')
+        if (allPaid && updated.status !== 'completed') {
+          await updateDoc(doc(db, 'sales', id), { status: 'completed' })
+          setSale({ ...updated, status: 'completed' })
+          showToast('All payments completed! Sale marked as completed.', 'success')
+        } else {
+          showToast('Payment marked as paid', 'success')
+        }
+      }
+    } catch (err) {
+      console.error('Failed to mark payment:', err)
+      showToast('Failed to mark payment', 'error')
+    } finally {
+      setMarkingPayment(null)
+    }
+  }
+
+  const handleMarkUnpaid = async (paymentId: string) => {
+    if (!id) return
+    setUndoPaymentId(paymentId)
+    try {
+      await markPaymentUnpaid(id, paymentId)
+      const updated = await getSaleById(id)
+      if (updated) setSale(updated)
+      showToast('Payment marked as unpaid', 'success')
+    } catch (err) {
+      console.error('Failed to mark payment unpaid:', err)
+      showToast('Failed to mark payment unpaid', 'error')
+    } finally {
+      setUndoPaymentId(null)
+      setUndoConfirmId(null)
+    }
+  }
+
+  const paidCount = sale.payments.filter((p) => p.status === 'paid').length
+  const totalPayments = sale.payments.length
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ marginBottom: '2rem' }}>
+        <button
+          onClick={() => navigate('/admin/sales')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            padding: '0.5rem 1rem', borderRadius: '0.625rem',
+            backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
+            color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.875rem',
+            cursor: 'pointer', marginBottom: '1.5rem',
+          }}
+        >
+          <ArrowLeft size={16} />
+          Back to Sales
+        </button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <h1 className="font-bebas" style={{ fontSize: '2rem', color: 'white', marginBottom: '0.5rem' }}>
+              {sale.buyer.name}
+            </h1>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>
+              {fmtDate(sale.saleDate)} •{' '}
+              <span style={{
+                display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
+                backgroundColor: sale.status === 'active' ? 'rgba(245,158,11,0.2)' : sale.status === 'completed' ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)',
+                color: sale.status === 'active' ? '#f59e0b' : sale.status === 'completed' ? '#22c55e' : '#ef4444',
+                fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit', textTransform: 'capitalize',
+              }}>
+                {sale.status}
+              </span>
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button
+              onClick={() => generateInvoice(sale)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
+                cursor: 'pointer', border: 'none', fontWeight: 600,
+              }}
+            >
+              <Download size={16} />
+              Download Invoice
+            </button>
+            <button
+              onClick={() => navigate(`/admin/sales/edit/${id}`)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
+                backgroundColor: 'rgba(245,158,11,0.1)',
+                border: '1px solid rgba(245,158,11,0.3)',
+                color: '#f59e0b', fontFamily: 'Outfit', fontSize: '0.875rem',
+                cursor: 'pointer', fontWeight: 600,
+              }}
+            >
+              <Edit size={16} />
+              Edit
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Two Column Layout */}
+      <div style={{ display: 'grid', gridTemplateColumns: '60% 1fr', gap: '2rem', alignItems: 'start' }}>
+        {/* Left Column */}
+        <div>
+          {/* Vehicle Card */}
+          <div style={{
+            backgroundColor: '#111111', border: '1px solid rgba(245,158,11,0.1)',
+            borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+          }}>
+            <img src={sale.carImages[0]} alt="" style={{
+              width: '100%', height: '180px', objectFit: 'cover',
+              borderRadius: '0.75rem', marginBottom: '1rem',
+            }} />
+            <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '0.5rem' }}>
+              {sale.carTitle}
+            </h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Year • KM</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>
+                  {sale.carYear} • {0} km
+                </p>
+              </div>
+              <div>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Color</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.carColor}</p>
+              </div>
+            </div>
+            <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#f59e0b' }}>
+              {fmt(sale.paymentPlan.salePrice)}
+            </p>
+          </div>
+
+          {/* Vehicle Extended Details */}
+          {sale.vehicleInfo && (
+            <div style={{
+              backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            }}>
+              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
+                Vehicle Details
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>VIN</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.vehicleInfo?.vin}</p>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>License Plate</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.vehicleInfo?.plate}</p>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Origin</p>
+                  <span style={{
+                    display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
+                    backgroundColor: sale.vehicleInfo?.isNZNew ? 'rgba(34,197,94,0.2)' : 'rgba(245,158,11,0.2)',
+                    color: sale.vehicleInfo?.isNZNew ? '#22c55e' : '#f59e0b',
+                    fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit',
+                  }}>
+                    {sale.vehicleInfo?.isNZNew ? 'NZ New' : 'Used Import'}
+                  </span>
+                </div>
+                {!sale.vehicleInfo?.isNZNew && (
+                  <div>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Country</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.vehicleInfo?.originCountry}</p>
+                  </div>
+                )}
+                <div>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Previous Owners</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.vehicleInfo?.previousOwners}</p>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Maintenance History</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.vehicleInfo?.hasMaintenanceHistory ? 'Yes' : 'No'}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Buyer Info Card */}
+          <div style={{
+            backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+          }}>
+            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
+              Buyer Information
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+              {[
+                { label: 'Full Name', value: sale.buyer.name },
+                { label: 'RUT', value: sale.buyer.rut },
+                { label: 'License', value: sale.buyer.licenseNumber },
+                { label: 'Email', value: sale.buyer.email },
+                { label: 'Phone', value: sale.buyer.phone },
+                { label: 'Address', value: sale.buyer.address },
+              ].map(({ label, value }) => (
+                <div key={label}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+                    {label}
+                  </p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ORC Section */}
+          {sale.orc && (sale.orc?.orcTotal > 0 || sale.orc?.orcIncluded) && (
+            <div style={{
+              backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            }}>
+              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
+                On Road Costs (ORC)
+              </h3>
+              {sale.orc?.orcIncluded ? (
+                <span style={{
+                  display: 'inline-block', padding: '0.5rem 1rem', borderRadius: '0.5rem',
+                  backgroundColor: 'rgba(34,197,94,0.2)', color: '#22c55e',
+                  fontSize: '0.875rem', fontWeight: 600, fontFamily: 'Outfit',
+                }}>
+                  ORC Included in Price
+                </span>
+              ) : (
+                <div style={{ fontSize: '0.875rem' }}>
+                  {sale.orc?.wof > 0 && <p style={{ color: 'white', marginBottom: '0.5rem' }}>WoF: {fmt(sale.orc?.wof)}</p>}
+                  {sale.orc?.registration > 0 && <p style={{ color: 'white', marginBottom: '0.5rem' }}>Registration: {fmt(sale.orc?.registration)}</p>}
+                  {sale.orc?.grooming > 0 && <p style={{ color: 'white', marginBottom: '0.5rem' }}>Grooming: {fmt(sale.orc?.grooming)}</p>}
+                  {sale.orc?.ownershipTransfer > 0 && <p style={{ color: 'white', marginBottom: '0.5rem' }}>Ownership Transfer: {fmt(sale.orc?.ownershipTransfer)}</p>}
+                  {sale.orc?.mechanicalInspection > 0 && <p style={{ color: 'white', marginBottom: '0.5rem' }}>Mechanical Inspection: {fmt(sale.orc?.mechanicalInspection)}</p>}
+                  {sale.orc?.otherAmount > 0 && <p style={{ color: 'white', marginBottom: '0.5rem' }}>{sale.orc?.otherLabel}: {fmt(sale.orc?.otherAmount)}</p>}
+                  <p style={{ color: '#f59e0b', fontWeight: 600, marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                    Total: {fmt(sale.orc?.orcTotal)}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Accessories Section */}
+          {sale.extraAccessories && sale.extraAccessories?.items?.length > 0 && (
+            <div style={{
+              backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            }}>
+              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
+                Extra Accessories
+              </h3>
+              <div style={{ fontSize: '0.875rem' }}>
+                {sale.extraAccessories?.items?.map((item, idx) => (
+                  <p key={idx} style={{ color: 'white', marginBottom: '0.5rem' }}>
+                    {item.description}: {fmt(item.price)}
+                  </p>
+                ))}
+                <p style={{ color: '#f59e0b', fontWeight: 600, marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                  Total: {fmt(sale.extraAccessories?.total)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Financing Fees Section */}
+          {sale.financingFees && (
+            <div style={{
+              backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            }}>
+              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
+                Financing Fees
+              </h3>
+              <div style={{ fontSize: '0.875rem' }}>
+                <p style={{ color: 'white', marginBottom: '0.5rem' }}>Establishment: {fmt(sale.financingFees?.establishmentFee)}</p>
+                <p style={{ color: 'white', marginBottom: '0.5rem' }}>PPSR: {fmt(sale.financingFees?.ppsr)}</p>
+                <p style={{ color: 'white', marginBottom: '0.5rem' }}>Monthly Account Fee: {fmt(sale.financingFees?.monthlyAccountFee)}</p>
+                <p style={{ color: 'white', marginBottom: '0.75rem' }}>Dealer Origination: {fmt(sale.financingFees?.dealerOriginationFee)}</p>
+                <p style={{ color: '#f59e0b', fontWeight: 600, paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                  Total: {fmt(sale.financingFees?.total)}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Warranty & Insurance Section */}
+          {(sale.warranty || sale.mechanicalInsurance) && (
+            <div style={{
+              backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            }}>
+              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
+                Warranty & Insurance
+              </h3>
+              <div style={{ fontSize: '0.875rem' }}>
+                {sale.warranty && (
+                  <p style={{ color: 'white', marginBottom: '0.5rem' }}>
+                    Warranty: {sale.warranty?.months} months - {sale.warranty?.provider}
+                  </p>
+                )}
+                {sale.mechanicalInsurance && (
+                  <p style={{ color: 'white', marginBottom: '0.5rem' }}>
+                    Insurance: {sale.mechanicalInsurance?.months} months - {sale.mechanicalInsurance?.provider}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Notes */}
+          {sale.notes && (
+            <div style={{
+              backgroundColor: '#111111', borderRadius: '0.875rem', padding: '1.25rem', marginBottom: '1.5rem',
+            }}>
+              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+                Notes
+              </h4>
+              <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
+                {sale.notes}
+              </p>
+            </div>
+          )}
+
+          {/* Documents */}
+          {sale.documents && (sale.documents as any).uploadedDocuments && ((sale.documents as any).uploadedDocuments.length > 0) && (
+            <div style={{
+              backgroundColor: '#111111', borderRadius: '0.875rem', padding: '1.25rem', marginBottom: '1.5rem',
+            }}>
+              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+                Documents & Photos ({(sale.documents as any).uploadedDocuments.length})
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
+                {((sale.documents as any).uploadedDocuments as string[]).map((url, i) => (
+                  <div key={i} style={{
+                    backgroundColor: '#0a0a0a',
+                    borderRadius: '0.75rem',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(245,158,11,0.2)',
+                    position: 'relative',
+                  }}>
+                    {url.includes('image') && !url.includes('.pdf') ? (
+                      <img src={url} alt={`Doc ${i + 1}`} style={{
+                        width: '100%', height: '100px', objectFit: 'cover', cursor: 'pointer',
+                      }} />
+                    ) : (
+                      <div style={{
+                        height: '100px',
+                        backgroundColor: '#0f0f0f',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#f59e0b',
+                        fontSize: '2rem',
+                      }}>
+                        📄
+                      </div>
+                    )}
+                    <a href={url} target="_blank" rel="noopener noreferrer" style={{
+                      display: 'block',
+                      padding: '0.5rem',
+                      fontFamily: 'Outfit',
+                      fontSize: '0.65rem',
+                      color: '#f59e0b',
+                      textDecoration: 'none',
+                      textAlign: 'center',
+                      borderTop: '1px solid rgba(245,158,11,0.2)',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.05)' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
+                    >
+                      View
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Column */}
+        <div>
+          {/* Payment Summary Card */}
+          <div style={{
+            background: 'linear-gradient(135deg, #1a1a1a, #111111)', border: '1px solid rgba(245,158,11,0.15)',
+            borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+          }}>
+            <span style={{
+              display: 'inline-block', padding: '0.375rem 0.75rem', borderRadius: '0.375rem',
+              backgroundColor: sale.paymentPlan.type === 'cash'
+                ? 'rgba(34, 197, 94, 0.2)' : sale.paymentPlan.type === 'financing'
+                  ? 'rgba(59, 130, 246, 0.2)' : 'rgba(147, 51, 234, 0.2)',
+              color: sale.paymentPlan.type === 'cash'
+                ? '#22c55e' : sale.paymentPlan.type === 'financing'
+                  ? '#3b82f6' : '#9333ea',
+              fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit', marginBottom: '1rem',
+            }}>
+              {sale.paymentPlan.type === 'cash' ? 'Cash Payment' : sale.paymentPlan.type === 'financing' ? 'Full Financing' : 'Down Payment + Financing'}
+            </span>
+
+            {sale.paymentPlan.type === 'cash' ? (
+              <div>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>
+                  Sale Price
+                </p>
+                <p className="font-bebas" style={{ fontSize: '2.5rem', color: '#f59e0b', lineHeight: 1 }}>
+                  {fmt(sale.paymentPlan.salePrice)}
+                </p>
+              </div>
+            ) : (
+              <div>
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Sale Price</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: 'white' }}>{fmt(sale.paymentPlan.salePrice)}</p>
+                </div>
+                {sale.paymentPlan.downPayment > 0 && (
+                  <div style={{ marginBottom: '1rem' }}>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Down Payment</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#22c55e' }}>{fmt(sale.paymentPlan.downPayment)}</p>
+                  </div>
+                )}
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Amount Financed</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: 'white' }}>{fmt(sale.paymentPlan.financedAmount)}</p>
+                </div>
+                <div style={{
+                  backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '0.75rem', padding: '1rem',
+                  border: '1px solid rgba(245,158,11,0.1)', marginBottom: '1rem',
+                }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>
+                    Monthly Payment
+                  </p>
+                  <p className="font-bebas" style={{ fontSize: '2rem', color: '#f59e0b', lineHeight: 1 }}>
+                    {fmt(sale.paymentPlan.monthlyPayment)}
+                  </p>
+                </div>
+                <div style={{
+                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem',
+                  paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)',
+                }}>
+                  <div>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>
+                      Total Interest
+                    </p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#ef4444' }}>{fmt(sale.paymentPlan.totalInterest)}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>
+                      Total Repayment
+                    </p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: 'white' }}>{fmt(sale.paymentPlan.totalPayment)}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Payment Schedule */}
+          {sale.paymentPlan.type !== 'cash' && sale.payments.length > 0 && (() => {
+            const paymentsPerPage = 12
+            const totalPages = Math.ceil(sale.payments.length / paymentsPerPage)
+            const visiblePayments = sale.payments.slice(
+              paymentPage * paymentsPerPage,
+              (paymentPage + 1) * paymentsPerPage
+            )
+            const pendingCount = sale.payments.filter(p => p.status === 'pending').length
+            const remaining = sale.payments
+              .filter(p => p.status !== 'paid')
+              .reduce((sum, p) => sum + p.amount, 0)
+
+            return (
+              <div style={{
+                backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '1rem', padding: '1.5rem',
+              }}>
+                <div style={{ marginBottom: '1rem' }}>
+                  <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '0.75rem' }}>
+                    Payment Schedule
+                  </h3>
+                  <div style={{
+                    height: '8px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden',
+                  }}>
+                    <div style={{
+                      height: '100%', backgroundColor: '#22c55e',
+                      width: `${(paidCount / totalPayments) * 100}%`, transition: 'width 0.3s',
+                    }} />
+                  </div>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.5rem' }}>
+                    {paidCount} of {totalPayments} payments completed
+                  </p>
+                </div>
+
+                {/* Summary Row */}
+                <div style={{
+                  backgroundColor: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.1)',
+                  borderRadius: '0.625rem', padding: '0.75rem 1rem', marginBottom: '1rem',
+                  fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)',
+                }}>
+                  {paidCount} payments completed · {pendingCount} pending · {fmt(remaining)} remaining
+                </div>
+
+                <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        {['Month', 'Due Date', 'Amount', 'Status', 'Action'].map((h) => (
+                          <th key={h} style={{
+                            padding: '0.75rem', textAlign: 'left',
+                            fontFamily: 'Outfit', fontSize: '0.75rem',
+                            color: 'rgba(255,255,255,0.4)', fontWeight: 400,
+                            textTransform: 'uppercase', letterSpacing: '0.05em',
+                          }}>
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {visiblePayments.map((p, i) => (
+                        <tr key={p.id} style={{
+                          borderBottom: '1px solid rgba(255,255,255,0.05)',
+                          opacity: p.status === 'paid' ? 0.6 : 1,
+                        }}>
+                          <td style={{ padding: '0.75rem', fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                            {paymentPage * paymentsPerPage + i + 1}
+                          </td>
+                          <td style={{ padding: '0.75rem', fontFamily: 'Outfit', fontSize: '0.85rem', color: 'white' }}>
+                            {fmtDate(p.dueDate)}
+                          </td>
+                          <td style={{ padding: '0.75rem', fontFamily: 'Bebas', fontSize: '0.9rem', color: '#f59e0b' }}>
+                            {fmt(p.amount)}
+                          </td>
+                          <td style={{ padding: '0.75rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                {p.status === 'paid' ? (
+                                  <>
+                                    <CheckCircle size={16} color="#22c55e" />
+                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#22c55e' }}>Paid</span>
+                                  </>
+                                ) : p.status === 'overdue' ? (
+                                  <>
+                                    <AlertCircle size={16} color="#ef4444" />
+                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#ef4444' }}>Overdue</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Clock size={16} color='#f59e0b' />
+                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#f59e0b' }}>Pending</span>
+                                  </>
+                                )}
+                              </div>
+                              {p.status === 'paid' && p.paidDate && (
+                                <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>
+                                  {fmtDate(p.paidDate)}
+                                </span>
+                              )}
+                            </div>
+                          </td>
+                          <td style={{ padding: '0.75rem' }}>
+                            {p.status === 'pending' && (
+                              <button
+                                onClick={() => handleMarkPaid(p.id)}
+                                disabled={markingPayment === p.id}
+                                style={{
+                                  padding: '0.375rem 0.75rem', borderRadius: '0.375rem',
+                                  border: '1px solid #f59e0b', backgroundColor: 'transparent',
+                                  color: '#f59e0b', fontFamily: 'Outfit', fontSize: '0.75rem',
+                                  fontWeight: 600, cursor: markingPayment === p.id ? 'not-allowed' : 'pointer',
+                                  opacity: markingPayment === p.id ? 0.5 : 1,
+                                }}
+                              >
+                                {markingPayment === p.id ? '...' : 'Mark Paid'}
+                              </button>
+                            )}
+                            {p.status === 'paid' && (
+                              undoConfirmId === p.id ? (
+                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                  <button
+                                    onClick={() => handleMarkUnpaid(p.id)}
+                                    disabled={undoPaymentId === p.id}
+                                    style={{
+                                      padding: '0.25rem 0.5rem', borderRadius: '0.375rem',
+                                      border: '1px solid #22c55e', backgroundColor: 'transparent',
+                                      color: '#22c55e', fontFamily: 'Outfit', fontSize: '0.7rem',
+                                      fontWeight: 600, cursor: 'pointer',
+                                      opacity: undoPaymentId === p.id ? 0.5 : 1,
+                                    }}
+                                  >
+                                    Confirm
+                                  </button>
+                                  <button
+                                    onClick={() => setUndoConfirmId(null)}
+                                    disabled={undoPaymentId === p.id}
+                                    style={{
+                                      padding: '0.25rem 0.5rem', borderRadius: '0.375rem',
+                                      border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent',
+                                      color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.7rem',
+                                      fontWeight: 600, cursor: 'pointer',
+                                    }}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={() => setUndoConfirmId(p.id)}
+                                  style={{
+                                    padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
+                                    border: '1px solid rgba(220,38,38,0.3)', backgroundColor: 'transparent',
+                                    color: 'rgba(220,38,38,0.6)', fontFamily: 'Outfit', fontSize: '0.75rem',
+                                    fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+                                  }}
+                                  onMouseEnter={(e) => {
+                                    e.currentTarget.style.borderColor = '#ef4444'
+                                    e.currentTarget.style.color = '#ef4444'
+                                  }}
+                                  onMouseLeave={(e) => {
+                                    e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'
+                                    e.currentTarget.style.color = 'rgba(220,38,38,0.6)'
+                                  }}
+                                >
+                                  Undo
+                                </button>
+                              )
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                    paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)',
+                  }}>
+                    <button
+                      onClick={() => setPaymentPage(Math.max(0, paymentPage - 1))}
+                      disabled={paymentPage === 0}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: '32px', height: '32px',
+                        backgroundColor: '#1a1a1a', border: 'rgba(255,255,255,0.08)',
+                        borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
+                        color: paymentPage === 0 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)',
+                        cursor: paymentPage === 0 ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      <ArrowLeft size={16} />
+                    </button>
+
+                    {(() => {
+                      const pages = []
+                      const maxButtons = 5
+                      let start = Math.max(0, paymentPage - Math.floor(maxButtons / 2))
+                      let end = Math.min(totalPages, start + maxButtons)
+                      if (end - start < maxButtons) start = Math.max(0, end - maxButtons)
+
+                      for (let i = start; i < end; i++) {
+                        pages.push(i)
+                      }
+                      return pages.map(p => (
+                        <button
+                          key={p}
+                          onClick={() => setPaymentPage(p)}
+                          style={{
+                            width: '32px', height: '32px',
+                            backgroundColor: paymentPage === p ? '#f59e0b' : '#1a1a1a',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
+                            color: paymentPage === p ? 'black' : 'rgba(255,255,255,0.6)',
+                            fontWeight: paymentPage === p ? 700 : 400,
+                            fontFamily: 'Outfit', fontSize: '0.875rem',
+                            cursor: 'pointer', transition: 'all 0.2s',
+                          }}
+                        >
+                          {p + 1}
+                        </button>
+                      ))
+                    })()}
+
+                    <button
+                      onClick={() => setPaymentPage(Math.min(totalPages - 1, paymentPage + 1))}
+                      disabled={paymentPage === totalPages - 1}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: '32px', height: '32px',
+                        backgroundColor: '#1a1a1a', border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
+                        color: paymentPage === totalPages - 1 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)',
+                        cursor: paymentPage === totalPages - 1 ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )
+          })()}
+        </div>
+      </div>
+    </div>
+  )
+}

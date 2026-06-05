@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket\\\\src\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(npx playwright *)",
+      "Bash(node *)",
+      "Bash(curl -s http://localhost:5173/admin/sales)",
+      "Bash(awk '{print $9, $5}')",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket\\\\src\\\\lib\\\\\" | Where-Object { $_.Name -match \"\\(cloudinary|invoice\\)\" } | Select-Object Name)",
+      "Bash(wc *)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :5173)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}
