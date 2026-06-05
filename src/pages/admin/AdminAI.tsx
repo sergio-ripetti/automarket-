@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { Send, Bot, Trash2 } from 'lucide-react'
-import { collection, getDocs, where, query, orderBy, limit } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 
 interface ChatMessage {
