@@ -14,7 +14,7 @@ app.use(express.json({ limit: '10mb' }));
 
 // Initialize Anthropic client
 const anthropicKey = process.env.ANTHROPIC_API_KEY || process.env.VITE_ANTHROPIC_API_KEY;
-const serverApiKey = process.env.AI_ASSISTANT_API_KEY || 'dev-key-change-in-production';
+const serverApiKey = process.env.AI_ASSISTANT_API_KEY || 'test-key-123';
 
 if (!anthropicKey) {
   console.error('❌ ANTHROPIC_API_KEY not configured');
