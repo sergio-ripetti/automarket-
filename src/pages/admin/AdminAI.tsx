@@ -192,7 +192,8 @@ export default function AdminAI() {
       }
 
       // Send request to AI Assistant API with authentication
-      const response = await fetch('/api/aiAssistant', {
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api'
+      const response = await fetch(`${apiBaseUrl}/aiAssistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
