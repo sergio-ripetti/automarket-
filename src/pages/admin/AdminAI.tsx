@@ -197,7 +197,7 @@ export default function AdminAI() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_AI_ASSISTANT_API_KEY || 'dev-key-change-in-production',
+          'x-api-key': import.meta.env.VITE_AI_ASSISTANT_API_KEY || 'test-key-123',
         },
         body: JSON.stringify({
           message: userMessage.content,
