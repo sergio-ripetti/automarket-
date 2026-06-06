@@ -26,9 +26,14 @@ const client = new Anthropic({ apiKey: anthropicKey });
 // Middleware: Validate API key
 const validateApiKey = (req, res, next) => {
   const key = req.headers['x-api-key'];
+  console.log('🔑 API Key received:', key);
+  console.log('🔑 API Key expected:', serverApiKey);
+  console.log('🔑 Keys match?', key === serverApiKey);
   if (!key || key !== serverApiKey) {
+    console.error('❌ Auth failed - Received:', key, 'Expected:', serverApiKey);
     return res.status(401).json({ success: false, error: 'Unauthorized - Invalid API key' });
   }
+  console.log('✅ Auth passed');
   next();
 };
 
