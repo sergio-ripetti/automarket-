@@ -7,6 +7,7 @@ interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   timestamp?: Date
+  id?: string
 }
 
 interface BusinessContext {
@@ -32,8 +33,10 @@ interface BusinessContext {
   contactMessages: number
 }
 
+// Fetch business data from Firebase for AI context
 async function getBusinessContext(): Promise<BusinessContext> {
   try {
+    // Fetch all collections in parallel
     const [carsSnap, salesSnap, financingSnap, messagesSnap] = await Promise.all([
       getDocs(collection(db, 'cars')),
       getDocs(collection(db, 'sales')),
@@ -58,7 +61,19 @@ async function getBusinessContext(): Promise<BusinessContext> {
     const financedSalesCount = sales.filter((s: any) => s.paymentPlan?.type === 'financing').length
     const completedSalesCount = sales.filter((s: any) => s.status === 'completed').length
     const recentSalesArray = sales.slice(-10).map((s: any) => ({
-      carTitle: s.carTitle, buyer: s.buyer?.name, salePrice: s.paymentPlan?.salePrice, type: s.paymentPlan?.type,
+      carTitle: s.carTitle,
+      carBrand: s.carBrand,
+      carModel: s.carModel,
+      carYear: s.carYear,
+      buyerName: s.buyer?.name,
+      buyerPhone: s.buyer?.phone,
+      buyerEmail: s.buyer?.email,
+      buyerAddress: s.buyer?.address,
+      buyerLicense: s.buyer?.licenseNumber,
+      salePrice: s.paymentPlan?.salePrice,
+      paymentType: s.paymentPlan?.type,
+      downPayment: s.paymentPlan?.downPayment,
+      createdAt: s.createdAt,
     }))
 
     const pendingFinancingCount = financing.filter((f: any) => f.status === 'pending').length
@@ -116,6 +131,7 @@ const suggestionQuestions = [
   'Show me unread messages',
 ]
 
+// AI Assistant chat interface
 export default function AdminAI() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -124,6 +140,10 @@ export default function AdminAI() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    console.log('📊 Messages state updated:', messages.length, 'messages')
+    messages.forEach((m, i) => {
+      console.log(`  ${i}: ${m.role} - ${m.content.substring(0, 30)}...`)
+    })
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
@@ -131,15 +151,19 @@ export default function AdminAI() {
     setInputValue(question)
   }
 
+  // Send message to AI and get response
   const handleSendMessage = async () => {
     if (!inputValue.trim() || loading) return
 
+    // Create user message object
     const userMessage: ChatMessage = {
       role: 'user',
       content: inputValue,
       timestamp: new Date(),
+      id: Date.now() + '-user',
     }
 
+    // Add user message to chat
     setMessages((prev) => [...prev, userMessage])
     setInputValue('')
     setLoading(true)
@@ -152,10 +176,27 @@ export default function AdminAI() {
         content: m.content,
       }))
 
+      console.log('📤 Enviando datos al servidor:')
+      console.log('  - Mensaje:', userMessage.content.substring(0, 50))
+      console.log('  - Business Context:', JSON.stringify(context, null, 2))
+      if (context.recentSalesJSON) {
+        try {
+          const sales = JSON.parse(context.recentSalesJSON)
+          console.log('  - Ventas recientes:', sales.length, 'sales')
+          sales.forEach((s: any, i: number) => {
+            console.log(`    ${i + 1}. ${s.carBrand} ${s.carModel} - Comprador: ${s.buyerName}`)
+          })
+        } catch (e) {
+          console.log('  - Error al parsear recentSalesJSON')
+        }
+      }
+
+      // Send request to AI Assistant API with authentication
       const response = await fetch('/api/aiAssistant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': import.meta.env.VITE_AI_ASSISTANT_API_KEY || 'dev-key-change-in-production',
         },
         body: JSON.stringify({
           message: userMessage.content,
@@ -175,8 +216,10 @@ export default function AdminAI() {
         role: 'assistant',
         content: data.reply || 'Sorry, I could not process your request.',
         timestamp: new Date(),
+        id: Date.now() + '-assistant',
       }
 
+      console.log('✅ Assistant message added:', assistantMessage)
       setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
       console.error('Error:', err)
@@ -184,6 +227,7 @@ export default function AdminAI() {
         role: 'assistant',
         content: err instanceof Error ? err.message : 'Sorry, I couldn\'t process your request. Please try again.',
         timestamp: new Date(),
+        id: Date.now() + '-error',
       }
       setMessages((prev) => [...prev, errorMessage])
     } finally {
@@ -204,9 +248,30 @@ export default function AdminAI() {
     }
   }
 
+  // Load saved messages from localStorage
   useEffect(() => {
+    const savedMessages = localStorage.getItem('aiAssistantMessages')
+    if (savedMessages) {
+      try {
+        const parsed = JSON.parse(savedMessages)
+        const messagesWithDates = parsed.map((m: any) => ({
+          ...m,
+          timestamp: m.timestamp ? new Date(m.timestamp) : undefined
+        }))
+        setMessages(messagesWithDates)
+      } catch (e) {
+        console.error('Error loading messages:', e)
+      }
+    }
     setIsLoadingContext(false)
   }, [])
+
+  // Persist messages to localStorage
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('aiAssistantMessages', JSON.stringify(messages))
+    }
+  }, [messages])
 
   return (
     <div style={{
@@ -314,18 +379,18 @@ export default function AdminAI() {
           </div>
         ) : (
           <>
-            {messages.map((msg, idx) => (
-              <div key={idx} style={{
+            {messages.map((msg) => (
+              <div key={msg.id || msg.content} style={{
                 display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
                 gap: '0.75rem',
               }}>
                 <div style={{
                   maxWidth: msg.role === 'user' ? '70%' : '80%',
                   backgroundColor: msg.role === 'user'
-                    ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+                    ? '#f59e0b'
                     : '#1a1a1a',
                   border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                  color: msg.role === 'user' ? 'black' : 'white',
+                  color: msg.role === 'user' ? 'white' : 'white',
                   borderRadius: msg.role === 'user' ? '1rem 1rem 0.25rem 1rem' : '1rem 1rem 1rem 0.25rem',
                   padding: '0.875rem 1.25rem',
                   fontFamily: 'Outfit',
@@ -337,8 +402,8 @@ export default function AdminAI() {
                   {msg.content}
                   {msg.timestamp && (
                     <p style={{
-                      fontSize: '0.7rem',
-                      color: msg.role === 'user' ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.3)',
+                      fontSize: '0.65rem',
+                      color: msg.role === 'user' ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.4)',
                       marginTop: '0.5rem',
                       marginBottom: 0,
                     }}>

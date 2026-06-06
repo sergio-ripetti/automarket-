@@ -20,7 +20,15 @@
       "Bash(git remote *)",
       "Bash(git branch *)",
       "Bash(git push *)",
-      "Bash(git reset *)"
+      "Bash(git reset *)",
+      "PowerShell(node --version)",
+      "Bash(curl -s http://localhost:3001/health)",
+      "Bash(curl -s -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{\"message\":\"¿Cuál es el mejor proceso para vender un auto usado?\",\"businessContext\":{\"businessType\":\"automotive marketplace\",\"industryFocus\":\"used car sales\",\"targetAudience\":\"car sellers\"}}')",
+      "Bash(curl -s -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{\"message\":\"¿Cuál es el mejor proceso para vender un auto usado?\",\"businessContext\":{\"businessType\":\"automotive marketplace\"}}')",
+      "Bash(curl -v -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{\"message\":\"test\",\"businessContext\":{\"totalCars\":5},\"conversationHistory\":[]}')",
+      "Bash(git rm *)"
     ]
   }
 }

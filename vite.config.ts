@@ -6,6 +6,10 @@ export default defineConfig({
   server: {
     cors: true,
     proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
       '/ninjas-api': {
         target: 'https://api.api-ninjas.com',
         changeOrigin: true,
