@@ -602,7 +602,7 @@ export default function AdminFinancing() {
         }
       `}</style>
       {selectedRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4 lg:p-6 bg-black/90 overflow-y-auto">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-4 lg:p-6 bg-black/90 overflow-y-auto">
           <div className="w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-amber-500/20 p-4 md:p-6">
             {/* Header */}
             <div

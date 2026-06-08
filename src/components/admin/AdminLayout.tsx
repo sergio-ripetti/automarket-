@@ -257,7 +257,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           backgroundColor: '#0f0f0f',
           overflow: 'hidden',
           overflowY: 'auto',
-          zIndex: 30,
           padding: screenSize === 'desktop' ? '2rem' : screenSize === 'tablet' ? '1.25rem' : '1rem',
         }}
       >
