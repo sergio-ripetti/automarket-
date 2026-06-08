@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { PlusCircle, Eye, Trash2, ShoppingBag } from 'lucide-react'
 import { getSales, deleteSale, type Sale } from '../../lib/salesService'
 import { showToast } from '../../lib/toast'
+import Button from '../../components/ui/Button'
+import Badge from '../../components/ui/Badge'
 
 function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
@@ -76,68 +78,49 @@ export default function AdminSales() {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1 className="font-bebas" style={{ fontSize: '2rem', color: 'white', lineHeight: 1, marginBottom: '0.25rem' }}>
-          Sales Records
-        </h1>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)' }}>
-            {sales.length} sales recorded
-          </p>
-          <Link
-            to="/admin/sales/new"
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-              padding: '0.875rem 1.5rem', borderRadius: '0.625rem',
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-              color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', fontWeight: 600,
-              textDecoration: 'none', cursor: 'pointer', border: 'none',
-            }}
+      <div className="mb-8">
+        <div className="flex justify-between items-center">
+          <h1 className="font-bebas text-3xl text-white">Sales Records</h1>
+          <Button
+            variant="primary"
+            size="md"
+            icon={<PlusCircle size={18} />}
+            className="flex items-center gap-2"
+            onClick={() => window.location.href = '/admin/sales/new'}
           >
-            <PlusCircle size={18} />
             Record New Sale
-          </Link>
+          </Button>
         </div>
+        <p className="text-sm text-white/40 mt-2 font-outfit">{sales.length} sales recorded</p>
       </div>
 
       {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[
           { label: 'Total Revenue', value: fmt(stats.totalRevenue) },
           { label: 'Cash Sales', value: stats.cashSales.toString() },
           { label: 'Financed Sales', value: stats.financedSales.toString() },
           { label: 'Active Financing', value: stats.activeFinancing.toString() },
         ].map(({ label, value }) => (
-          <div key={label} style={{
-            backgroundColor: '#1a1a1a', border: '1px solid rgba(245,158,11,0.1)',
-            borderRadius: '0.875rem', padding: '1.25rem',
-          }}>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '0.5rem' }}>
-              {label}
-            </p>
-            <p className="font-bebas" style={{ fontSize: '1.75rem', color: '#f59e0b' }}>
-              {value}
-            </p>
+          <div key={label} className="bg-carbon border border-white/5 rounded-lg p-5 hover:border-amber-500/20 transition-colors">
+            <p className="text-xs text-white/50 mb-2 font-outfit">{label}</p>
+            <p className="font-bebas text-2xl text-amber-500 tracking-wider">{value}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
-      <div style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+      <div className="mb-6">
+        <div className="flex flex-wrap gap-2 mb-4">
           {(['all', 'cash', 'financing', 'mixed', 'completed'] as FilterType[]).map((type) => (
             <button
               key={type}
               onClick={() => setFilter(type)}
-              style={{
-                padding: '0.5rem 1rem', borderRadius: '0.625rem',
-                fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 500,
-                border: `2px solid ${filter === type ? '#f59e0b' : 'rgba(255,255,255,0.1)'}`,
-                backgroundColor: filter === type ? 'rgba(245,158,11,0.1)' : 'transparent',
-                color: filter === type ? '#f59e0b' : 'rgba(255,255,255,0.5)',
-                cursor: 'pointer', transition: 'all 0.2s',
-                textTransform: 'capitalize',
-              }}
+              className={`px-4 py-2 rounded-lg text-sm font-outfit font-medium transition-all ${
+                filter === type
+                  ? 'border-2 border-amber-500 bg-amber-500/10 text-amber-500'
+                  : 'border-2 border-white/10 bg-transparent text-white/50 hover:border-white/20'
+              }`}
             >
               {type === 'all' ? 'All' : type.charAt(0).toUpperCase() + type.slice(1)}
             </button>
@@ -149,28 +132,17 @@ export default function AdminSales() {
           placeholder="Search by buyer, car, or RUT..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-            backgroundColor: '#0f0f0f', border: '1px solid rgba(255,255,255,0.08)',
-            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
-            outline: 'none',
-          }}
-          onFocus={(e) => { e.target.style.borderColor = '#f59e0b' }}
-          onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
+          className="w-full px-4 py-2 rounded-lg bg-dark border border-white/10 text-white font-outfit text-sm focus:outline-none focus:border-amber-500/50 transition-colors"
         />
       </div>
 
       {/* Sales Table */}
-      <div style={{ backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <div className="bg-dark border border-white/5 rounded-lg overflow-hidden">
+        <table className="w-full border-collapse">
           <thead>
-            <tr style={{ backgroundColor: '#1a1a1a' }}>
+            <tr className="bg-carbon">
               {['Car', 'Buyer Name', 'Sale Price', 'Type', 'Date', 'Status', 'Actions'].map((h) => (
-                <th key={h} style={{
-                  padding: '1rem 1.25rem', textAlign: 'left',
-                  fontFamily: 'Bebas Neue, sans-serif', fontSize: '0.9rem',
-                  color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em', fontWeight: 400,
-                }}>
+                <th key={h} className="px-5 py-4 text-left font-bebas text-xs text-white/50 tracking-wider">
                   {h}
                 </th>
               ))}
@@ -179,106 +151,70 @@ export default function AdminSales() {
           <tbody>
             {loading ? (
               [...Array(5)].map((_, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <td colSpan={7} style={{ padding: '1rem 1.25rem', backgroundColor: '#0a0a0a', height: '24px' }} />
+                <tr key={i} className="border-b border-white/5">
+                  <td colSpan={7} className="px-5 py-4 h-6 bg-white/5 rounded animate-pulse" />
                 </tr>
               ))
             ) : filtered.length === 0 ? (
               <tr>
-                <td colSpan={7} style={{
-                  padding: '3rem', textAlign: 'center',
-                  fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: '0.9rem',
-                }}>
-                  <ShoppingBag size={32} style={{ margin: '0 auto 1rem', opacity: 0.3 }} />
-                  <div>No sales found</div>
+                <td colSpan={7} className="px-5 py-16 text-center">
+                  <ShoppingBag size={32} className="mx-auto mb-4 text-white/20" />
+                  <p className="text-white/30 font-outfit">No sales found</p>
                 </td>
               </tr>
             ) : (
               filtered.map((sale) => (
-                <tr key={sale.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <tr key={sale.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
                   {/* Car */}
-                  <td style={{ padding: '1rem 1.25rem' }}>
-                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                      <img src={sale.carImages[0]} alt="" style={{ width: '50px', height: '36px', borderRadius: '0.375rem', objectFit: 'cover' }} />
+                  <td className="px-5 py-4">
+                    <div className="flex gap-3 items-center">
+                      <img src={sale.carImages[0]} alt="" className="w-12 h-9 rounded object-cover" />
                       <div>
-                        <p className="font-bebas" style={{ fontSize: '0.9rem', color: 'white', lineHeight: 1 }}>
-                          {sale.carTitle}
-                        </p>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
-                          {sale.carYear}
-                        </p>
+                        <p className="font-bebas text-sm text-white">{sale.carTitle}</p>
+                        <p className="text-xs text-white/40 font-outfit">{sale.carYear}</p>
                       </div>
                     </div>
                   </td>
                   {/* Buyer */}
-                  <td style={{ padding: '1rem 1.25rem' }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.buyer.name}</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
-                      {sale.buyer.email}
-                    </p>
+                  <td className="px-5 py-4">
+                    <p className="text-sm text-white font-outfit">{sale.buyer.name}</p>
+                    <p className="text-xs text-white/40 font-outfit">{sale.buyer.email}</p>
                   </td>
                   {/* Price */}
-                  <td style={{ padding: '1rem 1.25rem', fontFamily: 'Bebas Neue, sans-serif', fontSize: '1rem', color: '#f59e0b' }}>
-                    {fmt(sale.paymentPlan.salePrice)}
-                  </td>
+                  <td className="px-5 py-4 font-bebas text-lg text-amber-500">{fmt(sale.paymentPlan.salePrice)}</td>
                   {/* Type */}
-                  <td style={{ padding: '1rem 1.25rem' }}>
-                    <span style={{
-                      padding: '0.375rem 0.75rem', borderRadius: '0.375rem', fontSize: '0.75rem', fontWeight: 600,
-                      backgroundColor: sale.paymentPlan.type === 'cash'
-                        ? 'rgba(34, 197, 94, 0.2)' : sale.paymentPlan.type === 'financing'
-                          ? 'rgba(59, 130, 246, 0.2)' : 'rgba(147, 51, 234, 0.2)',
-                      color: sale.paymentPlan.type === 'cash'
-                        ? '#22c55e' : sale.paymentPlan.type === 'financing'
-                          ? '#3b82f6' : '#9333ea',
-                      fontFamily: 'Outfit',
-                    }}>
+                  <td className="px-5 py-4">
+                    <Badge
+                      variant={sale.paymentPlan.type === 'cash' ? 'success' : sale.paymentPlan.type === 'financing' ? 'info' : 'default'}
+                      className="text-xs"
+                    >
                       {sale.paymentPlan.type === 'cash' ? 'Cash' : sale.paymentPlan.type === 'financing' ? 'Financing' : 'Mixed'}
-                    </span>
+                    </Badge>
                   </td>
                   {/* Date */}
-                  <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
-                    {fmtDate(sale.saleDate)}
-                  </td>
+                  <td className="px-5 py-4 text-sm text-white/60 font-outfit">{fmtDate(sale.saleDate)}</td>
                   {/* Status */}
-                  <td style={{ padding: '1rem 1.25rem' }}>
-                    <span style={{
-                      padding: '0.375rem 0.75rem', borderRadius: '0.375rem', fontSize: '0.75rem', fontWeight: 600,
-                      backgroundColor: sale.status === 'active'
-                        ? 'rgba(245,158,11,0.2)' : sale.status === 'completed'
-                          ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                      color: sale.status === 'active'
-                        ? '#f59e0b' : sale.status === 'completed'
-                          ? '#22c55e' : '#ef4444',
-                      fontFamily: 'Outfit',
-                      textTransform: 'capitalize',
-                    }}>
+                  <td className="px-5 py-4">
+                    <Badge
+                      variant={sale.status === 'active' ? 'warning' : sale.status === 'completed' ? 'success' : 'danger'}
+                      className="text-xs capitalize"
+                    >
                       {sale.status}
-                    </span>
+                    </Badge>
                   </td>
                   {/* Actions */}
-                  <td style={{ padding: '1rem 1.25rem' }}>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <td className="px-5 py-4">
+                    <div className="flex gap-2">
                       <Link
                         to={`/admin/sales/${sale.id}`}
-                        style={{
-                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                          width: '32px', height: '32px', borderRadius: '0.375rem',
-                          backgroundColor: 'rgba(245,158,11,0.1)', color: '#f59e0b',
-                          cursor: 'pointer', transition: 'all 0.2s', textDecoration: 'none',
-                        }}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 transition-colors"
                         title="View details"
                       >
                         <Eye size={16} />
                       </Link>
                       <button
                         onClick={() => handleDelete(sale.id)}
-                        style={{
-                          display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                          width: '32px', height: '32px', borderRadius: '0.375rem',
-                          backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444',
-                          cursor: 'pointer', transition: 'all 0.2s', border: 'none',
-                        }}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
                         title="Delete sale"
                       >
                         <Trash2 size={16} />
