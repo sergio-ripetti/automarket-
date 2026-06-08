@@ -65,14 +65,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
   const closeSidebar = () => setSidebarOpen(false)
 
-  // Calculate sidebar width based on screen size and state
-  const getSidebarWidth = () => {
+  // Calculate sidebar widths (FIXED - never changes main content margin)
+  const getCollapsedWidth = () => {
     if (screenSize === 'desktop') return 250
-    if (screenSize === 'tablet') return sidebarOpen ? 250 : 100
-    return sidebarOpen ? 250 : 80
+    if (screenSize === 'tablet') return 100
+    return 80
   }
 
-  const sidebarWidth = getSidebarWidth()
+  const getExpandedWidth = () => 250
+
+  const collapsedWidth = getCollapsedWidth()
+  const expandedWidth = getExpandedWidth()
+  const sidebarDisplayWidth = sidebarOpen && screenSize !== 'desktop' ? expandedWidth : collapsedWidth
   const isExpanded = sidebarOpen || screenSize === 'desktop'
 
   return (
@@ -91,14 +95,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
 
-      {/* SIDEBAR - FIXED */}
+      {/* SIDEBAR - FIXED (overlays ON TOP of content, NOT pushing it) */}
       <aside
         style={{
           position: 'fixed',
           left: 0,
           top: 0,
           height: '100vh',
-          width: sidebarWidth,
+          width: sidebarDisplayWidth,
           backgroundColor: '#0a0a0a',
           borderRight: '1px solid rgba(245,158,11,0.15)',
           display: 'flex',
@@ -243,17 +247,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         )}
       </aside>
 
-      {/* MAIN CONTENT - SCROLLABLE */}
+      {/* MAIN CONTENT - SCROLLABLE (margin-left FIXED - sidebar overlays ON TOP) */}
       <main
         style={{
           position: 'relative',
-          marginLeft: sidebarWidth,
-          width: `calc(100% - ${sidebarWidth}px)`,
+          marginLeft: collapsedWidth,
+          width: `calc(100% - ${collapsedWidth}px)`,
           height: '100vh',
           backgroundColor: '#0f0f0f',
           overflow: 'hidden',
           overflowY: 'auto',
-          transition: 'margin-left 0.3s ease, width 0.3s ease',
+          zIndex: 30,
           padding: '2rem',
         }}
       >
