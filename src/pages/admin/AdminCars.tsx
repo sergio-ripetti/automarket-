@@ -66,9 +66,15 @@ export default function AdminCars() {
 
   return (
     <div>
+      <style>{`
+        .cars-page-title {
+          font-size: clamp(1.25rem, 5vw, 2rem);
+          font-weight: 600;
+        }
+      `}</style>
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="font-bebas text-3xl text-white">Vehicle Inventory</h1>
+      <div className="flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
+        <h1 className="font-bebas text-white cars-page-title">Vehicle Inventory</h1>
         <Button
           variant="primary"
           size="md"
@@ -80,7 +86,7 @@ export default function AdminCars() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-6 mb-6 items-center">
+      <div className="flex gap-6 flex-wrap items-center" style={{ marginBottom: 'clamp(1.25rem, 3vw, 1.5rem)' }}>
         <label className="flex items-center gap-2 cursor-pointer text-sm text-white/60 font-outfit">
           <input
             type="checkbox"
@@ -106,7 +112,7 @@ export default function AdminCars() {
 
       {/* Grid of Cards */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
           {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-carbon border border-white/5 rounded-xl overflow-hidden animate-pulse">
               <div className="h-60 bg-slate-800" />
@@ -123,7 +129,7 @@ export default function AdminCars() {
           <p className="text-lg font-outfit">No vehicles found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
           {displayed.map((car) => (
             <div
               key={car.id}
@@ -146,7 +152,7 @@ export default function AdminCars() {
               </div>
 
               {/* Content */}
-              <div className="p-5 lg:p-6">
+              <div style={{ padding: 'clamp(1rem, 3vw, 1.5rem)' }}>
                 {/* Title */}
                 <h3 className="font-bebas text-xl lg:text-2xl text-white tracking-wider mb-3 line-clamp-1">
                   {car.title}

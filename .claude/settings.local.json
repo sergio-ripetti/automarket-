@@ -45,7 +45,9 @@
       "PowerShell(Get-Content \"$env:TEMP\\\\claude-seo\\\\README.md\" | Select-Object -First 200)",
       "PowerShell(powershell -ExecutionPolicy Bypass -File \"$env:USERPROFILE\\\\claude-seo\\\\install.ps1\")",
       "PowerShell(python -m ensurepip --upgrade)",
-      "Bash(Sort-Object -Unique)"
+      "Bash(Sort-Object -Unique)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)"
     ]
   }
 }

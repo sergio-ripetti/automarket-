@@ -195,16 +195,51 @@ export default function AdminMessages() {
               </div>
 
               {expandedId === msg.id && (
-                <div style={{ display: 'flex', gap: '0.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <>
+                  <style>{`
+                    .message-actions {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                      gap: 0.5rem;
+                      padding-top: 1rem;
+                      border-top: 1px solid rgba(255,255,255,0.05);
+                    }
+                    .message-actions button {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 0.4rem;
+                      padding: 0.5rem;
+                      border-radius: 0.5rem;
+                      font-family: 'Outfit', sans-serif;
+                      font-size: 0.75rem;
+                      cursor: pointer;
+                      white-space: nowrap;
+                      min-height: 36px;
+                    }
+                    @media (min-width: 768px) {
+                      .message-actions {
+                        grid-template-columns: auto;
+                        gap: 0.75rem;
+                      }
+                      .message-actions button {
+                        padding: 0.5rem 1rem;
+                        font-size: 0.8rem;
+                      }
+                    }
+                    .message-actions .delete-btn {
+                      grid-column: -2 / -1;
+                      margin-left: auto;
+                    }
+                  `}</style>
+                  <div className="message-actions">
                   <button
                     onClick={(e) => { e.stopPropagation(); setSelectedMessage(msg) }}
                     style={{
-                      display: 'flex', alignItems: 'center', gap: '0.4rem',
-                      padding: '0.5rem 1rem', borderRadius: '0.5rem', fontFamily: 'Outfit', fontSize: '0.8rem',
-                      border: '1px solid rgba(100, 116, 139, 0.3)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'transparent', cursor: 'pointer',
+                      border: '1px solid rgba(100, 116, 139, 0.3)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'transparent',
                     }}
                   >
-                    <Eye size={12} /> View Details
+                    <Eye size={14} /> <span className="hidden sm:inline">Details</span>
                   </button>
                   <button
                     onClick={(e) => {
@@ -214,8 +249,7 @@ export default function AdminMessages() {
                       window.location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${body}`
                     }}
                     style={{
-                      padding: '0.5rem 1rem', borderRadius: '0.5rem', fontFamily: 'Outfit', fontSize: '0.8rem',
-                      border: '1px solid #f59e0b', color: '#f59e0b', backgroundColor: 'transparent', cursor: 'pointer',
+                      border: '1px solid #f59e0b', color: '#f59e0b', backgroundColor: 'transparent',
                     }}
                   >
                     Reply
@@ -223,23 +257,22 @@ export default function AdminMessages() {
                   <button
                     onClick={(e) => { e.stopPropagation(); handleToggleRead(msg) }}
                     style={{
-                      padding: '0.5rem 1rem', borderRadius: '0.5rem', fontFamily: 'Outfit', fontSize: '0.8rem',
-                      border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'transparent', cursor: 'pointer',
+                      border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'transparent',
                     }}
                   >
-                    {msg.read ? 'Mark Unread' : 'Mark Read'}
+                    {msg.read ? 'Unread' : 'Read'}
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDelete(msg.id) }}
+                    className="delete-btn"
                     style={{
-                      display: 'flex', alignItems: 'center', gap: '0.4rem', marginLeft: 'auto',
-                      padding: '0.5rem 1rem', borderRadius: '0.5rem', fontFamily: 'Outfit', fontSize: '0.8rem',
-                      border: '1px solid rgba(220,38,38,0.4)', color: '#ef4444', backgroundColor: 'transparent', cursor: 'pointer',
+                      border: '1px solid rgba(220,38,38,0.4)', color: '#ef4444', backgroundColor: 'transparent',
                     }}
                   >
-                    <Trash2 size={12} /> Delete
+                    <Trash2 size={14} /> <span className="hidden sm:inline">Delete</span>
                   </button>
-                </div>
+                  </div>
+                </>
               )}
             </div>
           )
@@ -247,6 +280,100 @@ export default function AdminMessages() {
       </div>
 
       {/* Details Modal */}
+      <style>{`
+        .message-modal {
+          position: fixed;
+          inset: 0;
+          z-index: 50;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+          overflow-y: auto;
+          background-color: rgba(0, 0, 0, 0.9);
+        }
+        .message-modal-content {
+          background-color: #1a1a1a;
+          border: 1px solid rgba(245,158,11,0.2);
+          border-radius: 1rem;
+          width: 100%;
+          max-width: 85vw;
+          max-height: 92vh;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
+        @media (min-width: 768px) {
+          .message-modal-content {
+            max-width: 650px;
+            border-radius: 1.25rem;
+          }
+        }
+        .message-modal-header {
+          position: sticky;
+          top: 0;
+          background: linear-gradient(135deg, #f59e0b, #d97706);
+          padding: clamp(1rem, 2vw, 1.5rem);
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          z-index: 10;
+          gap: clamp(0.75rem, 2vw, 1rem);
+          flex-wrap: wrap;
+        }
+        .message-modal-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: clamp(1rem, 2vw, 1.75rem);
+        }
+        .message-modal-grid-2col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: clamp(1rem, 2.5vw, 1.5rem);
+        }
+        @media (min-width: 768px) {
+          .message-modal-grid-2col {
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.25rem, 3vw, 1.75rem);
+          }
+        }
+        .message-modal-title {
+          font-size: clamp(1.1rem, 4vw, 1.3rem);
+          font-weight: 600;
+          letter-spacing: 0.02em;
+        }
+        .message-modal-section {
+          margin-bottom: 1.5rem;
+        }
+        .message-modal-label {
+          font-size: 0.7rem;
+          color: rgba(255,255,255,0.4);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.4rem;
+          display: block;
+        }
+        .message-modal-value {
+          font-size: 0.9rem;
+          color: white;
+          font-weight: 500;
+        }
+        .message-modal-value-highlight {
+          font-size: clamp(1rem, 3vw, 1.2rem);
+          color: #f59e0b;
+          font-weight: 600;
+        }
+        .message-modal-footer {
+          padding: clamp(1rem, 2vw, 1.75rem);
+          border-top: 1px solid rgba(245,158,11,0.1);
+          display: flex;
+          gap: clamp(0.5rem, 1.5vw, 0.75rem);
+          flex-direction: column;
+        }
+        .message-modal-footer button {
+          min-height: 44px;
+        }
+      `}</style>
       <AnimatePresence>
         {selectedMessage && (
           <motion.div
@@ -254,51 +381,29 @@ export default function AdminMessages() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedMessage(null)}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 50,
-              display: 'flex',
-              alignItems: 'flex-start',
-              justifyContent: 'center',
-              paddingTop: '5vh',
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              backdropFilter: 'blur(8px)',
-            }}
+            className="message-modal"
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              style={{
-                backgroundColor: '#111111',
-                border: '1px solid rgba(245,158,11,0.2)',
-                borderRadius: '1.25rem',
-                width: '90%',
-                maxWidth: '600px',
-                maxHeight: '90vh',
-                overflowY: 'auto',
-              }}
+              className="message-modal-content"
             >
               {/* Header */}
-              <div style={{
-                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                padding: '1.5rem 2rem',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-                borderBottom: '1px solid rgba(245,158,11,0.2)',
-              }}>
-                <div style={{ flex: 1 }}>
+              <div className="message-modal-header">
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
-                    display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
-                    backgroundColor: 'rgba(0,0,0,0.2)',
-                    color: 'black', fontSize: '0.75rem', fontWeight: 600,
+                    display: 'inline-block', padding: '0.35rem 0.85rem', borderRadius: '0.375rem',
+                    backgroundColor: 'rgba(0,0,0,0.25)',
+                    color: 'black', fontSize: '0.7rem', fontWeight: 700,
                     fontFamily: 'Outfit', marginBottom: '0.75rem', textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
                   }}>
                     {selectedMessage.type === 'offer' ? 'OFFER' : selectedMessage.type === 'contact' ? 'CONTACT' : 'FINANCING'}
                   </div>
-                  <p className="font-bebas" style={{
-                    fontSize: '1.5rem', color: 'black', lineHeight: 1,
+                  <p className="font-bebas message-modal-title" style={{
+                    color: 'black', lineHeight: 1.2, marginBottom: 0
                   }}>
                     {selectedMessage.senderName}
                   </p>
@@ -322,18 +427,18 @@ export default function AdminMessages() {
               </div>
 
               {/* Body */}
-              <div style={{ padding: '2rem' }}>
+              <div className="message-modal-body">
                 {selectedMessage.type === 'offer' ? (
                   <>
                     {/* Offer Details */}
-                    <div style={{ marginBottom: '2rem' }}>
+                    <div className="message-modal-section" style={{ paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                       <p className="font-bebas" style={{
-                        fontSize: '1.5rem', color: '#f59e0b', marginBottom: '0.5rem',
+                        fontSize: 'clamp(1.15rem, 4vw, 1.4rem)', color: '#f59e0b', marginBottom: '0.75rem', fontWeight: 600
                       }}>
                         {(selectedMessage as any).carTitle || 'Vehicle'}
                       </p>
                       <p className="font-bebas" style={{
-                        fontSize: '2.5rem', color: '#f59e0b', marginBottom: '0.5rem',
+                        fontSize: 'clamp(1.5rem, 5vw, 2rem)', color: '#f59e0b', marginBottom: '0.75rem', fontWeight: 600
                       }}>
                         {fmt((selectedMessage as any).offerPrice || 0)}
                       </p>
@@ -353,7 +458,7 @@ export default function AdminMessages() {
 
                     {/* Contact Information */}
                     <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                      <div className="message-modal-grid-2col">
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>First Name</p>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{(selectedMessage as any).firstName}</p>
@@ -387,7 +492,7 @@ export default function AdminMessages() {
                   <>
                     {/* Contact Info */}
                     <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                      <div className="message-modal-grid-2col">
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Name</p>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedMessage.senderName}</p>
@@ -421,10 +526,7 @@ export default function AdminMessages() {
               </div>
 
               {/* Footer */}
-              <div style={{
-                padding: '1.5rem 2rem', borderTop: '1px solid rgba(245,158,11,0.1)',
-                display: 'flex', gap: '0.75rem', flexDirection: 'column',
-              }}>
+              <div className="message-modal-footer">
                 <button
                   onClick={() => {
                     const subject = selectedMessage.type === 'offer'
@@ -438,21 +540,23 @@ export default function AdminMessages() {
                     background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                     color: 'black', fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
                     border: 'none', borderRadius: '0.5rem', cursor: 'pointer',
+                    minHeight: '44px',
                   }}
                 >
                   Reply via Email
                 </button>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <div className="message-modal-grid-2col">
                   <button
                     onClick={() => {
                       handleToggleRead(selectedMessage)
                       setSelectedMessage(null)
                     }}
                     style={{
-                      flex: 1, padding: '0.75rem 1rem',
+                      padding: '0.75rem 1rem',
                       backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
                       color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.875rem',
                       borderRadius: '0.5rem', cursor: 'pointer',
+                      minHeight: '44px',
                     }}
                   >
                     {selectedMessage.read ? 'Mark Unread' : 'Mark Read'}
@@ -460,10 +564,11 @@ export default function AdminMessages() {
                   <button
                     onClick={() => setSelectedMessage(null)}
                     style={{
-                      flex: 1, padding: '0.75rem 1rem',
+                      padding: '0.75rem 1rem',
                       backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
                       color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.875rem',
                       borderRadius: '0.5rem', cursor: 'pointer',
+                      minHeight: '44px',
                     }}
                   >
                     Close

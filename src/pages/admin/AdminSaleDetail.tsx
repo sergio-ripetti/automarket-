@@ -112,8 +112,95 @@ export default function AdminSaleDetail() {
 
   return (
     <div>
+      <style>{`
+        .sale-detail-header {
+          margin-bottom: 2rem;
+        }
+        .sale-detail-title {
+          font-size: clamp(1.25rem, 5vw, 2rem);
+          color: white;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+        }
+        .sale-detail-grid {
+          display: grid;
+          gap: clamp(1.5rem, 3vw, 2rem);
+          align-items: start;
+        }
+        @media (min-width: 1024px) {
+          .sale-detail-grid {
+            grid-template-columns: 60% 1fr;
+          }
+        }
+        @media (max-width: 1023px) {
+          .sale-detail-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        .detail-header-actions {
+          display: flex;
+          gap: clamp(0.5rem, 2vw, 0.75rem);
+          flex-wrap: wrap;
+        }
+        .detail-header-actions button {
+          min-height: 44px;
+        }
+        @media (max-width: 767px) {
+          .detail-header-actions {
+            flex-direction: column;
+          }
+          .detail-header-actions button {
+            width: 100%;
+          }
+        }
+        .detail-section-grid-2col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: clamp(1rem, 2.5vw, 1.5rem);
+        }
+        @media (min-width: 768px) {
+          .detail-section-grid-2col {
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.25rem, 3vw, 1.75rem);
+          }
+        }
+        .payment-summary-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: clamp(1rem, 2.5vw, 1.5rem);
+        }
+        @media (min-width: 768px) {
+          .payment-summary-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(1.25rem, 3vw, 1.75rem);
+          }
+        }
+        .sale-detail-section {
+          margin-bottom: 1.25rem;
+          padding-bottom: 1.25rem;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .sale-detail-section:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+          padding-bottom: 0;
+        }
+        .sale-detail-label {
+          font-size: 0.7rem;
+          color: rgba(255,255,255,0.4);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.4rem;
+          display: block;
+        }
+        .sale-detail-value {
+          font-size: 0.9rem;
+          color: white;
+          font-weight: 500;
+        }
+      `}</style>
       {/* Header */}
-      <div style={{ marginBottom: '2rem' }}>
+      <div className="sale-detail-header">
         <button
           onClick={() => navigate('/admin/sales')}
           style={{
@@ -127,9 +214,9 @@ export default function AdminSaleDetail() {
           <ArrowLeft size={16} />
           Back to Sales
         </button>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
-            <h1 className="font-bebas" style={{ fontSize: '2rem', color: 'white', marginBottom: '0.5rem' }}>
+            <h1 className="font-bebas sale-detail-title">
               {sale.buyer.name}
             </h1>
             <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>
@@ -144,11 +231,11 @@ export default function AdminSaleDetail() {
               </span>
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div className="detail-header-actions">
             <button
               onClick={() => generateInvoice(sale)}
               style={{
-                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                 padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
                 background: 'linear-gradient(135deg, #f59e0b, #d97706)',
                 color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
@@ -156,12 +243,13 @@ export default function AdminSaleDetail() {
               }}
             >
               <Download size={16} />
-              Download Invoice
+              <span style={{ display: 'none' }} className="sm:inline">Download Invoice</span>
+              <span className="sm:hidden">Invoice</span>
             </button>
             <button
               onClick={() => navigate(`/admin/sales/edit/${id}`)}
               style={{
-                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
                 padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
                 backgroundColor: 'rgba(245,158,11,0.1)',
                 border: '1px solid rgba(245,158,11,0.3)',
@@ -177,7 +265,7 @@ export default function AdminSaleDetail() {
       </div>
 
       {/* Two Column Layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '60% 1fr', gap: '2rem', alignItems: 'start' }}>
+      <div className="sale-detail-grid">
         {/* Left Column */}
         <div>
           {/* Vehicle Card */}
@@ -192,7 +280,7 @@ export default function AdminSaleDetail() {
             <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '0.5rem' }}>
               {sale.carTitle}
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
               <div>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Year • KM</p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>
@@ -218,7 +306,7 @@ export default function AdminSaleDetail() {
               <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
                 Vehicle Details
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>VIN</p>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{sale.vehicleInfo?.vin}</p>
@@ -264,7 +352,7 @@ export default function AdminSaleDetail() {
             <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
               Buyer Information
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div className="detail-section-grid-2col">
               {[
                 { label: 'Full Name', value: sale.buyer.name },
                 { label: 'RUT', value: sale.buyer.rut },
@@ -511,8 +599,7 @@ export default function AdminSaleDetail() {
                     {fmt(sale.paymentPlan.monthlyPayment)}
                   </p>
                 </div>
-                <div style={{
-                  display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem',
+                <div className="payment-summary-grid" style={{
                   paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)',
                 }}>
                   <div>
@@ -576,75 +663,107 @@ export default function AdminSaleDetail() {
                   {paidCount} payments completed · {pendingCount} pending · {fmt(remaining)} remaining
                 </div>
 
-                <div style={{ overflowX: 'auto', marginBottom: '1rem' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <style>{`
+                  .payment-table-wrapper {
+                    overflow-x: auto;
+                    -webkit-overflow-scrolling: touch;
+                    margin-bottom: 1rem;
+                    border-radius: 0.625rem;
+                  }
+                  .payment-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    min-width: 600px;
+                  }
+                  .payment-table thead tr {
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                  }
+                  .payment-table th {
+                    padding: 0.75rem;
+                    text-align: left;
+                    font-family: 'Outfit', sans-serif;
+                    font-size: 0.75rem;
+                    color: rgba(255,255,255,0.4);
+                    font-weight: 400;
+                    text-transform: uppercase;
+                    letter-spacing: 0.05em;
+                  }
+                  .payment-table td {
+                    padding: 0.75rem;
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                  }
+                  @media (max-width: 767px) {
+                    .payment-table {
+                      min-width: 500px;
+                      font-size: 0.7rem;
+                    }
+                    .payment-table th,
+                    .payment-table td {
+                      padding: 0.5rem;
+                      font-size: 0.65rem;
+                    }
+                  }
+                `}</style>
+                <div className="payment-table-wrapper">
+                  <table className="payment-table">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <tr>
                         {['Month', 'Due Date', 'Amount', 'Status', 'Action'].map((h) => (
-                          <th key={h} style={{
-                            padding: '0.75rem', textAlign: 'left',
-                            fontFamily: 'Outfit', fontSize: '0.75rem',
-                            color: 'rgba(255,255,255,0.4)', fontWeight: 400,
-                            textTransform: 'uppercase', letterSpacing: '0.05em',
-                          }}>
-                            {h}
-                          </th>
+                          <th key={h}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {visiblePayments.map((p, i) => (
-                        <tr key={p.id} style={{
-                          borderBottom: '1px solid rgba(255,255,255,0.05)',
-                          opacity: p.status === 'paid' ? 0.6 : 1,
-                        }}>
-                          <td style={{ padding: '0.75rem', fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)' }}>
+                        <tr key={p.id} style={{ opacity: p.status === 'paid' ? 0.6 : 1 }}>
+                          <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.6)' }}>
                             {paymentPage * paymentsPerPage + i + 1}
                           </td>
-                          <td style={{ padding: '0.75rem', fontFamily: 'Outfit', fontSize: '0.85rem', color: 'white' }}>
+                          <td style={{ fontFamily: 'Outfit', color: 'white' }}>
                             {fmtDate(p.dueDate)}
                           </td>
-                          <td style={{ padding: '0.75rem', fontFamily: 'Bebas', fontSize: '0.9rem', color: '#f59e0b' }}>
+                          <td style={{ fontFamily: 'Bebas', color: '#f59e0b' }}>
                             {fmt(p.amount)}
                           </td>
-                          <td style={{ padding: '0.75rem' }}>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                          <td>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: 0 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                 {p.status === 'paid' ? (
                                   <>
-                                    <CheckCircle size={16} color="#22c55e" />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#22c55e' }}>Paid</span>
+                                    <CheckCircle size={14} color="#22c55e" />
+                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#22c55e' }}>Paid</span>
                                   </>
                                 ) : p.status === 'overdue' ? (
                                   <>
-                                    <AlertCircle size={16} color="#ef4444" />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#ef4444' }}>Overdue</span>
+                                    <AlertCircle size={14} color="#ef4444" />
+                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#ef4444' }}>Overdue</span>
                                   </>
                                 ) : (
                                   <>
-                                    <Clock size={16} color='#f59e0b' />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#f59e0b' }}>Pending</span>
+                                    <Clock size={14} color='#f59e0b' />
+                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#f59e0b' }}>Pending</span>
                                   </>
                                 )}
                               </div>
                               {p.status === 'paid' && p.paidDate && (
-                                <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>
                                   {fmtDate(p.paidDate)}
                                 </span>
                               )}
                             </div>
                           </td>
-                          <td style={{ padding: '0.75rem' }}>
+                          <td>
                             {p.status === 'pending' && (
                               <button
                                 onClick={() => handleMarkPaid(p.id)}
                                 disabled={markingPayment === p.id}
                                 style={{
-                                  padding: '0.375rem 0.75rem', borderRadius: '0.375rem',
+                                  padding: '0.375rem 0.5rem', borderRadius: '0.375rem',
                                   border: '1px solid #f59e0b', backgroundColor: 'transparent',
-                                  color: '#f59e0b', fontFamily: 'Outfit', fontSize: '0.75rem',
+                                  color: '#f59e0b', fontFamily: 'Outfit', fontSize: '0.65rem',
                                   fontWeight: 600, cursor: markingPayment === p.id ? 'not-allowed' : 'pointer',
                                   opacity: markingPayment === p.id ? 0.5 : 1,
+                                  whiteSpace: 'nowrap',
                                 }}
                               >
                                 {markingPayment === p.id ? '...' : 'Mark Paid'}
@@ -652,41 +771,42 @@ export default function AdminSaleDetail() {
                             )}
                             {p.status === 'paid' && (
                               undoConfirmId === p.id ? (
-                                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div style={{ display: 'flex', gap: '0.25rem' }}>
                                   <button
                                     onClick={() => handleMarkUnpaid(p.id)}
                                     disabled={undoPaymentId === p.id}
                                     style={{
-                                      padding: '0.25rem 0.5rem', borderRadius: '0.375rem',
+                                      padding: '0.25rem 0.375rem', borderRadius: '0.375rem',
                                       border: '1px solid #22c55e', backgroundColor: 'transparent',
-                                      color: '#22c55e', fontFamily: 'Outfit', fontSize: '0.7rem',
+                                      color: '#22c55e', fontFamily: 'Outfit', fontSize: '0.6rem',
                                       fontWeight: 600, cursor: 'pointer',
                                       opacity: undoPaymentId === p.id ? 0.5 : 1,
                                     }}
                                   >
-                                    Confirm
+                                    OK
                                   </button>
                                   <button
                                     onClick={() => setUndoConfirmId(null)}
                                     disabled={undoPaymentId === p.id}
                                     style={{
-                                      padding: '0.25rem 0.5rem', borderRadius: '0.375rem',
+                                      padding: '0.25rem 0.375rem', borderRadius: '0.375rem',
                                       border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent',
-                                      color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.7rem',
+                                      color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.6rem',
                                       fontWeight: 600, cursor: 'pointer',
                                     }}
                                   >
-                                    Cancel
+                                    X
                                   </button>
                                 </div>
                               ) : (
                                 <button
                                   onClick={() => setUndoConfirmId(p.id)}
                                   style={{
-                                    padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
+                                    padding: '0.25rem 0.5rem', borderRadius: '0.375rem',
                                     border: '1px solid rgba(220,38,38,0.3)', backgroundColor: 'transparent',
-                                    color: 'rgba(220,38,38,0.6)', fontFamily: 'Outfit', fontSize: '0.75rem',
+                                    color: 'rgba(220,38,38,0.6)', fontFamily: 'Outfit', fontSize: '0.65rem',
                                     fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
+                                    whiteSpace: 'nowrap',
                                   }}
                                   onMouseEnter={(e) => {
                                     e.currentTarget.style.borderColor = '#ef4444'

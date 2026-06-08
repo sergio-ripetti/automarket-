@@ -88,7 +88,14 @@ export default function AdminFinancing() {
 
   return (
     <div>
-      <h1 className="font-bebas text-3xl text-white mb-8">Financing Requests</h1>
+      <style>{`
+        .financing-page-title {
+          font-size: clamp(1.25rem, 5vw, 2rem);
+          margin-bottom: clamp(1.5rem, 4vw, 2rem);
+          font-weight: 600;
+        }
+      `}</style>
+      <h1 className="font-bebas text-white mb-8 financing-page-title">Financing Requests</h1>
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 mb-8">
@@ -171,13 +178,7 @@ export default function AdminFinancing() {
               </div>
 
               {/* Details */}
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1rem",
-                  marginBottom: "1rem",
-                }}>
+              <div className="financing-card-grid-2col" style={{ marginBottom: "1rem" }}>
                 <div>
                   <p
                     style={{
@@ -274,112 +275,92 @@ export default function AdminFinancing() {
               </p>
 
               {/* Actions */}
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              <style>{`
+                .financing-card-grid-2col {
+                  display: grid;
+                  grid-template-columns: 1fr;
+                  gap: 1rem;
+                }
+                @media (min-width: 768px) {
+                  .financing-card-grid-2col {
+                    grid-template-columns: 1fr 1fr;
+                    gap: 1.5rem;
+                  }
+                }
+                .financing-request-actions {
+                  display: grid;
+                  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                  gap: 0.5rem;
+                }
+                .financing-request-actions button {
+                  padding: 0.5rem 0.75rem;
+                  border-radius: 0.5rem;
+                  font-family: 'Outfit', sans-serif;
+                  font-size: 0.75rem;
+                  background-color: transparent;
+                  cursor: pointer;
+                  min-height: 36px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 0.3rem;
+                  white-space: nowrap;
+                }
+                .financing-request-actions .delete-btn {
+                  grid-column: -2 / -1;
+                  margin-left: auto;
+                }
+                @media (min-width: 768px) {
+                  .financing-request-actions {
+                    grid-template-columns: auto;
+                    gap: 0.75rem;
+                  }
+                  .financing-request-actions button {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.8rem;
+                  }
+                  .financing-request-actions .delete-btn {
+                    grid-column: auto;
+                    margin-left: auto;
+                  }
+                }
+              `}</style>
+              <div className="financing-request-actions">
                 <button
                   onClick={() => handleStatusChange(req.id, "approved")}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    border: "1px solid #10b981",
-                    color: "#10b981",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                  }}>
+                  style={{ border: "1px solid #10b981", color: "#10b981" }}>
                   Approve
                 </button>
                 <button
                   onClick={() => handleStatusChange(req.id, "rejected")}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    border: "1px solid #ef4444",
-                    color: "#ef4444",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                  }}>
+                  style={{ border: "1px solid #ef4444", color: "#ef4444" }}>
                   Reject
                 </button>
                 <button
                   onClick={() => handleStatusChange(req.id, "paying")}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    border: "1px solid #3b82f6",
-                    color: "#3b82f6",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                  }}>
-                  Mark Paying
+                  style={{ border: "1px solid #3b82f6", color: "#3b82f6" }}>
+                  <span className="hidden sm:inline">Mark</span> Paying
                 </button>
                 <button
                   onClick={() => handleStatusChange(req.id, "completed")}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    border: "1px solid #6b7280",
-                    color: "#6b7280",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                  }}>
-                  Complete
+                  style={{ border: "1px solid #6b7280", color: "#6b7280" }}>
+                  Done
                 </button>
-
                 <button
                   onClick={() => handleReply(req.email, req.carTitle)}
-                  style={{
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    border: "1px solid #f59e0b",
-                    color: "#f59e0b",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                  }}>
+                  style={{ border: "1px solid #f59e0b", color: "#f59e0b" }}>
                   Reply
                 </button>
                 <button
                   onClick={() => setSelectedRequest(req)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    border: "1px solid #fd6b33",
-                    color: "#fd6b33",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                  }}>
-                  <Eye size={14} /> View Details
+                  style={{ border: "1px solid #fd6b33", color: "#fd6b33" }}>
+                  <Eye size={14} /> <span className="hidden sm:inline">View</span>
                 </button>
                 <button
                   onClick={() => handleDelete(req.id)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.4rem",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    border: "1px solid rgba(220,38,38,0.4)",
-                    color: "#ef4444",
-                    backgroundColor: "transparent",
-                    cursor: "pointer",
-                    marginLeft: "auto",
-                  }}>
-                  <Trash2 size={12} /> Delete
+                  className="delete-btn"
+                  style={{ border: "1px solid rgba(220,38,38,0.4)", color: "#ef4444" }}>
+                  <Trash2 size={12} /> <span className="hidden sm:inline">Delete</span>
                 </button>
               </div>
             </div>
@@ -388,33 +369,207 @@ export default function AdminFinancing() {
       </div>
 
       {/* View Details Modal */}
+      <style>{`
+        .financing-modal {
+          position: fixed;
+          inset: 0;
+          z-index: 50;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.75rem;
+          overflow-y: auto;
+          background-color: rgba(0, 0, 0, 0.95);
+        }
+        @media (min-width: 768px) {
+          .financing-modal {
+            padding: 1rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal {
+            padding: 1.5rem;
+          }
+        }
+        .financing-modal-content {
+          background-color: #111111;
+          border: 1px solid rgba(245,158,11,0.2);
+          border-radius: 0.75rem;
+          width: 100%;
+          max-width: 100%;
+          max-height: 95vh;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding: 1rem;
+        }
+        @media (min-width: 640px) {
+          .financing-modal-content {
+            max-width: 95vw;
+            border-radius: 1rem;
+            padding: 1.25rem;
+          }
+        }
+        @media (min-width: 768px) {
+          .financing-modal-content {
+            max-width: 650px;
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal-content {
+            max-width: 750px;
+            padding: 2rem;
+          }
+        }
+        .financing-modal-section {
+          margin-bottom: 1rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .financing-modal-section:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+          padding-bottom: 0;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+          }
+        }
+        .financing-modal-section-title {
+          font-size: 0.7rem;
+          margin-bottom: 0.75rem;
+          color: #f59e0b;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-section-title {
+            font-size: 0.75rem;
+            margin-bottom: 1rem;
+          }
+        }
+        .financing-modal-row {
+          margin-bottom: 1rem;
+        }
+        .financing-modal-row:last-child {
+          margin-bottom: 0;
+        }
+        .financing-modal-label {
+          font-size: 0.65rem;
+          color: rgba(255,255,255,0.4);
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 0.3rem;
+          display: block;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-label {
+            font-size: 0.7rem;
+            margin-bottom: 0.4rem;
+          }
+        }
+        .financing-modal-value {
+          font-size: 0.8rem;
+          color: white;
+          font-weight: 500;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-value {
+            font-size: 0.9rem;
+          }
+        }
+        .financing-modal-header-title {
+          font-size: clamp(1.25rem, 5vw, 1.75rem);
+          font-weight: 600;
+        }
+        .financing-modal-grid-2col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          row-gap: 1rem;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-grid-2col {
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem 1.5rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal-grid-2col {
+            gap: 1.25rem 1.75rem;
+          }
+        }
+        .financing-modal-grid-3col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          row-gap: 1rem;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-grid-3col {
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem 1.5rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal-grid-3col {
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.25rem 1.75rem;
+          }
+        }
+        .financing-modal-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          margin-top: 1rem;
+          flex-wrap: wrap;
+        }
+        .financing-modal-actions button {
+          padding: 0.5rem 0.75rem;
+          border-radius: 0.5rem;
+          font-family: 'Outfit', sans-serif;
+          font-size: 0.75rem;
+          cursor: pointer;
+          min-height: 44px;
+          width: 100%;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-actions {
+            flex-direction: row;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+          }
+          .financing-modal-actions button {
+            padding: 0.65rem 1rem;
+            font-size: 0.8rem;
+            flex: 1;
+            min-width: 100px;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal-actions {
+            gap: 1rem;
+            margin-top: 2rem;
+          }
+          .financing-modal-actions button {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.85rem;
+          }
+        }
+      `}</style>
       {selectedRequest && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: "rgba(0,0,0,0.8)",
-            backdropFilter: "blur(8px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 50,
-            padding: "1rem",
-          }}>
-          <div
-            style={{
-              backgroundColor: "#111111",
-              border: "1px solid rgba(245,158,11,0.2)",
-              borderRadius: "1.25rem",
-              width: "90%",
-              maxWidth: "700px",
-              maxHeight: "90vh",
-              overflowY: "auto",
-              padding: "2rem",
-            }}>
+        <div className="financing-modal">
+          <div className="financing-modal-content">
             {/* Header */}
             <div
               style={{
@@ -422,23 +577,25 @@ export default function AdminFinancing() {
                 justifyContent: "space-between",
                 alignItems: "flex-start",
                 marginBottom: "2rem",
+                gap: "1rem",
               }}>
-              <div>
+              <div style={{ minWidth: 0, flex: 1 }}>
                 <h2
-                  className="font-bebas"
+                  className="font-bebas financing-modal-header-title"
                   style={{
-                    fontSize: "2rem",
                     color: "white",
-                    lineHeight: 1,
+                    lineHeight: 1.2,
                     marginBottom: "0.5rem",
+                    fontWeight: 600
                   }}>
                   Financing Application
                 </h2>
                 <p
                   style={{
                     fontFamily: "Outfit",
-                    fontSize: "1rem",
+                    fontSize: "0.95rem",
                     color: "#f59e0b",
+                    fontWeight: 500
                   }}>
                   {selectedRequest.firstName} {selectedRequest.lastName}
                 </p>
@@ -458,24 +615,18 @@ export default function AdminFinancing() {
             </div>
 
             {/* SECTION 1: Personal Information */}
-            <div style={{ marginBottom: "2rem" }}>
+            <div className="financing-modal-section">
               <h3
+                className="financing-modal-section-title"
                 style={{
                   fontFamily: "Outfit",
-                  fontSize: "0.9rem",
-                  color: "rgba(255,255,255,0.4)",
                   textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  marginBottom: "1rem",
+                  letterSpacing: "0.08em",
+                  fontSize: "0.75rem"
                 }}>
                 Personal Information
               </h3>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1.5rem",
-                }}>
+              <div className="financing-modal-grid-2col">
                 {[
                   {
                     label: "Full Name",
@@ -521,21 +672,18 @@ export default function AdminFinancing() {
                 borderBottom: "1px solid rgba(255,255,255,0.05)",
               }}>
               <h3
+                className="financing-modal-section-title"
                 style={{
                   fontFamily: "Outfit",
-                  fontSize: "0.9rem",
-                  color: "rgba(255,255,255,0.4)",
                   textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  marginBottom: "1rem",
+                  letterSpacing: "0.08em",
+                  fontSize: "0.75rem"
                 }}>
                 Vehicle & Loan Details
               </h3>
               <div
+                className="financing-modal-grid-2col"
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1.5rem",
                   marginBottom: "1.5rem",
                 }}>
                 <div>
@@ -703,12 +851,7 @@ export default function AdminFinancing() {
                     </div>
                   ))}
                 </div>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr 1fr",
-                    gap: "1.5rem",
-                  }}>
+                <div className="financing-modal-grid-3col">
                   {[
                     {
                       label: "Monthly Income",
@@ -856,13 +999,12 @@ export default function AdminFinancing() {
             {/* SECTION 5: Application Status */}
             <div>
               <h3
+                className="financing-modal-section-title"
                 style={{
                   fontFamily: "Outfit",
-                  fontSize: "0.9rem",
-                  color: "rgba(255,255,255,0.4)",
                   textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  marginBottom: "1rem",
+                  letterSpacing: "0.08em",
+                  fontSize: "0.75rem"
                 }}>
                 Application Status
               </h3>
@@ -895,21 +1037,16 @@ export default function AdminFinancing() {
                   },
                 )}
               </p>
-              <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              <div className="financing-modal-actions">
                 <button
                   onClick={() => {
                     handleStatusChange(selectedRequest.id, "approved");
                     setSelectedRequest(null);
                   }}
                   style={{
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.85rem",
                     border: "1px solid #10b981",
                     color: "#10b981",
                     backgroundColor: "transparent",
-                    cursor: "pointer",
                   }}>
                   Approve
                 </button>
@@ -919,14 +1056,9 @@ export default function AdminFinancing() {
                     setSelectedRequest(null);
                   }}
                   style={{
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.85rem",
                     border: "1px solid #ef4444",
                     color: "#ef4444",
                     backgroundColor: "transparent",
-                    cursor: "pointer",
                   }}>
                   Reject
                 </button>
@@ -936,14 +1068,9 @@ export default function AdminFinancing() {
                     setSelectedRequest(null);
                   }}
                   style={{
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.85rem",
                     border: "1px solid #3b82f6",
                     color: "#3b82f6",
                     backgroundColor: "transparent",
-                    cursor: "pointer",
                   }}>
                   Mark Paying
                 </button>
@@ -953,14 +1080,9 @@ export default function AdminFinancing() {
                     setSelectedRequest(null);
                   }}
                   style={{
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "0.5rem",
-                    fontFamily: "Outfit",
-                    fontSize: "0.85rem",
                     border: "1px solid #6b7280",
                     color: "#6b7280",
                     backgroundColor: "transparent",
-                    cursor: "pointer",
                   }}>
                   Complete
                 </button>

@@ -258,7 +258,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           overflow: 'hidden',
           overflowY: 'auto',
           zIndex: 30,
-          padding: '2rem',
+          padding: screenSize === 'desktop' ? '2rem' : screenSize === 'tablet' ? '1.25rem' : '1rem',
         }}
       >
         {children}

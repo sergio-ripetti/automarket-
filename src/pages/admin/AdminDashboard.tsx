@@ -82,22 +82,44 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="font-bebas" style={{ fontSize: '3rem', color: 'white', lineHeight: 1, marginBottom: '0.25rem' }}>
+      <h1 className="font-bebas" style={{ fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', color: 'white', lineHeight: 1, marginBottom: '0.25rem', fontWeight: 600 }}>
         Dashboard
       </h1>
-      <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', marginBottom: '2rem' }}>
+      <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', color: 'rgba(255,255,255,0.4)', marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
         {today}
       </p>
 
       {/* ── Stat cards ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
+      <style>{`
+        .stats-grid {
+          display: grid;
+          gap: clamp(0.75rem, 3vw, 1.5rem);
+          margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+        }
+        @media (min-width: 1024px) {
+          .stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 767px) {
+          .stats-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
+      <div className="stats-grid">
         {statCards.map(({ icon: Icon, key, label, money }) => {
           const val = stats[key as keyof Stats]
           return (
             <div key={key} style={{
               backgroundColor: '#1a1a1a', border: '1px solid rgba(245,158,11,0.1)',
-              borderRadius: '1rem', padding: '1.5rem',
-              display: 'flex', alignItems: 'flex-start', gap: '1rem',
+              borderRadius: 'clamp(0.75rem, 2vw, 1rem)', padding: 'clamp(0.875rem, 3vw, 1.5rem)',
+              display: 'flex', alignItems: 'flex-start', gap: 'clamp(0.75rem, 2vw, 1.25rem)',
             }}>
               <div style={{
                 width: 44, height: 44, backgroundColor: 'rgba(245,158,11,0.1)',
@@ -105,11 +127,11 @@ export default function AdminDashboard() {
               }}>
                 <Icon size={20} color="#f59e0b" />
               </div>
-              <div>
-                <p className="font-bebas" style={{ fontSize: '2.25rem', color: '#f59e0b', lineHeight: 1 }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <p className="font-bebas" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.25rem)', color: '#f59e0b', lineHeight: 1 }}>
                   {loading ? '—' : money ? fmt(val) : val.toLocaleString()}
                 </p>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.25rem' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.25rem' }}>
                   {label}
                 </p>
               </div>
@@ -119,17 +141,54 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── Recent Sales ── */}
-      <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '1rem' }}>
+      <style>{`
+        .table-wrapper {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+          background-color: #111111;
+          border: 1px solid rgba(255,255,255,0.05);
+          border-radius: 1rem;
+        }
+        .recent-sales-table {
+          width: 100%;
+          border-collapse: collapse;
+          min-width: 700px;
+          font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+        }
+        .recent-sales-table thead tr {
+          background-color: #1a1a1a;
+        }
+        .recent-sales-table th {
+          padding: clamp(0.75rem, 2vw, 1.25rem);
+          text-align: left;
+          font-family: 'Bebas Neue', sans-serif;
+          font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+          color: rgba(255,255,255,0.5);
+          letter-spacing: 0.05em;
+          font-weight: 400;
+          text-transform: uppercase;
+        }
+        .recent-sales-table td {
+          padding: clamp(0.75rem, 2vw, 1.25rem);
+          border-bottom: 1px solid rgba(255,255,255,0.04);
+          color: rgba(255,255,255,0.8);
+        }
+        @media (max-width: 767px) {
+          .recent-sales-table {
+            min-width: 600px;
+          }
+        }
+      `}</style>
+      <h2 className="font-bebas" style={{ fontSize: 'clamp(1.1rem, 4vw, 1.5rem)', color: 'white', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: 600 }}>
         Recent Sales
       </h2>
-      <div style={{ backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', overflow: 'auto', marginBottom: '2.5rem' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+      <div className="table-wrapper">
+        <table className="recent-sales-table">
           <thead>
-            <tr style={{ backgroundColor: '#1a1a1a' }}>
+            <tr>
               {['Car Title', 'Buyer', 'Sale Price', 'Type', 'Date'].map((h) => (
-                <th key={h} style={{ padding: '1rem 1.25rem', textAlign: 'left', fontFamily: 'Bebas Neue, sans-serif', fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em', fontWeight: 400 }}>
-                  {h}
-                </th>
+                <th key={h}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -141,12 +200,12 @@ export default function AdminDashboard() {
                 </td>
               </tr>
             ) : recentSales.map((sale) => (
-              <tr key={sale.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>{sale.carTitle}</td>
-                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>{sale.buyer.name}</td>
-                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Bebas Neue, sans-serif', fontSize: '1rem', color: '#f59e0b' }}>{fmt(sale.paymentPlan.salePrice)}</td>
-                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>{paymentTypeLabel[sale.paymentPlan.type] || sale.paymentPlan.type}</td>
-                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>{fmtDate(sale.saleDate)}</td>
+              <tr key={sale.id}>
+                <td style={{ fontFamily: 'Outfit' }}>{sale.carTitle}</td>
+                <td style={{ fontFamily: 'Outfit' }}>{sale.buyer.name}</td>
+                <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#f59e0b', fontSize: '1rem' }}>{fmt(sale.paymentPlan.salePrice)}</td>
+                <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)' }}>{paymentTypeLabel[sale.paymentPlan.type] || sale.paymentPlan.type}</td>
+                <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)' }}>{fmtDate(sale.saleDate)}</td>
               </tr>
             ))}
           </tbody>
@@ -154,25 +213,57 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── Recent Messages ── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white' }}>Recent Messages</h2>
-        <Link to="/admin/messages" style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#f59e0b', textDecoration: 'none' }}>
+      <style>{`
+        .recent-messages-title {
+          font-size: clamp(1.1rem, 4vw, 1.5rem);
+        }
+        .message-item {
+          display: flex;
+          gap: clamp(0.75rem, 2vw, 1rem);
+          padding: clamp(0.75rem, 2vw, 1.25rem);
+          background-color: #111111;
+          border-radius: 0.75rem;
+          margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
+          border: 1px solid;
+        }
+        .message-item-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 0.25rem;
+          gap: clamp(0.5rem, 2vw, 1rem);
+          flex-wrap: wrap;
+        }
+        .message-sender {
+          font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+        }
+        .message-date {
+          font-size: clamp(0.6rem, 1vw, 0.7rem);
+        }
+        @media (max-width: 767px) {
+          .message-item-header {
+            flex-direction: column;
+            gap: 0.25rem;
+          }
+        }
+      `}</style>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', flexWrap: 'wrap', gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
+        <h2 className="font-bebas recent-messages-title text-white" style={{ fontWeight: 600 }}>Recent Messages</h2>
+        <Link to="/admin/messages" style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#f59e0b', textDecoration: 'none' }}>
           View All →
         </Link>
       </div>
       {recentMessages.length === 0 ? (
-        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: '0.9rem', padding: '1.5rem 0' }}>No messages yet.</p>
+        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)', padding: 'clamp(1rem, 2vw, 1.5rem) 0' }}>No messages yet.</p>
       ) : recentMessages.map((msg) => (
-        <div key={msg.id} style={{
-          display: 'flex', gap: '1rem', padding: '1rem',
-          backgroundColor: '#111111', borderRadius: '0.75rem', marginBottom: '0.5rem',
-          border: `1px solid ${msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(245,158,11,0.15)'}`,
+        <div key={msg.id} className="message-item" style={{
+          borderColor: msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(245,158,11,0.15)',
         }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#f59e0b', flexShrink: 0, marginTop: '0.4rem' }} />
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
-              <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1rem', color: 'white', letterSpacing: '0.03em' }}>{msg.senderName}</p>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', whiteSpace: 'nowrap', marginLeft: '1rem' }}>
+            <div className="message-item-header">
+              <p className="font-bebas message-sender" style={{ color: 'white', letterSpacing: '0.03em' }}>{msg.senderName}</p>
+              <p className="message-date" style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.35)' }}>
                 {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
               </p>
             </div>
