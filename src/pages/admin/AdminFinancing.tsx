@@ -3,6 +3,8 @@ import { Trash2, Eye, X } from 'lucide-react'
 import { getFinancingRequests, updateFinancingStatus, deleteFinancingRequest } from '../../lib/financingService'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
+import Button from '../../components/ui/Button'
+import Badge from '../../components/ui/Badge'
 import type { FinancingRequest } from '../../lib/financingService'
 
 type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected' | 'paying' | 'completed'
@@ -86,72 +88,36 @@ export default function AdminFinancing() {
 
   return (
     <div>
-      <h1
-        className="font-bebas"
-        style={{
-          fontSize: "2rem",
-          color: "white",
-          lineHeight: 1,
-          marginBottom: "1.5rem",
-        }}>
-        Financing Requests
-      </h1>
+      <h1 className="font-bebas text-3xl text-white mb-8">Financing Requests</h1>
 
       {/* Tabs */}
-      <div
-        style={{
-          display: "flex",
-          gap: "0.5rem",
-          marginBottom: "2rem",
-          flexWrap: "wrap",
-        }}>
+      <div className="flex flex-wrap gap-2 mb-8">
         {tabs.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            style={{
-              padding: "0.5rem 1.25rem",
-              borderRadius: "2rem",
-              fontFamily: "Outfit",
-              fontSize: "0.85rem",
-              cursor: "pointer",
-              border: "none",
-              transition: "all 0.2s",
-              ...(activeTab === id
-                ? { backgroundColor: "#f59e0b", color: "#000", fontWeight: 700 }
-                : {
-                    backgroundColor: "rgba(255,255,255,0.05)",
-                    color: "rgba(255,255,255,0.5)",
-                  }),
-            }}>
+            className={`px-5 py-2 rounded-full text-sm font-outfit font-medium transition-all ${
+              activeTab === id
+                ? 'bg-amber-500 text-black'
+                : 'bg-white/5 text-white/50 hover:bg-white/10'
+            }`}
+          >
             {label}
           </button>
         ))}
       </div>
 
       {/* Requests */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <div className="space-y-4">
         {loading ? (
           [...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="animate-pulse"
-              style={{
-                backgroundColor: "#111111",
-                height: 200,
-                borderRadius: "1rem",
-              }}
+              className="bg-dark border border-white/5 rounded-lg h-48 animate-pulse"
             />
           ))
         ) : filtered.length === 0 ? (
-          <p
-            style={{
-              fontFamily: "Outfit",
-              color: "rgba(255,255,255,0.3)",
-              fontSize: "0.9rem",
-              padding: "2rem",
-              textAlign: "center",
-            }}>
+          <p className="text-center py-8 text-white/30 font-outfit text-sm">
             No financing requests{" "}
             {activeTab !== "all" &&
               `with status "${statusLabel[activeTab as FinancingRequest["status"]]}"`}
@@ -160,12 +126,7 @@ export default function AdminFinancing() {
           filtered.map((req) => (
             <div
               key={req.id}
-              style={{
-                backgroundColor: "#111111",
-                border: "1px solid rgba(255,255,255,0.06)",
-                borderRadius: "1rem",
-                padding: "1.5rem",
-              }}>
+              className="bg-dark border border-white/5 rounded-lg p-6 hover:border-amber-500/20 transition-colors">
               {/* Header */}
               <div
                 style={{
