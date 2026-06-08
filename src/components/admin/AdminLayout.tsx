@@ -7,6 +7,15 @@ import { logoutAdmin } from '../../lib/authService'
 
 interface AdminLayoutProps { children: React.ReactNode }
 
+const linkBase: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', gap: '0.75rem',
+  padding: '0.75rem 1rem', borderRadius: '0.625rem',
+  fontFamily: 'Outfit, sans-serif', fontSize: '0.875rem',
+  cursor: 'pointer', transition: 'all 0.2s', marginBottom: '0.25rem',
+  textDecoration: 'none', border: 'none', background: 'none', width: '100%',
+  textAlign: 'left' as const,
+}
+
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard',    to: '/admin',             end: true },
   { icon: Car,             label: 'Inventory',    to: '/admin/cars',        end: false },
@@ -28,102 +37,146 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const closeSidebar = () => setSidebarOpen(false)
 
+  // Detectar si es mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
+
   return (
-    <div className="flex min-h-screen bg-dark">
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* ─── SIDEBAR BACKDROP (Mobile only) ─── */}
-      {sidebarOpen && (
+      {sidebarOpen && isMobile && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 40,
+          }}
           onClick={closeSidebar}
           aria-hidden="true"
         />
       )}
 
-      {/* ─── SIDEBAR ─── */}
+      {/* ── Sidebar ── */}
       <aside
-        className={`
-          fixed lg:relative
-          top-0 left-0 h-screen w-4/5 max-w-xs
-          bg-dark border-r border-amber-500/15
-          flex flex-col p-4 lg:p-6
-          z-50 lg:z-10
-          transition-transform duration-300
-          lg:translate-x-0
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-        `}
+        style={{
+          width: isMobile && !sidebarOpen ? 0 : '260px',
+          backgroundColor: '#0a0a0a',
+          borderRight: '1px solid rgba(245,158,11,0.15)',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '1.5rem 1rem',
+          position: isMobile ? 'fixed' : 'fixed',
+          top: 0,
+          left: isMobile && !sidebarOpen ? '-260px' : 0,
+          height: '100vh',
+          zIndex: 100,
+          overflowY: 'auto',
+          transition: 'all 0.3s ease',
+          maxWidth: '80vw',
+        }}
       >
         {/* Logo */}
-        <div className="mb-8 lg:mb-10 pl-1">
-          <span className="font-bebas text-2xl lg:text-3xl text-amber-500 block">
+        <div style={{ marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
+          <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#f59e0b', display: 'block' }}>
             AutoMarket
           </span>
-          <span className="font-outfit text-xs text-white/30 tracking-widest uppercase">
+          <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
             Admin Panel
           </span>
         </div>
 
-        {/* Nav Links */}
-        <nav className="space-y-1 flex-1">
-          {navItems.map(({ icon: Icon, label, to, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              onClick={closeSidebar}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 rounded-lg font-outfit text-sm transition-all ${
-                  isActive
-                    ? 'bg-amber-500/10 text-amber-500 border-l-3 border-amber-500 pl-[calc(1rem-3px)]'
-                    : 'text-white/50 hover:text-white/70'
-                }`
-              }
-            >
-              <Icon size={18} />
-              <span className="hidden sm:inline">{label}</span>
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Bottom Actions */}
-        <div className="space-y-1 pt-6 border-t border-white/5">
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 px-4 py-2.5 rounded-lg font-outfit text-sm text-white/40 hover:text-white/60 transition-colors"
+        {/* Nav links */}
+        {navItems.map(({ icon: Icon, label, to, end }) => (
+          <NavLink
+            key={to}
+            to={to}
+            end={end}
+            onClick={closeSidebar}
+            style={({ isActive }) => ({
+              ...linkBase,
+              ...(isActive
+                ? {
+                    backgroundColor: 'rgba(245,158,11,0.1)',
+                    color: '#f59e0b',
+                    borderLeft: '3px solid #f59e0b',
+                    paddingLeft: 'calc(1rem - 3px)',
+                  }
+                : { color: 'rgba(255,255,255,0.5)' }),
+            })}
           >
-            <ExternalLink size={18} />
-            <span className="hidden sm:inline">View Site</span>
-          </a>
+            <Icon size={17} />
+            {label}
+          </NavLink>
+        ))}
 
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg font-outfit text-sm text-white/40 hover:text-white/60 transition-colors"
-          >
-            <LogOut size={18} />
-            <span className="hidden sm:inline">Sign Out</span>
-          </button>
-        </div>
+        <div style={{ marginTop: 'auto' }} />
+
+        {/* View Site */}
+        <a
+          href="/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ ...linkBase, color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}
+        >
+          <ExternalLink size={17} />
+          View Site
+        </a>
+
+        {/* Sign Out */}
+        <button onClick={handleLogout} style={{ ...linkBase, color: 'rgba(255,255,255,0.4)' }}>
+          <LogOut size={17} />
+          Sign Out
+        </button>
       </aside>
 
       {/* ─── MAIN CONTENT ─── */}
-      <main className="flex-1 w-full lg:w-auto bg-dark min-h-screen">
+      <main
+        style={{
+          marginLeft: isMobile ? 0 : '260px',
+          padding: isMobile ? '3.5rem 1rem 2rem' : '2rem',
+          backgroundColor: '#0f0f0f',
+          minHeight: '100vh',
+          flex: 1,
+          width: isMobile ? '100%' : 'auto',
+        }}
+      >
         {/* Mobile Header */}
-        <div className="lg:hidden sticky top-0 z-30 bg-carbon border-b border-white/5 px-4 py-3 flex items-center gap-3">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-            aria-label="Toggle menu"
+        {isMobile && (
+          <div
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 50,
+              backgroundColor: '#1a1a1a',
+              borderBottom: '1px solid rgba(255,255,255,0.05)',
+              padding: '0.75rem 1rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+            }}
           >
-            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <span className="font-bebas text-lg text-white flex-1">AutoMarket</span>
-        </div>
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              style={{
+                padding: '0.5rem',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'white',
+              }}
+              aria-label="Toggle menu"
+            >
+              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <span className="font-bebas" style={{ fontSize: '1.25rem', color: 'white', flex: 1 }}>
+              AutoMarket
+            </span>
+          </div>
+        )}
 
-        {/* Content */}
-        <div className="px-4 py-4 lg:px-8 lg:py-6 max-w-7xl mx-auto">
-          {children}
-        </div>
+        {children}
       </main>
     </div>
   )

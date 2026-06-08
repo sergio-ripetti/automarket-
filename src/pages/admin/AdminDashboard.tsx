@@ -82,48 +82,52 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      {/* Header */}
-      <div className="mb-6 lg:mb-8">
-        <h1 className="font-bebas text-2xl sm:text-3xl lg:text-4xl text-white mb-1">Dashboard</h1>
-        <p className="font-outfit text-sm text-white/40">{today}</p>
-      </div>
+      <h1 className="font-bebas" style={{ fontSize: '3rem', color: 'white', lineHeight: 1, marginBottom: '0.25rem' }}>
+        Dashboard
+      </h1>
+      <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', marginBottom: '2rem' }}>
+        {today}
+      </p>
 
-      {/* ── Stat Cards (Responsive Grid) ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+      {/* ── Stat cards ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginBottom: '2.5rem' }}>
         {statCards.map(({ icon: Icon, key, label, money }) => {
           const val = stats[key as keyof Stats]
           return (
-            <div
-              key={key}
-              className="bg-carbon border border-amber-500/10 rounded-lg p-4 lg:p-6 hover:border-amber-500/20 transition-colors"
-            >
-              <div className="flex items-start gap-4">
-                <div className="w-11 h-11 bg-amber-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Icon size={20} className="text-amber-500" />
-                </div>
-                <div>
-                  <p className="font-bebas text-xl sm:text-2xl lg:text-2xl text-amber-500 leading-none">
-                    {loading ? '—' : money ? fmt(val) : val.toLocaleString()}
-                  </p>
-                  <p className="font-outfit text-xs sm:text-sm text-white/50 mt-1">{label}</p>
-                </div>
+            <div key={key} style={{
+              backgroundColor: '#1a1a1a', border: '1px solid rgba(245,158,11,0.1)',
+              borderRadius: '1rem', padding: '1.5rem',
+              display: 'flex', alignItems: 'flex-start', gap: '1rem',
+            }}>
+              <div style={{
+                width: 44, height: 44, backgroundColor: 'rgba(245,158,11,0.1)',
+                borderRadius: '0.625rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              }}>
+                <Icon size={20} color="#f59e0b" />
+              </div>
+              <div>
+                <p className="font-bebas" style={{ fontSize: '2.25rem', color: '#f59e0b', lineHeight: 1 }}>
+                  {loading ? '—' : money ? fmt(val) : val.toLocaleString()}
+                </p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.25rem' }}>
+                  {label}
+                </p>
               </div>
             </div>
           )
         })}
       </div>
 
-      {/* ── Recent Sales (Horizontal Scroll on Mobile) ── */}
-      <h2 className="font-bebas text-xl sm:text-2xl text-white mb-4">Recent Sales</h2>
-      <div className="bg-dark border border-white/5 rounded-lg overflow-x-auto mb-8">
-        <table className="w-full border-collapse">
+      {/* ── Recent Sales ── */}
+      <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '1rem' }}>
+        Recent Sales
+      </h2>
+      <div style={{ backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '1rem', overflow: 'auto', marginBottom: '2.5rem' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
           <thead>
-            <tr className="bg-carbon">
+            <tr style={{ backgroundColor: '#1a1a1a' }}>
               {['Car Title', 'Buyer', 'Sale Price', 'Type', 'Date'].map((h) => (
-                <th
-                  key={h}
-                  className="px-3 sm:px-4 py-3 text-left font-bebas text-xs sm:text-sm text-white/50 tracking-wider whitespace-nowrap"
-                >
+                <th key={h} style={{ padding: '1rem 1.25rem', textAlign: 'left', fontFamily: 'Bebas Neue, sans-serif', fontSize: '0.9rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em', fontWeight: 400 }}>
                   {h}
                 </th>
               ))}
@@ -132,83 +136,53 @@ export default function AdminDashboard() {
           <tbody>
             {recentSales.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center font-outfit text-sm text-white/30">
+                <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: '0.9rem' }}>
                   No sales recorded yet
                 </td>
               </tr>
-            ) : (
-              recentSales.map((sale) => (
-                <tr key={sale.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                  <td className="px-3 sm:px-4 py-3 font-outfit text-xs sm:text-sm text-white/80 whitespace-nowrap">
-                    {sale.carTitle}
-                  </td>
-                  <td className="px-3 sm:px-4 py-3 font-outfit text-xs sm:text-sm text-white/80 whitespace-nowrap">
-                    {sale.buyer.name}
-                  </td>
-                  <td className="px-3 sm:px-4 py-3 font-bebas text-sm lg:text-base text-amber-500 whitespace-nowrap">
-                    {fmt(sale.paymentPlan.salePrice)}
-                  </td>
-                  <td className="px-3 sm:px-4 py-3 font-outfit text-xs sm:text-sm text-white/50 whitespace-nowrap">
-                    {paymentTypeLabel[sale.paymentPlan.type] || sale.paymentPlan.type}
-                  </td>
-                  <td className="px-3 sm:px-4 py-3 font-outfit text-xs sm:text-sm text-white/50 whitespace-nowrap">
-                    {fmtDate(sale.saleDate)}
-                  </td>
-                </tr>
-              ))
-            )}
+            ) : recentSales.map((sale) => (
+              <tr key={sale.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>{sale.carTitle}</td>
+                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.8)' }}>{sale.buyer.name}</td>
+                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Bebas Neue, sans-serif', fontSize: '1rem', color: '#f59e0b' }}>{fmt(sale.paymentPlan.salePrice)}</td>
+                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>{paymentTypeLabel[sale.paymentPlan.type] || sale.paymentPlan.type}</td>
+                <td style={{ padding: '1rem 1.25rem', fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>{fmtDate(sale.saleDate)}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
       {/* ── Recent Messages ── */}
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-2">
-        <h2 className="font-bebas text-xl sm:text-2xl text-white">Recent Messages</h2>
-        <Link
-          to="/admin/messages"
-          className="font-outfit text-sm text-amber-500 hover:text-amber-400 transition-colors"
-        >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white' }}>Recent Messages</h2>
+        <Link to="/admin/messages" style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#f59e0b', textDecoration: 'none' }}>
           View All →
         </Link>
       </div>
-
       {recentMessages.length === 0 ? (
-        <p className="font-outfit text-sm text-white/30 py-4">No messages yet.</p>
-      ) : (
-        <div className="space-y-2">
-          {recentMessages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex gap-3 p-3 sm:p-4 rounded-lg border transition-colors ${
-                msg.read
-                  ? 'bg-dark border-white/5'
-                  : 'bg-dark border-amber-500/15'
-              }`}
-            >
-              <div
-                className="w-2 h-2 rounded-full flex-shrink-0 mt-2"
-                style={{
-                  backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#f59e0b',
-                }}
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-2 mb-1">
-                  <p className="font-bebas text-sm sm:text-base text-white tracking-wider">
-                    {msg.senderName}
-                  </p>
-                  <p className="font-outfit text-xs text-white/35 whitespace-nowrap">
-                    {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
-                  </p>
-                </div>
-                <p className="font-outfit text-xs text-amber-500 mb-1">{msg.reason}</p>
-                <p className="font-outfit text-xs sm:text-sm text-white/45 line-clamp-2">
-                  {msg.message}
-                </p>
-              </div>
+        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: '0.9rem', padding: '1.5rem 0' }}>No messages yet.</p>
+      ) : recentMessages.map((msg) => (
+        <div key={msg.id} style={{
+          display: 'flex', gap: '1rem', padding: '1rem',
+          backgroundColor: '#111111', borderRadius: '0.75rem', marginBottom: '0.5rem',
+          border: `1px solid ${msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(245,158,11,0.15)'}`,
+        }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#f59e0b', flexShrink: 0, marginTop: '0.4rem' }} />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
+              <p style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1rem', color: 'white', letterSpacing: '0.03em' }}>{msg.senderName}</p>
+              <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', whiteSpace: 'nowrap', marginLeft: '1rem' }}>
+                {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
+              </p>
             </div>
-          ))}
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#f59e0b', marginBottom: '0.25rem' }}>{msg.reason}</p>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {msg.message}
+            </p>
+          </div>
         </div>
-      )}
+      ))}
 
       <SeedButton />
     </div>
