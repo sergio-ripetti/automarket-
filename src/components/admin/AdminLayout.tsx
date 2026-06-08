@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu, X,
+  LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu,
 } from 'lucide-react'
 import { logoutAdmin } from '../../lib/authService'
 
@@ -31,30 +31,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 1024)
 
-  // Update isMobile on window resize
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024)
-    }
+    const handleResize = () => setIsMobile(window.innerWidth < 1024)
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Close sidebar when location changes
   useEffect(() => {
     setSidebarOpen(false)
   }, [location])
 
-  // Prevent body scroll when sidebar is open
   useEffect(() => {
     if (sidebarOpen && isMobile) {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'unset'
     }
-    return () => {
-      document.body.style.overflow = 'unset'
-    }
+    return () => { document.body.style.overflow = 'unset' }
   }, [sidebarOpen, isMobile])
 
   const handleLogout = async () => {
@@ -67,40 +60,63 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* ─── SIDEBAR BACKDROP (Mobile only) ─── */}
+      {/* BACKDROP */}
       {sidebarOpen && isMobile && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
             backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 40,
+            zIndex: 30,
           }}
           onClick={closeSidebar}
           aria-hidden="true"
         />
       )}
 
-      {/* ── Sidebar ── */}
+      {/* SIDEBAR */}
       <aside
         style={{
-          width: isMobile && !sidebarOpen ? 0 : '260px',
+          width: '260px',
           backgroundColor: '#0a0a0a',
           borderRight: '1px solid rgba(245,158,11,0.15)',
           display: 'flex',
           flexDirection: 'column',
           padding: '1.5rem 1rem',
-          position: isMobile ? 'fixed' : 'fixed',
+          position: isMobile ? 'fixed' : 'relative',
           top: 0,
-          left: isMobile && !sidebarOpen ? '-260px' : 0,
+          left: 0,
           height: '100vh',
-          zIndex: 100,
+          zIndex: 40,
           overflowY: 'auto',
-          transition: 'all 0.3s ease',
-          maxWidth: '80vw',
+          transition: 'transform 0.3s ease',
+          transform: isMobile && !sidebarOpen ? 'translateX(-100%)' : 'translateX(0)',
         }}
       >
-        {/* Logo */}
+        {/* HEADER CON HAMBURGUESA (Mobile) */}
+        {isMobile && (
+          <button
+            onClick={toggleSidebar}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '44px',
+              height: '44px',
+              backgroundColor: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'white',
+              marginBottom: '1rem',
+              marginLeft: '-0.5rem',
+            }}
+            aria-label="Close menu"
+          >
+            <Menu size={24} />
+          </button>
+        )}
+
+        {/* LOGO */}
         <div style={{ marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
           <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#f59e0b', display: 'block' }}>
             AutoMarket
@@ -110,7 +126,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           </span>
         </div>
 
-        {/* Nav links */}
+        {/* NAV LINKS */}
         {navItems.map(({ icon: Icon, label, to, end }) => (
           <NavLink
             key={to}
@@ -136,7 +152,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         <div style={{ marginTop: 'auto' }} />
 
-        {/* View Site */}
+        {/* BOTTOM LINKS */}
         <a
           href="/"
           target="_blank"
@@ -147,63 +163,23 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           View Site
         </a>
 
-        {/* Sign Out */}
         <button onClick={handleLogout} style={{ ...linkBase, color: 'rgba(255,255,255,0.4)' }}>
           <LogOut size={17} />
           Sign Out
         </button>
       </aside>
 
-      {/* ─── MAIN CONTENT ─── */}
+      {/* MAIN CONTENT */}
       <main
         style={{
-          marginLeft: isMobile ? 0 : '260px',
-          padding: isMobile ? '3.5rem 1rem 2rem' : '2rem',
+          flex: 1,
           backgroundColor: '#0f0f0f',
           minHeight: '100vh',
-          flex: 1,
-          width: isMobile ? '100%' : 'auto',
+          padding: '2rem',
+          overflow: 'hidden',
+          overflowY: 'auto',
         }}
       >
-        {/* Mobile Header */}
-        {isMobile && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 50,
-              backgroundColor: '#1a1a1a',
-              borderBottom: '1px solid rgba(255,255,255,0.05)',
-              padding: '0.75rem 1rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-            }}
-          >
-            <button
-              onClick={toggleSidebar}
-              style={{
-                padding: '0.5rem',
-                backgroundColor: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minWidth: '44px',
-                minHeight: '44px',
-              }}
-              aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={sidebarOpen}
-            >
-              {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        )}
-
         {children}
       </main>
     </div>
