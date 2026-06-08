@@ -53,9 +53,9 @@ export default function Cars() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="font-outfit text-gold uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
+            <p className="font-outfit text-amber-500 uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
             <h1 className="font-bebas text-5xl text-white tracking-wide leading-none">
-              Our <span className="text-gold">Vehicles</span>
+              Our <span className="text-amber-500">Vehicles</span>
             </h1>
             <p className="font-outfit text-white/40 text-sm mt-2">Find your perfect match</p>
           </motion.div>
@@ -96,9 +96,9 @@ export default function Cars() {
               <>
                 <h2 className="font-bebas text-2xl text-white tracking-wide mb-6">
                   {hasActiveFilters ? (
-                    <><span className="text-gold">{filteredCars.length}</span> vehicles found</>
+                    <><span className="text-amber-500">{filteredCars.length}</span> vehicles found</>
                   ) : (
-                    <>All <span className="text-gold">Vehicles</span></>
+                    <>All <span className="text-amber-500">Vehicles</span></>
                   )}
                 </h2>
 

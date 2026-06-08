@@ -35,7 +35,7 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
         <div className="flex justify-between items-center mb-2">
           <label className="font-outfit text-sm text-white/70">Down payment</label>
           <div className="text-right">
-            <span className="font-bebas text-xl text-gold">{downPaymentPct}%</span>
+            <span className="font-bebas text-xl text-amber-500">{downPaymentPct}%</span>
             <p className="font-outfit text-xs text-white/40">{formatPrice(downPayment)}</p>
           </div>
         </div>
@@ -46,7 +46,7 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
           step={5}
           value={downPaymentPct}
           onChange={(e) => setDownPaymentPct(Number(e.target.value))}
-          className="w-full accent-gold"
+          className="w-full accent-amber-500"
         />
         <div className="flex justify-between font-outfit text-xs text-white/30 mt-1">
           <span>10%</span>
@@ -64,8 +64,8 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
               onClick={() => setMonths(m)}
               className={`font-outfit text-sm px-4 py-2 rounded border transition-all ${
                 months === m
-                  ? 'bg-gold text-dark border-gold font-semibold'
-                  : 'bg-white/5 text-white/60 border-white/10 hover:border-gold/40'
+                  ? 'bg-amber-500 text-dark border-amber-500 font-semibold'
+                  : 'bg-white/5 text-white/60 border-white/10 hover:border-amber-500/40'
               }`}
             >
               {m}m
@@ -76,9 +76,9 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
 
       {/* Results */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-gold/10 border border-gold/30 rounded-lg p-4 col-span-2">
-          <p className="font-outfit text-xs text-gold/70 mb-1">Monthly Payment</p>
-          <p className="font-bebas text-3xl text-gold">{formatPrice(Math.round(monthlyPayment))}</p>
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 col-span-2">
+          <p className="font-outfit text-xs text-amber-500/70 mb-1">Monthly Payment</p>
+          <p className="font-bebas text-3xl text-amber-500">{formatPrice(Math.round(monthlyPayment))}</p>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-lg p-3">
           <p className="font-outfit text-xs text-white/50 mb-1">Amount Financed</p>
@@ -97,7 +97,7 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
       {onRequestFinancing && (
         <button
           onClick={onRequestFinancing}
-          className="w-full bg-gold text-dark font-outfit font-semibold py-3 rounded-lg hover:bg-yellow-400 transition-colors"
+          className="w-full bg-amber-500 text-dark font-outfit font-semibold py-3 rounded-lg hover:bg-yellow-400 transition-colors"
         >
           Apply for Financing
         </button>

@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, Gauge, Fuel, Settings2, ArrowRight, Heart } from 'lucide-react'
+import { Calendar, Gauge, Fuel, Zap, ArrowRight, Heart } from 'lucide-react'
+import { motion } from 'framer-motion'
 import type { Car } from '../types'
+import Badge from './ui/Badge'
+import Button from './ui/Button'
 
 interface CarCardProps {
   car: Car
@@ -22,19 +25,28 @@ const fuelLabel: Record<Car['fuel'], string> = {
   hibrido: 'Hybrid',
 }
 
+const fuelIcon: Record<Car['fuel'], React.ReactNode> = {
+  gasolina: <Fuel size={14} />,
+  diesel: <Fuel size={14} />,
+  electrico: <Zap size={14} />,
+  hibrido: <Zap size={14} />,
+}
+
 const transmissionLabel: Record<Car['transmission'], string> = {
   manual: 'Manual',
   automatico: 'Automatic',
 }
 
 function getFavs(): string[] {
-  try { return JSON.parse(localStorage.getItem('automarket_favourites') || '[]') } catch { return [] }
+  try {
+    return JSON.parse(localStorage.getItem('automarket_favourites') || '[]')
+  } catch {
+    return []
+  }
 }
 
 export default function CarCard({ car }: CarCardProps) {
   const navigate = useNavigate()
-  const [hovered, setHovered] = useState(false)
-  const [btnHovered, setBtnHovered] = useState(false)
   const [isFav, setIsFav] = useState(() => getFavs().includes(car.id))
 
   const toggleFav = (e: React.MouseEvent) => {
@@ -49,173 +61,101 @@ export default function CarCard({ car }: CarCardProps) {
   }
 
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       onClick={() => navigate(`/auto/${car.id}`)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        backgroundColor: '#111111',
-        borderRadius: '1rem',
-        border: `1px solid ${hovered ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.06)'}`,
-        overflow: 'hidden',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
-        position: 'relative',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-        boxShadow: hovered
-          ? '0 20px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(245,158,11,0.1)'
-          : 'none',
-      }}
+      className="group relative bg-gray-900 border border-white/5 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-black/40 cursor-pointer"
+      role="article"
+      aria-label={`${car.title} - ${formatPrice(car.price)}`}
     >
-      {/* ── IMAGE ── */}
-      <div style={{ height: '220px', overflow: 'hidden', position: 'relative' }}>
+      {/* Image Container */}
+      <div className="relative h-60 overflow-hidden bg-slate-900">
         <img
           src={car.images[0]}
           alt={car.title}
-          style={{
-            width: '100%', height: '100%', objectFit: 'cover',
-            transition: 'transform 0.5s ease',
-            transform: hovered ? 'scale(1.05)' : 'scale(1)',
-          }}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          loading="lazy"
         />
 
+        {/* Image Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-md" />
+
         {/* Badges */}
-        <div style={{ position: 'absolute', top: 12, left: 12, display: 'flex', gap: 6 }}>
-          {car.isOnSale && (
-            <span style={{
-              backgroundColor: '#dc2626', color: 'white',
-              fontFamily: 'Outfit', fontSize: '0.65rem', fontWeight: 700,
-              padding: '4px 10px', borderRadius: '2rem',
-              letterSpacing: '0.08em', textTransform: 'uppercase',
-            }}>
-              Sale
-            </span>
-          )}
-          {car.featured && (
-            <span style={{
-              background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#000',
-              fontFamily: 'Outfit', fontSize: '0.65rem', fontWeight: 700,
-              padding: '4px 10px', borderRadius: '2rem',
-              letterSpacing: '0.08em', textTransform: 'uppercase',
-            }}>
-              Featured
-            </span>
-          )}
+        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+          {car.isOnSale && <Badge variant="danger">Sale</Badge>}
+          {car.featured && <Badge variant="amber-500">Featured</Badge>}
         </div>
 
-        {/* Heart button */}
+        {/* Favorite Button */}
         <button
           onClick={toggleFav}
-          style={{
-            position: 'absolute', top: 12, right: 12,
-            backgroundColor: isFav ? 'rgba(220,38,38,0.2)' : 'rgba(0,0,0,0.5)',
-            backdropFilter: 'blur(4px)',
-            border: `1px solid ${isFav ? 'rgba(220,38,38,0.4)' : 'rgba(255,255,255,0.1)'}`,
-            borderRadius: '50%',
-            width: 36, height: 36,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}
+          className={`absolute top-4 right-4 w-10 h-10 rounded-lg backdrop-blur-md border transition-all duration-200 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+            isFav
+              ? 'bg-red-500/30 border-red-500/50 text-red-400'
+              : 'bg-black/40 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20'
+          }`}
+          aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
+          aria-pressed={isFav}
         >
-          <Heart
-            size={16}
-            fill={isFav ? '#dc2626' : 'none'}
-            color={isFav ? '#dc2626' : 'rgba(255,255,255,0.5)'}
-          />
+          <Heart size={18} fill={isFav ? 'currentColor' : 'none'} />
         </button>
       </div>
 
-      {/* ── BODY ── */}
-      <div style={{ padding: '1.25rem' }}>
-
+      {/* Content */}
+      <div className="p-5 lg:p-6">
         {/* Title */}
-        <p style={{
-          fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.4rem', color: 'white',
-          letterSpacing: '0.05em', marginBottom: '0.5rem', lineHeight: 1.1,
-        }}>
+        <h3 className="font-bebas text-xl lg:text-2xl text-white tracking-wider mb-3 line-clamp-1">
           {car.title}
-        </p>
+        </h3>
 
-        {/* Year + KM row */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.875rem' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-            <Calendar size={13} color="#f59e0b" />
-            <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)' }}>
-              {car.year}
-            </span>
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-            <Gauge size={13} color="#f59e0b" />
-            <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.45)' }}>
-              {formatKm(car.km)}
-            </span>
-          </span>
+        {/* Year & Mileage */}
+        <div className="flex gap-4 mb-4 text-xs lg:text-sm">
+          <div className="flex items-center gap-1.5 text-white/60">
+            <Calendar size={14} className="text-amber-500" aria-hidden="true" />
+            <span>{car.year}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-white/60">
+            <Gauge size={14} className="text-amber-500" aria-hidden="true" />
+            <span>{formatKm(car.km)}</span>
+          </div>
         </div>
 
-        {/* Fuel + Transmission chips */}
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-          <span style={{
-            backgroundColor: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '2rem', padding: '3px 10px',
-            fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)',
-            display: 'flex', alignItems: 'center', gap: 4,
-          }}>
-            <Settings2 size={11} color="#f59e0b" />
+        {/* Specs */}
+        <div className="flex flex-wrap gap-2 mb-5">
+          <Badge variant="default" className="text-xs">
             {transmissionLabel[car.transmission]}
-          </span>
-          <span style={{
-            backgroundColor: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: '2rem', padding: '3px 10px',
-            fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)',
-            display: 'flex', alignItems: 'center', gap: 4,
-          }}>
-            <Fuel size={11} color="#f59e0b" />
+          </Badge>
+          <Badge variant="default" className="flex items-center gap-1.5 text-xs">
+            <span className="text-amber-500">{fuelIcon[car.fuel]}</span>
             {fuelLabel[car.fuel]}
-          </span>
-        </div>
-
-        {/* Price */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', minHeight: '36px', marginBottom: '1.25rem' }}>
-          {car.isOnSale && car.originalPrice && (
-            <span style={{
-              fontFamily: 'Outfit', fontSize: '0.8rem',
-              color: 'rgba(255,255,255,0.25)', textDecoration: 'line-through',
-            }}>
-              {formatPrice(car.originalPrice)}
-            </span>
-          )}
-          <span style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.6rem', color: '#f59e0b', lineHeight: 1 }}>
-            {formatPrice(car.price)}
-          </span>
+          </Badge>
         </div>
 
         {/* Divider */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', marginBottom: '1.25rem' }} />
+        <div className="h-px bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-5" />
 
-        {/* View Details button */}
-        <button
-          onMouseEnter={() => setBtnHovered(true)}
-          onMouseLeave={() => setBtnHovered(false)}
-          style={{
-            width: '100%', height: '44px',
-            background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-            color: '#000',
-            fontFamily: 'Outfit, sans-serif',
-            fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.05em',
-            borderRadius: '0.625rem', border: 'none', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-            opacity: btnHovered ? 0.9 : 1,
-            boxShadow: btnHovered ? '0 0 20px rgba(245,158,11,0.4)' : 'none',
-            transition: 'all 0.2s',
-          }}
+        {/* Price */}
+        <div className="flex items-baseline gap-3 mb-6">
+          {car.isOnSale && car.originalPrice && (
+            <span className="text-sm text-white/40 line-through">{formatPrice(car.originalPrice)}</span>
+          )}
+          <span className="font-bebas text-2xl text-amber-500 tracking-wider">{formatPrice(car.price)}</span>
+        </div>
+
+        {/* Button */}
+        <Button
+          variant="primary"
+          size="md"
+          fullWidth
+          icon={<ArrowRight size={16} />}
+          aria-label={`View details for ${car.title}`}
+          className="group/btn"
         >
-          VIEW DETAILS
-          <ArrowRight size={16} />
-        </button>
+          <span className="group-hover/btn:tracking-wider transition-all duration-sm">View Details</span>
+        </Button>
       </div>
-    </div>
+    </motion.div>
   )
 }

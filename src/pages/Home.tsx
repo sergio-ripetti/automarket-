@@ -103,7 +103,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-outfit text-gold uppercase tracking-[0.25em] text-xs mb-5"
+            className="font-outfit text-amber-500 uppercase tracking-[0.25em] text-xs mb-5"
           >
             New Zealand's Premier Car Marketplace
           </motion.p>
@@ -115,7 +115,7 @@ export default function Home() {
             className="font-bebas text-7xl sm:text-8xl lg:text-[7rem] text-white leading-none mb-6 tracking-wide"
           >
             FIND YOUR{' '}
-            <span className="text-gold">PERFECT</span>
+            <span className="text-amber-500">PERFECT</span>
             {' '}CAR
           </motion.h1>
 
@@ -147,7 +147,7 @@ export default function Home() {
             </Link>
             <Link
               to="/financiamiento"
-              className="font-outfit font-medium text-sm text-white hover:text-gold transition-colors"
+              className="font-outfit font-medium text-sm text-white hover:text-amber-500 transition-colors"
               style={{
                 padding: '0.875rem 2rem', borderRadius: '0.5rem',
                 letterSpacing: '0.04em', border: '1px solid rgba(255,255,255,0.2)',
@@ -177,9 +177,9 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <p className="font-outfit text-gold uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
+            <p className="font-outfit text-amber-500 uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
             <h2 className="font-bebas text-5xl text-white tracking-wide leading-none">
-              Featured <span className="text-gold">Vehicles</span>
+              Featured <span className="text-amber-500">Vehicles</span>
             </h2>
             <p className="font-outfit text-white/40 text-sm mt-2">Hand-picked by our team</p>
           </motion.div>
@@ -262,9 +262,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="mb-12"
           >
-            <p className="font-outfit text-gold uppercase tracking-[0.2em] text-xs mb-2">Process</p>
+            <p className="font-outfit text-amber-500 uppercase tracking-[0.2em] text-xs mb-2">Process</p>
             <h2 className="font-bebas text-5xl text-white tracking-wide leading-none">
-              How It <span className="text-gold">Works</span>
+              How It <span className="text-amber-500">Works</span>
             </h2>
           </motion.div>
 
@@ -291,7 +291,7 @@ export default function Home() {
                       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                     }}
                   >
-                    <step.icon size={20} className="text-gold" />
+                    <step.icon size={20} className="text-amber-500" />
                   </div>
                   <span
                     className="font-bebas"

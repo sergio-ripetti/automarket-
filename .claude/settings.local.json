@@ -28,7 +28,24 @@
       "Bash(curl -s -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{\"message\":\"¿Cuál es el mejor proceso para vender un auto usado?\",\"businessContext\":{\"businessType\":\"automotive marketplace\"}}')",
       "Bash(curl -v -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{ *)",
       "Bash(curl -s -X POST http://localhost:3001/api/aiAssistant -H 'Content-Type: application/json' -d '{\"message\":\"test\",\"businessContext\":{\"totalCars\":5},\"conversationHistory\":[]}')",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(claude plugin *)",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(pkill -f \"npm run dev\")",
+      "Bash(curl -s http://localhost:3001/api/health)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(tail -50 /tmp/app.log 2>/dev/null || echo \"No logs found\")",
+      "Bash(tail -100 /tmp/app.log 2>/dev/null | grep -i -E \"error|failed|unhandled\" | tail -20)",
+      "Bash(xargs sed -i 's/text-gold/text-amber-500/g; s/bg-gold/bg-amber-500/g; s/border-gold/border-amber-500/g; s/ring-gold/ring-amber-500/g; s/from-gold/from-amber-500/g; s/to-gold/to-amber-500/g; s/accent-gold/accent-amber-500/g; s/focus-visible:ring-gold/focus-visible:ring-amber-500/g; s/hover:border-gold/hover:border-amber-500/g; s/focus:border-gold/focus:border-amber-500/g; s/focus:ring-gold/focus:ring-amber-500/g; s/\"gold\"/\"amber-500\"/g')",
+      "Bash(xargs sed -i 's/bg-dark/bg-black/g; s/bg-carbon/bg-gray-900/g; s/via-amber-500/via-amber-400/g')",
+      "PowerShell(Get-Content \\(Join-Path $env:TEMP claude-seo README.md\\) | Select-Object -First 200 | Out-String)",
+      "PowerShell(Get-Content \"$env:TEMP\\\\claude-seo\\\\README.md\" | Select-Object -First 200)",
+      "PowerShell(powershell -ExecutionPolicy Bypass -File \"$env:USERPROFILE\\\\claude-seo\\\\install.ps1\")",
+      "PowerShell(python -m ensurepip --upgrade)",
+      "Bash(Sort-Object -Unique)"
     ]
   }
 }
