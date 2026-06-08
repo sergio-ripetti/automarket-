@@ -60,6 +60,32 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
+      {/* MOBILE HAMBURGER (Always visible) */}
+      {isMobile && (
+        <button
+          onClick={toggleSidebar}
+          style={{
+            position: 'fixed',
+            top: '1rem',
+            left: '1rem',
+            zIndex: 50,
+            width: '44px',
+            height: '44px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            color: 'white',
+          }}
+          aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={sidebarOpen}
+        >
+          <Menu size={24} />
+        </button>
+      )}
+
       {/* BACKDROP */}
       {sidebarOpen && isMobile && (
         <div
@@ -93,29 +119,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           transform: isMobile && !sidebarOpen ? 'translateX(-100%)' : 'translateX(0)',
         }}
       >
-        {/* HEADER CON HAMBURGUESA (Mobile) */}
-        {isMobile && (
-          <button
-            onClick={toggleSidebar}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '44px',
-              height: '44px',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'white',
-              marginBottom: '1rem',
-              marginLeft: '-0.5rem',
-            }}
-            aria-label="Close menu"
-          >
-            <Menu size={24} />
-          </button>
-        )}
-
         {/* LOGO */}
         <div style={{ marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
           <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#f59e0b', display: 'block' }}>
