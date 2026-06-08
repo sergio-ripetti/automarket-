@@ -4,6 +4,8 @@ import { Trash2, Mail, Eye, X } from 'lucide-react'
 import { getMessages, markAsRead, markAsUnread, deleteMessage } from '../../lib/messagesService'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
+import Button from '../../components/ui/Button'
+import Badge from '../../components/ui/Badge'
 import type { Message } from '../../lib/messagesService'
 
 type TypeFilter = 'all' | 'contact' | 'offer' | 'unread'
@@ -86,26 +88,24 @@ export default function AdminMessages() {
 
   return (
     <div>
-      <h1 className="font-bebas" style={{ fontSize: '2rem', color: 'white', lineHeight: 1, marginBottom: '0.25rem' }}>
-        Inbox
-      </h1>
-      <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem' }}>
-        {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
-      </p>
+      <div className="mb-8">
+        <h1 className="font-bebas text-3xl text-white mb-1">Inbox</h1>
+        <p className="text-sm text-white/40 font-outfit">
+          {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
+        </p>
+      </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+      <div className="flex flex-wrap gap-2 mb-8">
         {tabs.map(({ id, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            style={{
-              padding: '0.5rem 1.25rem', borderRadius: '2rem', fontFamily: 'Outfit', fontSize: '0.85rem',
-              cursor: 'pointer', border: 'none', transition: 'all 0.2s',
-              ...(activeTab === id
-                ? { backgroundColor: '#f59e0b', color: '#000', fontWeight: 700 }
-                : { backgroundColor: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)' }),
-            }}
+            className={`px-5 py-2 rounded-full text-sm font-outfit font-medium transition-all ${
+              activeTab === id
+                ? 'bg-amber-500 text-black'
+                : 'bg-white/5 text-white/50 hover:bg-white/10'
+            }`}
           >
             {label}
           </button>
