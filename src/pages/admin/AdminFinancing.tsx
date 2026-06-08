@@ -568,8 +568,8 @@ export default function AdminFinancing() {
         }
       `}</style>
       {selectedRequest && (
-        <div className="financing-modal">
-          <div className="financing-modal-content">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-4 lg:p-6 bg-black/90 overflow-y-auto">
+          <div className="w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-amber-500/20 p-4 md:p-6">
             {/* Header */}
             <div
               style={{
@@ -615,9 +615,9 @@ export default function AdminFinancing() {
             </div>
 
             {/* SECTION 1: Personal Information */}
-            <div className="financing-modal-section">
+            <div className="pb-4 md:pb-6 border-b border-white/5 last:border-b-0 mb-4 md:mb-6">
               <h3
-                className="financing-modal-section-title"
+                className="text-xs md:text-sm text-amber-500 font-semibold uppercase tracking-wider mb-3 md:mb-4"
                 style={{
                   fontFamily: "Outfit",
                   textTransform: "uppercase",
@@ -626,7 +626,7 @@ export default function AdminFinancing() {
                 }}>
                 Personal Information
               </h3>
-              <div className="financing-modal-grid-2col">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                 {[
                   {
                     label: "Full Name",
@@ -682,7 +682,7 @@ export default function AdminFinancing() {
                 Vehicle & Loan Details
               </h3>
               <div
-                className="financing-modal-grid-2col"
+                className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4"
                 style={{
                   marginBottom: "1.5rem",
                 }}>
@@ -851,7 +851,7 @@ export default function AdminFinancing() {
                     </div>
                   ))}
                 </div>
-                <div className="financing-modal-grid-3col">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   {[
                     {
                       label: "Monthly Income",
@@ -1037,17 +1037,13 @@ export default function AdminFinancing() {
                   },
                 )}
               </p>
-              <div className="financing-modal-actions">
+              <div className="flex flex-col md:flex-row gap-2 md:gap-3 flex-wrap mt-4 md:mt-6">
                 <button
                   onClick={() => {
                     handleStatusChange(selectedRequest.id, "approved");
                     setSelectedRequest(null);
                   }}
-                  style={{
-                    border: "1px solid #10b981",
-                    color: "#10b981",
-                    backgroundColor: "transparent",
-                  }}>
+                  className="w-full md:flex-1 py-2 px-3 md:py-2.5 md:px-4 text-xs md:text-sm min-h-[44px] rounded border border-emerald-500 text-emerald-500 bg-transparent hover:bg-emerald-500/10 transition-colors">
                   Approve
                 </button>
                 <button
@@ -1055,11 +1051,7 @@ export default function AdminFinancing() {
                     handleStatusChange(selectedRequest.id, "rejected");
                     setSelectedRequest(null);
                   }}
-                  style={{
-                    border: "1px solid #ef4444",
-                    color: "#ef4444",
-                    backgroundColor: "transparent",
-                  }}>
+                  className="w-full md:flex-1 py-2 px-3 md:py-2.5 md:px-4 text-xs md:text-sm min-h-[44px] rounded border border-red-500 text-red-500 bg-transparent hover:bg-red-500/10 transition-colors">
                   Reject
                 </button>
                 <button
@@ -1067,11 +1059,7 @@ export default function AdminFinancing() {
                     handleStatusChange(selectedRequest.id, "paying");
                     setSelectedRequest(null);
                   }}
-                  style={{
-                    border: "1px solid #3b82f6",
-                    color: "#3b82f6",
-                    backgroundColor: "transparent",
-                  }}>
+                  className="w-full md:flex-1 py-2 px-3 md:py-2.5 md:px-4 text-xs md:text-sm min-h-[44px] rounded border border-blue-500 text-blue-500 bg-transparent hover:bg-blue-500/10 transition-colors">
                   Mark Paying
                 </button>
                 <button
@@ -1079,11 +1067,7 @@ export default function AdminFinancing() {
                     handleStatusChange(selectedRequest.id, "completed");
                     setSelectedRequest(null);
                   }}
-                  style={{
-                    border: "1px solid #6b7280",
-                    color: "#6b7280",
-                    backgroundColor: "transparent",
-                  }}>
+                  className="w-full md:flex-1 py-2 px-3 md:py-2.5 md:px-4 text-xs md:text-sm min-h-[44px] rounded border border-gray-600 text-gray-400 bg-transparent hover:bg-gray-600/10 transition-colors">
                   Complete
                 </button>
               </div>
