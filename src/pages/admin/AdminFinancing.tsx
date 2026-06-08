@@ -527,6 +527,40 @@ export default function AdminFinancing() {
             gap: 1.25rem 1.75rem;
           }
         }
+        .financing-modal-grid-responsive-2col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          row-gap: 1rem;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-grid-responsive-2col {
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem 1.5rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal-grid-responsive-2col {
+            gap: 1.25rem 1.75rem;
+          }
+        }
+        .financing-modal-grid-documents {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          row-gap: 1rem;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-grid-documents {
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .financing-modal-grid-documents {
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+          }
+        }
         .financing-modal-actions {
           display: flex;
           flex-direction: column;
@@ -738,12 +772,7 @@ export default function AdminFinancing() {
                 }}>
                 {fmt(selectedRequest.totalAmount)}
               </p>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1.5rem",
-                }}>
+              <div className="financing-modal-grid-responsive-2col">
                 {[
                   {
                     label: "Down Payment",
@@ -806,13 +835,7 @@ export default function AdminFinancing() {
                   }}>
                   Employment Details
                 </h3>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "1.5rem",
-                    marginBottom: "1.5rem",
-                  }}>
+                <div className="financing-modal-grid-responsive-2col" style={{ marginBottom: "1.5rem" }}>
                   {[
                     { label: "Employer", value: selectedRequest.employer },
                     { label: "Job Title", value: selectedRequest.jobTitle },
@@ -915,13 +938,7 @@ export default function AdminFinancing() {
                     }}>
                     Documents ({selectedRequest.documents.length})
                   </h3>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fill, minmax(100px, 1fr))",
-                      gap: "1rem",
-                    }}>
+                  <div className="financing-modal-grid-documents">
                     {selectedRequest.documents.map((doc) => (
                       <div
                         key={doc.url}
