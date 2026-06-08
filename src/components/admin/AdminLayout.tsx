@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu, X,
@@ -29,6 +29,33 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 1024)
+
+  // Update isMobile on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Close sidebar when location changes
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location])
+
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (sidebarOpen && isMobile) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [sidebarOpen, isMobile])
 
   const handleLogout = async () => {
     await logoutAdmin()
@@ -36,9 +63,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   const closeSidebar = () => setSidebarOpen(false)
-
-  // Detectar si es mobile
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -158,21 +183,24 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             }}
           >
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={toggleSidebar}
               style={{
                 padding: '0.5rem',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '44px',
+                minHeight: '44px',
               }}
-              aria-label="Toggle menu"
+              aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={sidebarOpen}
             >
               {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <span className="font-bebas" style={{ fontSize: '1.25rem', color: 'white', flex: 1 }}>
-              AutoMarket
-            </span>
           </div>
         )}
 
