@@ -1,20 +1,11 @@
 import { useState, useEffect } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu,
+  LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu, X,
 } from 'lucide-react'
 import { logoutAdmin } from '../../lib/authService'
 
 interface AdminLayoutProps { children: React.ReactNode }
-
-const linkBase: React.CSSProperties = {
-  display: 'flex', alignItems: 'center', gap: '0.75rem',
-  padding: '0.75rem 1rem', borderRadius: '0.625rem',
-  fontFamily: 'Outfit, sans-serif', fontSize: '0.875rem',
-  cursor: 'pointer', transition: 'all 0.2s', marginBottom: '0.25rem',
-  textDecoration: 'none', border: 'none', background: 'none', width: '100%',
-  textAlign: 'left' as const,
-}
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard',    to: '/admin',             end: true },
@@ -29,158 +20,241 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 1024)
+  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>(
+    typeof window !== 'undefined'
+      ? window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop'
+      : 'desktop'
+  )
 
+  // Detect screen size
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 1024)
+    const handleResize = () => {
+      if (window.innerWidth < 768) setScreenSize('mobile')
+      else if (window.innerWidth < 1024) setScreenSize('tablet')
+      else setScreenSize('desktop')
+    }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Close sidebar on navigation
   useEffect(() => {
     setSidebarOpen(false)
   }, [location])
 
+  // Close sidebar on desktop
   useEffect(() => {
-    if (sidebarOpen && isMobile) {
+    if (screenSize === 'desktop') setSidebarOpen(false)
+  }, [screenSize])
+
+  // Prevent body scroll when sidebar expanded on mobile/tablet
+  useEffect(() => {
+    if (sidebarOpen && screenSize !== 'desktop') {
       document.body.style.overflow = 'hidden'
     } else {
       document.body.style.overflow = 'unset'
     }
     return () => { document.body.style.overflow = 'unset' }
-  }, [sidebarOpen, isMobile])
+  }, [sidebarOpen, screenSize])
 
   const handleLogout = async () => {
     await logoutAdmin()
     navigate('/admin/login')
   }
 
-  const closeSidebar = () => setSidebarOpen(false)
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
+  const closeSidebar = () => setSidebarOpen(false)
+
+  // Calculate sidebar width based on screen size and state
+  const getSidebarWidth = () => {
+    if (screenSize === 'desktop') return 250
+    if (screenSize === 'tablet') return sidebarOpen ? 250 : 100
+    return sidebarOpen ? 250 : 80
+  }
+
+  const sidebarWidth = getSidebarWidth()
+  const isExpanded = sidebarOpen || screenSize === 'desktop'
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* MOBILE HAMBURGER (Always visible) */}
-      {isMobile && (
-        <button
-          onClick={toggleSidebar}
-          style={{
-            position: 'fixed',
-            top: '1rem',
-            left: '1rem',
-            zIndex: 50,
-            width: '44px',
-            height: '44px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'white',
-          }}
-          aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
-          aria-expanded={sidebarOpen}
-        >
-          <Menu size={24} />
-        </button>
-      )}
-
-      {/* BACKDROP */}
-      {sidebarOpen && isMobile && (
+    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#0a0a0a' }}>
+      {/* BACKDROP (for mobile/tablet when expanded) */}
+      {sidebarOpen && screenSize !== 'desktop' && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
             backgroundColor: 'rgba(0,0,0,0.5)',
-            zIndex: 30,
+            zIndex: 40,
           }}
           onClick={closeSidebar}
           aria-hidden="true"
         />
       )}
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR - FIXED */}
       <aside
         style={{
-          width: '260px',
+          position: 'fixed',
+          left: 0,
+          top: 0,
+          height: '100vh',
+          width: sidebarWidth,
           backgroundColor: '#0a0a0a',
           borderRight: '1px solid rgba(245,158,11,0.15)',
           display: 'flex',
           flexDirection: 'column',
-          padding: '1.5rem 1rem',
-          position: isMobile ? 'fixed' : 'relative',
-          top: 0,
-          left: 0,
-          height: '100vh',
-          zIndex: 40,
+          padding: screenSize === 'desktop' ? '1.5rem 1rem' : '0',
           overflowY: 'auto',
-          transition: 'transform 0.3s ease',
-          transform: isMobile && !sidebarOpen ? 'translateX(-100%)' : 'translateX(0)',
+          transition: 'width 0.3s ease',
+          zIndex: 50,
+          boxShadow: sidebarOpen && screenSize !== 'desktop' ? '2px 0 10px rgba(0,0,0,0.3)' : 'none',
         }}
       >
-        {/* LOGO */}
-        <div style={{ marginBottom: '2.5rem', paddingLeft: '0.5rem' }}>
-          <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#f59e0b', display: 'block' }}>
-            AutoMarket
-          </span>
-          <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            Admin Panel
-          </span>
-        </div>
+        {/* HAMBURGER BUTTON (visible on mobile/tablet) */}
+        {screenSize !== 'desktop' && (
+          <button
+            onClick={toggleSidebar}
+            style={{
+              width: '100%',
+              padding: '1rem',
+              border: 'none',
+              backgroundColor: '#f59e0b',
+              color: 'black',
+              cursor: 'pointer',
+              fontSize: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f6ad1b'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f59e0b'}
+            aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={sidebarOpen}
+          >
+            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        )}
+
+        {/* LOGO (only visible when expanded) */}
+        {isExpanded && (
+          <div style={{ marginBottom: '2.5rem', marginTop: screenSize !== 'desktop' ? '1rem' : '1.5rem', paddingLeft: '0.5rem' }}>
+            <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#f59e0b', display: 'block' }}>
+              AutoMarket
+            </span>
+            <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              Admin Panel
+            </span>
+          </div>
+        )}
 
         {/* NAV LINKS */}
-        {navItems.map(({ icon: Icon, label, to, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            onClick={closeSidebar}
-            style={({ isActive }) => ({
-              ...linkBase,
-              ...(isActive
-                ? {
-                    backgroundColor: 'rgba(245,158,11,0.1)',
-                    color: '#f59e0b',
-                    borderLeft: '3px solid #f59e0b',
-                    paddingLeft: 'calc(1rem - 3px)',
-                  }
-                : { color: 'rgba(255,255,255,0.5)' }),
-            })}
-          >
-            <Icon size={17} />
-            {label}
-          </NavLink>
-        ))}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          {navItems.map(({ icon: Icon, label, to, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              onClick={closeSidebar}
+              style={({ isActive }) => ({
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: screenSize === 'desktop' ? '0.75rem 1rem' : '1rem',
+                borderRadius: screenSize === 'desktop' ? '0.625rem' : '0',
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: isExpanded ? '0.875rem' : '0.75rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                textDecoration: 'none',
+                border: 'none',
+                background: 'none',
+                width: '100%',
+                textAlign: 'left' as const,
+                color: isActive ? '#f59e0b' : 'rgba(255,255,255,0.5)',
+                backgroundColor: isActive ? 'rgba(245,158,11,0.1)' : 'transparent',
+                borderLeft: isActive ? '3px solid #f59e0b' : 'none',
+                paddingLeft: isActive ? 'calc(1rem - 3px)' : '1rem',
+                justifyContent: isExpanded ? 'flex-start' : 'center',
+              })}
+            >
+              <Icon size={18} style={{ flexShrink: 0 }} />
+              {isExpanded && <span>{label}</span>}
+            </NavLink>
+          ))}
+        </nav>
 
         <div style={{ marginTop: 'auto' }} />
 
         {/* BOTTOM LINKS */}
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ ...linkBase, color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}
-        >
-          <ExternalLink size={17} />
-          View Site
-        </a>
+        {isExpanded && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: screenSize === 'desktop' ? '0.75rem 1rem' : '1rem',
+                borderRadius: screenSize === 'desktop' ? '0.625rem' : '0',
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                textDecoration: 'none',
+                border: 'none',
+                background: 'none',
+                width: '100%',
+                textAlign: 'left' as const,
+                color: 'rgba(255,255,255,0.4)',
+                marginBottom: '0.25rem',
+              }}
+            >
+              <ExternalLink size={18} />
+              View Site
+            </a>
 
-        <button onClick={handleLogout} style={{ ...linkBase, color: 'rgba(255,255,255,0.4)' }}>
-          <LogOut size={17} />
-          Sign Out
-        </button>
+            <button
+              onClick={handleLogout}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: screenSize === 'desktop' ? '0.75rem 1rem' : '1rem',
+                borderRadius: screenSize === 'desktop' ? '0.625rem' : '0',
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                textDecoration: 'none',
+                border: 'none',
+                background: 'none',
+                width: '100%',
+                textAlign: 'left' as const,
+                color: 'rgba(255,255,255,0.4)',
+              }}
+            >
+              <LogOut size={18} />
+              Sign Out
+            </button>
+          </div>
+        )}
       </aside>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN CONTENT - SCROLLABLE */}
       <main
         style={{
-          flex: 1,
+          position: 'relative',
+          marginLeft: sidebarWidth,
+          width: `calc(100% - ${sidebarWidth}px)`,
+          height: '100vh',
           backgroundColor: '#0f0f0f',
-          minHeight: '100vh',
-          padding: '2rem',
           overflow: 'hidden',
           overflowY: 'auto',
+          transition: 'margin-left 0.3s ease, width 0.3s ease',
+          padding: '2rem',
         }}
       >
         {children}
