@@ -3,16 +3,16 @@ import { Trash2, Eye, X } from 'lucide-react'
 import { getFinancingRequests, updateFinancingStatus, deleteFinancingRequest } from '../../lib/financingService'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
-import Button from '../../components/ui/Button'
-import Badge from '../../components/ui/Badge'
 import type { FinancingRequest } from '../../lib/financingService'
 
 type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected' | 'paying' | 'completed'
 
+// Formats a number as NZD currency for display
 function fmt(p: number) {
   return p.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
+// Converts a Firestore Timestamp into a readable NZ date string
 function fmtDate(ts: { toDate: () => Date } | undefined) {
   if (!ts || typeof ts.toDate !== 'function') return '—'
   return ts.toDate().toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -33,6 +33,8 @@ const tabs: { id: StatusFilter; label: string }[] = [
   { id: 'rejected', label: 'Rejected' }, { id: 'paying', label: 'Paying' }, { id: 'completed', label: 'Completed' },
 ]
 
+// Admin page listing all financing requests - lets staff filter by status, review applicant details,
+// and approve/reject/update applications; data is loaded from and written back to Firestore
 export default function AdminFinancing() {
   const [requests, setRequests] = useState<FinancingRequest[]>([])
   const [loading, setLoading] = useState(true)
@@ -40,6 +42,7 @@ export default function AdminFinancing() {
   const [selectedRequest, setSelectedRequest] = useState<FinancingRequest | null>(null)
   const { toast, showToast, dismissToast } = useToast()
 
+  // Fetches all financing requests from Firestore on mount and populates local state
   useEffect(() => {
     const load = async () => {
       try {
@@ -59,6 +62,7 @@ export default function AdminFinancing() {
     ? requests
     : requests.filter((r) => r.status === activeTab)
 
+  // Updates a financing request's status (approved/rejected/paying/completed) in Firestore and syncs local state
   const handleStatusChange = async (id: string, newStatus: FinancingRequest['status']) => {
     try {
       await updateFinancingStatus(id, newStatus)
@@ -69,6 +73,7 @@ export default function AdminFinancing() {
     }
   }
 
+  // Deletes a financing request from Firestore after user confirmation, then removes it from local state
   const handleDelete = async (id: string) => {
     if (!window.confirm('Delete this financing request? This cannot be undone.')) return
     try {
@@ -80,6 +85,7 @@ export default function AdminFinancing() {
     }
   }
 
+  // Opens the user's default mail client with a pre-filled reply to the applicant's financing request
   const handleReply = (email: string, carTitle: string) => {
     const subject = `Re: Financing Request - ${carTitle}`
     const body = encodeURIComponent('Thank you for your financing application. We will review your request and get back to you shortly.')
@@ -87,7 +93,7 @@ export default function AdminFinancing() {
   }
 
   return (
-    <div>
+    <div id="admin-financing-main-container" className="admin-financing-main-container">
       <style>{`
         .financing-page-title {
           font-size: clamp(1.25rem, 5vw, 2rem);
@@ -98,10 +104,11 @@ export default function AdminFinancing() {
       <h1 className="font-bebas text-white mb-8 financing-page-title">Financing Requests</h1>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div id="admin-financing-tabs" className="admin-financing-tabs flex flex-wrap gap-2 mb-8">
         {tabs.map(({ id, label }) => (
           <button
             key={id}
+            id={`admin-financing-tab-${id}`}
             onClick={() => setActiveTab(id)}
             className={`px-5 py-2 rounded-full text-sm font-outfit font-medium transition-all ${
               activeTab === id
@@ -115,7 +122,7 @@ export default function AdminFinancing() {
       </div>
 
       {/* Requests */}
-      <div className="space-y-4">
+      <div id="admin-financing-list-wrapper" className="admin-financing-list-wrapper space-y-6 md:space-y-4">
         {loading ? (
           [...Array(3)].map((_, i) => (
             <div
@@ -130,10 +137,12 @@ export default function AdminFinancing() {
               `with status "${statusLabel[activeTab as FinancingRequest["status"]]}"`}
           </p>
         ) : (
-          filtered.map((req) => (
+          filtered.map((req, idx) => (
             <div
               key={req.id}
-              className="bg-dark border border-white/5 rounded-lg p-6 hover:border-amber-500/20 transition-colors">
+              id={`admin-financing-card-${idx}`}
+              className={`admin-financing-card admin-financing-card-${idx} bg-dark border border-white/5 rounded-lg hover:border-amber-500/20 transition-colors`}
+              style={{ marginBottom: '1.5rem', padding: '10px' }}>
               {/* Header */}
               <div
                 style={{
@@ -165,13 +174,22 @@ export default function AdminFinancing() {
                 </div>
                 <div
                   style={{
-                    backgroundColor: statusColor[req.status],
-                    color: "#000",
-                    padding: "0.4rem 0.75rem",
-                    borderRadius: "0.5rem",
+                    backgroundColor: req.status === 'approved' ? 'rgba(34,197,94,0.12)'
+                      : req.status === 'rejected' ? 'rgba(239,68,68,0.12)'
+                      : req.status === 'paying' ? 'rgba(59,130,246,0.12)'
+                      : req.status === 'completed' ? 'rgba(107,114,128,0.12)'
+                      : 'rgba(245,158,11,0.12)',
+                    color: statusColor[req.status],
+                    border: `1px solid ${req.status === 'approved' ? 'rgba(34,197,94,0.3)'
+                      : req.status === 'rejected' ? 'rgba(239,68,68,0.3)'
+                      : req.status === 'paying' ? 'rgba(59,130,246,0.3)'
+                      : req.status === 'completed' ? 'rgba(107,114,128,0.3)'
+                      : 'rgba(245,158,11,0.3)'}`,
+                    padding: "0.35rem 0.75rem",
+                    borderRadius: "0.375rem",
                     fontFamily: "Outfit",
                     fontSize: "0.75rem",
-                    fontWeight: 700,
+                    fontWeight: 600,
                   }}>
                   {statusLabel[req.status]}
                 </div>
@@ -289,7 +307,7 @@ export default function AdminFinancing() {
                 }
                 .financing-request-actions {
                   display: grid;
-                  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+                  grid-template-columns: repeat(2, 1fr);
                   gap: 0.5rem;
                 }
                 .financing-request-actions button {
@@ -299,67 +317,138 @@ export default function AdminFinancing() {
                   font-size: 0.75rem;
                   background-color: transparent;
                   cursor: pointer;
-                  min-height: 36px;
+                  min-height: 38px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   gap: 0.3rem;
                   white-space: nowrap;
+                  width: 100%;
                 }
                 .financing-request-actions .delete-btn {
-                  grid-column: -2 / -1;
-                  margin-left: auto;
+                  grid-column: 1 / -1;
                 }
-                @media (min-width: 768px) {
+                @media (min-width: 1024px) {
                   .financing-request-actions {
-                    grid-template-columns: auto;
-                    gap: 0.75rem;
-                  }
-                  .financing-request-actions button {
-                    padding: 0.5rem 1rem;
-                    font-size: 0.8rem;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 0.5rem;
                   }
                   .financing-request-actions .delete-btn {
                     grid-column: auto;
-                    margin-left: auto;
                   }
                 }
+                .admin-financing-approve-btn:hover {
+                  background: rgba(34,197,94,0.12) !important;
+                  box-shadow: 0 0 10px rgba(34,197,94,0.15);
+                }
+                .admin-financing-reject-btn:hover {
+                  background: rgba(239,68,68,0.12) !important;
+                  box-shadow: 0 0 10px rgba(239,68,68,0.15);
+                }
+                .admin-financing-paying-btn:hover {
+                  background: rgba(59,130,246,0.12) !important;
+                  box-shadow: 0 0 10px rgba(59,130,246,0.15);
+                }
+                .admin-financing-complete-btn:hover {
+                  background: rgba(107,114,128,0.15) !important;
+                }
+                .admin-financing-reply-btn:hover {
+                  background: rgba(245,158,11,0.12) !important;
+                  box-shadow: 0 0 10px rgba(245,158,11,0.2);
+                }
+                .admin-financing-view-btn:hover {
+                  background: rgba(255,255,255,0.08) !important;
+                  border-color: rgba(255,255,255,0.3) !important;
+                  color: white !important;
+                }
+                .admin-financing-delete-btn:hover {
+                  background: rgba(239,68,68,0.08) !important;
+                  border-color: rgba(239,68,68,0.5) !important;
+                }
               `}</style>
-              <div className="financing-request-actions">
+              <div id={`admin-financing-card-actions-${idx}`} className="admin-financing-card-actions financing-request-actions">
                 <button
+                  className="admin-financing-approve-btn"
                   onClick={() => handleStatusChange(req.id, "approved")}
-                  style={{ border: "1px solid #10b981", color: "#10b981" }}>
+                  style={{
+                    border: "1px solid rgba(34,197,94,0.35)",
+                    color: "rgba(34,197,94,0.85)",
+                    background: "rgba(34,197,94,0.06)",
+                    transition: "all 0.2s ease",
+                    fontWeight: 500,
+                  }}>
                   Approve
                 </button>
                 <button
+                  className="admin-financing-reject-btn"
                   onClick={() => handleStatusChange(req.id, "rejected")}
-                  style={{ border: "1px solid #ef4444", color: "#ef4444" }}>
+                  style={{
+                    border: "1px solid rgba(239,68,68,0.3)",
+                    color: "rgba(239,68,68,0.8)",
+                    background: "rgba(239,68,68,0.05)",
+                    transition: "all 0.2s ease",
+                    fontWeight: 500,
+                  }}>
                   Reject
                 </button>
                 <button
+                  className="admin-financing-paying-btn"
                   onClick={() => handleStatusChange(req.id, "paying")}
-                  style={{ border: "1px solid #3b82f6", color: "#3b82f6" }}>
+                  style={{
+                    border: "1px solid rgba(59,130,246,0.35)",
+                    color: "rgba(59,130,246,0.85)",
+                    background: "rgba(59,130,246,0.06)",
+                    transition: "all 0.2s ease",
+                    fontWeight: 500,
+                  }}>
                   <span className="hidden sm:inline">Mark</span> Paying
                 </button>
                 <button
+                  className="admin-financing-complete-btn"
                   onClick={() => handleStatusChange(req.id, "completed")}
-                  style={{ border: "1px solid #6b7280", color: "#6b7280" }}>
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    color: "rgba(255,255,255,0.5)",
+                    background: "rgba(255,255,255,0.04)",
+                    transition: "all 0.2s ease",
+                    fontWeight: 500,
+                  }}>
                   Done
                 </button>
                 <button
+                  className="admin-financing-reply-btn"
                   onClick={() => handleReply(req.email, req.carTitle)}
-                  style={{ border: "1px solid #f59e0b", color: "#f59e0b" }}>
+                  style={{
+                    border: "1px solid rgba(245,158,11,0.45)",
+                    color: "#f59e0b",
+                    background: "rgba(245,158,11,0.08)",
+                    transition: "all 0.2s ease",
+                    fontWeight: 500,
+                  }}>
                   Reply
                 </button>
                 <button
+                  className="admin-financing-view-btn"
                   onClick={() => setSelectedRequest(req)}
-                  style={{ border: "1px solid #fd6b33", color: "#fd6b33" }}>
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    color: "rgba(255,255,255,0.55)",
+                    background: "rgba(255,255,255,0.04)",
+                    transition: "all 0.2s ease",
+                    fontWeight: 500,
+                  }}>
                   <Eye size={14} /> <span className="hidden sm:inline">View</span>
                 </button>
                 <button
+                  className="admin-financing-delete-btn delete-btn"
                   onClick={() => handleDelete(req.id)}
-                  className="delete-btn"
-                  style={{ border: "1px solid rgba(220,38,38,0.4)", color: "#ef4444" }}>
+                  style={{
+                    border: "1px solid rgba(239,68,68,0.2)",
+                    color: "rgba(239,68,68,0.6)",
+                    background: "transparent",
+                    transition: "all 0.2s ease",
+                    fontWeight: 500,
+                  }}>
                   <Trash2 size={12} /> <span className="hidden sm:inline">Delete</span>
                 </button>
               </div>
@@ -400,7 +489,7 @@ export default function AdminFinancing() {
           max-height: 95vh;
           overflow-y: auto;
           overflow-x: hidden;
-          padding: 1rem;
+          padding: 1.25rem;
         }
         @media (min-width: 640px) {
           .financing-modal-content {
@@ -413,13 +502,13 @@ export default function AdminFinancing() {
           .financing-modal-content {
             max-width: 650px;
             border-radius: 1.25rem;
-            padding: 1.5rem;
+            padding: 1.25rem;
           }
         }
         @media (min-width: 1024px) {
           .financing-modal-content {
             max-width: 750px;
-            padding: 2rem;
+            padding: 1.25rem;
           }
         }
         .financing-modal-section {
@@ -602,10 +691,12 @@ export default function AdminFinancing() {
         }
       `}</style>
       {selectedRequest && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-4 lg:p-6 bg-black/90 overflow-y-auto">
-          <div className="w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-amber-500/20 p-6 md:p-8 lg:p-10">
+        <div id="admin-financing-modal-overlay" className="admin-financing-modal-overlay fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-4 lg:p-6 bg-black/90 overflow-y-auto">
+          <div id="admin-financing-modal-detail" className="admin-financing-modal-detail w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-amber-500/20" style={{ padding: '1.25rem' }}>
             {/* Header */}
             <div
+              id="admin-modal-header"
+              className="admin-modal-header"
               style={{
                 display: "flex",
                 justifyContent: "space-between",
@@ -1029,13 +1120,22 @@ export default function AdminFinancing() {
                 <span
                   style={{
                     display: "inline-block",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "0.5rem",
-                    backgroundColor: statusColor[selectedRequest.status],
-                    color: "#000",
+                    padding: "0.35rem 0.75rem",
+                    borderRadius: "0.375rem",
+                    backgroundColor: selectedRequest.status === 'approved' ? 'rgba(34,197,94,0.12)'
+                      : selectedRequest.status === 'rejected' ? 'rgba(239,68,68,0.12)'
+                      : selectedRequest.status === 'paying' ? 'rgba(59,130,246,0.12)'
+                      : selectedRequest.status === 'completed' ? 'rgba(107,114,128,0.12)'
+                      : 'rgba(245,158,11,0.12)',
+                    color: statusColor[selectedRequest.status],
+                    border: `1px solid ${selectedRequest.status === 'approved' ? 'rgba(34,197,94,0.3)'
+                      : selectedRequest.status === 'rejected' ? 'rgba(239,68,68,0.3)'
+                      : selectedRequest.status === 'paying' ? 'rgba(59,130,246,0.3)'
+                      : selectedRequest.status === 'completed' ? 'rgba(107,114,128,0.3)'
+                      : 'rgba(245,158,11,0.3)'}`,
                     fontFamily: "Outfit",
-                    fontSize: "0.8rem",
-                    fontWeight: 700,
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
                   }}>
                   {statusLabel[selectedRequest.status]}
                 </span>
@@ -1060,7 +1160,12 @@ export default function AdminFinancing() {
                     handleStatusChange(selectedRequest.id, "approved");
                     setSelectedRequest(null);
                   }}
-                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded border border-emerald-500 text-emerald-500 bg-transparent hover:bg-emerald-500/10 transition-colors">
+                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded transition-all font-medium font-outfit"
+                  style={{
+                    border: "1px solid rgba(34,197,94,0.35)",
+                    color: "rgba(34,197,94,0.85)",
+                    background: "rgba(34,197,94,0.06)",
+                  }}>
                   Approve
                 </button>
                 <button
@@ -1068,7 +1173,12 @@ export default function AdminFinancing() {
                     handleStatusChange(selectedRequest.id, "rejected");
                     setSelectedRequest(null);
                   }}
-                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded border border-red-500 text-red-500 bg-transparent hover:bg-red-500/10 transition-colors">
+                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded transition-all font-medium font-outfit"
+                  style={{
+                    border: "1px solid rgba(239,68,68,0.3)",
+                    color: "rgba(239,68,68,0.8)",
+                    background: "rgba(239,68,68,0.05)",
+                  }}>
                   Reject
                 </button>
                 <button
@@ -1076,7 +1186,12 @@ export default function AdminFinancing() {
                     handleStatusChange(selectedRequest.id, "paying");
                     setSelectedRequest(null);
                   }}
-                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded border border-blue-500 text-blue-500 bg-transparent hover:bg-blue-500/10 transition-colors">
+                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded transition-all font-medium font-outfit"
+                  style={{
+                    border: "1px solid rgba(59,130,246,0.35)",
+                    color: "rgba(59,130,246,0.85)",
+                    background: "rgba(59,130,246,0.06)",
+                  }}>
                   Mark Paying
                 </button>
                 <button
@@ -1084,7 +1199,12 @@ export default function AdminFinancing() {
                     handleStatusChange(selectedRequest.id, "completed");
                     setSelectedRequest(null);
                   }}
-                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded border border-gray-600 text-gray-400 bg-transparent hover:bg-gray-600/10 transition-colors">
+                  className="py-1.5 px-2 text-xs md:py-2.5 md:px-4 md:text-sm min-h-[40px] md:min-h-[44px] rounded transition-all font-medium font-outfit"
+                  style={{
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    color: "rgba(255,255,255,0.5)",
+                    background: "rgba(255,255,255,0.04)",
+                  }}>
                   Complete
                 </button>
               </div>

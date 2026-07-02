@@ -6,11 +6,13 @@ import { sanitizeForFirestore } from '../../lib/sanitize'
 import carsCatalog from '../../data/cars-catalog.json'
 import type { Car } from '../../types'
 
+// Admin utility button that bulk-imports the static car catalog into Firestore, showing progress and status messages
 export default function SeedButton() {
   const [importing, setImporting] = useState(false)
   const [progress, setProgress] = useState(0)
   const [message, setMessage] = useState('')
 
+  // Writes each car from the local catalog JSON into the Firestore "cars" collection, sanitizing data first and overwriting existing entries
   const handleImport = async () => {
     if (importing) return
     if (!window.confirm(`Import ${carsCatalog.length} cars into Firestore? This will overwrite existing cars.`)) {

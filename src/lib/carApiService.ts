@@ -13,6 +13,7 @@ export interface CarAPIResult {
   combination_mpg: number
 }
 
+// Searches vehicle specs by make/model/year via the API Ninjas Cars REST API (proxied through /ninjas-api); returns [] on failure
 export async function searchCars(
   make: string,
   model: string,
@@ -42,6 +43,7 @@ export async function searchCars(
   }
 }
 
+// Fetches vehicle spec enrichment data for a single make/model pair from the API Ninjas Cars API, returning the first match or null
 export async function getCarByMakeModel(
   make: string,
   model: string,

@@ -16,6 +16,7 @@ const navItems = [
   { icon: Mail,            label: 'Messages',     to: '/admin/messages',    end: false },
 ]
 
+// Renders the admin dashboard shell - collapsible sidebar nav, responsive layout, and logout control wrapping page content
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const navigate = useNavigate()
   const location = useLocation()
@@ -57,6 +58,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return () => { document.body.style.overflow = 'unset' }
   }, [sidebarOpen, screenSize])
 
+  // Signs the admin out via Firebase auth and redirects to the login page
   const handleLogout = async () => {
     await logoutAdmin()
     navigate('/admin/login')
@@ -80,10 +82,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const isExpanded = sidebarOpen || screenSize === 'desktop'
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#0a0a0a' }}>
+    <div id="admin-layout-root" className="admin-layout-root" style={{ display: 'flex', height: '100vh', backgroundColor: '#0a0a0a' }}>
       {/* BACKDROP (for mobile/tablet when expanded) */}
       {sidebarOpen && screenSize !== 'desktop' && (
         <div
+          id="admin-sidebar-backdrop"
+          className="admin-sidebar-backdrop"
           style={{
             position: 'fixed',
             inset: 0,
@@ -97,6 +101,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* SIDEBAR - FIXED (overlays ON TOP of content, NOT pushing it) */}
       <aside
+        id="admin-sidebar-main"
+        className="admin-sidebar-main"
         style={{
           position: 'fixed',
           left: 0,
@@ -117,6 +123,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* HAMBURGER BUTTON (visible on mobile/tablet) */}
         {screenSize !== 'desktop' && (
           <button
+            id="admin-sidebar-toggle"
+            className="admin-sidebar-toggle"
             onClick={toggleSidebar}
             style={{
               width: '100%',
@@ -153,10 +161,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         )}
 
         {/* NAV LINKS */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+        <nav id="admin-sidebar-nav" className="admin-sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           {navItems.map(({ icon: Icon, label, to, end }) => (
             <NavLink
               key={to}
+              id={`admin-sidebar-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
+              className={`admin-sidebar-link admin-sidebar-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
               to={to}
               end={end}
               onClick={closeSidebar}
@@ -221,6 +231,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </a>
 
             <button
+              id="admin-sidebar-logout"
+              className="admin-sidebar-logout"
               onClick={handleLogout}
               style={{
                 display: 'flex',
@@ -249,6 +261,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* MAIN CONTENT - SCROLLABLE (margin-left FIXED - sidebar overlays ON TOP) */}
       <main
+        id="admin-main-content"
+        className="admin-main-content"
         style={{
           position: 'relative',
           marginLeft: collapsedWidth,

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { reseedCars } from '../lib/carsService'
 
+// Floating admin utility button that triggers reseeding of car data/images; auto-hides itself shortly after a successful run
 export default function SeedButton() {
   const [seeding, setSeeding] = useState(false)
   const [done, setDone] = useState(false)
@@ -8,6 +9,7 @@ export default function SeedButton() {
 
   if (!visible) return null
 
+  // Calls reseedCars() to refresh car records/images in Firestore, then hides the button after a short delay on success
   const handleSeed = async () => {
     setSeeding(true)
     try {

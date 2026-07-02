@@ -26,7 +26,7 @@ import AdminNewSale from './pages/admin/AdminNewSale'
 import AdminSaleDetail from './pages/admin/AdminSaleDetail'
 import AdminEditSale from './pages/admin/AdminEditSale'
 
-// Scroll to top en cada cambio de ruta
+// Resets the window scroll position to the top on every route change
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
@@ -35,6 +35,7 @@ function ScrollToTop() {
   return null
 }
 
+// Defines all app routes (public and admin) and wraps them in Framer Motion page-transition animations - admin routes animate with opacity only, public routes also animate on the y-axis
 function AnimatedRoutes() {
   const location = useLocation()
   const isAdminRoute = location.pathname.startsWith('/admin')
@@ -53,8 +54,8 @@ function AnimatedRoutes() {
           <Route path="/cars" element={<Cars />} />
           <Route path="/favourites" element={<Favourites />} />
           <Route path="/auto/:id" element={<CarDetail />} />
-          <Route path="/financiamiento" element={<Financing />} />
-          <Route path="/contacto" element={<Contact />} />
+          <Route path="/financing" element={<Financing />} />
+          <Route path="/contact" element={<Contact />} />
 
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
@@ -75,6 +76,7 @@ function AnimatedRoutes() {
   )
 }
 
+// Root app component - wraps the whole tree in AuthProvider (Firebase auth state) and BrowserRouter, then delegates layout decisions to RouteChecker
 export default function App() {
   return (
     <AuthProvider>
@@ -88,6 +90,7 @@ export default function App() {
   )
 }
 
+// Decides layout based on the current route - admin paths render routes alone (AdminLayout handles its own chrome), public paths get Navbar, Footer, and the SeedButton
 function RouteChecker() {
   const location = useLocation()
   const isAdminRoute = location.pathname.startsWith('/admin')

@@ -131,7 +131,7 @@ const suggestionQuestions = [
   'Show me unread messages',
 ]
 
-// AI Assistant chat interface
+// Admin AI Assistant chat page - lets the admin ask questions about business data; fetches Firestore stats for context and sends messages to the Claude AI backend
 export default function AdminAI() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputValue, setInputValue] = useState('')
@@ -139,6 +139,7 @@ export default function AdminAI() {
   const [isLoadingContext, setIsLoadingContext] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  // Logs message list changes for debugging and auto-scrolls chat to the latest message
   useEffect(() => {
     console.log('📊 Messages state updated:', messages.length, 'messages')
     messages.forEach((m, i) => {
@@ -147,11 +148,12 @@ export default function AdminAI() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Fills the chat input with a preset suggestion question when clicked
   const handleSuggestionClick = (question: string) => {
     setInputValue(question)
   }
 
-  // Send message to AI and get response
+  // Handles sending the user's chat message - builds business context from Firestore, posts message + context + history to the AI Assistant API, and appends the reply
   const handleSendMessage = async () => {
     if (!inputValue.trim() || loading) return
 
@@ -236,6 +238,7 @@ export default function AdminAI() {
     }
   }
 
+  // Submits the chat message when Enter is pressed without Shift
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
@@ -243,13 +246,14 @@ export default function AdminAI() {
     }
   }
 
+  // Clears the entire chat history after user confirmation
   const handleClearConversation = () => {
     if (window.confirm('Clear all messages? This cannot be undone.')) {
       setMessages([])
     }
   }
 
-  // Load saved messages from localStorage
+  // Loads previously saved chat messages from localStorage on mount
   useEffect(() => {
     const savedMessages = localStorage.getItem('aiAssistantMessages')
     if (savedMessages) {
@@ -267,7 +271,7 @@ export default function AdminAI() {
     setIsLoadingContext(false)
   }, [])
 
-  // Persist messages to localStorage
+  // Persists messages to localStorage whenever the chat history changes
   useEffect(() => {
     if (messages.length > 0) {
       localStorage.setItem('aiAssistantMessages', JSON.stringify(messages))
@@ -275,12 +279,35 @@ export default function AdminAI() {
   }, [messages])
 
   return (
-    <div style={{
+    <div id="admin-ai-main-container" className="admin-ai-main-container" style={{
       display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0px)',
-      backgroundColor: '#0f0f0f',
+      backgroundColor: '#0f0f0f', width: '100%', maxWidth: '100%',
+      boxSizing: 'border-box', overflow: 'hidden',
     }}>
+      <style>{`
+        .admin-ai-main-container { width: 100%; max-width: 100%; box-sizing: border-box; overflow: hidden; }
+        .admin-ai-input-wrapper { width: 100%; box-sizing: border-box; }
+        .admin-ai-suggestions {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+          width: 100%;
+          max-width: 600px;
+        }
+        @media (min-width: 640px) {
+          .admin-ai-suggestions { grid-template-columns: repeat(2, 1fr); }
+        }
+        .admin-ai-suggestion {
+          width: 100%;
+          text-align: left;
+          white-space: normal;
+          word-break: break-word;
+          padding: clamp(0.5rem, 2vw, 0.75rem) clamp(1rem, 3vw, 1.25rem) !important;
+          font-size: clamp(0.75rem, 2vw, 0.875rem) !important;
+        }
+      `}</style>
       {/* Header */}
-      <div style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div id="admin-ai-header" className="admin-ai-header" style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <h1 className="font-bebas" style={{ fontSize: '2rem', color: 'white', lineHeight: 1, marginBottom: '0.25rem' }}>
@@ -317,7 +344,7 @@ export default function AdminAI() {
       </div>
 
       {/* Chat Container */}
-      <div style={{
+      <div id="admin-ai-chat-wrapper" className="admin-ai-chat-wrapper" style={{
         flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column',
         gap: '1rem', padding: '1.5rem',
       }}>
@@ -350,12 +377,12 @@ export default function AdminAI() {
               }}>
                 Try asking:
               </p>
-              <div style={{
-                display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem', maxWidth: '600px',
-              }}>
-                {suggestionQuestions.map((question) => (
+              <div id="admin-ai-suggestions" className="admin-ai-suggestions" style={{ width: '100%', maxWidth: '600px' }}>
+                {suggestionQuestions.map((question, idx) => (
                   <button
                     key={question}
+                    id={`admin-ai-suggestion-${idx}`}
+                    className={`admin-ai-suggestion admin-ai-suggestion-${idx}`}
                     onClick={() => handleSuggestionClick(question)}
                     style={{
                       backgroundColor: '#1a1a1a', border: '1px solid rgba(245,158,11,0.2)',
@@ -380,8 +407,9 @@ export default function AdminAI() {
           </div>
         ) : (
           <>
-            {messages.map((msg) => (
-              <div key={msg.id || msg.content} style={{
+            <div id="admin-ai-messages-list" className="admin-ai-messages-list" style={{ display: 'contents' }}>
+            {messages.map((msg, idx) => (
+              <div key={msg.id || msg.content} id={`admin-ai-message-${idx}`} className={`admin-ai-message admin-ai-message-${msg.role}`} style={{
                 display: 'flex', justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
                 gap: '0.75rem',
               }}>
@@ -446,17 +474,20 @@ export default function AdminAI() {
               </div>
             )}
             <div ref={messagesEndRef} />
+            </div>
           </>
         )}
       </div>
 
       {/* Input Area */}
-      <div style={{
-        padding: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)',
-        backgroundColor: '#0f0f0f',
+      <div id="admin-ai-input-wrapper" className="admin-ai-input-wrapper" style={{
+        padding: 'clamp(0.75rem, 3vw, 1.5rem)', borderTop: '1px solid rgba(255,255,255,0.06)',
+        backgroundColor: '#0f0f0f', width: '100%', boxSizing: 'border-box',
       }}>
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 0.75rem)', width: '100%', boxSizing: 'border-box' }}>
           <input
+            id="admin-ai-input-field"
+            className="admin-ai-input-field"
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
@@ -464,10 +495,10 @@ export default function AdminAI() {
             placeholder="Ask me anything..."
             disabled={loading}
             style={{
-              flex: 1, backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '0.75rem', padding: '0.875rem 1.25rem',
+              flex: 1, minWidth: 0, backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem)',
               color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
-              outline: 'none', transition: 'all 0.2s',
+              outline: 'none', transition: 'all 0.2s', width: '100%', boxSizing: 'border-box',
               opacity: loading ? 0.6 : 1,
               cursor: loading ? 'not-allowed' : 'text',
             }}
@@ -481,10 +512,13 @@ export default function AdminAI() {
             }}
           />
           <button
+            id="admin-ai-send-button"
+            className="admin-ai-send-button"
             onClick={handleSendMessage}
             disabled={loading || !inputValue.trim()}
             style={{
-              padding: '0.875rem 1.25rem', borderRadius: '0.75rem',
+              padding: 'clamp(0.75rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem)',
+              borderRadius: '0.75rem', minWidth: '44px', flexShrink: 0,
               background: loading || !inputValue.trim()
                 ? 'rgba(245,158,11,0.3)'
                 : 'linear-gradient(135deg, #f59e0b, #d97706)',
@@ -492,7 +526,7 @@ export default function AdminAI() {
               fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
               border: 'none', cursor: loading || !inputValue.trim() ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', gap: '0.5rem',
-              transition: 'all 0.2s',
+              transition: 'all 0.2s', boxSizing: 'border-box',
             }}
             onMouseEnter={(e) => {
               if (!loading && inputValue.trim()) {

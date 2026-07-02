@@ -31,6 +31,7 @@ const empty: FormState = {
 
 const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
 
+// Reusable on/off switch control used for the Featured/On Sale toggles
 function Toggle({ value, onChange, label }: { value: boolean; onChange: () => void; label: string }) {
   return (
     <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
@@ -52,6 +53,7 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
   )
 }
 
+// Admin page for creating a new vehicle listing - supports manual entry or auto-fill via vehicle API search, then saves the record to Firestore
 export default function AdminAddCar() {
   const navigate = useNavigate()
   const [form, setForm] = useState<FormState>(empty)
@@ -65,6 +67,7 @@ export default function AdminAddCar() {
   const [showSuccess, setShowSuccess] = useState(false)
   const { toast, showToast, dismissToast } = useToast()
 
+  // Updates a single field in the vehicle form state
   const set = (field: keyof FormState, val: string | number | boolean) => {
     const value = typeof val === 'number' ? String(val) : val
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -93,6 +96,7 @@ export default function AdminAddCar() {
 
   const fp = (name: string) => ({ onFocus: () => setFocused(name), onBlur: () => setFocused(null) })
 
+  // Searches the external vehicle API by make/model/year to auto-fill car specs
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchMake.trim() || !searchModel.trim()) return
@@ -113,6 +117,7 @@ export default function AdminAddCar() {
     }
   }
 
+  // Applies a selected vehicle API search result to the form fields (brand, model, year, fuel, transmission, description)
   const handleSelectCar = (result: CarAPIResult) => {
     const fuelMap: Record<string, FormState['fuel']> = {
       gas: 'gasolina',
@@ -151,6 +156,7 @@ export default function AdminAddCar() {
     setTimeout(() => setShowSuccess(false), 4000)
   }
 
+  // Validates and saves the new vehicle form to the Firestore "cars" collection
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)

@@ -7,21 +7,24 @@ import Button from './ui/Button'
 const navLinks = [
   { label: 'Home', to: '/', id: 'nav-home' },
   { label: 'Cars', to: '/cars', id: 'nav-cars' },
-  { label: 'Financing', to: '/financiamiento', id: 'nav-financing' },
-  { label: 'Contact', to: '/contacto', id: 'nav-contact' },
+  { label: 'Financing', to: '/financing', id: 'nav-financing' },
+  { label: 'Contact', to: '/contact', id: 'nav-contact' },
 ]
 
+// Site-wide navigation header - shows nav links and favorites CTA, adds a blurred background on scroll, and collapses into a mobile menu on small screens
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
 
+  // Tracks page scroll position to toggle the navbar's background/blur styling
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Closes the mobile menu automatically whenever the route changes
   useEffect(() => {
     setMenuOpen(false)
   }, [location])

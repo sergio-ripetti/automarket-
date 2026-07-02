@@ -23,7 +23,7 @@ if (!anthropicKey) {
 
 const client = new Anthropic({ apiKey: anthropicKey });
 
-// Middleware: Validate API key
+// Express middleware - checks the x-api-key header against AI_ASSISTANT_API_KEY and rejects unauthorized requests with a 401
 const validateApiKey = (req, res, next) => {
   const key = req.headers['x-api-key'];
   console.log('🔑 API Key received:', key);
@@ -42,7 +42,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Main AI Assistant endpoint
+// POST /api/aiAssistant - takes a chat message plus business context/history from the client, builds a system prompt with live business data, and forwards the conversation to the Anthropic Claude API
 app.post('/api/aiAssistant', validateApiKey, async (req, res) => {
   try {
     const { message, businessContext, conversationHistory } = req.body;
@@ -79,7 +79,7 @@ app.post('/api/aiAssistant', validateApiKey, async (req, res) => {
       }
     }
 
-    systemPrompt += `\n\nResponde en español. Sé conciso y específico.`;
+    systemPrompt += `\n\nRespond in the same language the user is writing in. Be concise and specific.`;
 
     // Build messages array with conversation history
     let messages = [];

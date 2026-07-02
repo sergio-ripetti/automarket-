@@ -1,8 +1,8 @@
-// Default admin: admin@automarket.co.nz / AutoMarket2024!
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginAdmin } from '../../lib/authService'
 
+// Admin login page - renders the sign-in form and delegates credential verification to Firebase Authentication
 export default function AdminLogin() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -25,6 +25,7 @@ export default function AdminLogin() {
     textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px',
   }
 
+  // Handles admin login form submission - takes email/password, authenticates via Firebase, and redirects to the admin dashboard on success
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')

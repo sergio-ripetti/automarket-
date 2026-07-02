@@ -10,9 +10,11 @@ import { db } from "../lib/firebase"
 import { cars } from "../data/cars"
 import type { OfferForm } from "../types"
 
+// Formats a numeric price into NZD currency display format
 function formatPrice(price: number): string {
   return price.toLocaleString("en-NZ", { style: "currency", currency: "NZD", maximumFractionDigits: 0 })
 }
+// Formats a numeric odometer reading into a "X km" display string
 function formatKm(km: number): string {
   return km.toLocaleString("en-NZ") + " km"
 }
@@ -30,6 +32,7 @@ const iconWrap: React.CSSProperties = {
   flexShrink: 0,
 }
 
+// Renders a small gold-accented section title used to divide the car detail page
 const sectionHeader = (title: string) => (
   <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
     <div style={{ width: 3, height: 20, backgroundColor: "#f59e0b", borderRadius: 2 }} />
@@ -39,6 +42,7 @@ const sectionHeader = (title: string) => (
   </div>
 )
 
+// Displays full details for a single car (gallery, price, specs, description) and lets the user favourite it or submit an offer - looks up the car by route param id, reads/writes favourites to localStorage, and saves offers to Firestore
 export default function CarDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -79,6 +83,7 @@ export default function CarDetail() {
     )
   }
 
+  // Adds or removes the current car from the favourites list persisted in localStorage, then notifies other components via a custom event
   const toggleFavourite = () => {
     if (!car) return
     try {
@@ -92,6 +97,7 @@ export default function CarDetail() {
     } catch { /* silent */ }
   }
 
+  // Handles the "Make an Offer" form submission - takes offerForm state and car info, writes a new offer message document to Firestore, then shows a success toast and resets the form
   const handleOfferSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
@@ -364,7 +370,7 @@ export default function CarDetail() {
               </button>
 
               <Link
-                to={`/financiamiento?carId=${car.id}`}
+                to={`/financing?carId=${car.id}`}
                 onMouseEnter={() => setFinanceBtnHovered(true)}
                 onMouseLeave={() => setFinanceBtnHovered(false)}
                 style={{

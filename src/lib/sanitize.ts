@@ -1,3 +1,4 @@
+// Recursively strips undefined values (replacing with null) and normalizes NaN to 0 so nested objects/arrays are safe to write to Firestore
 export function sanitizeForFirestore(obj: unknown): unknown {
   if (obj === undefined || obj === null) return null
   if (typeof obj === 'number') return isNaN(obj) ? 0 : obj

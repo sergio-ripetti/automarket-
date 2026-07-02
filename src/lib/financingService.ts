@@ -40,12 +40,14 @@ export interface FinancingRequest {
 
 const COL = 'financing'
 
+// Fetches all financing applications from the Firestore 'financing' collection, newest first
 export async function getFinancingRequests(): Promise<FinancingRequest[]> {
   const q = query(collection(db, COL), orderBy('createdAt', 'desc'))
   const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as FinancingRequest))
 }
 
+// Updates the status field (pending/approved/rejected/paying/completed) of a financing request in Firestore
 export async function updateFinancingStatus(
   id: string,
   status: FinancingRequest['status'],
@@ -53,6 +55,7 @@ export async function updateFinancingStatus(
   await updateDoc(doc(db, COL, id), { status })
 }
 
+// Deletes a financing request document from Firestore by id
 export async function deleteFinancingRequest(id: string): Promise<void> {
   await deleteDoc(doc(db, COL, id))
 }

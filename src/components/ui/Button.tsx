@@ -1,4 +1,4 @@
-import { ReactNode, ButtonHTMLAttributes } from 'react'
+import type { ReactNode, ButtonHTMLAttributes } from 'react'
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
 type ButtonSize = 'sm' | 'md' | 'lg'
@@ -26,6 +26,7 @@ const sizes: Record<ButtonSize, string> = {
   lg: 'px-6 py-3 text-lg rounded-xl',
 }
 
+// Reusable button component supporting style variants, sizes, loading spinner, and optional icon
 export default function Button({
   variant = 'primary',
   size = 'md',

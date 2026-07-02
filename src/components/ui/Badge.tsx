@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 type BadgeVariant = 'default' | 'success' | 'danger' | 'warning' | 'info' | 'gold'
 
@@ -17,6 +17,7 @@ const variants: Record<BadgeVariant, string> = {
   gold: 'bg-amber-500/20 text-amber-500 border border-amber-500/30',
 }
 
+// Small pill-shaped label used to display status/tags (e.g. Sale, Featured) with semantic color variants
 export default function Badge({ children, variant = 'default', className = '' }: BadgeProps) {
   return (
     <span
@@ -33,6 +34,7 @@ export default function Badge({ children, variant = 'default', className = '' }:
   )
 }
 
+// Wraps multiple Badge elements in a flex container with consistent spacing
 export function BadgeGroup({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`flex flex-wrap gap-2 ${className}`}>{children}</div>
 }

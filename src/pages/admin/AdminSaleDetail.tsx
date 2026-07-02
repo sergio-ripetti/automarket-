@@ -7,15 +7,19 @@ import { generateInvoice } from '../../lib/invoiceService'
 import { showToast } from '../../lib/toast'
 import { db } from '../../lib/firebase'
 
+// Formats a number as NZD currency for display
 function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
+// Formats an ISO date string into a readable NZ date string
 function fmtDate(dateStr: string) {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+// Admin page showing full detail for a single sale - vehicle, buyer, payment plan, and installment schedule;
+// fetches the sale from Firestore by route param and lets staff mark payments paid/unpaid or download an invoice
 export default function AdminSaleDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -26,6 +30,7 @@ export default function AdminSaleDetail() {
   const [undoConfirmId, setUndoConfirmId] = useState<string | null>(null)
   const [paymentPage, setPaymentPage] = useState(0)
 
+  // Fetches the sale record from Firestore by id on mount (or when the id route param changes)
   useEffect(() => {
     const load = async () => {
       if (!id) return
@@ -65,6 +70,8 @@ export default function AdminSaleDetail() {
     )
   }
 
+  // Marks a payment installment as paid in Firestore, refetches the sale, and auto-completes the sale
+  // status once every installment has been paid
   const handleMarkPaid = async (paymentId: string) => {
     if (!id) return
     setMarkingPayment(paymentId)
@@ -90,6 +97,7 @@ export default function AdminSaleDetail() {
     }
   }
 
+  // Reverts a payment installment back to unpaid in Firestore and refetches the sale to sync local state
   const handleMarkUnpaid = async (paymentId: string) => {
     if (!id) return
     setUndoPaymentId(paymentId)
@@ -111,7 +119,11 @@ export default function AdminSaleDetail() {
   const totalPayments = sale.payments.length
 
   return (
-    <div>
+    <div
+      id="admin-sales-detail-wrapper"
+      className="admin-sales-detail-wrapper"
+      style={{ width: '100%', boxSizing: 'border-box', overflow: 'hidden', padding: '0' }}
+    >
       <style>{`
         .sale-detail-header {
           margin-bottom: 2rem;
@@ -124,34 +136,100 @@ export default function AdminSaleDetail() {
         }
         .sale-detail-grid {
           display: grid;
-          gap: clamp(1.5rem, 3vw, 2rem);
-          align-items: start;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
+          gap: clamp(1rem, 3vw, 1.5rem);
+          padding: 0;
+          grid-template-columns: 1fr;
         }
         @media (min-width: 1024px) {
           .sale-detail-grid {
-            grid-template-columns: 60% 1fr;
+            grid-template-columns: 1fr 1fr;
+            padding: 0;
           }
         }
-        @media (max-width: 1023px) {
-          .sale-detail-grid {
-            grid-template-columns: 1fr;
+        .admin-sales-detail-left-col {
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
+          padding: clamp(0.5rem, 2vw, 1rem);
+        }
+        .admin-sales-detail-right-col {
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
+          padding: clamp(0.5rem, 2vw, 1rem);
+        }
+        .admin-sales-payment-table-scroll {
+          width: 100%;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          border-radius: 0.5rem;
+        }
+        @media (min-width: 1024px) {
+          .admin-sales-payment-table-scroll {
+            overflow-x: visible;
+          }
+        }
+        .admin-sales-payment-table-scroll table {
+          min-width: 500px;
+          width: 100%;
+          border-collapse: collapse;
+        }
+        @media (max-width: 640px) {
+          .admin-sales-payment-table-scroll {
+            background: linear-gradient(to right, transparent 85%, rgba(0,0,0,0.3) 100%);
           }
         }
         .detail-header-actions {
           display: flex;
-          gap: clamp(0.5rem, 2vw, 0.75rem);
+          gap: clamp(0.5rem, 2vw, 1rem);
           flex-wrap: wrap;
+          width: 100%;
+          margin-top: clamp(1.5rem, 4vw, 2rem);
+          padding-top: clamp(1rem, 3vw, 1.5rem);
+          border-top: 1px solid rgba(255,255,255,0.1);
         }
-        .detail-header-actions button {
+        @media (min-width: 1024px) {
+          .admin-sales-detail-btn {
+            flex: 0 0 auto;
+          }
+        }
+        .admin-sales-detail-btn {
+          flex: 1 1 calc(50% - 0.5rem);
           min-height: 44px;
+          min-width: 0;
+          padding: clamp(0.75rem, 2vw, 1rem) clamp(0.5rem, 2vw, 1.25rem);
+          border: 1px solid rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.05);
+          color: #e5e7eb;
+          border-radius: 0.375rem;
+          font-size: clamp(0.75rem, 2vw, 1rem);
+          font-weight: 500;
+          font-family: 'Outfit', sans-serif;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          text-align: center;
+          overflow: hidden;
         }
-        @media (max-width: 767px) {
-          .detail-header-actions {
-            flex-direction: column;
+        @media (min-width: 1024px) {
+          .admin-sales-detail-btn {
+            white-space: nowrap;
           }
-          .detail-header-actions button {
-            width: 100%;
-          }
+        }
+        .admin-sales-detail-btn:hover {
+          border-color: rgba(245,158,11,0.5);
+          background: rgba(245,158,11,0.1);
+          color: #f59e0b;
+          box-shadow: 0 0 10px rgba(245,158,11,0.2);
         }
         .detail-section-grid-2col {
           display: grid;
@@ -200,7 +278,19 @@ export default function AdminSaleDetail() {
         }
       `}</style>
       {/* Header */}
-      <div className="sale-detail-header">
+      <div
+        id="admin-sales-detail-header"
+        className="admin-sales-detail-header sale-detail-header"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'clamp(1rem, 3vw, 1.5rem)',
+          marginBottom: 'clamp(1rem, 3vw, 1.5rem)',
+          padding: 'clamp(0.75rem, 3vw, 1.5rem)',
+          width: '100%',
+          boxSizing: 'border-box',
+        }}
+      >
         <button
           onClick={() => navigate('/admin/sales')}
           style={{
@@ -214,7 +304,7 @@ export default function AdminSaleDetail() {
           <ArrowLeft size={16} />
           Back to Sales
         </button>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'clamp(0.75rem, 2vw, 1rem)', width: '100%', boxSizing: 'border-box' }}>
           <div>
             <h1 className="font-bebas sale-detail-title">
               {sale.buyer.name}
@@ -231,31 +321,22 @@ export default function AdminSaleDetail() {
               </span>
             </p>
           </div>
-          <div className="detail-header-actions">
+          <div
+            id="admin-sales-detail-header-actions"
+            className="admin-sales-detail-header-actions detail-header-actions"
+          >
             <button
+              id="admin-sales-detail-btn-invoice"
+              className="admin-sales-detail-btn-invoice admin-sales-detail-btn"
               onClick={() => generateInvoice(sale)}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-                background: 'linear-gradient(135deg, #f59e0b, #d97706)',
-                color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
-                cursor: 'pointer', border: 'none', fontWeight: 600,
-              }}
             >
               <Download size={16} />
-              <span style={{ display: 'none' }} className="sm:inline">Download Invoice</span>
-              <span className="sm:hidden">Invoice</span>
+              Download Invoice
             </button>
             <button
+              id="admin-sales-detail-btn-edit"
+              className="admin-sales-detail-btn-edit admin-sales-detail-btn"
               onClick={() => navigate(`/admin/sales/edit/${id}`)}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-                backgroundColor: 'rgba(245,158,11,0.1)',
-                border: '1px solid rgba(245,158,11,0.3)',
-                color: '#f59e0b', fontFamily: 'Outfit', fontSize: '0.875rem',
-                cursor: 'pointer', fontWeight: 600,
-              }}
             >
               <Edit size={16} />
               Edit
@@ -265,16 +346,27 @@ export default function AdminSaleDetail() {
       </div>
 
       {/* Two Column Layout */}
-      <div className="sale-detail-grid">
+      <div
+        id="admin-sales-detail-grid"
+        className="admin-sales-detail-grid sale-detail-grid"
+      >
         {/* Left Column */}
-        <div>
+        <div
+          id="admin-sales-detail-left-col"
+          className="admin-sales-detail-left-col"
+          style={{  }}
+        >
           {/* Vehicle Card */}
-          <div style={{
+          <div
+            id="admin-sales-detail-vehicle"
+            className="admin-sales-detail-vehicle"
+            style={{
+            width: '100%', boxSizing: 'border-box', overflow: 'hidden',
             backgroundColor: '#111111', border: '1px solid rgba(245,158,11,0.1)',
-            borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: '1.5rem',
           }}>
             <img src={sale.carImages[0]} alt="" style={{
-              width: '100%', height: '180px', objectFit: 'cover',
+              width: '100%', maxWidth: '100%', height: 'auto', display: 'block',
               borderRadius: '0.75rem', marginBottom: '1rem',
             }} />
             <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '0.5rem' }}>
@@ -299,9 +391,12 @@ export default function AdminSaleDetail() {
 
           {/* Vehicle Extended Details */}
           {sale.vehicleInfo && (
-            <div style={{
+            <div
+              id="admin-sales-detail-vehicle-details"
+              className="admin-sales-detail-vehicle-details"
+              style={{
               backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
             }}>
               <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
                 Vehicle Details
@@ -345,9 +440,12 @@ export default function AdminSaleDetail() {
           )}
 
           {/* Buyer Info Card */}
-          <div style={{
+          <div
+            id="admin-sales-detail-buyer"
+            className="admin-sales-detail-buyer"
+            style={{
             backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
             <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
               Buyer Information
@@ -355,7 +453,7 @@ export default function AdminSaleDetail() {
             <div className="detail-section-grid-2col">
               {[
                 { label: 'Full Name', value: sale.buyer.name },
-                { label: 'RUT', value: sale.buyer.rut },
+                { label: 'ID Number', value: sale.buyer.idNumber },
                 { label: 'License', value: sale.buyer.licenseNumber },
                 { label: 'Email', value: sale.buyer.email },
                 { label: 'Phone', value: sale.buyer.phone },
@@ -373,9 +471,12 @@ export default function AdminSaleDetail() {
 
           {/* ORC Section */}
           {sale.orc && (sale.orc?.orcTotal > 0 || sale.orc?.orcIncluded) && (
-            <div style={{
+            <div
+              id="admin-sales-detail-orc"
+              className="admin-sales-detail-orc"
+              style={{
               backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
             }}>
               <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
                 On Road Costs (ORC)
@@ -406,9 +507,12 @@ export default function AdminSaleDetail() {
 
           {/* Accessories Section */}
           {sale.extraAccessories && sale.extraAccessories?.items?.length > 0 && (
-            <div style={{
+            <div
+              id="admin-sales-detail-accessories"
+              className="admin-sales-detail-accessories"
+              style={{
               backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
             }}>
               <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
                 Extra Accessories
@@ -428,9 +532,12 @@ export default function AdminSaleDetail() {
 
           {/* Financing Fees Section */}
           {sale.financingFees && (
-            <div style={{
+            <div
+              id="admin-sales-detail-financing-fees"
+              className="admin-sales-detail-financing-fees"
+              style={{
               backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
             }}>
               <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
                 Financing Fees
@@ -449,9 +556,12 @@ export default function AdminSaleDetail() {
 
           {/* Warranty & Insurance Section */}
           {(sale.warranty || sale.mechanicalInsurance) && (
-            <div style={{
+            <div
+              id="admin-sales-detail-warranty"
+              className="admin-sales-detail-warranty"
+              style={{
               backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
             }}>
               <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1rem' }}>
                 Warranty & Insurance
@@ -544,11 +654,18 @@ export default function AdminSaleDetail() {
         </div>
 
         {/* Right Column */}
-        <div>
+        <div
+          id="admin-sales-detail-right-col"
+          className="admin-sales-detail-right-col"
+          style={{ width: '100%', boxSizing: 'border-box' }}
+        >
           {/* Payment Summary Card */}
-          <div style={{
+          <div
+            id="admin-sales-detail-payment"
+            className="admin-sales-detail-payment"
+            style={{
             background: 'linear-gradient(135deg, #1a1a1a, #111111)', border: '1px solid rgba(245,158,11,0.15)',
-            borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
             <span style={{
               display: 'inline-block', padding: '0.375rem 0.75rem', borderRadius: '0.375rem',
@@ -633,16 +750,24 @@ export default function AdminSaleDetail() {
               .reduce((sum, p) => sum + p.amount, 0)
 
             return (
-              <div style={{
+              <div
+                id="admin-sales-detail-payment-schedule"
+                className="admin-sales-detail-payment-schedule"
+                style={{
+                width: '100%', boxSizing: 'border-box', overflow: 'hidden',
                 backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '1rem', padding: '1.5rem',
+                borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)',
               }}>
                 <div style={{ marginBottom: '1rem' }}>
                   <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '0.75rem' }}>
                     Payment Schedule
                   </h3>
-                  <div style={{
-                    height: '8px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden',
+                  <div
+                    id="admin-sales-payment-progress"
+                    style={{
+                    width: '100%', height: 'clamp(6px, 1.5vw, 10px)',
+                    backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '999px',
+                    overflow: 'hidden', marginBottom: 'clamp(0.75rem, 2vw, 1rem)',
                   }}>
                     <div style={{
                       height: '100%', backgroundColor: '#22c55e',
@@ -704,7 +829,10 @@ export default function AdminSaleDetail() {
                     }
                   }
                 `}</style>
-                <div className="payment-table-wrapper">
+                <div
+                  id="admin-sales-payment-table-scroll"
+                  className="admin-sales-payment-table-scroll payment-table-wrapper"
+                >
                   <table className="payment-table">
                     <thead>
                       <tr>

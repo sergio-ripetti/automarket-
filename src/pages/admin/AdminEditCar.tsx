@@ -33,6 +33,7 @@ interface FormState {
 const CHEVRON =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")";
 
+// Reusable on/off switch control used for the Featured/On Sale toggles
 function Toggle({
   value,
   onChange,
@@ -87,6 +88,7 @@ function Toggle({
   );
 }
 
+// Admin page for editing an existing vehicle listing - loads the car from Firestore by id, allows manual edits or API-based spec refresh, and supports save/delete
 export default function AdminEditCar() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -102,6 +104,7 @@ export default function AdminEditCar() {
   const [searching, setSearching] = useState(false);
   const { toast, showToast, dismissToast } = useToast();
 
+  // Loads the vehicle to edit from Firestore by id and populates the form
   useEffect(() => {
     const loadCar = async () => {
       if (!id) return;
@@ -150,6 +153,7 @@ export default function AdminEditCar() {
     );
   if (!form) return null;
 
+// Updates a single field in the vehicle edit form state
 const set = (field: keyof FormState, val: string | boolean) => {
   setForm((prev) => {
     if (!prev) return null;
@@ -191,6 +195,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
     marginBottom: "6px",
   };
 
+  // Searches the external vehicle API by make/model/year to refresh technical specs
   const handleSearchUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchMake.trim() || !searchModel.trim()) return;
@@ -211,6 +216,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
     }
   };
 
+  // Applies a selected vehicle API search result to update brand/model/year/fuel/transmission on the existing form
   const handleSelectCarForUpdate = (result: CarAPIResult) => {
     if (!form) return;
 
@@ -247,6 +253,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
     showToast('✓ Technical details updated from API', 'success');
   };
 
+  // Validates and saves the edited vehicle fields to Firestore
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id || !form) return;
@@ -292,6 +299,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
     }
   };
 
+  // Deletes the current vehicle from Firestore after user confirmation
   const handleDelete = async () => {
     if (!id || !window.confirm("Delete this vehicle? This cannot be undone."))
       return;

@@ -5,14 +5,17 @@ import { motion } from 'framer-motion'
 import CarCard from '../components/CarCard'
 import { cars } from '../data/cars'
 
+// Reads the list of favourited car ids from localStorage
 function getFavs(): string[] {
   try { return JSON.parse(localStorage.getItem('automarket_favourites') || '[]') } catch { return [] }
 }
 
+// Displays the user's saved/favourited cars - reads favourite ids from localStorage and cross-references them against the static car list, refreshing when favourites change elsewhere in the app
 export default function Favourites() {
   const [favIds, setFavIds] = useState<string[]>(getFavs)
 
   useEffect(() => {
+    // Re-reads favourites from localStorage whenever the "favourites-changed" custom event fires (e.g. after toggling a heart on another page)
     const handleChange = () => setFavIds(getFavs())
     window.addEventListener('favourites-changed', handleChange as EventListener)
     return () => window.removeEventListener('favourites-changed', handleChange as EventListener)

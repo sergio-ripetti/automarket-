@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface CardProps {
   children: ReactNode
@@ -7,6 +7,7 @@ interface CardProps {
   interactive?: boolean
 }
 
+// Base container component for card-style layouts, with optional hover and interactive (clickable) styling
 export function Card({ children, className = '', hoverable = false, interactive = false }: CardProps) {
   return (
     <div
@@ -27,6 +28,7 @@ interface CardHeaderProps {
   className?: string
 }
 
+// Top section of a Card, typically used for titles, separated by a bottom border
 export function CardHeader({ children, className = '' }: CardHeaderProps) {
   return (
     <div className={`px-6 py-4 border-b border-white/5 ${className}`}>
@@ -40,6 +42,7 @@ interface CardBodyProps {
   className?: string
 }
 
+// Main content section of a Card
 export function CardBody({ children, className = '' }: CardBodyProps) {
   return (
     <div className={`px-6 py-4 ${className}`}>
@@ -53,6 +56,7 @@ interface CardFooterProps {
   className?: string
 }
 
+// Bottom section of a Card, typically used for action buttons, separated by a top border
 export function CardFooter({ children, className = '' }: CardFooterProps) {
   return (
     <div className={`px-6 py-4 border-t border-white/5 flex gap-3 ${className}`}>

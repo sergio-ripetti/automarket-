@@ -6,6 +6,7 @@ interface AdminToastProps {
   onDismiss: () => void
 }
 
+// Displays a fixed-position success/error toast notification with a manual dismiss button
 export default function AdminToast({ message, type, onDismiss }: AdminToastProps) {
   const ok = type === 'success'
   return (

@@ -20,6 +20,7 @@ function formatPaymentSchedule(sale: Sale, maxRows: number = 6): Array<[string, 
   ])
 }
 
+// Builds a two-page PDF invoice (sale details, ORC, accessories, financing, payment schedule, consumer notice) from a Sale record and triggers a browser download via jsPDF
 export function generateInvoice(sale: Sale): void {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -299,7 +300,7 @@ export function generateInvoice(sale: Sale): void {
 
   const buyerData = [
     ['Full Name', sale.buyer.name],
-    ['RUT/ID', sale.buyer.rut],
+    ['ID Number', sale.buyer.idNumber],
     ['Driver License', sale.buyer.licenseNumber],
     ['Email', sale.buyer.email],
     ['Phone', sale.buyer.phone],

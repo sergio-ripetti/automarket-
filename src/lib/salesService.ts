@@ -7,7 +7,7 @@ import { sanitizeForFirestore } from './sanitize'
 
 export interface Buyer {
   name: string
-  rut: string
+  idNumber: string
   email: string
   phone: string
   address: string
@@ -123,12 +123,14 @@ export interface Sale {
 
 const COL = 'sales'
 
+// Fetches all vehicle sales from the Firestore 'sales' collection, newest first
 export async function getSales(): Promise<Sale[]> {
   const q = query(collection(db, COL), orderBy('createdAt', 'desc'))
   const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Sale))
 }
 
+// Fetches a single sale by document id from Firestore, returns null if it doesn't exist
 export async function getSaleById(id: string): Promise<Sale | null> {
   const docRef = doc(db, COL, id)
   const docSnap = await getDoc(docRef)
@@ -136,17 +138,20 @@ export async function getSaleById(id: string): Promise<Sale | null> {
   return { id: docSnap.id, ...docSnap.data() } as Sale
 }
 
+// Creates a new sale record in Firestore - sanitizes the data (strips undefined values) before writing and stamps a server-side createdAt
 export async function addSale(sale: Omit<Sale, 'id' | 'createdAt'>): Promise<string> {
   const sanitizedSale = sanitizeForFirestore(sale) as Record<string, unknown>
   const docRef = await addDoc(collection(db, COL), { ...sanitizedSale, createdAt: serverTimestamp() })
   return docRef.id
 }
 
+// Updates an existing sale document in Firestore with partial data, sanitizing values first to avoid undefined fields
 export async function updateSale(id: string, data: Partial<Sale>): Promise<void> {
   const sanitizedData = sanitizeForFirestore(data)
   await updateDoc(doc(db, COL, id), sanitizedData as Record<string, unknown>)
 }
 
+// Marks a specific payment in a sale's schedule as paid (sets paidDate to today) and persists the updated payments array to Firestore
 export async function markPaymentPaid(saleId: string, paymentId: string): Promise<void> {
   const sale = await getSaleById(saleId)
   if (!sale) throw new Error('Sale not found')
@@ -161,6 +166,7 @@ export async function markPaymentPaid(saleId: string, paymentId: string): Promis
   await updateSale(saleId, { payments: updatedPayments })
 }
 
+// Reverts a specific payment in a sale's schedule back to pending (clears paidDate) and reopens the sale if it was completed; persists to Firestore
 export async function markPaymentUnpaid(saleId: string, paymentId: string): Promise<void> {
   const sale = await getSaleById(saleId)
   if (!sale) throw new Error('Sale not found')
@@ -181,10 +187,12 @@ export async function markPaymentUnpaid(saleId: string, paymentId: string): Prom
   await updateSale(saleId, updateData)
 }
 
+// Deletes a sale document from Firestore by id
 export async function deleteSale(id: string): Promise<void> {
   await deleteDoc(doc(db, COL, id))
 }
 
+// Computes an amortized monthly payment schedule for a loan (financed amount, term, rate) starting from a given first payment date - pure calculation, no external I/O
 export function generatePaymentSchedule(
   financedAmount: number,
   termMonths: number,

@@ -4,8 +4,8 @@ import { MapPin, Phone, Mail, ExternalLink } from 'lucide-react'
 const footerLinks = [
   { label: 'Home', to: '/' },
   { label: 'Browse Cars', to: '/cars' },
-  { label: 'Financing', to: '/financiamiento' },
-  { label: 'Contact', to: '/contacto' },
+  { label: 'Financing', to: '/financing' },
+  { label: 'Contact', to: '/contact' },
 ]
 
 const socialLinks = [
@@ -13,6 +13,7 @@ const socialLinks = [
   { icon: ExternalLink, label: 'LinkedIn', href: '#' },
 ]
 
+// Renders the site-wide footer with brand info, quick links, and contact details
 export default function Footer() {
   return (
     <footer className="bg-black border-t border-amber-500/10 mt-20 lg:mt-32">

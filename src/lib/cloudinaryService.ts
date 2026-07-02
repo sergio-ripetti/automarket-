@@ -1,6 +1,7 @@
 const CLOUD_NAME = 'dlfgvbtzz'
 const UPLOAD_PRESET = 'automarket_docs'
 
+// Uploads a document file (e.g. ID, payslip) to Cloudinary under automarket/{folder} and returns its secure URL
 export async function uploadDocument(file: File, folder: string): Promise<string> {
   const formData = new FormData()
   formData.append('file', file)
@@ -20,6 +21,7 @@ export async function uploadDocument(file: File, folder: string): Promise<string
   return data.secure_url
 }
 
+// Uploads an image file to Cloudinary under automarket/{folder} and returns its secure URL
 export async function uploadImage(file: File, folder: string): Promise<string> {
   const formData = new FormData()
   formData.append('file', file)

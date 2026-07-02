@@ -8,6 +8,7 @@ import { uploadDocument } from '../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../lib/sanitize'
 import type { FinancingForm, FinancingDocument } from '../types'
 
+// Formats a numeric price into NZD currency display format
 function formatPrice(price: number): string {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
@@ -35,6 +36,7 @@ const errorStyle: React.CSSProperties = {
   color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem',
 }
 
+// Two-step financing page: step 1 is a loan calculator (down payment, term, monthly payment), step 2 is a full application form - uploads supporting documents to Cloudinary and saves the completed application to Firestore
 export default function Financing() {
   const [searchParams] = useSearchParams()
   const carId = searchParams.get('carId')
@@ -69,6 +71,7 @@ export default function Financing() {
     transition: 'border-color 0.2s',
   })
 
+  // Validates all required application fields (personal info, employment, consent checkbox) and sets error messages for any invalid fields
   const validate = (): boolean => {
     const e: FormErrors = {}
     if (!form.firstName.trim()) e.firstName = 'Required'
@@ -87,6 +90,7 @@ export default function Financing() {
     return Object.keys(e).length === 0
   }
 
+  // Handles supporting document selection/drop - uploads each selected file to Cloudinary, tracks per-file upload progress in state, and appends the resulting URLs to the financing form's documents list
   const handleFilesSelected = async (files: FileList) => {
     const newFiles = Array.from(files)
     const newUploading = new Map(uploadingFiles)
@@ -132,6 +136,7 @@ export default function Financing() {
     }
   }
 
+  // Updates the document-type classification (e.g. passport, payslip) for an already-uploaded document, matched by its URL
   const handleDocumentTypeChange = (url: string, type: FinancingDocument['type']) => {
     setForm((f) => ({
       ...f,
@@ -139,6 +144,7 @@ export default function Financing() {
     }))
   }
 
+  // Removes an uploaded document from the financing form's documents list by URL
   const handleRemoveDocument = (url: string) => {
     setForm((f) => ({
       ...f,
@@ -146,6 +152,7 @@ export default function Financing() {
     }))
   }
 
+  // Handles the financing application form submission - validates input, computes final loan figures, sanitizes the data, and saves it as a new "pending" financing document in Firestore
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return

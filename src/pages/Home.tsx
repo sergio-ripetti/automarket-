@@ -33,6 +33,7 @@ const steps = [
   },
 ]
 
+// Custom hook that animates a number counting up from 0 to a target value using requestAnimationFrame with an ease-out curve - only starts once `started` becomes true
 function useCountUp(end: number, duration: number = 2000, started: boolean = false): number {
   const [count, setCount] = useState(0)
   const frameRef = useRef<number>(0)
@@ -56,6 +57,7 @@ function useCountUp(end: number, duration: number = 2000, started: boolean = fal
   return count
 }
 
+// Renders the public landing page - hero banner, featured cars fetched via useCars, animated stats counters, and how-it-works steps
 export default function Home() {
   const { cars: allCars, loading: carsLoading, error: carsError } = useCars()
   const featuredCars = allCars.filter((c) => c.featured)
@@ -63,6 +65,7 @@ export default function Home() {
   const statsRef = useRef<HTMLDivElement>(null)
   const [statsStarted, setStatsStarted] = useState(false)
 
+  // Watches the stats section and triggers the count-up animation once it scrolls into view
   useEffect(() => {
     const el = statsRef.current
     if (!el) return
@@ -146,7 +149,7 @@ export default function Home() {
               Browse All Cars <ArrowRight size={16} />
             </Link>
             <Link
-              to="/financiamiento"
+              to="/financing"
               className="font-outfit font-medium text-sm text-white hover:text-amber-500 transition-colors"
               style={{
                 padding: '0.875rem 2rem', borderRadius: '0.5rem',

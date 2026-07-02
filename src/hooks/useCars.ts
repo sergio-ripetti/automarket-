@@ -8,6 +8,7 @@ interface UseCarsResult {
   error: string | null
 }
 
+// Fetches the car inventory from Firestore on mount and exposes cars, loading, and error state to consuming components
 export function useCars(): UseCarsResult {
   const [cars, setCars] = useState<Car[]>([])
   const [loading, setLoading] = useState(true)

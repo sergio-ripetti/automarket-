@@ -15,10 +15,12 @@ interface Stats {
   pendingFinancing: number
 }
 
+// Formats a numeric price as NZD currency
 function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
+// Formats a date value (plain string or Firestore Timestamp) into a readable NZ date
 function fmtDate(dateStr: string | { toDate: () => Date }) {
   if (!dateStr) return '—'
   if (typeof dateStr === 'string') {
@@ -41,12 +43,14 @@ const statCards = [
   { icon: CreditCard,  key: 'activeFinancing',   label: 'Active Financing',  money: false },
 ]
 
+// Admin dashboard overview page - fetches car/sales/financing/message stats from Firestore and displays summary cards, recent sales, and recent messages
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({ totalCars: 0, totalSales: 0, totalRevenue: 0, activeFinancing: 0, pendingFinancing: 0 })
   const [recentSales, setRecentSales] = useState<Sale[]>([])
   const [recentMessages, setRecentMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Fetches dashboard stats (cars, sales, pending financing, recent messages) from Firestore in parallel on mount
   useEffect(() => {
     const run = async () => {
       try {
@@ -81,7 +85,7 @@ export default function AdminDashboard() {
   const today = new Date().toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
-    <div>
+    <div id="admin-dashboard-main-container" className="admin-dashboard-main-container">
       <h1 className="font-bebas" style={{ fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', color: 'white', lineHeight: 1, marginBottom: '0.25rem', fontWeight: 600 }}>
         Dashboard
       </h1>
@@ -112,13 +116,13 @@ export default function AdminDashboard() {
           }
         }
       `}</style>
-      <div className="stats-grid">
-        {statCards.map(({ icon: Icon, key, label, money }) => {
+      <div id="admin-dashboard-stats-grid" className="admin-dashboard-stats-grid stats-grid">
+        {statCards.map(({ icon: Icon, key, label, money }, idx) => {
           const val = stats[key as keyof Stats]
           return (
-            <div key={key} style={{
+            <div key={key} id={`admin-dashboard-stat-card-${idx + 1}`} className={`admin-dashboard-stat-card admin-dashboard-stat-card-${key}`} style={{
               backgroundColor: '#1a1a1a', border: '1px solid rgba(245,158,11,0.1)',
-              borderRadius: 'clamp(0.75rem, 2vw, 1rem)', padding: 'clamp(0.875rem, 3vw, 1.5rem)',
+              borderRadius: 'clamp(0.75rem, 2vw, 1rem)', padding: 'clamp(0.25rem, 2vw, 1.5rem)',
               display: 'flex', alignItems: 'flex-start', gap: 'clamp(0.75rem, 2vw, 1.25rem)',
             }}>
               <div style={{
@@ -183,10 +187,10 @@ export default function AdminDashboard() {
       <h2 className="font-bebas" style={{ fontSize: 'clamp(1.1rem, 4vw, 1.5rem)', color: 'white', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: 600 }}>
         Recent Sales
       </h2>
-      <div className="table-wrapper">
+      <div id="admin-dashboard-recent-sales" className="admin-dashboard-recent-sales table-wrapper">
         <table className="recent-sales-table">
           <thead>
-            <tr>
+            <tr id="admin-dashboard-recent-sales-header" className="admin-dashboard-recent-sales-header">
               {['Car Title', 'Buyer', 'Sale Price', 'Type', 'Date'].map((h) => (
                 <th key={h}>{h}</th>
               ))}
@@ -199,8 +203,8 @@ export default function AdminDashboard() {
                   No sales recorded yet
                 </td>
               </tr>
-            ) : recentSales.map((sale) => (
-              <tr key={sale.id}>
+            ) : recentSales.map((sale, idx) => (
+              <tr key={sale.id} id={`admin-dashboard-recent-sales-row-${idx}`} className="admin-dashboard-recent-sales-row">
                 <td style={{ fontFamily: 'Outfit' }}>{sale.carTitle}</td>
                 <td style={{ fontFamily: 'Outfit' }}>{sale.buyer.name}</td>
                 <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#f59e0b', fontSize: '1rem' }}>{fmt(sale.paymentPlan.salePrice)}</td>
@@ -247,7 +251,7 @@ export default function AdminDashboard() {
           }
         }
       `}</style>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', flexWrap: 'wrap', gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
+      <div id="admin-dashboard-recent-messages-header" className="admin-dashboard-recent-messages-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', flexWrap: 'wrap', gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
         <h2 className="font-bebas recent-messages-title text-white" style={{ fontWeight: 600 }}>Recent Messages</h2>
         <Link to="/admin/messages" style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#f59e0b', textDecoration: 'none' }}>
           View All →
@@ -255,8 +259,8 @@ export default function AdminDashboard() {
       </div>
       {recentMessages.length === 0 ? (
         <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)', padding: 'clamp(1rem, 2vw, 1.5rem) 0' }}>No messages yet.</p>
-      ) : recentMessages.map((msg) => (
-        <div key={msg.id} className="message-item" style={{
+      ) : recentMessages.map((msg, idx) => (
+        <div key={msg.id} id={`admin-dashboard-recent-messages-item-${idx}`} className="admin-dashboard-recent-messages-item message-item" style={{
           borderColor: msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(245,158,11,0.15)',
         }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#f59e0b', flexShrink: 0, marginTop: '0.4rem' }} />
@@ -275,7 +279,9 @@ export default function AdminDashboard() {
         </div>
       ))}
 
-      <SeedButton />
+      <div id="admin-dashboard-import-button" className="admin-dashboard-import-button">
+        <SeedButton />
+      </div>
     </div>
   )
 }

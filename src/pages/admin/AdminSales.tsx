@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom'
 import { PlusCircle, Eye, Trash2, ShoppingBag } from 'lucide-react'
 import { getSales, deleteSale, type Sale } from '../../lib/salesService'
 import { showToast } from '../../lib/toast'
-import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
 
+// Formats a number as NZD currency for display
 function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
+// Formats an ISO date string into a readable NZ date string
 function fmtDate(dateStr: string) {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -17,12 +18,15 @@ function fmtDate(dateStr: string) {
 
 type FilterType = 'all' | 'cash' | 'financing' | 'mixed' | 'completed'
 
+// Admin page listing all recorded sales - lets staff filter by payment type/status, search by buyer/car,
+// and drill into or delete individual sales; data is loaded from and written back to Firestore
 export default function AdminSales() {
   const [sales, setSales] = useState<Sale[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<FilterType>('all')
   const [search, setSearch] = useState('')
 
+  // Fetches all sales from Firestore on mount and populates local state
   useEffect(() => {
     const load = async () => {
       try {
@@ -38,6 +42,7 @@ export default function AdminSales() {
     load()
   }, [])
 
+  // Applies the active payment-type/status filter and search query to the loaded sales list
   const filtered = useMemo(() => {
     return sales.filter((s) => {
       const matchFilter = filter === 'all'
@@ -50,7 +55,7 @@ export default function AdminSales() {
         ? true
         : s.buyer.name.toLowerCase().includes(search.toLowerCase())
           || s.carTitle.toLowerCase().includes(search.toLowerCase())
-          || s.buyer.rut.toLowerCase().includes(search.toLowerCase())
+          || s.buyer.idNumber.toLowerCase().includes(search.toLowerCase())
 
       return matchFilter && matchSearch
     })
@@ -63,6 +68,7 @@ export default function AdminSales() {
     activeFinancing: sales.filter((s) => s.status === 'active' && s.paymentPlan.type !== 'cash').length,
   }
 
+  // Deletes a sale from Firestore after user confirmation, then removes it from local state
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this sale?')) return
     try {
@@ -76,12 +82,8 @@ export default function AdminSales() {
   }
 
   return (
-    <div>
+    <div id="admin-sales-main-container" className="admin-sales-main-container">
       <style>{`
-        .sales-page-title {
-          font-size: clamp(1.25rem, 5vw, 2rem);
-          font-weight: 600;
-        }
         .sales-table-wrapper {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
@@ -113,51 +115,195 @@ export default function AdminSales() {
           padding: clamp(0.75rem, 2vw, 1.25rem);
           border-bottom: 1px solid rgba(255,255,255,0.05);
         }
+        .admin-sales-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 40vw, 200px), 1fr));
+          gap: clamp(1rem, 3vw, 1.5rem);
+          margin-bottom: clamp(1.5rem, 4vw, 2rem);
+        }
+        .admin-sales-stat-card {
+          border: 1px solid rgba(255,255,255,0.1);
+          background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+          border-radius: 0.5rem;
+          padding: clamp(0.75rem, 3vw, 1.5rem);
+          transition: all 0.3s ease;
+        }
+        .admin-sales-stat-card:hover {
+          border-color: rgba(245,158,11,0.3);
+          background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+          box-shadow: 0 4px 12px rgba(245,158,11,0.1);
+        }
+        .admin-sales-stat-label {
+          font-size: clamp(0.75rem, 2vw, 0.875rem);
+          color: #e5e7eb;
+          margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
+          font-family: 'Outfit', sans-serif;
+          text-transform: capitalize;
+          opacity: 0.7;
+        }
+        .admin-sales-stat-value {
+          font-size: clamp(1.5rem, 5vw, 2.25rem);
+          color: #f59e0b;
+          font-family: 'Bebas Neue', sans-serif;
+          letter-spacing: 0.05em;
+          line-height: 1;
+        }
+        .admin-sales-new-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: clamp(0.5rem, 1.5vw, 0.75rem);
+          padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem);
+          border: 1px solid #f59e0b;
+          background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.1) 100%);
+          color: #f59e0b;
+          font-size: clamp(0.875rem, 2vw, 1rem);
+          font-weight: 600;
+          font-family: 'Outfit', sans-serif;
+          border-radius: 0.375rem;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+          letter-spacing: 0.05em;
+          text-decoration: none;
+        }
+        .admin-sales-new-btn:hover {
+          background: linear-gradient(135deg, rgba(245,158,11,0.3) 0%, rgba(245,158,11,0.2) 100%);
+          color: #fcd34d;
+          box-shadow: 0 0 20px rgba(245,158,11,0.3);
+          transform: translateY(-2px);
+        }
+        .admin-sales-new-btn:active {
+          transform: translateY(0);
+          box-shadow: 0 0 10px rgba(245,158,11,0.2);
+        }
+        .admin-sales-filter-btn {
+          padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2.5vw, 1.5rem);
+          border: 1px solid rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.05);
+          color: #e5e7eb;
+          border-radius: 0.375rem;
+          font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+          font-weight: 500;
+          font-family: 'Outfit', sans-serif;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          white-space: nowrap;
+        }
+        .admin-sales-filter-btn:hover {
+          border-color: rgba(245,158,11,0.5);
+          background: rgba(245,158,11,0.1);
+          color: #f59e0b;
+        }
+        .admin-sales-filter-btn.active {
+          border-color: #f59e0b;
+          background: rgba(245,158,11,0.2);
+          color: #f59e0b;
+          box-shadow: 0 0 10px rgba(245,158,11,0.2);
+        }
+        .admin-sales-search-input {
+          width: 100%;
+          padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2vw, 1.25rem);
+          border: 1px solid rgba(255,255,255,0.1);
+          background: rgba(255,255,255,0.05);
+          color: #ffffff;
+          border-radius: 0.375rem;
+          font-size: clamp(0.875rem, 2vw, 1rem);
+          font-family: 'Outfit', sans-serif;
+          transition: all 0.3s ease;
+          outline: none;
+          box-sizing: border-box;
+        }
+        .admin-sales-search-input::placeholder {
+          color: rgba(229,231,235,0.5);
+        }
+        .admin-sales-search-input:focus {
+          border-color: rgba(245,158,11,0.5);
+          background: rgba(255,255,255,0.08);
+          box-shadow: 0 0 0 3px rgba(245,158,11,0.1);
+        }
       `}</style>
+
       {/* Header */}
-      <div style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
-        <div className="flex justify-between items-center flex-wrap gap-4">
-          <h1 className="font-bebas text-white sales-page-title">Sales Records</h1>
-          <Button
-            variant="primary"
-            size="md"
-            icon={<PlusCircle size={18} />}
-            className="flex items-center gap-2"
-            onClick={() => window.location.href = '/admin/sales/new'}
+      <div
+        id="admin-sales-header"
+        className="admin-sales-header"
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 'clamp(1rem, 3vw, 1.5rem)',
+          marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+          paddingBottom: 'clamp(1rem, 3vw, 1.5rem)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+        }}
+      >
+        <div>
+          <h1
+            id="admin-sales-title"
+            className="admin-sales-title font-bebas"
+            style={{
+              fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+              fontWeight: 700,
+              color: '#ffffff',
+              letterSpacing: '0.05em',
+              lineHeight: 1,
+              marginBottom: '0.35rem',
+            }}
           >
-            Record New Sale
-          </Button>
+            Sales Records
+          </h1>
+          <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: 'rgba(255,255,255,0.4)' }}>
+            {sales.length} sales recorded
+          </p>
         </div>
-        <p className="font-outfit" style={{ fontSize: 'clamp(0.8rem, 1.5vw, 0.875rem)', color: 'rgba(255,255,255,0.4)', marginTop: '0.5rem' }}>{sales.length} sales recorded</p>
+        <button
+          id="admin-sales-create-button"
+          className="admin-sales-create-button admin-sales-new-btn"
+          onClick={() => window.location.href = '/admin/sales/new'}
+        >
+          <PlusCircle size={18} />
+          Record New Sale
+        </button>
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
+      <div id="admin-sales-stats-grid" className="admin-sales-stats-grid">
         {[
-          { label: 'Total Revenue', value: fmt(stats.totalRevenue) },
-          { label: 'Cash Sales', value: stats.cashSales.toString() },
-          { label: 'Financed Sales', value: stats.financedSales.toString() },
-          { label: 'Active Financing', value: stats.activeFinancing.toString() },
-        ].map(({ label, value }) => (
-          <div key={label} className="bg-carbon border border-white/5 rounded-lg p-5 hover:border-amber-500/20 transition-colors">
-            <p className="text-xs text-white/50 mb-2 font-outfit">{label}</p>
-            <p className="font-bebas text-2xl text-amber-500 tracking-wider">{value}</p>
+          { id: 'admin-sales-total-revenue',    label: 'Total Revenue',    value: fmt(stats.totalRevenue) },
+          { id: 'admin-sales-cash-sales',        label: 'Cash Sales',       value: stats.cashSales.toString() },
+          { id: 'admin-sales-financed-sales',    label: 'Financed Sales',   value: stats.financedSales.toString() },
+          { id: 'admin-sales-active-financing',  label: 'Active Financing', value: stats.activeFinancing.toString() },
+        ].map(({ id, label, value }) => (
+          <div key={label} id={id} className="admin-sales-stat-card">
+            <p className="admin-sales-stat-label">{label}</p>
+            <p className="admin-sales-stat-value">{value}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
-      <div style={{ marginBottom: 'clamp(1.25rem, 3vw, 1.5rem)' }}>
-        <div className="flex flex-wrap gap-2" style={{ marginBottom: 'clamp(0.75rem, 2vw, 1rem)' }}>
+      <div
+        id="admin-sales-filters"
+        className="admin-sales-filters"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'clamp(1rem, 3vw, 1.5rem)',
+          marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
+        }}
+      >
+        <div
+          id="admin-sales-filter-buttons"
+          className="admin-sales-filter-buttons"
+          style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 1rem)', flexWrap: 'wrap' }}
+        >
           {(['all', 'cash', 'financing', 'mixed', 'completed'] as FilterType[]).map((type) => (
             <button
               key={type}
+              id={`admin-sales-filter-btn-${type}`}
+              className={`admin-sales-filter-btn${filter === type ? ' active' : ''}`}
               onClick={() => setFilter(type)}
-              className={`px-4 py-2 rounded-lg text-sm font-outfit font-medium transition-all ${
-                filter === type
-                  ? 'border-2 border-amber-500 bg-amber-500/10 text-amber-500'
-                  : 'border-2 border-white/10 bg-transparent text-white/50 hover:border-white/20'
-              }`}
             >
               {type === 'all' ? 'All' : type.charAt(0).toUpperCase() + type.slice(1)}
             </button>
@@ -165,19 +311,20 @@ export default function AdminSales() {
         </div>
 
         <input
+          id="admin-sales-search-bar"
+          className="admin-sales-search-input"
           type="text"
-          placeholder="Search by buyer, car, or RUT..."
+          placeholder="Search by buyer, car, or ID number..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full px-4 py-2 rounded-lg bg-dark border border-white/10 text-white font-outfit text-sm focus:outline-none focus:border-amber-500/50 transition-colors"
         />
       </div>
 
       {/* Sales Table */}
-      <div className="sales-table-wrapper">
-        <table className="sales-table">
+      <div id="admin-sales-table-wrapper" className="admin-sales-table-wrapper sales-table-wrapper">
+        <table id="admin-sales-table" className="admin-sales-table sales-table">
           <thead>
-            <tr>
+            <tr id="admin-sales-table-header" className="admin-sales-table-header">
               {['Car', 'Buyer Name', 'Sale Price', 'Type', 'Date', 'Status', 'Actions'].map((h) => (
                 <th key={h}>{h}</th>
               ))}
@@ -198,8 +345,8 @@ export default function AdminSales() {
                 </td>
               </tr>
             ) : (
-              filtered.map((sale) => (
-                <tr key={sale.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              filtered.map((sale, idx) => (
+                <tr key={sale.id} id={`admin-sales-table-row-${idx}`} className="admin-sales-table-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   {/* Car */}
                   <td>
                     <div className="flex gap-3 items-center" style={{ minWidth: 0 }}>

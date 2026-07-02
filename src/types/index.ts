@@ -1,3 +1,4 @@
+// Represents a vehicle listing shown in the public catalog and managed via the admin dashboard (Firestore 'cars' collection)
 export interface Car {
   id: string
   title: string
@@ -17,6 +18,7 @@ export interface Car {
   color: string
 }
 
+// Holds the current search/filter criteria used by the public car listing UI (FilterBar component)
 export interface FilterState {
   search: string
   brand: string
@@ -28,12 +30,14 @@ export interface FilterState {
   fuel: string
 }
 
+// A single uploaded supporting document (e.g. ID, payslip) attached to a financing application, stored via Cloudinary
 export interface FinancingDocument {
   url: string
   type: 'passport_license' | 'visa_residency' | 'proof_of_address' | 'payslip' | 'bank_statement' | 'other'
   filename: string
 }
 
+// Shape of the customer-facing financing application form, submitted to Firestore via financingService
 export interface FinancingForm {
   firstName: string
   lastName: string
@@ -52,6 +56,7 @@ export interface FinancingForm {
   creditHistoryConsent: boolean
 }
 
+// Shape of the customer-facing "make an offer" form for a car listing, submitted as a message to Firestore
 export interface OfferForm {
   offerPrice: string
   firstName: string

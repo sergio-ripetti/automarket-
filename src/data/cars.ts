@@ -1,5 +1,6 @@
 import type { Car } from '../types'
 
+// Static sample car catalog used to seed the Firestore 'cars' collection when it's empty (see carsService.ts seedCars/reseedCars)
 export const cars: Car[] = [
   {
     id: '1',

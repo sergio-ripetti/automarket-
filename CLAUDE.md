@@ -4,21 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**AutoMarket** is an automotive marketplace with an integrated AI assistant for business analytics. It's a full-stack application featuring a public-facing customer portal and a comprehensive admin dashboard.
-
-The application is bilingual (Spanish/English) and includes real-time analytics, secure API authentication, persistent chat history, and Firebase/Firestore integration for data management.
+**AutoMarket** is an automotive marketplace with an integrated AI assistant for business analytics. It's a full-stack application featuring a public-facing customer portal and a comprehensive admin dashboard, with real-time analytics, secure API authentication, persistent chat history, and Firebase/Firestore integration for data management.
 
 ## Tech Stack & Build
 
 **Frontend:**
-- React 19 with TypeScript
-- Vite 8.0 (fast bundler with HMR)
-- Tailwind CSS 4.3 (custom color palette: gold, dark, carbon, bone)
-- Framer Motion 12 (page transitions & animations)
-- React Router 7 (client-side routing)
+- React with TypeScript
+- Vite (fast bundler with HMR)
+- Tailwind CSS (custom color palette: gold, dark, carbon, bone)
+- Framer Motion (page transitions & animations)
+- React Router (client-side routing)
 
 **Backend:**
-- Node.js / Express 5.2
+- Node.js / Express
 - Runs on port 3001 (proxied via Vite at `/api`)
 
 **Third-party APIs:**
@@ -196,7 +194,7 @@ All `/api/*` requests are validated against `AI_ASSISTANT_API_KEY` (server-side)
 - Uses Anthropic's `claude-opus-4-8` model
 - Accepts `message`, `businessContext`, and `conversationHistory`
 - System prompt includes business stats and recent sales data
-- Responds in Spanish
+- Responds in the same language the user is writing in (multi-language support)
 - Max tokens: 1024
 
 ## Important File Locations

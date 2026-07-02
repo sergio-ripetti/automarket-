@@ -6,13 +6,14 @@ import { uploadImage, uploadDocument } from '../../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../../lib/sanitize'
 import { showToast } from '../../lib/toast'
 
+// Formats a numeric price as NZD currency
 function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
 interface EditForm {
   buyerName: string
-  buyerRut: string
+  buyerIdNumber: string
   buyerLicense: string
   buyerEmail: string
   buyerPhone: string
@@ -26,6 +27,7 @@ interface EditForm {
   uploadedDocuments: string[]
 }
 
+// Admin page for editing an existing sale - loads sale data from Firestore, recalculates financing payments, and handles document uploads to Cloudinary
 export default function AdminEditSale() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -33,7 +35,7 @@ export default function AdminEditSale() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState<EditForm>({
-    buyerName: '', buyerRut: '', buyerLicense: '', buyerEmail: '', buyerPhone: '', buyerAddress: '',
+    buyerName: '', buyerIdNumber: '', buyerLicense: '', buyerEmail: '', buyerPhone: '', buyerAddress: '',
     saleDate: '', salePrice: 0, downPayment: 0, loanTerm: 24, notes: '',
     uploadingFiles: new Map(), uploadedDocuments: [],
   })
@@ -45,6 +47,7 @@ export default function AdminEditSale() {
       : 0,
   }
 
+  // Loads the sale to edit from Firestore by id and populates the form
   useEffect(() => {
     if (!id) return
     const load = async () => {
@@ -54,7 +57,7 @@ export default function AdminEditSale() {
           setSale(data)
           setForm({
             buyerName: data.buyer.name,
-            buyerRut: data.buyer.rut,
+            buyerIdNumber: data.buyer.idNumber,
             buyerLicense: data.buyer.licenseNumber,
             buyerEmail: data.buyer.email,
             buyerPhone: data.buyer.phone,
@@ -78,6 +81,7 @@ export default function AdminEditSale() {
     load()
   }, [id])
 
+  // Uploads selected files (images or documents) to Cloudinary and tracks per-file progress in form state
   const handleFilesSelected = async (files: FileList) => {
     const newFiles = Array.from(files)
     const newUploading = new Map(form.uploadingFiles)
@@ -123,6 +127,7 @@ export default function AdminEditSale() {
     }
   }
 
+  // Removes an already-uploaded document/image URL from the form's document list
   const handleRemoveFile = (url: string) => {
     setForm((f) => ({
       ...f,
@@ -130,6 +135,7 @@ export default function AdminEditSale() {
     }))
   }
 
+  // Sanitizes and saves the edited sale (buyer info, payment plan, documents) to Firestore
   const handleSave = async () => {
     if (!id || !sale) return
     setSaving(true)
@@ -137,7 +143,7 @@ export default function AdminEditSale() {
       const updatedSale: Partial<Sale> = {
         buyer: {
           name: form.buyerName,
-          rut: form.buyerRut,
+          idNumber: form.buyerIdNumber,
           email: form.buyerEmail,
           phone: form.buyerPhone,
           address: form.buyerAddress,
@@ -196,6 +202,30 @@ export default function AdminEditSale() {
 
   return (
     <div>
+      <style>{`
+        .admin-edit-sale-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: clamp(1rem, 3vw, 2rem);
+          width: 100%;
+          box-sizing: border-box;
+        }
+        @media (min-width: 1024px) {
+          .admin-edit-sale-grid {
+            grid-template-columns: 60% 1fr;
+          }
+        }
+        .admin-edit-sale-grid-2col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: clamp(0.75rem, 2vw, 1rem);
+        }
+        @media (min-width: 640px) {
+          .admin-edit-sale-grid-2col {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+      `}</style>
       <button
         onClick={() => navigate(`/admin/sales/${id}`)}
         style={{
@@ -214,20 +244,20 @@ export default function AdminEditSale() {
         Edit Sale - {sale.buyer.name}
       </h1>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '60% 1fr', gap: '2rem' }}>
+      <div className="admin-edit-sale-grid">
         <div>
           {/* Buyer Information */}
           <div style={{
             backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '1rem', padding: '1.5rem', marginBottom: '1.5rem',
+            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
-            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1.5rem' }}>
+            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               Buyer Information
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="admin-edit-sale-grid-2col">
               {[
                 { label: 'Full Name', key: 'buyerName' },
-                { label: 'RUT/ID', key: 'buyerRut' },
+                { label: 'ID Number', key: 'buyerIdNumber' },
                 { label: 'Email', key: 'buyerEmail' },
                 { label: 'Phone', key: 'buyerPhone' },
                 { label: 'License Number', key: 'buyerLicense' },
@@ -257,12 +287,12 @@ export default function AdminEditSale() {
           {/* Payment Information */}
           <div style={{
             backgroundColor: '#111111', border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '1rem', padding: '1.5rem',
+            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
-            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '1.5rem' }}>
+            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               Payment Information
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="admin-edit-sale-grid-2col">
               <div>
                 <label style={{
                   display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
@@ -547,7 +577,8 @@ export default function AdminEditSale() {
           <div style={{
             background: 'linear-gradient(135deg, #1a1a1a, #111111)',
             border: '1px solid rgba(245,158,11,0.15)', borderRadius: '1rem',
-            padding: '1.5rem', position: 'sticky', top: '2rem',
+            padding: 'clamp(1rem, 3vw, 1.5rem)', position: 'sticky', top: '1rem',
+            width: '100%', boxSizing: 'border-box',
           }}>
             <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1.5rem' }}>
               Summary

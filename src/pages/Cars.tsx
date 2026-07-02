@@ -17,12 +17,14 @@ const emptyFilters: FilterState = {
   fuel: '',
 }
 
+// Displays the full car catalogue with search/filter controls - fetches cars via useCars hook and filters them client-side based on FilterState (search, brand, model, year, price, fuel)
 export default function Cars() {
   const [filters, setFilters] = useState<FilterState>(emptyFilters)
   const { cars: allCars, loading, error } = useCars()
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== '')
 
+  // Applies all active filter criteria to the full car list and returns only matching cars
   const filteredCars = allCars.filter((car) => {
     if (
       filters.search &&

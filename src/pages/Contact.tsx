@@ -34,6 +34,7 @@ const errorStyle: React.CSSProperties = {
   fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem',
 }
 
+// Renders the public contact page with a message form and business info - validates form fields client-side and saves submissions to Firestore
 export default function Contact() {
   const [form, setForm] = useState<ContactFormData>(emptyForm)
   const [errors, setErrors] = useState<ContactErrors>({})
@@ -60,6 +61,7 @@ export default function Contact() {
     cursor: 'pointer',
   })
 
+  // Validates required contact form fields (name, email format, phone, reason, message length) and sets error messages for any invalid fields
   const validate = (): boolean => {
     const e: ContactErrors = {}
     if (!form.name.trim()) e.name = 'Required'
@@ -73,6 +75,7 @@ export default function Contact() {
     return Object.keys(e).length === 0
   }
 
+  // Handles the contact form submission - validates input, sanitizes it, then sends it to Firestore as a new "contact" type message document
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return

@@ -6,12 +6,14 @@ interface FinancingSimulatorProps {
   onRequestFinancing?: () => void
 }
 
+// Formats a numeric price into NZD currency string for display
 function formatPrice(price: number): string {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
 const MONTHLY_RATE = 0.008
 
+// Interactive loan calculator - lets the user adjust down payment and term to preview monthly payment, total repayment, and interest for a car (or a default price if none given)
 export default function FinancingSimulator({ car, onRequestFinancing }: FinancingSimulatorProps) {
   const basePrice = car?.price ?? 25000
   const [downPaymentPct, setDownPaymentPct] = useState(20)

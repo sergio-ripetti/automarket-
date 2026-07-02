@@ -6,14 +6,15 @@ import { db } from '../../lib/firebase'
 import { useCars } from '../../hooks/useCars'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
-import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
 import type { Car } from '../../types'
 
+// Formats a numeric price as NZD currency
 function fmt(p: number) {
   return p.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
+// Formats mileage with thousands separators and a "km" suffix
 function formatKm(km: number): string {
   return km.toLocaleString('en-NZ') + ' km'
 }
@@ -26,6 +27,7 @@ const transmissionLabel: Record<string, string> = {
   manual: 'Manual', automatico: 'Automatic',
 }
 
+// Admin vehicle inventory page - lists cars from Firestore (via useCars hook) with filters, and lets the admin toggle featured status, edit, or delete vehicles
 export default function AdminCars() {
   const navigate = useNavigate()
   const { cars: firestoreCars, loading } = useCars()
@@ -44,6 +46,7 @@ export default function AdminCars() {
     .filter((c) => !featuredOnly || c.featured)
     .filter((c) => !saleOnly || c.isOnSale)
 
+  // Toggles a vehicle's "featured" flag in Firestore and updates local state
   const toggleFeatured = async (car: Car) => {
     try {
       await updateDoc(doc(db, 'cars', car.id), { featured: !car.featured })
@@ -53,6 +56,7 @@ export default function AdminCars() {
     }
   }
 
+  // Deletes a vehicle from Firestore after user confirmation
   const handleDelete = async (car: Car) => {
     if (!window.confirm(`Delete "${car.title}"? This cannot be undone.`)) return
     try {
@@ -65,7 +69,7 @@ export default function AdminCars() {
   }
 
   return (
-    <div>
+    <div id="admin-inventory-main-container" className="admin-inventory-main-container">
       <style>{`
         .cars-page-title {
           font-size: clamp(1.25rem, 5vw, 2rem);
@@ -73,38 +77,110 @@ export default function AdminCars() {
         }
       `}</style>
       {/* Header */}
-      <div className="flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
+      <div id="admin-inventory-header" className="admin-inventory-header flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
         <h1 className="font-bebas text-white cars-page-title">Vehicle Inventory</h1>
-        <Button
-          variant="primary"
-          size="md"
-          icon={<PlusCircle size={16} />}
+        <button
+          id="admin-inventory-add-button"
+          className="admin-inventory-add-button"
           onClick={() => navigate('/admin/cars/add')}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 'clamp(0.5rem, 1.5vw, 0.75rem)',
+            padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem)',
+            border: '1px solid #f59e0b',
+            background: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.1) 100%)',
+            color: '#f59e0b',
+            fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+            fontWeight: 600,
+            fontFamily: 'Outfit, sans-serif',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            whiteSpace: 'nowrap',
+            letterSpacing: '0.05em',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.3) 0%, rgba(245,158,11,0.2) 100%)'
+            e.currentTarget.style.color = '#fcd34d'
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(245,158,11,0.3)'
+            e.currentTarget.style.transform = 'translateY(-2px)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.1) 100%)'
+            e.currentTarget.style.color = '#f59e0b'
+            e.currentTarget.style.boxShadow = 'none'
+            e.currentTarget.style.transform = 'translateY(0)'
+          }}
         >
+          <PlusCircle size={16} />
           Add New Vehicle
-        </Button>
+        </button>
       </div>
 
       {/* Filters */}
-      <div className="flex gap-6 flex-wrap items-center" style={{ marginBottom: 'clamp(1.25rem, 3vw, 1.5rem)' }}>
-        <label className="flex items-center gap-2 cursor-pointer text-sm text-white/60 font-outfit">
-          <input
-            type="checkbox"
-            checked={featuredOnly}
-            onChange={() => setFeaturedOnly(!featuredOnly)}
-            className="w-4 h-4 rounded border border-white/20 bg-white/10 cursor-pointer accent-amber-500"
-          />
-          Featured Only
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer text-sm text-white/60 font-outfit">
-          <input
-            type="checkbox"
-            checked={saleOnly}
-            onChange={() => setSaleOnly(!saleOnly)}
-            className="w-4 h-4 rounded border border-white/20 bg-white/10 cursor-pointer accent-amber-500"
-          />
-          On Sale Only
-        </label>
+      <div id="admin-inventory-filters" className="admin-inventory-filters flex gap-6 flex-wrap items-center" style={{ marginBottom: 'clamp(1.25rem, 3vw, 1.5rem)' }}>
+        {[
+          { checked: featuredOnly, onChange: () => setFeaturedOnly(!featuredOnly), label: 'Featured Only' },
+          { checked: saleOnly, onChange: () => setSaleOnly(!saleOnly), label: 'On Sale Only' },
+        ].map(({ checked, onChange, label }) => (
+          <label
+            key={label}
+            onClick={onChange}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.625rem',
+              cursor: 'pointer',
+              padding: '0.5rem 0.875rem',
+              border: `1px solid ${checked ? 'rgba(245,158,11,0.5)' : 'rgba(255,255,255,0.1)'}`,
+              background: checked ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.03)',
+              borderRadius: '0.375rem',
+              transition: 'all 0.2s ease',
+              userSelect: 'none',
+            }}
+            onMouseEnter={(e) => {
+              if (!checked) {
+                e.currentTarget.style.borderColor = 'rgba(245,158,11,0.3)'
+                e.currentTarget.style.background = 'rgba(245,158,11,0.05)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!checked) {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'
+                e.currentTarget.style.background = 'rgba(255,255,255,0.03)'
+              }
+            }}
+          >
+            <div style={{
+              width: 16,
+              height: 16,
+              borderRadius: '0.25rem',
+              border: `1.5px solid ${checked ? '#f59e0b' : 'rgba(255,255,255,0.2)'}`,
+              background: checked ? '#f59e0b' : 'transparent',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease',
+              flexShrink: 0,
+            }}>
+              {checked && (
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                  <path d="M2 5L4 7L8 3" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </div>
+            <span style={{
+              fontFamily: 'Outfit, sans-serif',
+              fontSize: '0.875rem',
+              color: checked ? '#f59e0b' : 'rgba(255,255,255,0.6)',
+              fontWeight: checked ? 500 : 400,
+              transition: 'color 0.2s ease',
+            }}>
+              {label}
+            </span>
+          </label>
+        ))}
         <p className="text-xs text-white/35 ml-auto">
           {displayed.length} vehicle{displayed.length !== 1 ? 's' : ''}
         </p>
@@ -112,7 +188,7 @@ export default function AdminCars() {
 
       {/* Grid of Cards */}
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
+        <div id="admin-inventory-cards-grid" className="admin-inventory-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
           {[...Array(8)].map((_, i) => (
             <div key={i} className="bg-carbon border border-white/5 rounded-xl overflow-hidden animate-pulse">
               <div className="h-60 bg-slate-800" />
@@ -129,11 +205,12 @@ export default function AdminCars() {
           <p className="text-lg font-outfit">No vehicles found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
-          {displayed.map((car) => (
+        <div id="admin-inventory-cards-grid" className="admin-inventory-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
+          {displayed.map((car, idx) => (
             <div
               key={car.id}
-              className="group relative bg-carbon border border-white/5 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-black/40"
+              id={`admin-inventory-card-${idx}`}
+              className={`admin-inventory-card admin-inventory-card-${idx} group relative bg-carbon border border-white/5 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-black/40`}
             >
               {/* Image */}
               <div className="relative h-60 overflow-hidden bg-slate-900">
@@ -189,36 +266,115 @@ export default function AdminCars() {
                 </div>
 
                 {/* Featured Toggle */}
-                <label className="flex items-center gap-2 cursor-pointer mb-4 text-sm text-white/60 font-outfit">
-                  <input
-                    type="checkbox"
-                    checked={car.featured}
-                    onChange={() => toggleFeatured(car)}
-                    className="w-4 h-4 rounded border border-white/20 bg-white/10 cursor-pointer accent-amber-500"
-                  />
-                  Mark as Featured
+                <label
+                  onClick={() => toggleFeatured(car)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                    cursor: 'pointer',
+                    marginBottom: '1rem',
+                    userSelect: 'none',
+                  }}
+                >
+                  <div style={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: '0.25rem',
+                    border: `1.5px solid ${car.featured ? '#f59e0b' : 'rgba(255,255,255,0.2)'}`,
+                    background: car.featured ? '#f59e0b' : 'transparent',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease',
+                    flexShrink: 0,
+                  }}>
+                    {car.featured && (
+                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                        <path d="M2 5L4 7L8 3" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                  <span style={{
+                    fontFamily: 'Outfit, sans-serif',
+                    fontSize: '0.8rem',
+                    color: car.featured ? '#f59e0b' : 'rgba(255,255,255,0.5)',
+                    transition: 'color 0.2s ease',
+                  }}>
+                    Mark as Featured
+                  </span>
                 </label>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    icon={<Pencil size={14} />}
-                    fullWidth
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button
                     onClick={() => navigate(`/admin/cars/edit/${car.id}`)}
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      border: '1px solid rgba(255,255,255,0.15)',
+                      background: 'rgba(255,255,255,0.04)',
+                      color: 'rgba(255,255,255,0.6)',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 500,
+                      fontFamily: 'Outfit, sans-serif',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      minHeight: '36px',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(245,158,11,0.5)'
+                      e.currentTarget.style.background = 'rgba(245,158,11,0.08)'
+                      e.currentTarget.style.color = '#f59e0b'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                      e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+                    }}
                   >
+                    <Pencil size={13} />
                     Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    icon={<Trash2 size={14} />}
-                    fullWidth
+                  </button>
+                  <button
                     onClick={() => handleDelete(car)}
+                    style={{
+                      flex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.375rem',
+                      padding: '0.5rem 0.75rem',
+                      border: '1px solid rgba(239,68,68,0.25)',
+                      background: 'rgba(239,68,68,0.05)',
+                      color: 'rgba(239,68,68,0.7)',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.8rem',
+                      fontWeight: 500,
+                      fontFamily: 'Outfit, sans-serif',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      minHeight: '36px',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(239,68,68,0.6)'
+                      e.currentTarget.style.background = 'rgba(239,68,68,0.1)'
+                      e.currentTarget.style.color = '#ef4444'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(239,68,68,0.25)'
+                      e.currentTarget.style.background = 'rgba(239,68,68,0.05)'
+                      e.currentTarget.style.color = 'rgba(239,68,68,0.7)'
+                    }}
                   >
+                    <Trash2 size={13} />
                     Delete
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>

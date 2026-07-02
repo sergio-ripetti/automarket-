@@ -10,10 +10,12 @@ interface CarCardProps {
   car: Car
 }
 
+// Formats a numeric price into NZD currency string for display
 function formatPrice(price: number): string {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
+// Formats a numeric odometer value into a localized "km" string for display
 function formatKm(km: number): string {
   return km.toLocaleString('en-NZ') + ' km'
 }
@@ -37,6 +39,7 @@ const transmissionLabel: Record<Car['transmission'], string> = {
   automatico: 'Automatic',
 }
 
+// Reads the list of favourited car IDs from localStorage
 function getFavs(): string[] {
   try {
     return JSON.parse(localStorage.getItem('automarket_favourites') || '[]')
@@ -45,10 +48,12 @@ function getFavs(): string[] {
   }
 }
 
+// Displays a single car's summary (image, price, specs) as a clickable card that navigates to its detail page
 export default function CarCard({ car }: CarCardProps) {
   const navigate = useNavigate()
   const [isFav, setIsFav] = useState(() => getFavs().includes(car.id))
 
+  // Adds/removes this car from favourites in localStorage and notifies other components via a custom event
   const toggleFav = (e: React.MouseEvent) => {
     e.stopPropagation()
     const favs = getFavs()
@@ -85,7 +90,7 @@ export default function CarCard({ car }: CarCardProps) {
         {/* Badges */}
         <div className="absolute top-4 left-4 flex flex-wrap gap-2">
           {car.isOnSale && <Badge variant="danger">Sale</Badge>}
-          {car.featured && <Badge variant="amber-500">Featured</Badge>}
+          {car.featured && <Badge variant="gold">Featured</Badge>}
         </div>
 
         {/* Favorite Button */}

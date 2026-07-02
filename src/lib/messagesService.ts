@@ -24,20 +24,24 @@ export interface Message {
 
 const COL = 'messages'
 
+// Fetches all contact/financing/offer messages from the Firestore 'messages' collection, newest first
 export async function getMessages(): Promise<Message[]> {
   const q = query(collection(db, COL), orderBy('createdAt', 'desc'))
   const snap = await getDocs(q)
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Message))
 }
 
+// Marks a message as read in Firestore
 export async function markAsRead(id: string): Promise<void> {
   await updateDoc(doc(db, COL, id), { read: true })
 }
 
+// Marks a message as unread in Firestore
 export async function markAsUnread(id: string): Promise<void> {
   await updateDoc(doc(db, COL, id), { read: false })
 }
 
+// Deletes a message document from Firestore by id
 export async function deleteMessage(id: string): Promise<void> {
   await deleteDoc(doc(db, COL, id))
 }

@@ -8,6 +8,7 @@ import { sanitizeForFirestore } from '../../lib/sanitize'
 import { showToast } from '../../lib/toast'
 import type { Car } from '../../types'
 
+// Formats a number as NZD currency for display
 function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
@@ -23,7 +24,7 @@ interface FormData {
   hasMaintenanceHistory: boolean
   // Step 2
   buyerName: string
-  buyerRut: string
+  buyerIdNumber: string
   buyerLicense: string
   buyerEmail: string
   buyerPhone: string
@@ -66,6 +67,8 @@ interface FormData {
   uploadedDocuments: string[]
 }
 
+// Multi-step admin form for recording a new vehicle sale - collects vehicle, buyer, and payment details,
+// uploads supporting documents to Cloudinary, and saves the completed sale record to Firestore
 export default function AdminNewSale() {
   const navigate = useNavigate()
   const [step, setStep] = useState<1 | 2 | 3>(1)
@@ -78,7 +81,7 @@ export default function AdminNewSale() {
 
   const [form, setForm] = useState<FormData>({
     carId: '', vin: '', plate: '', isNZNew: true, originCountry: 'Japan', previousOwners: 0, hasMaintenanceHistory: false,
-    buyerName: '', buyerRut: '', buyerLicense: '', buyerEmail: '', buyerPhone: '', buyerAddress: '',
+    buyerName: '', buyerIdNumber: '', buyerLicense: '', buyerEmail: '', buyerPhone: '', buyerAddress: '',
     saleDate: new Date().toISOString().split('T')[0],
     paymentType: 'cash', salePrice: 0, downPayment: 0, loanTerm: 24,
     firstPaymentDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -95,6 +98,7 @@ export default function AdminNewSale() {
   const [financingFeesExpanded, setFinancingFeesExpanded] = useState(false)
   const [warrantyExpanded, setWarrantyExpanded] = useState(false)
 
+  // Fetches the full car inventory from Firestore on mount and pre-selects a car if one was already chosen
   useEffect(() => {
     getCars().then((data) => {
       setCars(data)
@@ -105,6 +109,7 @@ export default function AdminNewSale() {
     })
   }, [])
 
+  // Syncs the sale price field with the selected car's listed price whenever the selection changes
   useEffect(() => {
     if (selectedCar) {
       setForm((f) => ({ ...f, salePrice: selectedCar.price }))
@@ -118,6 +123,7 @@ export default function AdminNewSale() {
   }, [cars, searchInput])
 
   const monthlyRate = 0.008
+  // Calculates monthly payment, total payment, and total interest for the selected payment type (cash/financing/mixed)
   const calc = useMemo(() => {
     if (form.paymentType === 'cash') {
       return { monthlyPayment: 0, totalPayment: form.salePrice, totalInterest: 0, financedAmount: 0 }
@@ -131,10 +137,11 @@ export default function AdminNewSale() {
     return { monthlyPayment: Math.round(monthlyPayment * 100) / 100, totalPayment, totalInterest: Math.round(totalInterest * 100) / 100, financedAmount: financed }
   }, [form.paymentType, form.salePrice, form.downPayment, form.loanTerm])
 
+  // Validates whether the current step's required fields are filled before allowing navigation to the next step
   const canNext = () => {
     if (step === 1) return !!selectedCar && form.vin.trim() && form.plate.trim()
     if (step === 2) {
-      return form.buyerName && form.buyerRut && form.buyerLicense && form.buyerEmail && form.buyerPhone && form.buyerAddress && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.buyerEmail)
+      return form.buyerName && form.buyerIdNumber && form.buyerLicense && form.buyerEmail && form.buyerPhone && form.buyerAddress && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.buyerEmail)
     }
     return true
   }
@@ -146,6 +153,7 @@ export default function AdminNewSale() {
   const gst = Math.round(subtotal * 0.15)
   const totalCostToBuyer = subtotal + gst
 
+  // Uploads selected/dropped files (images or documents) to Cloudinary one by one, tracking per-file progress in form state
   const handleFilesSelected = async (files: FileList) => {
     const newFiles = Array.from(files)
     const newUploading = new Map(form.uploadingFiles)
@@ -191,6 +199,7 @@ export default function AdminNewSale() {
     }
   }
 
+  // Removes a previously uploaded document/image URL from the form's list of attached documents
   const handleRemoveFile = (url: string) => {
     setForm((f) => ({
       ...f,
@@ -198,13 +207,15 @@ export default function AdminNewSale() {
     }))
   }
 
+  // Assembles the full sale record (buyer, vehicle, payment plan, ORC, fees, warranty, documents) from form state,
+  // sanitizes it, and saves it to Firestore, then redirects to the new sale's detail page
   const handleSubmit = async () => {
     if (!selectedCar) return
     setLoading(true)
     try {
       const buyer: Buyer = {
         name: form.buyerName,
-        rut: form.buyerRut,
+        idNumber: form.buyerIdNumber,
         email: form.buyerEmail,
         phone: form.buyerPhone,
         address: form.buyerAddress,
@@ -330,7 +341,7 @@ export default function AdminNewSale() {
   return (
     <div>
       {/* Step indicator */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', marginBottom: '3rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'clamp(1rem, 4vw, 2rem)', marginBottom: 'clamp(1.5rem, 4vw, 3rem)', flexWrap: 'wrap' }}>
         {([1, 2, 3] as const).map((s) => (
           <div key={s}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
@@ -414,11 +425,11 @@ export default function AdminNewSale() {
             <>
               <div style={{
                 backgroundColor: '#111111', border: '1px solid rgba(245,158,11,0.15)',
-                borderRadius: '1rem', padding: '1.5rem', marginBottom: '2rem',
+                borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
               }}>
                 <img src={selectedCar.images[0]} alt="" style={{ width: '100%', height: '180px', borderRadius: '0.75rem', objectFit: 'cover', marginBottom: '1rem' }} />
                 <h3 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                   <div>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Year • KM</p>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
@@ -447,10 +458,10 @@ export default function AdminNewSale() {
 
               <div style={{
                 backgroundColor: '#111111', border: '1px solid rgba(245,158,11,0.15)',
-                borderRadius: '1rem', padding: '1.5rem', marginBottom: '2rem',
+                borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
               }}>
                 <h3 className="font-bebas" style={{ fontSize: '1.25rem', color: '#f59e0b', marginBottom: '1rem' }}>Vehicle Details *</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1.5rem' }}>
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
@@ -552,7 +563,7 @@ export default function AdminNewSale() {
                   </div>
                 )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1.5rem' }}>
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
@@ -646,12 +657,12 @@ export default function AdminNewSale() {
         <div>
           <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '1.5rem' }}>Buyer Information</h2>
           <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem',
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: '2rem',
           }}>
             {[
               { label: 'Full Name', key: 'buyerName', required: true },
               { label: 'Email', key: 'buyerEmail', type: 'email', required: true },
-              { label: 'RUT/ID', key: 'buyerRut', placeholder: '12.345.678-9', required: true },
+              { label: 'ID Number', key: 'buyerIdNumber', placeholder: 'e.g. AB123456', required: true },
               { label: 'Phone', key: 'buyerPhone', required: true },
               { label: 'Driver License', key: 'buyerLicense', required: true },
               { label: 'Address', key: 'buyerAddress', required: true },
@@ -744,7 +755,7 @@ export default function AdminNewSale() {
             }}>
               Payment Type *
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: 'clamp(0.5rem, 2vw, 1rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)', width: '100%', boxSizing: 'border-box' }}>
               {[
                 { type: 'cash' as const, icon: DollarSign, title: 'Cash', desc: 'Full payment upfront' },
                 { type: 'financing' as const, icon: CreditCard, title: 'Financing', desc: 'Monthly installments' },
@@ -831,7 +842,7 @@ export default function AdminNewSale() {
                 }}>
                   Loan Term (months) *
                 </label>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   {[12, 24, 36, 48, 60].map((m) => (
                     <button
                       key={m}
@@ -975,7 +986,7 @@ export default function AdminNewSale() {
                 </div>
 
                 {!form.orcIncluded && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
@@ -1278,7 +1289,7 @@ export default function AdminNewSale() {
               </button>
               {financingFeesExpanded && (
                 <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
@@ -1423,7 +1434,7 @@ export default function AdminNewSale() {
                     <span style={{ color: 'white', fontSize: '0.875rem' }}>Mechanical Warranty</span>
                   </label>
                   {form.warrantyIncluded && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginLeft: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
                       <div>
                         <label style={{
                           display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
@@ -1484,7 +1495,7 @@ export default function AdminNewSale() {
                     <span style={{ color: 'white', fontSize: '0.875rem' }}>Mechanical Insurance</span>
                   </label>
                   {form.mechInsuranceIncluded && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginLeft: '1.5rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
                       <div>
                         <label style={{
                           display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
@@ -1540,12 +1551,12 @@ export default function AdminNewSale() {
           {/* Grand Total Breakdown */}
           <div style={{
             backgroundColor: '#111111', border: '1px solid rgba(255,158,11,0.15)',
-            borderRadius: '1rem', padding: '1.5rem', marginBottom: '2rem',
+            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
           }}>
             <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               Grand Total Breakdown
             </h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem', fontSize: '0.875rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', fontSize: '0.875rem' }}>
               <div>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Vehicle Price</p>
                 <p style={{ fontFamily: 'Outfit', color: 'white' }}>{fmt(form.salePrice)}</p>
@@ -1571,7 +1582,7 @@ export default function AdminNewSale() {
             </div>
 
             <div style={{ paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Subtotal</p>
                   <p style={{ fontFamily: 'Outfit', color: 'white' }}>{fmt(subtotal)}</p>
@@ -1593,12 +1604,12 @@ export default function AdminNewSale() {
           {form.paymentType !== 'cash' && (
             <div style={{
               background: 'linear-gradient(135deg, #1a1a1a, #111111)', border: '1px solid rgba(245,158,11,0.2)',
-              borderRadius: '1rem', padding: '1.5rem', marginBottom: '2rem',
+              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
             }}>
               <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
                 Payment Summary
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Amount Financed</p>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: 'white' }}>{fmt(calc.financedAmount)}</p>

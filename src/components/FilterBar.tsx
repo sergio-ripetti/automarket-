@@ -21,14 +21,17 @@ const labelStyle: React.CSSProperties = {
   display: 'block',
 }
 
+// Renders search/filter controls (brand, model, year range, fuel) for the car listing and reports changes to the parent via onFilterChange
 export default function FilterBar({ cars, filters, onFilterChange, onClear }: FilterBarProps) {
   const [focused, setFocused] = useState<string | null>(null)
   const [clearHovered, setClearHovered] = useState(false)
 
+  // Derives the unique, sorted list of brands from the current car dataset
   const brands = useMemo(() => {
     return Array.from(new Set(cars.map((car) => car.brand))).sort()
   }, [cars])
 
+  // Derives the unique, sorted list of models available for the currently selected brand
   const models = useMemo(() => {
     if (!filters.brand) return []
     return Array.from(new Set(
@@ -38,6 +41,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
     )).sort()
   }, [cars, filters.brand])
 
+  // Updates a single filter field and propagates the new filter state to the parent; resets model when brand changes
   const handleChange = (field: keyof FilterState, value: string) => {
     if (field === 'brand') {
       onFilterChange({ ...filters, brand: value, model: '' })
@@ -48,6 +52,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== '')
 
+  // Builds inline styles for a text/number input, highlighting the border when the field is focused
   const inputBase = (name: string): React.CSSProperties => ({
     backgroundColor: '#0f0f0f',
     border: `1px solid ${focused === name ? '#f59e0b' : 'rgba(255,255,255,0.08)'}`,
@@ -62,6 +67,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
     transition: 'border-color 0.2s',
   })
 
+  // Builds inline styles for a select dropdown, extending inputBase with a chevron icon and disabled state
   const selectBase = (name: string, disabled = false): React.CSSProperties => ({
     ...inputBase(name),
     appearance: 'none',

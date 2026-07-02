@@ -4,17 +4,17 @@ import { Trash2, Mail, Eye, X } from 'lucide-react'
 import { getMessages, markAsRead, markAsUnread, deleteMessage } from '../../lib/messagesService'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
-import Button from '../../components/ui/Button'
-import Badge from '../../components/ui/Badge'
 import type { Message } from '../../lib/messagesService'
 
 type TypeFilter = 'all' | 'contact' | 'offer' | 'unread'
 
+// Converts a Firestore Timestamp into a readable NZ date string
 function fmtDate(ts: { toDate: () => Date } | undefined) {
   if (!ts || typeof ts.toDate !== 'function') return '—'
   return ts.toDate().toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
+// Formats a number as NZD currency for display
 function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
@@ -26,6 +26,8 @@ const tabs: { id: TypeFilter; label: string }[] = [
   { id: 'unread', label: 'Unread' },
 ]
 
+// Admin inbox page listing contact and offer messages - lets staff filter, read/unread toggle,
+// reply via email, and delete messages; data is loaded from and written back to Firestore
 export default function AdminMessages() {
   const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(true)
@@ -34,6 +36,7 @@ export default function AdminMessages() {
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
   const { toast, showToast, dismissToast } = useToast()
 
+  // Fetches all messages from Firestore on mount and populates local state
   useEffect(() => {
     const load = async () => {
       try {
@@ -61,6 +64,7 @@ export default function AdminMessages() {
 
   const unreadCount = messages.filter((m) => !m.read).length
 
+  // Toggles a message's read/unread status in Firestore and syncs local state
   const handleToggleRead = async (msg: Message) => {
     try {
       if (msg.read) {
@@ -75,6 +79,7 @@ export default function AdminMessages() {
     }
   }
 
+  // Deletes a message from Firestore after user confirmation, then removes it from local state
   const handleDelete = async (id: string) => {
     if (!window.confirm('Delete this message? This cannot be undone.')) return
     try {
@@ -87,8 +92,8 @@ export default function AdminMessages() {
   }
 
   return (
-    <div>
-      <div className="mb-8">
+    <div id="admin-messages-main-container" className="admin-messages-main-container">
+      <div id="admin-messages-header" className="admin-messages-header mb-8">
         <h1 className="font-bebas text-3xl text-white mb-1">Inbox</h1>
         <p className="text-sm text-white/40 font-outfit">
           {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
@@ -96,10 +101,11 @@ export default function AdminMessages() {
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-8">
+      <div id="admin-messages-tabs" className="admin-messages-tabs flex flex-wrap gap-2 mb-8">
         {tabs.map(({ id, label }) => (
           <button
             key={id}
+            id={`admin-messages-tab-${id}`}
             onClick={() => setActiveTab(id)}
             className={`px-5 py-2 rounded-full text-sm font-outfit font-medium transition-all ${
               activeTab === id
@@ -113,7 +119,7 @@ export default function AdminMessages() {
       </div>
 
       {/* Messages */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div id="admin-messages-list-wrapper" className="admin-messages-list-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {loading ? (
           [...Array(5)].map((_, i) => (
             <div key={i} className="animate-pulse" style={{ backgroundColor: '#111111', height: 100, borderRadius: '0.75rem' }} />
@@ -123,11 +129,13 @@ export default function AdminMessages() {
             <Mail size={40} style={{ opacity: 0.3, marginBottom: '1rem' }} />
             <p>No messages yet.</p>
           </div>
-        ) : filtered.map((msg) => {
+        ) : filtered.map((msg, idx) => {
           const isOffer = msg.type === 'offer'
           return (
             <div
               key={msg.id}
+              id={`admin-messages-list-item-${idx}`}
+              className={`admin-messages-list-item admin-messages-list-item-${idx}`}
               onClick={() => setExpandedId(expandedId === msg.id ? null : msg.id)}
               style={{
                 backgroundColor: '#111111',
@@ -198,50 +206,64 @@ export default function AdminMessages() {
                 <>
                   <style>{`
                     .message-actions {
-                      display: grid;
-                      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                      display: flex;
+                      flex-wrap: wrap;
                       gap: 0.5rem;
                       padding-top: 1rem;
                       border-top: 1px solid rgba(255,255,255,0.05);
+                      align-items: center;
                     }
                     .message-actions button {
+                      flex: 1 1 calc(50% - 0.25rem);
                       display: flex;
                       align-items: center;
                       justify-content: center;
                       gap: 0.4rem;
-                      padding: 0.5rem;
-                      border-radius: 0.5rem;
+                      padding: 0.625rem 1rem;
+                      border-radius: 0.375rem;
                       font-family: 'Outfit', sans-serif;
-                      font-size: 0.75rem;
+                      font-size: 0.8rem;
+                      font-weight: 500;
                       cursor: pointer;
                       white-space: nowrap;
-                      min-height: 36px;
+                      min-height: 40px;
+                      transition: all 0.2s ease;
+                      letter-spacing: 0.02em;
                     }
-                    @media (min-width: 768px) {
-                      .message-actions {
-                        grid-template-columns: auto;
-                        gap: 0.75rem;
-                      }
+                    @media (min-width: 640px) {
                       .message-actions button {
-                        padding: 0.5rem 1rem;
-                        font-size: 0.8rem;
+                        flex: 0 0 auto;
                       }
                     }
                     .message-actions .delete-btn {
-                      grid-column: -2 / -1;
                       margin-left: auto;
+                      flex: 0 0 auto;
                     }
                   `}</style>
-                  <div className="message-actions">
+                  <div id={`admin-messages-actions-${idx}`} className="admin-messages-actions message-actions">
                   <button
+                    id={`admin-messages-details-button-${idx}`}
+                    className="admin-messages-details-button"
                     onClick={(e) => { e.stopPropagation(); setSelectedMessage(msg) }}
                     style={{
-                      border: '1px solid rgba(100, 116, 139, 0.3)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'transparent',
+                      border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'rgba(255,255,255,0.04)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
+                      e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'
+                      e.currentTarget.style.color = 'white'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+                      e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'
+                      e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
                     }}
                   >
                     <Eye size={14} /> <span className="hidden sm:inline">Details</span>
                   </button>
                   <button
+                    id={`admin-messages-reply-button-${idx}`}
+                    className="admin-messages-reply-button"
                     onClick={(e) => {
                       e.stopPropagation()
                       const subject = isOffer ? `Re: Offer for ${(msg as any).carTitle}` : msg.reason
@@ -249,24 +271,57 @@ export default function AdminMessages() {
                       window.location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${body}`
                     }}
                     style={{
-                      border: '1px solid #f59e0b', color: '#f59e0b', backgroundColor: 'transparent',
+                      border: '1px solid rgba(245,158,11,0.5)', color: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.08)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = '#f59e0b'
+                      e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.15)'
+                      e.currentTarget.style.boxShadow = '0 0 10px rgba(245,158,11,0.2)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(245,158,11,0.5)'
+                      e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.08)'
+                      e.currentTarget.style.boxShadow = 'none'
                     }}
                   >
                     Reply
                   </button>
                   <button
+                    id={`admin-messages-read-button-${idx}`}
+                    className="admin-messages-read-button"
                     onClick={(e) => { e.stopPropagation(); handleToggleRead(msg) }}
                     style={{
-                      border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'transparent',
+                      border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', backgroundColor: 'rgba(255,255,255,0.04)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
+                      e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'
+                      e.currentTarget.style.color = 'white'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+                      e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'
+                      e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
                     }}
                   >
                     {msg.read ? 'Unread' : 'Read'}
                   </button>
                   <button
+                    id={`admin-messages-delete-button-${idx}`}
+                    className="admin-messages-delete-button delete-btn"
                     onClick={(e) => { e.stopPropagation(); handleDelete(msg.id) }}
-                    className="delete-btn"
                     style={{
-                      border: '1px solid rgba(220,38,38,0.4)', color: '#ef4444', backgroundColor: 'transparent',
+                      border: '1px solid rgba(239,68,68,0.25)', color: 'rgba(239,68,68,0.7)', backgroundColor: 'rgba(239,68,68,0.05)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(239,68,68,0.6)'
+                      e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.1)'
+                      e.currentTarget.style.color = '#ef4444'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'rgba(239,68,68,0.25)'
+                      e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.05)'
+                      e.currentTarget.style.color = 'rgba(239,68,68,0.7)'
                     }}
                   >
                     <Trash2 size={14} /> <span className="hidden sm:inline">Delete</span>
@@ -324,7 +379,10 @@ export default function AdminMessages() {
         .message-modal-body {
           flex: 1;
           overflow-y: auto;
-          padding: clamp(1rem, 2vw, 1.75rem);
+          overflow-x: hidden;
+          padding: clamp(1rem, 3vw, 1.25rem);
+          width: 100%;
+          box-sizing: border-box;
         }
         .message-modal-grid-2col {
           display: grid;
@@ -377,21 +435,23 @@ export default function AdminMessages() {
       <AnimatePresence>
         {selectedMessage && (
           <motion.div
+            id="admin-messages-modal-overlay"
+            className="admin-messages-modal-overlay message-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedMessage(null)}
-            className="message-modal"
           >
             <motion.div
+              id="admin-messages-modal-detail"
+              className="admin-messages-modal-detail message-modal-content"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              className="message-modal-content"
             >
               {/* Header */}
-              <div className="message-modal-header">
+              <div id="admin-modal-header" className="admin-modal-header message-modal-header">
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
                     display: 'inline-block', padding: '0.35rem 0.85rem', borderRadius: '0.375rem',
@@ -427,7 +487,7 @@ export default function AdminMessages() {
               </div>
 
               {/* Body */}
-              <div className="message-modal-body">
+              <div id="admin-modal-body" className="admin-modal-body message-modal-body">
                 {selectedMessage.type === 'offer' ? (
                   <>
                     {/* Offer Details */}
@@ -482,7 +542,11 @@ export default function AdminMessages() {
                     {selectedMessage.message && (
                       <div>
                         <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#f59e0b', marginBottom: '0.75rem' }}>Note from buyer</p>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', fontStyle: 'italic' }}>
+                        <p style={{
+                          fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', fontStyle: 'italic',
+                          whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word',
+                          overflowX: 'hidden', width: '100%', maxWidth: '100%',
+                        }}>
                           {selectedMessage.message}
                         </p>
                       </div>
@@ -517,7 +581,11 @@ export default function AdminMessages() {
                     {/* Message */}
                     <div>
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Message</p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
+                      <p style={{
+                        fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)',
+                        whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word',
+                        overflowX: 'hidden', width: '100%', maxWidth: '100%',
+                      }}>
                         {selectedMessage.message}
                       </p>
                     </div>
@@ -526,8 +594,10 @@ export default function AdminMessages() {
               </div>
 
               {/* Footer */}
-              <div className="message-modal-footer">
+              <div id="admin-modal-footer" className="admin-modal-footer message-modal-footer">
                 <button
+                  id="admin-messages-modal-reply-button"
+                  className="admin-messages-modal-reply-button"
                   onClick={() => {
                     const subject = selectedMessage.type === 'offer'
                       ? `Re: Offer for ${(selectedMessage as any).carTitle}`

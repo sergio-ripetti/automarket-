@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, ReactNode } from 'react'
+import type { InputHTMLAttributes, ReactNode } from 'react'
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string
@@ -8,6 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   fullWidth?: boolean
 }
 
+// Reusable text input with optional label, icon, error message, and helper text for form validation feedback
 export default function Input({
   label,
   error,
@@ -55,6 +56,7 @@ interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
   fullWidth?: boolean
 }
 
+// Reusable multi-line text input with optional label, error message, and helper text for form validation feedback
 export function TextArea({
   label,
   error,
