@@ -91,7 +91,7 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-white p-2 hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+          className="lg:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         >

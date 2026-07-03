@@ -982,7 +982,7 @@ export default function AdminSaleDetail() {
                       const pages = []
                       const maxButtons = 5
                       let start = Math.max(0, paymentPage - Math.floor(maxButtons / 2))
-                      let end = Math.min(totalPages, start + maxButtons)
+                      const end = Math.min(totalPages, start + maxButtons)
                       if (end - start < maxButtons) start = Math.max(0, end - maxButtons)
 
                       for (let i = start; i < end; i++) {

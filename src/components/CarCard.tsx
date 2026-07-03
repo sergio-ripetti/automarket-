@@ -111,7 +111,7 @@ export default function CarCard({ car }: CarCardProps) {
         {/* Favorite Button */}
         <button
           onClick={toggleFav}
-          className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+          className={`absolute top-2.5 right-2.5 w-11 h-11 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
             isFav
               ? 'bg-red-500/50 border-red-500/60 text-red-400'
               : 'bg-black/50 border-white/15 text-white/70 hover:bg-white/10'

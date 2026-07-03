@@ -110,7 +110,9 @@ async function getBusinessContext(): Promise<BusinessContext> {
       contactMessages: contactMessagesCount,
     }
   } catch (err) {
-    console.error('Error fetching business context:', err)
+    if (import.meta.env.DEV) {
+      console.error('Error fetching business context:', err)
+    }
     return {
       totalCars: 0, availableCars: 0, featuredCars: 0, carsOnSale: 0, recentCars: '[]',
       totalSales: 0, totalRevenue: 0, cashSales: 0, financedSales: 0, completedSales: 0, recentSalesJSON: '[]',
@@ -141,10 +143,12 @@ export default function AdminAI() {
 
   // Logs message list changes for debugging and auto-scrolls chat to the latest message
   useEffect(() => {
-    console.log('📊 Messages state updated:', messages.length, 'messages')
-    messages.forEach((m, i) => {
-      console.log(`  ${i}: ${m.role} - ${m.content.substring(0, 30)}...`)
-    })
+    if (import.meta.env.DEV) {
+      console.log('📊 Messages state updated:', messages.length, 'messages')
+      messages.forEach((m, i) => {
+        console.log(`  ${i}: ${m.role} - ${m.content.substring(0, 30)}...`)
+      })
+    }
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
@@ -178,18 +182,20 @@ export default function AdminAI() {
         content: m.content,
       }))
 
-      console.log('📤 Enviando datos al servidor:')
-      console.log('  - Mensaje:', userMessage.content.substring(0, 50))
-      console.log('  - Business Context:', JSON.stringify(context, null, 2))
-      if (context.recentSalesJSON) {
-        try {
-          const sales = JSON.parse(context.recentSalesJSON)
-          console.log('  - Ventas recientes:', sales.length, 'sales')
-          sales.forEach((s: any, i: number) => {
-            console.log(`    ${i + 1}. ${s.carBrand} ${s.carModel} - Comprador: ${s.buyerName}`)
-          })
-        } catch (e) {
-          console.log('  - Error al parsear recentSalesJSON')
+      if (import.meta.env.DEV) {
+        console.log('📤 Enviando datos al servidor:')
+        console.log('  - Mensaje:', userMessage.content.substring(0, 50))
+        console.log('  - Business Context:', JSON.stringify(context, null, 2))
+        if (context.recentSalesJSON) {
+          try {
+            const sales = JSON.parse(context.recentSalesJSON)
+            console.log('  - Ventas recientes:', sales.length, 'sales')
+            sales.forEach((s: any, i: number) => {
+              console.log(`    ${i + 1}. ${s.carBrand} ${s.carModel} - Comprador: ${s.buyerName}`)
+            })
+          } catch (e) {
+            console.log('  - Error al parsear recentSalesJSON')
+          }
         }
       }
 
@@ -210,7 +216,9 @@ export default function AdminAI() {
 
       if (!response.ok) {
         const error = await response.json()
-        console.error('API error:', error)
+        if (import.meta.env.DEV) {
+          console.error('API error:', error)
+        }
         throw new Error(error.error || 'Failed to get response from AI')
       }
 
@@ -222,10 +230,14 @@ export default function AdminAI() {
         id: Date.now() + '-assistant',
       }
 
-      console.log('✅ Assistant message added:', assistantMessage)
+      if (import.meta.env.DEV) {
+        console.log('✅ Assistant message added:', assistantMessage)
+      }
       setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
-      console.error('Error:', err)
+      if (import.meta.env.DEV) {
+        console.error('Error:', err)
+      }
       const errorMessage: ChatMessage = {
         role: 'assistant',
         content: err instanceof Error ? err.message : 'Sorry, I couldn\'t process your request. Please try again.',
@@ -265,7 +277,9 @@ export default function AdminAI() {
         }))
         setMessages(messagesWithDates)
       } catch (e) {
-        console.error('Error loading messages:', e)
+        if (import.meta.env.DEV) {
+          console.error('Error loading messages:', e)
+        }
       }
     }
     setIsLoadingContext(false)

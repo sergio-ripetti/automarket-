@@ -203,7 +203,7 @@ export function generatePaymentSchedule(
   const rate = monthlyRate / 100
   const monthlyPayment = financedAmount * (rate * (1 + rate) ** termMonths) / ((1 + rate) ** termMonths - 1)
 
-  let currentDate = new Date(firstPaymentDate)
+  const currentDate = new Date(firstPaymentDate)
 
   for (let i = 0; i < termMonths; i++) {
     const dueDate = new Date(currentDate)
