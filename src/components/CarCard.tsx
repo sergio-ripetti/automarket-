@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, Gauge, Fuel, Zap, ArrowRight, Heart } from 'lucide-react'
+import { Calendar, Gauge, Settings, Fuel, Zap, ArrowRight, Heart } from 'lucide-react'
 import { motion } from 'framer-motion'
 import type { Car } from '../types'
-import Badge from './ui/Badge'
-import Button from './ui/Button'
 
 interface CarCardProps {
   car: Car
@@ -28,10 +26,10 @@ const fuelLabel: Record<Car['fuel'], string> = {
 }
 
 const fuelIcon: Record<Car['fuel'], React.ReactNode> = {
-  gasolina: <Fuel size={14} />,
-  diesel: <Fuel size={14} />,
-  electrico: <Zap size={14} />,
-  hibrido: <Zap size={14} />,
+  gasolina: <Fuel size={13} />,
+  diesel: <Fuel size={13} />,
+  electrico: <Zap size={13} />,
+  hibrido: <Zap size={13} />,
 }
 
 const transmissionLabel: Record<Car['transmission'], string> = {
@@ -46,6 +44,12 @@ function getFavs(): string[] {
   } catch {
     return []
   }
+}
+
+// Shared inline padding for the two "Automatic / Petrol" pill tags (site-wide Tailwind px-*/py-* utilities are
+// currently overridden by the unlayered `* { padding: 0 }` reset in index.css, so padding is set inline here)
+const tagStyle: React.CSSProperties = {
+  padding: '2px 8px',
 }
 
 // Displays a single car's summary (image, price, specs) as a clickable card that navigates to its detail page
@@ -71,95 +75,154 @@ export default function CarCard({ car }: CarCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onClick={() => navigate(`/auto/${car.id}`)}
-      className="group relative bg-gray-900 border border-white/5 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-black/40 cursor-pointer"
+      className="group relative flex flex-col h-full bg-[#111111] border border-white/[0.08] rounded-xl overflow-hidden transition-all duration-300 hover:border-amber-500/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] cursor-pointer"
       role="article"
       aria-label={`${car.title} - ${formatPrice(car.price)}`}
     >
       {/* Image Container */}
-      <div className="relative h-60 overflow-hidden bg-slate-900">
+      <div className="relative h-[200px] overflow-hidden bg-neutral-900">
         <img
           src={car.images[0]}
           alt={car.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
 
-        {/* Image Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-md" />
-
         {/* Badges */}
-        <div className="absolute top-4 left-4 flex flex-wrap gap-2">
-          {car.isOnSale && <Badge variant="danger">Sale</Badge>}
-          {car.featured && <Badge variant="gold">Featured</Badge>}
+        <div className="absolute top-3 left-3 flex gap-1.5">
+          {car.isOnSale && (
+            <span
+              className="bg-red-500/90 text-white font-bebas rounded"
+              style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', padding: '3px 10px' }}
+            >
+              SALE
+            </span>
+          )}
+          {car.featured && (
+            <span
+              className="bg-amber-500/90 text-black font-bebas rounded"
+              style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', padding: '3px 10px' }}
+            >
+              FEATURED
+            </span>
+          )}
         </div>
 
         {/* Favorite Button */}
         <button
           onClick={toggleFav}
-          className={`absolute top-4 right-4 w-10 h-10 rounded-lg backdrop-blur-md border transition-all duration-200 flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
+          className={`absolute top-2.5 right-2.5 w-8 h-8 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 ${
             isFav
-              ? 'bg-red-500/30 border-red-500/50 text-red-400'
-              : 'bg-black/40 border-white/10 text-white/60 hover:bg-white/10 hover:border-white/20'
+              ? 'bg-red-500/50 border-red-500/60 text-red-400'
+              : 'bg-black/50 border-white/15 text-white/70 hover:bg-white/10'
           }`}
           aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
           aria-pressed={isFav}
         >
-          <Heart size={18} fill={isFav ? 'currentColor' : 'none'} />
+          <Heart size={16} fill={isFav ? 'currentColor' : 'none'} />
         </button>
       </div>
 
       {/* Content */}
-      <div className="p-5 lg:p-6">
+      <div className="flex flex-col flex-1" style={{ padding: '1rem 1.25rem' }}>
         {/* Title */}
-        <h3 className="font-bebas text-xl lg:text-2xl text-white tracking-wider mb-3 line-clamp-1">
+        <h3
+          className="font-bebas text-white"
+          style={{
+            fontSize: car.title.length > 20 ? 'clamp(0.875rem, 2vw, 1rem)' : 'clamp(1rem, 2.5vw, 1.25rem)',
+            letterSpacing: '0.05em',
+            lineHeight: 1.2,
+            marginBottom: '0.5rem',
+            minHeight: '2.4rem',
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}
+        >
           {car.title}
         </h3>
 
-        {/* Year & Mileage */}
-        <div className="flex gap-4 mb-4 text-xs lg:text-sm">
-          <div className="flex items-center gap-1.5 text-white/60">
-            <Calendar size={14} className="text-amber-500" aria-hidden="true" />
-            <span>{car.year}</span>
+        {/* Specs row */}
+        <div className="flex flex-wrap gap-3" style={{ marginBottom: '0.75rem' }}>
+          <div className="flex items-center gap-1">
+            <Calendar size={13} className="text-amber-500" aria-hidden="true" />
+            <span className="font-outfit text-white/55" style={{ fontSize: '0.75rem' }}>{car.year}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-white/60">
-            <Gauge size={14} className="text-amber-500" aria-hidden="true" />
-            <span>{formatKm(car.km)}</span>
+          <div className="flex items-center gap-1">
+            <Gauge size={13} className="text-amber-500" aria-hidden="true" />
+            <span className="font-outfit text-white/55" style={{ fontSize: '0.75rem' }}>{formatKm(car.km)}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Settings size={13} className="text-amber-500" aria-hidden="true" />
+            <span className="font-outfit text-white/55" style={{ fontSize: '0.75rem' }}>{transmissionLabel[car.transmission]}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-amber-500 inline-flex">{fuelIcon[car.fuel]}</span>
+            <span className="font-outfit text-white/55" style={{ fontSize: '0.75rem' }}>{fuelLabel[car.fuel]}</span>
           </div>
         </div>
 
-        {/* Specs */}
-        <div className="flex flex-wrap gap-2 mb-5">
-          <Badge variant="default" className="text-xs">
+        {/* Specs tags */}
+        <div className="inline-flex flex-wrap gap-1.5" style={{ marginBottom: '0.75rem' }}>
+          <span
+            className="inline-flex bg-white/[0.06] border border-white/10 text-white/50 font-outfit rounded"
+            style={{ ...tagStyle, fontSize: '0.7rem' }}
+          >
             {transmissionLabel[car.transmission]}
-          </Badge>
-          <Badge variant="default" className="flex items-center gap-1.5 text-xs">
-            <span className="text-amber-500">{fuelIcon[car.fuel]}</span>
+          </span>
+          <span
+            className="inline-flex bg-white/[0.06] border border-white/10 text-white/50 font-outfit rounded"
+            style={{ ...tagStyle, fontSize: '0.7rem' }}
+          >
             {fuelLabel[car.fuel]}
-          </Badge>
+          </span>
         </div>
 
         {/* Divider */}
-        <div className="h-px bg-gradient-to-r from-white/10 via-white/5 to-transparent mb-5" />
+        <div
+          className="bg-gradient-to-r from-white/[0.08] to-transparent"
+          style={{ height: '1px', margin: '0.75rem 0' }}
+        />
 
         {/* Price */}
-        <div className="flex items-baseline gap-3 mb-6">
-          {car.isOnSale && car.originalPrice && (
-            <span className="text-sm text-white/40 line-through">{formatPrice(car.originalPrice)}</span>
+        <div
+          className="flex flex-wrap items-baseline"
+          style={{ gap: '0.75rem', marginBottom: '1rem', minHeight: '2.5rem' }}
+        >
+          {car.isOnSale && car.originalPrice ? (
+            <>
+              <span className="text-white/35 line-through font-outfit" style={{ fontSize: '0.875rem', lineHeight: 1 }}>
+                {formatPrice(car.originalPrice)}
+              </span>
+              <span
+                className="font-bebas text-amber-500"
+                style={{ fontSize: 'clamp(1.5rem, 3vw, 1.875rem)', letterSpacing: '0.05em', lineHeight: 1 }}
+              >
+                {formatPrice(car.price)}
+              </span>
+            </>
+          ) : (
+            <span
+              className="font-bebas text-amber-500"
+              style={{ fontSize: 'clamp(1.5rem, 3vw, 1.875rem)', letterSpacing: '0.05em', lineHeight: 1 }}
+            >
+              {formatPrice(car.price)}
+            </span>
           )}
-          <span className="font-bebas text-2xl text-amber-500 tracking-wider">{formatPrice(car.price)}</span>
         </div>
 
-        {/* Button */}
-        <Button
-          variant="primary"
-          size="md"
-          fullWidth
-          icon={<ArrowRight size={16} />}
+        {/* Spacer - pushes the button to the bottom of the card regardless of content length above */}
+        <div className="flex-1" />
+
+        {/* View Details Button */}
+        <button
           aria-label={`View details for ${car.title}`}
-          className="group/btn"
+          className="w-full h-11 flex items-center justify-center gap-2 font-outfit text-black rounded-lg border-none cursor-pointer transition-all duration-200 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 hover:shadow-[0_4px_15px_rgba(245,158,11,0.4)] hover:-translate-y-px"
+          style={{ fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.08em' }}
         >
-          <span className="group-hover/btn:tracking-wider transition-all duration-sm">View Details</span>
-        </Button>
+          VIEW DETAILS <ArrowRight size={16} />
+        </button>
       </div>
     </motion.div>
   )

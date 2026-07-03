@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Heart } from 'lucide-react'
-import Button from './ui/Button'
 
 const navLinks = [
   { label: 'Home', to: '/', id: 'nav-home' },
@@ -78,15 +77,14 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden lg:block">
-          <Link to="/favourites" className="focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg">
-            <Button
-              variant="primary"
-              size="md"
-              icon={<Heart size={16} />}
-              aria-label="Go to favorites"
-            >
-              Favorites
-            </Button>
+          <Link
+            to="/favourites"
+            aria-label="Go to favorites"
+            className="inline-flex items-center gap-2 font-outfit text-black rounded-lg cursor-pointer transition-all duration-200 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 hover:shadow-[0_4px_15px_rgba(245,158,11,0.4)] hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            style={{ padding: '0.625rem 1.25rem', fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.04em' }}
+          >
+            <Heart size={16} />
+            Favorites
           </Link>
         </div>
 
@@ -136,16 +134,14 @@ export default function Navbar() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: navLinks.length * 0.08 }}
               >
-                <Link to="/favourites" className="block">
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    fullWidth
-                    icon={<Heart size={16} />}
-                    aria-label="Go to favorites"
-                  >
-                    My Favorites
-                  </Button>
+                <Link
+                  to="/favourites"
+                  aria-label="Go to favorites"
+                  className="w-full flex items-center justify-center gap-2 font-outfit text-black rounded-lg cursor-pointer transition-all duration-200 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 hover:shadow-[0_4px_15px_rgba(245,158,11,0.4)]"
+                  style={{ height: '48px', fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.04em' }}
+                >
+                  <Heart size={16} />
+                  My Favorites
                 </Link>
               </motion.div>
             </nav>

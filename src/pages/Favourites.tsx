@@ -3,16 +3,19 @@ import { Link } from 'react-router-dom'
 import { Heart, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import CarCard from '../components/CarCard'
-import { cars } from '../data/cars'
+import { getCars } from '../lib/carsService'
+import type { Car } from '../types'
 
 // Reads the list of favourited car ids from localStorage
 function getFavs(): string[] {
   try { return JSON.parse(localStorage.getItem('automarket_favourites') || '[]') } catch { return [] }
 }
 
-// Displays the user's saved/favourited cars - reads favourite ids from localStorage and cross-references them against the static car list, refreshing when favourites change elsewhere in the app
+// Displays the user's saved/favourited cars - reads favourite ids from localStorage and cross-references them against the live Firestore car list, refreshing when favourites change elsewhere in the app
 export default function Favourites() {
   const [favIds, setFavIds] = useState<string[]>(getFavs)
+  const [allCars, setAllCars] = useState<Car[]>([])
+  const [loadingCars, setLoadingCars] = useState(true)
 
   useEffect(() => {
     // Re-reads favourites from localStorage whenever the "favourites-changed" custom event fires (e.g. after toggling a heart on another page)
@@ -21,7 +24,22 @@ export default function Favourites() {
     return () => window.removeEventListener('favourites-changed', handleChange as EventListener)
   }, [])
 
-  const savedCars = cars.filter((c) => favIds.includes(c.id))
+  useEffect(() => {
+    // Fetches the full car inventory from Firestore on mount, so favourite ids (which reference real Firestore doc ids) can be resolved to actual car records
+    const load = async () => {
+      try {
+        const data = await getCars()
+        setAllCars(data)
+      } catch (err) {
+        console.error('Failed to load cars:', err)
+      } finally {
+        setLoadingCars(false)
+      }
+    }
+    load()
+  }, [])
+
+  const savedCars = allCars.filter((c) => favIds.includes(c.id))
 
   return (
     <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#0a0a0a', minHeight: '100vh' }}>
@@ -46,14 +64,26 @@ export default function Favourites() {
             Saved Vehicles
           </h1>
           <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', fontSize: '1rem' }}>
-            {savedCars.length > 0
-              ? `${savedCars.length} vehicle${savedCars.length !== 1 ? 's' : ''} saved`
-              : 'Your saved vehicles will appear here'}
+            {loadingCars
+              ? 'Loading your saved vehicles...'
+              : savedCars.length > 0
+                ? `${savedCars.length} vehicle${savedCars.length !== 1 ? 's' : ''} saved`
+                : 'Your saved vehicles will appear here'}
           </p>
         </div>
 
-        {/* ── Empty state ── */}
-        {savedCars.length === 0 ? (
+        {loadingCars ? (
+          /* ── Loading skeleton ── */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem' }}>
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                style={{ height: '380px', backgroundColor: '#111111', borderRadius: '0.75rem', animation: 'pulse 1.5s infinite' }}
+              />
+            ))}
+          </div>
+        ) : savedCars.length === 0 ? (
+          /* ── Empty state ── */
           <div style={{ textAlign: 'center', paddingTop: '5rem', paddingBottom: '5rem' }}>
             <div style={{
               width: 72, height: 72, borderRadius: '50%',
@@ -91,10 +121,11 @@ export default function Favourites() {
           </div>
         ) : (
           /* ── Cars grid ── */
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 items-stretch pb-8">
             {savedCars.map((car, i) => (
               <motion.div
                 key={car.id}
+                className="h-full"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06, duration: 0.4 }}

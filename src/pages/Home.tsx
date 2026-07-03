@@ -202,10 +202,11 @@ export default function Home() {
               {carsError} Please try again later.
             </p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
               {featuredCars.map((car, i) => (
                 <motion.div
                   key={car.id}
+                  className="h-full"
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}

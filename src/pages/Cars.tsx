@@ -75,7 +75,7 @@ export default function Cars() {
             {loading ? (
               <>
                 <div style={{ height: '2rem', width: '12rem', backgroundColor: '#111111', borderRadius: '0.5rem', marginBottom: '1.5rem' }} className="animate-pulse" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 pb-16">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
                   {[...Array(8)].map((_, i) => (
                     <div
                       key={i}
@@ -115,10 +115,11 @@ export default function Cars() {
                     <p className="font-outfit text-white/30 text-sm mt-1">Try adjusting your filters</p>
                   </motion.div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 pb-16">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-stretch pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
                     {displayed.map((car, i) => (
                       <motion.div
                         key={car.id}
+                        className="h-full"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.04, duration: 0.4 }}
