@@ -324,7 +324,7 @@ export default function AdminAI() {
       <div id="admin-ai-header" className="admin-ai-header" style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <h1 className="font-bebas" style={{ fontSize: '2rem', color: 'white', lineHeight: 1, marginBottom: '0.25rem' }}>
+            <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.25rem' }}>
               AI Assistant
             </h1>
             <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)' }}>
@@ -376,7 +376,7 @@ export default function AdminAI() {
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>
               <Bot size={48} style={{ color: '#2E86AB', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
-              <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '0.5rem' }}>
+              <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
                 Hello! I'm your AI Assistant
               </h2>
               <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', maxWidth: '400px' }}>
@@ -511,7 +511,7 @@ export default function AdminAI() {
             style={{
               flex: 1, minWidth: 0, backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem)',
-              color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
+              color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
               outline: 'none', transition: 'all 0.2s', width: '100%', boxSizing: 'border-box',
               opacity: loading ? 0.6 : 1,
               cursor: loading ? 'not-allowed' : 'text',

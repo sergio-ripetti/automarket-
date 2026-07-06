@@ -154,7 +154,7 @@ export const cars: Car[] = [
     featured: false,
     transmission: 'automatico',
     fuel: 'electrico',
-    color: '#ffffff',
+    color: "#0D1B2A",
     images: [
       'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&q=80',
       'https://images.unsplash.com/photo-1554744512-d6c603f27c54?w=800&q=80',

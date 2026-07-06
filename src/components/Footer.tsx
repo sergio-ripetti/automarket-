@@ -58,7 +58,7 @@ export default function Footer() {
 
           {/* Quick Links Column */}
           <div>
-            <h3 className="font-bebas text-lg tracking-wider text-white mb-6">Quick Links</h3>
+            <h3 className="font-bebas text-[#0D1B2A] mb-6">Quick Links</h3>
             <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.to}>
@@ -75,7 +75,7 @@ export default function Footer() {
 
           {/* Contact Column */}
           <div>
-            <h3 className="font-bebas text-lg tracking-wider text-white mb-6">Contact Info</h3>
+            <h3 className="font-bebas text-[#0D1B2A] mb-6">Contact Info</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-#2E86AB mt-0.5 shrink-0" aria-hidden="true" />

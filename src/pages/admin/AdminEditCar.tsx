@@ -168,7 +168,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
     border: "1px solid rgba(255,255,255,0.08)",
     borderRadius: "0.625rem",
     padding: "0.875rem 1rem",
-    color: "white",
+    color: "#0D1B2A",
     fontFamily: "Inter, sans-serif",
     fontSize: "0.875rem",
     outline: "none",
@@ -321,7 +321,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
         className="font-bebas"
         style={{
           fontSize: "2rem",
-          color: "white",
+          color: "#0D1B2A",
           lineHeight: 1,
           marginBottom: "2rem",
         }}>
@@ -418,7 +418,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                 height: '44px',
                 padding: '0 1.5rem',
                 background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #2E86AB, #256E8C)',
-                color: 'white',
+                color: "#0D1B2A",
                 fontFamily: 'Outfit',
                 fontSize: '0.875rem',
                 fontWeight: 600,
@@ -457,7 +457,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                   onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E4EAF0' }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                 >
-                  <div className="font-bebas" style={{ fontSize: '1rem', color: 'white', marginBottom: '0.25rem' }}>
+                  <div className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.25rem' }}>
                     {result.make} {result.model} {result.year}
                   </div>
                   <div style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>

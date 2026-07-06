@@ -16,7 +16,7 @@ export default function AdminLogin() {
     backgroundColor: '#EEF2F7',
     border: `1px solid ${focused === name ? '#2E86AB' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
-    color: 'white', fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
+    color: "#0D1B2A", fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
     outline: 'none', transition: 'border-color 0.2s',
   })
 
@@ -57,7 +57,7 @@ export default function AdminLogin() {
           </span>
         </div>
 
-        <h1 className="font-bebas" style={{ fontSize: '2.5rem', color: 'white', textAlign: 'center', lineHeight: 1, marginBottom: '0.5rem' }}>
+        <h1 className="font-bebas" style={{color: "#0D1B2A"', textAlign: 'center', lineHeight: 1, marginBottom: '0.5rem' }}>
           Admin Access
         </h1>
         <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: '2rem' }}>

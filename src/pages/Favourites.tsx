@@ -59,7 +59,7 @@ export default function Favourites() {
           </div>
           <h1
             className="font-bebas"
-            style={{ fontSize: '4rem', color: 'white', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}
+            style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}
           >
             Saved Vehicles
           </h1>
@@ -96,7 +96,7 @@ export default function Favourites() {
             </div>
             <p
               className="font-bebas"
-              style={{ fontSize: '2rem', color: 'white', letterSpacing: '0.05em', marginBottom: '0.5rem' }}
+              style={{color: "#0D1B2A"', letterSpacing: '0.05em', marginBottom: '0.5rem' }}
             >
               No Saved Vehicles Yet
             </p>

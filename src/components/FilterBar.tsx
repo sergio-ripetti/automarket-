@@ -58,7 +58,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
     border: `1px solid ${focused === name ? '#2E86AB' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem',
     padding: '0.75rem 1rem',
-    color: 'white',
+    color: "#0D1B2A",
     fontFamily: 'Inter, sans-serif',
     fontSize: '0.875rem',
     outline: 'none',

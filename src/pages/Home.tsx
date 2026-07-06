@@ -115,7 +115,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-bebas text-7xl sm:text-8xl lg:text-[7rem] text-white leading-none mb-6 tracking-wide"
+            className="font-bebas text-[#0D1B2A] leading-none mb-6 tracking-wide"
           >
             FIND YOUR{' '}
             <span className="text-#2E86AB">PERFECT</span>
@@ -126,7 +126,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-inter text-lg text-white/60 mb-10 max-w-lg mx-auto"
+            className="font-inter text-lg text-white/80 mb-10 max-w-lg mx-auto"
           >
             Buy, sell, and finance with complete confidence. Quality vehicles, transparent pricing, expert support.
           </motion.p>
@@ -150,7 +150,7 @@ export default function Home() {
             </Link>
             <Link
               to="/financing"
-              className="font-inter font-medium text-sm text-white hover:text-#2E86AB transition-colors"
+              className="font-inter font-medium text-sm text-white/80 hover:text-white transition-colors"
               style={{
                 padding: '0.875rem 2rem', borderRadius: '0.5rem',
                 letterSpacing: '0.04em', border: '1px solid rgba(255,255,255,0.2)',
@@ -181,10 +181,10 @@ export default function Home() {
             transition={{ duration: 0.55 }}
           >
             <p className="font-inter text-#2E86AB uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
-            <h2 className="font-bebas text-5xl text-white tracking-wide leading-none">
+            <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
               Featured <span className="text-#2E86AB">Vehicles</span>
             </h2>
-            <p className="font-inter text-white/40 text-sm mt-2">Hand-picked by our team</p>
+            <p className="font-inter text-[#A8B8C8] text-sm mt-2">Hand-picked by our team</p>
           </motion.div>
 
           {carsLoading ? (
@@ -198,7 +198,7 @@ export default function Home() {
               ))}
             </div>
           ) : carsError ? (
-            <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>
+            <p style={{ fontFamily: 'Outfit', color: '#A8B8C8', fontSize: '0.9rem' }}>
               {carsError} Please try again later.
             </p>
           ) : (
@@ -247,7 +247,7 @@ export default function Home() {
                 >
                   {counts[i]}{stat.suffix}
                 </p>
-                <p className="font-inter text-xs text-white/40 uppercase tracking-widest">{stat.label}</p>
+                <p className="font-inter text-xs text-[#A8B8C8] uppercase tracking-widest">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -267,7 +267,7 @@ export default function Home() {
             className="mb-12"
           >
             <p className="font-inter text-#2E86AB uppercase tracking-[0.2em] text-xs mb-2">Process</p>
-            <h2 className="font-bebas text-5xl text-white tracking-wide leading-none">
+            <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
               How It <span className="text-#2E86AB">Works</span>
             </h2>
           </motion.div>
@@ -304,8 +304,8 @@ export default function Home() {
                     {step.number}
                   </span>
                 </div>
-                <h3 className="font-bebas text-xl text-white tracking-wide mb-2">{step.title}</h3>
-                <p className="font-inter text-sm text-white/45 leading-relaxed">{step.description}</p>
+                <h3 className="font-bebas text-[#0D1B2A] tracking-wide mb-2">{step.title}</h3>
+                <p className="font-inter text-sm text-[#A8B8C8] leading-relaxed">{step.description}</p>
               </motion.div>
             ))}
           </div>
@@ -328,10 +328,10 @@ export default function Home() {
           viewport={{ once: true }}
           className="text-center px-4"
         >
-          <h2 className="font-bebas text-5xl sm:text-6xl text-white tracking-wide mb-4">
+          <h2 className="font-bebas text-[#0D1B2A] tracking-wide mb-4">
             Ready to Find Your Car?
           </h2>
-          <p className="font-inter text-white/40 text-sm mb-10 max-w-xs mx-auto leading-relaxed">
+          <p className="font-inter text-[#A8B8C8] text-sm mb-10 max-w-xs mx-auto leading-relaxed">
             Browse our full catalogue of 500+ quality vehicles with advanced filtering.
           </p>
           <Link

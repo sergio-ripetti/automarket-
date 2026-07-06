@@ -330,7 +330,7 @@ export default function AdminNewSale() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', textAlign: 'center' }}>
         <CheckCircle size={64} color="#22c55e" style={{ marginBottom: '1.5rem' }} />
-        <h2 className="font-bebas" style={{ fontSize: '3rem', color: 'white', marginBottom: '1rem' }}>Sale Recorded!</h2>
+        <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1rem' }}>Sale Recorded!</h2>
         <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', maxWidth: '400px' }}>
           {selectedCar?.title} sold to {form.buyerName} for {fmt(form.salePrice)}. Redirecting...
         </p>
@@ -366,7 +366,7 @@ export default function AdminNewSale() {
       {/* Step 1: Select Vehicle */}
       {step === 1 && (
         <div>
-          <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '1.5rem' }}>Select Vehicle</h2>
+          <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1.5rem' }}>Select Vehicle</h2>
           <div style={{ position: 'relative', marginBottom: '2rem' }}>
             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
             <input
@@ -376,7 +376,7 @@ export default function AdminNewSale() {
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
                 width: '100%', paddingLeft: '2.5rem', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)', color: 'white',
+                backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)', color: "#0D1B2A",
                 fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
               onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB'; setCarsOpen(true) }}
@@ -408,7 +408,7 @@ export default function AdminNewSale() {
                     <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                       <img src={c.images[0]} alt="" style={{ width: '50px', height: '36px', borderRadius: '0.375rem', objectFit: 'cover' }} />
                       <div style={{ flex: 1 }}>
-                        <p className="font-bebas" style={{ fontSize: '0.9rem', color: 'white' }}>{c.title}</p>
+                        <p className="font-bebas" style={{color: "#0D1B2A"' }}>{c.title}</p>
                         <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
                           {c.year} • {c.km.toLocaleString()} km
                         </p>
@@ -428,15 +428,15 @@ export default function AdminNewSale() {
                 borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
               }}>
                 <img src={selectedCar.images[0]} alt="" style={{ width: '100%', height: '180px', borderRadius: '0.75rem', objectFit: 'cover', marginBottom: '1rem' }} />
-                <h3 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
+                <h3 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                   <div>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Year • KM</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
+                    <p style={{color: "#0D1B2A"' }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
                   </div>
                   <div>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Transmission • Fuel</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
+                    <p style={{color: "#0D1B2A"' }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
                   </div>
                 </div>
                 <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#2E86AB', marginBottom: '1rem' }}>{fmt(selectedCar.price)}</p>
@@ -478,7 +478,7 @@ export default function AdminNewSale() {
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                         backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                        color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -500,7 +500,7 @@ export default function AdminNewSale() {
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                         backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                        color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -524,7 +524,7 @@ export default function AdminNewSale() {
                         onChange={() => setForm((f) => ({ ...f, isNZNew: true }))}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ color: 'white' }}>NZ New</span>
+                      <span style={{color: "#0D1B2A"' }}>NZ New</span>
                     </label>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontFamily: 'Outfit' }}>
                       <input
@@ -533,7 +533,7 @@ export default function AdminNewSale() {
                         onChange={() => setForm((f) => ({ ...f, isNZNew: false }))}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{ color: 'white' }}>Used Import</span>
+                      <span style={{color: "#0D1B2A"' }}>Used Import</span>
                     </label>
                   </div>
                 </div>
@@ -555,7 +555,7 @@ export default function AdminNewSale() {
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                         backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                        color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -580,7 +580,7 @@ export default function AdminNewSale() {
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                         backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                        color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -630,7 +630,7 @@ export default function AdminNewSale() {
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
                 backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                color: 'white', fontFamily: 'Outfit', cursor: 'pointer',
+                color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
               Cancel
@@ -641,7 +641,7 @@ export default function AdminNewSale() {
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
                 background: 'linear-gradient(135deg, #2E86AB, #256E8C)',
-                color: 'white', fontFamily: 'Outfit', fontWeight: 600,
+                color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
                 cursor: canNext() ? 'pointer' : 'not-allowed', opacity: canNext() ? 1 : 0.5,
                 border: 'none',
               }}
@@ -655,7 +655,7 @@ export default function AdminNewSale() {
       {/* Step 2: Buyer Details */}
       {step === 2 && (
         <div>
-          <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '1.5rem' }}>Buyer Information</h2>
+          <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1.5rem' }}>Buyer Information</h2>
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: '2rem',
           }}>
@@ -683,7 +683,7 @@ export default function AdminNewSale() {
                   style={{
                     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                     backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                    color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                    color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -698,7 +698,7 @@ export default function AdminNewSale() {
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
                 backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                color: 'white', fontFamily: 'Outfit', cursor: 'pointer',
+                color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
               ← Back
@@ -709,7 +709,7 @@ export default function AdminNewSale() {
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
                 background: 'linear-gradient(135deg, #2E86AB, #256E8C)',
-                color: 'white', fontFamily: 'Outfit', fontWeight: 600,
+                color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
                 cursor: canNext() ? 'pointer' : 'not-allowed', opacity: canNext() ? 1 : 0.5,
                 border: 'none',
               }}
@@ -723,7 +723,7 @@ export default function AdminNewSale() {
       {/* Step 3: Payment Plan */}
       {step === 3 && selectedCar && (
         <div>
-          <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '1.5rem' }}>Payment Plan</h2>
+          <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1.5rem' }}>Payment Plan</h2>
 
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{
@@ -740,7 +740,7 @@ export default function AdminNewSale() {
               style={{
                 width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                 backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
               onFocus={(e) => { e.target.style.borderColor = '#2E86AB' }}
               onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -778,7 +778,7 @@ export default function AdminNewSale() {
                   }}
                 >
                   <Icon size={24} color={form.paymentType === type ? '#2E86AB' : 'rgba(255,255,255,0.3)'} style={{ marginBottom: '0.75rem' }} />
-                  <p className="font-bebas" style={{ fontSize: '1rem', color: 'white', marginBottom: '0.25rem' }}>{title}</p>
+                  <p className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.25rem' }}>{title}</p>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{desc}</p>
                 </div>
               ))}
@@ -803,7 +803,7 @@ export default function AdminNewSale() {
                   style={{
                     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                     backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                    color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                    color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -826,7 +826,7 @@ export default function AdminNewSale() {
                     style={{
                       width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                       backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                      color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                      color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                     }}
                     onFocus={(e) => { e.target.style.borderColor = '#2E86AB' }}
                     onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -876,7 +876,7 @@ export default function AdminNewSale() {
                   style={{
                     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                     backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                    color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                    color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -888,7 +888,7 @@ export default function AdminNewSale() {
                 borderRadius: '0.75rem', padding: '1rem', marginBottom: '1.5rem', fontSize: '0.8rem',
                 color: 'rgba(255,255,255,0.5)',
               }}>
-                <p>Fixed monthly rate: <strong style={{ color: 'white' }}>0.8%</strong></p>
+                <p>Fixed monthly rate: <strong style={{color: "#0D1B2A"' }}>0.8%</strong></p>
               </div>
             </div>
           )}
@@ -910,7 +910,7 @@ export default function AdminNewSale() {
                 style={{
                   width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                   backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                  color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                  color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                 }}
                 onFocus={(e) => { e.target.style.borderColor = '#2E86AB' }}
                 onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -934,7 +934,7 @@ export default function AdminNewSale() {
               style={{
                 width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                 backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                 minHeight: '100px', resize: 'vertical',
               }}
               onFocus={(e) => { e.target.style.borderColor = '#2E86AB' }}
@@ -972,7 +972,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, orcIncluded: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{ color: 'white', fontSize: '0.875rem' }}>ORC Included in Price</span>
+                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>ORC Included in Price</span>
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontFamily: 'Outfit' }}>
                     <input
@@ -981,7 +981,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, driveAwayPrice: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{ color: 'white', fontSize: '0.875rem' }}>Drive Away Price</span>
+                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>Drive Away Price</span>
                   </label>
                 </div>
 
@@ -1002,7 +1002,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1024,7 +1024,7 @@ export default function AdminNewSale() {
                           style={{
                             padding: '0.875rem 1rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
                           }}
                         >
                           <option value="6">6 months</option>
@@ -1037,7 +1037,7 @@ export default function AdminNewSale() {
                           style={{
                             padding: '0.875rem 1rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                           onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1060,7 +1060,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1082,7 +1082,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1104,7 +1104,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1127,7 +1127,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1149,7 +1149,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1204,7 +1204,7 @@ export default function AdminNewSale() {
                           style={{
                             width: '100%', padding: '0.75rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                           onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1223,7 +1223,7 @@ export default function AdminNewSale() {
                           style={{
                             width: '100%', padding: '0.75rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                           onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1306,7 +1306,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1332,7 +1332,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1358,7 +1358,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1384,7 +1384,7 @@ export default function AdminNewSale() {
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
                           backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                          color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1431,7 +1431,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, warrantyIncluded: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{ color: 'white', fontSize: '0.875rem' }}>Mechanical Warranty</span>
+                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>Mechanical Warranty</span>
                   </label>
                   {form.warrantyIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
@@ -1449,7 +1449,7 @@ export default function AdminNewSale() {
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
                           }}
                         >
                           <option value="3">3 months</option>
@@ -1474,7 +1474,7 @@ export default function AdminNewSale() {
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                           onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1492,7 +1492,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, mechInsuranceIncluded: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{ color: 'white', fontSize: '0.875rem' }}>Mechanical Insurance</span>
+                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>Mechanical Insurance</span>
                   </label>
                   {form.mechInsuranceIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
@@ -1510,7 +1510,7 @@ export default function AdminNewSale() {
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
                           }}
                         >
                           <option value="3">3 months</option>
@@ -1535,7 +1535,7 @@ export default function AdminNewSale() {
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
                             backgroundColor: '#EEF2F7', border: '1px solid rgba(255,255,255,0.08)',
-                            color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                           onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
@@ -1559,24 +1559,24 @@ export default function AdminNewSale() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', fontSize: '0.875rem' }}>
               <div>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Vehicle Price</p>
-                <p style={{ fontFamily: 'Outfit', color: 'white' }}>{fmt(form.salePrice)}</p>
+                <p style={{color: "#0D1B2A"' }}>{fmt(form.salePrice)}</p>
               </div>
               {!form.orcIncluded && orcTotal > 0 && (
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>ORC</p>
-                  <p style={{ fontFamily: 'Outfit', color: 'white' }}>{fmt(orcTotal)}</p>
+                  <p style={{color: "#0D1B2A"' }}>{fmt(orcTotal)}</p>
                 </div>
               )}
               {accessoriesTotal > 0 && (
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Accessories</p>
-                  <p style={{ fontFamily: 'Outfit', color: 'white' }}>{fmt(accessoriesTotal)}</p>
+                  <p style={{color: "#0D1B2A"' }}>{fmt(accessoriesTotal)}</p>
                 </div>
               )}
               {financingFeesTotal > 0 && (
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Financing Fees</p>
-                  <p style={{ fontFamily: 'Outfit', color: 'white' }}>{fmt(financingFeesTotal)}</p>
+                  <p style={{color: "#0D1B2A"' }}>{fmt(financingFeesTotal)}</p>
                 </div>
               )}
             </div>
@@ -1585,7 +1585,7 @@ export default function AdminNewSale() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Subtotal</p>
-                  <p style={{ fontFamily: 'Outfit', color: 'white' }}>{fmt(subtotal)}</p>
+                  <p style={{color: "#0D1B2A"' }}>{fmt(subtotal)}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>GST (15%)</p>
@@ -1612,7 +1612,7 @@ export default function AdminNewSale() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Amount Financed</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: 'white' }}>{fmt(calc.financedAmount)}</p>
+                  <p style={{color: "#0D1B2A"' }}>{fmt(calc.financedAmount)}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Total Interest</p>
@@ -1628,7 +1628,7 @@ export default function AdminNewSale() {
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Total Repayment</p>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: 'white' }}>{fmt(calc.totalPayment)}</p>
+                <p style={{color: "#0D1B2A"' }}>{fmt(calc.totalPayment)}</p>
               </div>
             </div>
           )}
@@ -1692,7 +1692,7 @@ export default function AdminNewSale() {
               />
               <label htmlFor="unified-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
                 <Upload size={40} style={{ margin: '0 auto 1rem', color: '#2E86AB' }} />
-                <p style={{ fontFamily: 'Outfit', fontSize: '1rem', color: 'white', marginBottom: '0.5rem' }}>
+                <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
                   Drop files here or click to browse
                 </p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
@@ -1738,7 +1738,7 @@ export default function AdminNewSale() {
                         {Math.round(progress)}%
                       </span>
                     </div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', padding: '0.5rem', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                    <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
                       {file.name}
                     </p>
                   </div>
@@ -1788,7 +1788,7 @@ export default function AdminNewSale() {
                           height: '24px',
                           borderRadius: '50%',
                           backgroundColor: 'rgba(239,68,68,0.9)',
-                          color: 'white',
+                          color: "#0D1B2A",
                           border: 'none',
                           cursor: 'pointer',
                           fontSize: '14px',
@@ -1824,7 +1824,7 @@ export default function AdminNewSale() {
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
                 backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                color: 'white', fontFamily: 'Outfit', cursor: 'pointer',
+                color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
               ← Back
@@ -1835,7 +1835,7 @@ export default function AdminNewSale() {
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
                 background: 'linear-gradient(135deg, #2E86AB, #256E8C)',
-                color: 'white', fontFamily: 'Outfit', fontWeight: 600,
+                color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.5 : 1,
                 border: 'none', width: '100%', height: '52px',
               }}

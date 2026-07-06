@@ -245,7 +245,7 @@ export default function AdminSales() {
             style={{
               fontSize: 'clamp(1.5rem, 4vw, 2rem)',
               fontWeight: 700,
-              color: '#ffffff',
+              color: "#0D1B2A",
               letterSpacing: '0.05em',
               lineHeight: 1,
               marginBottom: '0.35rem',
@@ -352,14 +352,14 @@ export default function AdminSales() {
                     <div className="flex gap-3 items-center" style={{ minWidth: 0 }}>
                       <img src={sale.carImages[0]} alt="" className="w-12 h-9 rounded object-cover flex-shrink-0" style={{ minWidth: '48px' }} />
                       <div style={{ minWidth: 0 }}>
-                        <p className="font-bebas text-white" style={{ fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>{sale.carTitle}</p>
+                        <p className="font-bebas text-[#0D1B2A]" style={{ fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>{sale.carTitle}</p>
                         <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'Outfit' }}>{sale.carYear}</p>
                       </div>
                     </div>
                   </td>
                   {/* Buyer */}
                   <td style={{ fontFamily: 'Outfit' }}>
-                    <p style={{ fontSize: '0.85rem', color: 'white' }}>{sale.buyer.name}</p>
+                    <p style={{color: "#0D1B2A"' }}>{sale.buyer.name}</p>
                     <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>{sale.buyer.email}</p>
                   </td>
                   {/* Price */}

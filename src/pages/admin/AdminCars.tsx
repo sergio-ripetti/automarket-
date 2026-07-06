@@ -78,7 +78,7 @@ export default function AdminCars() {
       `}</style>
       {/* Header */}
       <div id="admin-inventory-header" className="admin-inventory-header flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
-        <h1 className="font-bebas text-white cars-page-title">Vehicle Inventory</h1>
+        <h1 className="font-bebas text-[#0D1B2A] cars-page-title">Vehicle Inventory</h1>
         <button
           id="admin-inventory-add-button"
           className="admin-inventory-add-button"
@@ -231,7 +231,7 @@ export default function AdminCars() {
               {/* Content */}
               <div style={{ padding: 'clamp(1rem, 3vw, 1.5rem)' }}>
                 {/* Title */}
-                <h3 className="font-bebas text-xl lg:text-2xl text-white tracking-wider mb-3 line-clamp-1">
+                <h3 className="font-bebas text-[#0D1B2A] tracking-wider mb-3 line-clamp-1">
                   {car.title}
                 </h3>
 

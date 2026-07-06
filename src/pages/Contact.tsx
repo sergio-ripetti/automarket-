@@ -47,7 +47,7 @@ export default function Contact() {
     backgroundColor: '#EEF2F7',
     border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : focused === name ? '#2E86AB' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.75rem 1rem',
-    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: 'white', outline: 'none',
+    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: "#0D1B2A", outline: 'none',
     transition: 'border-color 0.2s',
   })
 
@@ -113,7 +113,7 @@ export default function Contact() {
             </span>
             <div style={{ width: 40, height: 1, backgroundColor: '#2E86AB' }} />
           </div>
-          <h1 className="font-bebas" style={{ fontSize: '4rem', color: 'white', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+          <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
             Contact Us
           </h1>
           <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)', fontSize: '1rem' }}>
@@ -126,7 +126,7 @@ export default function Contact() {
 
           {/* ════ LEFT — Contact Form ════ */}
           <div>
-            <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
+            <h2 className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
               Send Us a Message
             </h2>
 
@@ -145,7 +145,7 @@ export default function Contact() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
-                <p className="font-bebas" style={{ fontSize: '2rem', color: 'white', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+                <p className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
                   Message Sent!
                 </p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.45)', marginBottom: '2rem', lineHeight: 1.6 }}>
@@ -254,7 +254,7 @@ export default function Contact() {
 
             {/* Info cards */}
             <div>
-              <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
+              <h2 className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
                 Our Details
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
@@ -293,7 +293,7 @@ export default function Contact() {
                 <button style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                   background: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)',
-                  color: 'white', fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 600,
+                  color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 600,
                   padding: '0.5rem 1rem', borderRadius: '2rem', border: 'none', cursor: 'pointer',
                 }}>
                   <Camera size={13} />
@@ -303,7 +303,7 @@ export default function Contact() {
                 <button style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                   background: 'linear-gradient(135deg, #1877F2, #0a58ca)',
-                  color: 'white', fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 600,
+                  color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 600,
                   padding: '0.5rem 1rem', borderRadius: '2rem', border: 'none', cursor: 'pointer',
                 }}>
                   <Share2 size={13} />
@@ -313,7 +313,7 @@ export default function Contact() {
                 <button style={{
                   display: 'flex', alignItems: 'center', gap: '0.5rem',
                   background: 'linear-gradient(135deg, #25D366, #128C7E)',
-                  color: 'white', fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 600,
+                  color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 600,
                   padding: '0.5rem 1rem', borderRadius: '2rem', border: 'none', cursor: 'pointer',
                 }}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
@@ -334,7 +334,7 @@ export default function Contact() {
               alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
             }}>
               <MapPin size={32} color="#2E86AB" />
-              <p className="font-bebas" style={{ fontSize: '1.25rem', color: 'white', letterSpacing: '0.1em' }}>
+              <p className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.1em' }}>
                 Find Us in Auckland
               </p>
               <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.32)' }}>

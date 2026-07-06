@@ -86,7 +86,7 @@ export default function AdminDashboard() {
 
   return (
     <div id="admin-dashboard-main-container" className="admin-dashboard-main-container">
-      <h1 className="font-bebas" style={{ fontSize: 'clamp(1.75rem, 6vw, 2.5rem)', color: 'white', lineHeight: 1, marginBottom: '0.25rem', fontWeight: 600 }}>
+      <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.25rem', fontWeight: 600 }}>
         Dashboard
       </h1>
       <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', color: 'rgba(255,255,255,0.4)', marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
           }
         }
       `}</style>
-      <h2 className="font-bebas" style={{ fontSize: 'clamp(1.1rem, 4vw, 1.5rem)', color: 'white', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: 600 }}>
+      <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: 600 }}>
         Recent Sales
       </h2>
       <div id="admin-dashboard-recent-sales" className="admin-dashboard-recent-sales table-wrapper">
@@ -252,7 +252,7 @@ export default function AdminDashboard() {
         }
       `}</style>
       <div id="admin-dashboard-recent-messages-header" className="admin-dashboard-recent-messages-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', flexWrap: 'wrap', gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
-        <h2 className="font-bebas recent-messages-title text-white" style={{ fontWeight: 600 }}>Recent Messages</h2>
+        <h2 className="font-bebas text-[#0D1B2A]" style={{ fontWeight: 600 }}>Recent Messages</h2>
         <Link to="/admin/messages" style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#2E86AB', textDecoration: 'none' }}>
           View All →
         </Link>
@@ -266,13 +266,13 @@ export default function AdminDashboard() {
           <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#2E86AB', flexShrink: 0, marginTop: '0.4rem' }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="message-item-header">
-              <p className="font-bebas message-sender" style={{ color: 'white', letterSpacing: '0.03em' }}>{msg.senderName}</p>
+              <p className="font-bebas message-sender" style={{color: "#0D1B2A"', letterSpacing: '0.03em' }}>{msg.senderName}</p>
               <p className="message-date" style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.35)' }}>
                 {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
               </p>
             </div>
             <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#2E86AB', marginBottom: '0.25rem' }}>{msg.reason}</p>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
               {msg.message}
             </p>
           </div>

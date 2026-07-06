@@ -53,7 +53,7 @@ export default function Navbar() {
             <circle cx="8" cy="18" r="2" fill="currentColor" />
             <circle cx="24" cy="18" r="2" fill="currentColor" />
           </svg>
-          <span className="font-bebas text-lg sm:text-xl tracking-wider text-white hidden sm:inline">
+          <span className="font-bebas text-white hidden sm:inline">
             <span className="text-[#2E86AB]">AUTO</span>MARKET
           </span>
         </Link>

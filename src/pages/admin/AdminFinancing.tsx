@@ -101,7 +101,7 @@ export default function AdminFinancing() {
           font-weight: 600;
         }
       `}</style>
-      <h1 className="font-bebas text-white mb-8 financing-page-title">Financing Requests</h1>
+      <h1 className="font-bebas text-[#0D1B2A] mb-8 financing-page-title">Financing Requests</h1>
 
       {/* Tabs */}
       <div id="admin-financing-tabs" className="admin-financing-tabs flex flex-wrap gap-2 mb-8">
@@ -156,7 +156,7 @@ export default function AdminFinancing() {
                     className="font-bebas"
                     style={{
                       fontSize: "1.25rem",
-                      color: "white",
+                      color: "#0D1B2A",
                       letterSpacing: "0.03em",
                       lineHeight: 1,
                       marginBottom: "0.25rem",
@@ -213,7 +213,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.875rem",
-                      color: "white",
+                      color: "#0D1B2A",
                     }}>
                     {req.carTitle}
                   </p>
@@ -274,7 +274,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.875rem",
-                      color: "white",
+                      color: "#0D1B2A",
                     }}>
                     {req.loanTerm} months
                   </p>
@@ -708,7 +708,7 @@ export default function AdminFinancing() {
                 <h2
                   className="font-bebas financing-modal-header-title"
                   style={{
-                    color: "white",
+                    color: "#0D1B2A",
                     lineHeight: 1.2,
                     marginBottom: "0.5rem",
                     fontWeight: 600
@@ -780,7 +780,7 @@ export default function AdminFinancing() {
                       style={{
                         fontFamily: "Outfit",
                         fontSize: "0.875rem",
-                        color: "white",
+                        color: "#0D1B2A",
                       }}>
                       {value}
                     </p>
@@ -827,7 +827,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.875rem",
-                      color: "white",
+                      color: "#0D1B2A",
                     }}>
                     {selectedRequest.carTitle}
                   </p>
@@ -848,7 +848,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.875rem",
-                      color: "white",
+                      color: "#0D1B2A",
                     }}>
                     {fmt(selectedRequest.totalAmount)}
                   </p>
@@ -898,7 +898,7 @@ export default function AdminFinancing() {
                       style={{
                         fontFamily: "Outfit",
                         fontSize: "0.875rem",
-                        color: "white",
+                        color: "#0D1B2A",
                       }}>
                       {value}
                     </p>
@@ -958,7 +958,7 @@ export default function AdminFinancing() {
                         style={{
                           fontFamily: "Outfit",
                           fontSize: "0.875rem",
-                          color: "white",
+                          color: "#0D1B2A",
                         }}>
                         {value}
                       </p>
@@ -999,7 +999,7 @@ export default function AdminFinancing() {
                         style={{
                           fontFamily: "Outfit",
                           fontSize: "0.875rem",
-                          color: "white",
+                          color: "#0D1B2A",
                         }}>
                         {value}
                       </p>

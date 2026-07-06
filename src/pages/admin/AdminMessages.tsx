@@ -94,7 +94,7 @@ export default function AdminMessages() {
   return (
     <div id="admin-messages-main-container" className="admin-messages-main-container">
       <div id="admin-messages-header" className="admin-messages-header mb-8">
-        <h1 className="font-bebas text-3xl text-white mb-1">Inbox</h1>
+        <h1 className="font-bebas text-[#0D1B2A] mb-1">Inbox</h1>
         <p className="text-sm text-white/40 font-inter">
           {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
         </p>
@@ -153,10 +153,10 @@ export default function AdminMessages() {
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.25rem' }}>
-                    <p className="font-bebas" style={{ fontSize: '1rem', color: 'white', letterSpacing: '0.03em', lineHeight: 1 }}>
+                    <p className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.03em', lineHeight: 1 }}>
                       {msg.senderName}
                     </p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.35)', whiteSpace: 'nowrap' }}>
+                    <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
                       {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
                     </p>
                   </div>
@@ -521,19 +521,19 @@ export default function AdminMessages() {
                       <div className="message-modal-grid-2col">
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>First Name</p>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{(selectedMessage as any).firstName}</p>
+                          <p style={{color: "#0D1B2A"' }}>{(selectedMessage as any).firstName}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Last Name</p>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{(selectedMessage as any).lastName}</p>
+                          <p style={{color: "#0D1B2A"' }}>{(selectedMessage as any).lastName}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedMessage.email}</p>
+                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.email}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{(selectedMessage as any).phone}</p>
+                          <p style={{color: "#0D1B2A"' }}>{(selectedMessage as any).phone}</p>
                         </div>
                       </div>
                     </div>
@@ -559,21 +559,21 @@ export default function AdminMessages() {
                       <div className="message-modal-grid-2col">
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Name</p>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedMessage.senderName}</p>
+                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.senderName}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedMessage.email}</p>
+                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.email}</p>
                         </div>
                         {selectedMessage.phone && (
                           <div>
                             <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedMessage.phone}</p>
+                            <p style={{color: "#0D1B2A"' }}>{selectedMessage.phone}</p>
                           </div>
                         )}
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Reason</p>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'white' }}>{selectedMessage.reason}</p>
+                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.reason}</p>
                         </div>
                       </div>
                     </div>

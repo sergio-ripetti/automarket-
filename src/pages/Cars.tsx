@@ -56,10 +56,10 @@ export default function Cars() {
             transition={{ duration: 0.5 }}
           >
             <p className="font-inter text-#2E86AB uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
-            <h1 className="font-bebas text-5xl text-white tracking-wide leading-none">
+            <h1 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
               Our <span className="text-#2E86AB">Vehicles</span>
             </h1>
-            <p className="font-inter text-white/40 text-sm mt-2">Find your perfect match</p>
+            <p className="font-inter text-[#A8B8C8] text-sm mt-2">Find your perfect match</p>
           </motion.div>
 
           {/* Filter bar */}
@@ -87,16 +87,16 @@ export default function Cars() {
               </>
             ) : error ? (
               <div style={{ textAlign: 'center', padding: '5rem 0' }}>
-                <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', fontSize: '1rem', marginBottom: '0.5rem' }}>
+                <p style={{ fontFamily: 'Outfit', color: '#A8B8C8', fontSize: '1rem', marginBottom: '0.5rem' }}>
                   {error}
                 </p>
-                <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.25)', fontSize: '0.8rem' }}>
+                <p style={{ fontFamily: 'Outfit', color: '#C8D8E4', fontSize: '0.8rem' }}>
                   Make sure the database is seeded and try refreshing.
                 </p>
               </div>
             ) : (
               <>
-                <h2 className="font-bebas text-2xl text-white tracking-wide mb-6">
+                <h2 className="font-bebas text-[#0D1B2A] tracking-wide mb-6">
                   {hasActiveFilters ? (
                     <><span className="text-#2E86AB">{filteredCars.length}</span> vehicles found</>
                   ) : (
@@ -110,9 +110,9 @@ export default function Cars() {
                     animate={{ opacity: 1 }}
                     className="flex flex-col items-center justify-center py-32 text-center"
                   >
-                    <SearchX size={56} className="text-white/20 mb-4" />
-                    <p className="font-inter text-white/50 text-lg">No vehicles found matching your criteria</p>
-                    <p className="font-inter text-white/30 text-sm mt-1">Try adjusting your filters</p>
+                    <SearchX size={56} className="text-[#C8D8E4] mb-4" />
+                    <p className="font-inter text-[#4A6070] text-lg">No vehicles found matching your criteria</p>
+                    <p className="font-inter text-[#A8B8C8] text-sm mt-1">Try adjusting your filters</p>
                   </motion.div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-stretch pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
