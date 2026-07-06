@@ -398,7 +398,7 @@ export default function Financing() {
                     { label: 'Amount Financed', value: formatPrice(financed) },
                     { label: 'Total Repayment', value: formatPrice(Math.round(totalRepay)) },
                     { label: 'Total Interest', value: formatPrice(Math.round(totalInterest)), red: true },
-                  ].map(({ label, value, red }) => (
+                  ].map(({ label, value }) => (
                     <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.38)' }}>{label}</span>
                       <span style={{color: "#0D1B2A" }}>{value}</span>
