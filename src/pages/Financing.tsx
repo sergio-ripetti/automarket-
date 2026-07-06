@@ -676,7 +676,7 @@ export default function Financing() {
                               {Math.round(progress)}%
                             </span>
                           </div>
-                          <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
+                          <p style={{color: "#0D1B2A", whiteSpace: 'nowrap'}}>
                             {file.name}
                           </p>
                         </div>
@@ -693,7 +693,7 @@ export default function Financing() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         {form.documents.map((doc) => (
                           <div key={doc.url} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '1rem', alignItems: 'center', padding: '0.75rem 1rem', backgroundColor: '#E4EAF0', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.06)' }}>
-                            <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
+                            <p style={{color: "#0D1B2A", whiteSpace: 'nowrap'}}>
                               {doc.filename}
                             </p>
                             <select

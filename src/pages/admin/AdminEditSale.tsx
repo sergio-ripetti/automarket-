@@ -489,7 +489,7 @@ export default function AdminEditSale() {
                           {Math.round(progress)}%
                         </span>
                       </div>
-                      <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
+                      <p style={{color: "#0D1B2A", whiteSpace: 'nowrap'}}>
                         {file.name}
                       </p>
                     </div>

@@ -156,7 +156,7 @@ export default function AdminMessages() {
                     <p className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.03em', lineHeight: 1 }}>
                       {msg.senderName}
                     </p>
-                    <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
+                    <p style={{color: "#0D1B2A", whiteSpace: 'nowrap'}}>
                       {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
                     </p>
                   </div>

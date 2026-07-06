@@ -36,7 +36,7 @@ const iconWrap: React.CSSProperties = {
 const sectionHeader = (title: string) => (
   <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
     <div style={{ width: 3, height: 20, backgroundColor: "#2E86AB", borderRadius: 2 }} />
-    <h2 className="font-bebas" style={{color: "#0D1B2A"", letterSpacing: "0.05em" }}>
+    <h2 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: "0.05em" }}>
       {title}
     </h2>
   </div>
@@ -248,7 +248,7 @@ export default function CarDetail() {
                   SPECIAL OFFER
                 </span>
               )}
-              <h1 className="font-bebas" style={{color: "#0D1B2A"", letterSpacing: "0.03em", lineHeight: 1, marginBottom: 0 }}>
+              <h1 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: "0.03em", lineHeight: 1, marginBottom: 0 }}>
                 {car.title}
               </h1>
             </div>
@@ -287,7 +287,7 @@ export default function CarDetail() {
                     <p style={{ fontFamily: "Outfit", fontSize: "0.65rem", color: "#A8B8C8", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       {label}
                     </p>
-                    <p style={{color: "#0D1B2A"" }}>
+                    <p style={{color: "#0D1B2A" }}>
                       {value}
                     </p>
                   </div>

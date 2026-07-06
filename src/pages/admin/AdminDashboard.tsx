@@ -272,7 +272,7 @@ export default function AdminDashboard() {
               </p>
             </div>
             <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#2E86AB', marginBottom: '0.25rem' }}>{msg.reason}</p>
-            <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
+            <p style={{color: "#0D1B2A", whiteSpace: 'nowrap' }}>
               {msg.message}
             </p>
           </div>
