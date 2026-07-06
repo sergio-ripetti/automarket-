@@ -35,9 +35,9 @@ export default function SeedButton() {
         zIndex: 9999,
         background: done
           ? 'linear-gradient(135deg, #16a34a, #15803d)'
-          : 'linear-gradient(135deg, #f59e0b, #d97706)',
+          : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
         color: '#000',
-        fontFamily: 'Outfit, sans-serif',
+        fontFamily: 'Inter, sans-serif',
         fontWeight: 700,
         fontSize: '0.8rem',
         letterSpacing: '0.05em',

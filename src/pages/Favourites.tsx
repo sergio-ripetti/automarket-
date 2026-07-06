@@ -42,20 +42,20 @@ export default function Favourites() {
   const savedCars = allCars.filter((c) => favIds.includes(c.id))
 
   return (
-    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#0a0a0a', minHeight: '100vh' }}>
+    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#FAFBFC', minHeight: '100vh' }}>
       <div style={{ width: '80%', margin: '0 auto' }}>
 
         {/* ── Page Header ── */}
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-            <div style={{ width: 40, height: 1, backgroundColor: '#f59e0b' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: '#1D4ED8' }} />
             <span
               className="font-bebas"
-              style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#f59e0b' }}
+              style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#1D4ED8' }}
             >
               YOUR COLLECTION
             </span>
-            <div style={{ width: 40, height: 1, backgroundColor: '#f59e0b' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: '#1D4ED8' }} />
           </div>
           <h1
             className="font-bebas"
@@ -78,7 +78,7 @@ export default function Favourites() {
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                style={{ height: '380px', backgroundColor: '#111111', borderRadius: '0.75rem', animation: 'pulse 1.5s infinite' }}
+                style={{ height: '380px', backgroundColor: '#FFFFFF', borderRadius: '0.75rem', animation: 'pulse 1.5s infinite' }}
               />
             ))}
           </div>
@@ -87,12 +87,12 @@ export default function Favourites() {
           <div style={{ textAlign: 'center', paddingTop: '5rem', paddingBottom: '5rem' }}>
             <div style={{
               width: 72, height: 72, borderRadius: '50%',
-              backgroundColor: 'rgba(245,158,11,0.08)',
-              border: '1px solid rgba(245,158,11,0.15)',
+              backgroundColor: 'rgba(29,78,216,0.08)',
+              border: '1px solid rgba(29,78,216,0.15)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 1.5rem',
             }}>
-              <Heart size={32} color="#f59e0b" />
+              <Heart size={32} color="#1D4ED8" />
             </div>
             <p
               className="font-bebas"
@@ -110,7 +110,7 @@ export default function Favourites() {
               to="/cars"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                background: 'linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)',
                 color: '#000', fontFamily: 'Outfit', fontWeight: 700, fontSize: '0.875rem',
                 padding: '0.875rem 2rem', borderRadius: '0.625rem',
                 textDecoration: 'none', letterSpacing: '0.04em',

@@ -35,10 +35,10 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
       {/* Down payment slider */}
       <div>
         <div className="flex justify-between items-center mb-2">
-          <label className="font-outfit text-sm text-white/70">Down payment</label>
+          <label className="font-inter text-sm text-white/70">Down payment</label>
           <div className="text-right">
-            <span className="font-bebas text-xl text-amber-500">{downPaymentPct}%</span>
-            <p className="font-outfit text-xs text-white/40">{formatPrice(downPayment)}</p>
+            <span className="font-bebas text-xl text-blue-700">{downPaymentPct}%</span>
+            <p className="font-inter text-xs text-white/40">{formatPrice(downPayment)}</p>
           </div>
         </div>
         <input
@@ -48,9 +48,9 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
           step={5}
           value={downPaymentPct}
           onChange={(e) => setDownPaymentPct(Number(e.target.value))}
-          className="w-full accent-amber-500"
+          className="w-full accent-blue-700"
         />
-        <div className="flex justify-between font-outfit text-xs text-white/30 mt-1">
+        <div className="flex justify-between font-inter text-xs text-white/30 mt-1">
           <span>10%</span>
           <span>50%</span>
         </div>
@@ -58,16 +58,16 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
 
       {/* Loan term selector */}
       <div>
-        <label className="font-outfit text-sm text-white/70 block mb-2">Loan term</label>
+        <label className="font-inter text-sm text-white/70 block mb-2">Loan term</label>
         <div className="flex gap-2 flex-wrap">
           {monthOptions.map((m) => (
             <button
               key={m}
               onClick={() => setMonths(m)}
-              className={`font-outfit text-sm px-4 py-2 rounded border transition-all ${
+              className={`font-inter text-sm px-4 py-2 rounded border transition-all ${
                 months === m
-                  ? 'bg-amber-500 text-dark border-amber-500 font-semibold'
-                  : 'bg-white/5 text-white/60 border-white/10 hover:border-amber-500/40'
+                  ? 'bg-blue-700 text-dark border-blue-700 font-semibold'
+                  : 'bg-white/5 text-white/60 border-white/10 hover:border-blue-700/40'
               }`}
             >
               {m}m
@@ -78,28 +78,28 @@ export default function FinancingSimulator({ car, onRequestFinancing }: Financin
 
       {/* Results */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 col-span-2">
-          <p className="font-outfit text-xs text-amber-500/70 mb-1">Monthly Payment</p>
-          <p className="font-bebas text-3xl text-amber-500">{formatPrice(Math.round(monthlyPayment))}</p>
+        <div className="bg-blue-700/10 border border-blue-700/30 rounded-lg p-4 col-span-2">
+          <p className="font-inter text-xs text-blue-700/70 mb-1">Monthly Payment</p>
+          <p className="font-bebas text-3xl text-blue-700">{formatPrice(Math.round(monthlyPayment))}</p>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-lg p-3">
-          <p className="font-outfit text-xs text-white/50 mb-1">Amount Financed</p>
-          <p className="font-outfit text-sm font-semibold text-white">{formatPrice(financed)}</p>
+          <p className="font-inter text-xs text-white/50 mb-1">Amount Financed</p>
+          <p className="font-inter text-sm font-semibold text-white">{formatPrice(financed)}</p>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-lg p-3">
-          <p className="font-outfit text-xs text-white/50 mb-1">Total Repayment</p>
-          <p className="font-outfit text-sm font-semibold text-white">{formatPrice(Math.round(totalPayment))}</p>
+          <p className="font-inter text-xs text-white/50 mb-1">Total Repayment</p>
+          <p className="font-inter text-sm font-semibold text-white">{formatPrice(Math.round(totalPayment))}</p>
         </div>
         <div className="bg-white/5 border border-white/10 rounded-lg p-3 col-span-2">
-          <p className="font-outfit text-xs text-white/50 mb-1">Total Interest</p>
-          <p className="font-outfit text-sm font-semibold text-red-400">{formatPrice(Math.round(totalInterest))}</p>
+          <p className="font-inter text-xs text-white/50 mb-1">Total Interest</p>
+          <p className="font-inter text-sm font-semibold text-red-400">{formatPrice(Math.round(totalInterest))}</p>
         </div>
       </div>
 
       {onRequestFinancing && (
         <button
           onClick={onRequestFinancing}
-          className="w-full bg-amber-500 text-dark font-outfit font-semibold py-3 rounded-lg hover:bg-yellow-400 transition-colors"
+          className="w-full bg-blue-700 text-dark font-inter font-semibold py-3 rounded-lg hover:bg-yellow-400 transition-colors"
         >
           Apply for Financing
         </button>

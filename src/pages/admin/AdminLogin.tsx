@@ -13,10 +13,10 @@ export default function AdminLogin() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#0f0f0f',
-    border: `1px solid ${focused === name ? '#f59e0b' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#FAFBFC',
+    border: `1px solid ${focused === name ? '#1D4ED8' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
-    color: 'white', fontFamily: 'Outfit, sans-serif', fontSize: '0.9rem',
+    color: 'white', fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
     outline: 'none', transition: 'border-color 0.2s',
   })
 
@@ -41,15 +41,15 @@ export default function AdminLogin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#FAFBFC', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{
         width: '100%', maxWidth: '420px',
-        backgroundColor: '#111111', border: '1px solid rgba(245,158,11,0.15)',
+        backgroundColor: '#FFFFFF', border: '1px solid rgba(29,78,216,0.15)',
         borderRadius: '1.25rem', padding: '2.5rem',
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <span className="font-bebas" style={{ fontSize: '2rem', color: '#f59e0b', display: 'block', lineHeight: 1 }}>
+          <span className="font-bebas" style={{ fontSize: '2rem', color: '#1D4ED8', display: 'block', lineHeight: 1 }}>
             AutoMarket
           </span>
           <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
@@ -102,8 +102,8 @@ export default function AdminLogin() {
             disabled={loading}
             style={{
               width: '100%', height: '48px',
-              background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-              color: '#000', fontWeight: 700, fontFamily: 'Outfit, sans-serif', fontSize: '0.95rem',
+              background: 'linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)',
+              color: '#000', fontWeight: 700, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem',
               borderRadius: '0.75rem', border: 'none',
               cursor: loading ? 'default' : 'pointer',
               opacity: loading ? 0.7 : 1, transition: 'opacity 0.2s',

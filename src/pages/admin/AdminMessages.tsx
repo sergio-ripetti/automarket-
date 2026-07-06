@@ -95,7 +95,7 @@ export default function AdminMessages() {
     <div id="admin-messages-main-container" className="admin-messages-main-container">
       <div id="admin-messages-header" className="admin-messages-header mb-8">
         <h1 className="font-bebas text-3xl text-white mb-1">Inbox</h1>
-        <p className="text-sm text-white/40 font-outfit">
+        <p className="text-sm text-white/40 font-inter">
           {unreadCount} unread message{unreadCount !== 1 ? 's' : ''}
         </p>
       </div>
@@ -107,9 +107,9 @@ export default function AdminMessages() {
             key={id}
             id={`admin-messages-tab-${id}`}
             onClick={() => setActiveTab(id)}
-            className={`px-5 py-2 rounded-full text-sm font-outfit font-medium transition-all ${
+            className={`px-5 py-2 rounded-full text-sm font-inter font-medium transition-all ${
               activeTab === id
-                ? 'bg-amber-500 text-black'
+                ? 'bg-blue-700 text-black'
                 : 'bg-white/5 text-white/50 hover:bg-white/10'
             }`}
           >
@@ -122,7 +122,7 @@ export default function AdminMessages() {
       <div id="admin-messages-list-wrapper" className="admin-messages-list-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {loading ? (
           [...Array(5)].map((_, i) => (
-            <div key={i} className="animate-pulse" style={{ backgroundColor: '#111111', height: 100, borderRadius: '0.75rem' }} />
+            <div key={i} className="animate-pulse" style={{ backgroundColor: '#FFFFFF', height: 100, borderRadius: '0.75rem' }} />
           ))
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: 'rgba(255,255,255,0.3)', fontFamily: 'Outfit' }}>
@@ -138,9 +138,9 @@ export default function AdminMessages() {
               className={`admin-messages-list-item admin-messages-list-item-${idx}`}
               onClick={() => setExpandedId(expandedId === msg.id ? null : msg.id)}
               style={{
-                backgroundColor: '#111111',
-                border: `1px solid ${msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(245,158,11,0.15)'}`,
-                borderLeft: isOffer ? '3px solid #f59e0b' : undefined,
+                backgroundColor: '#FFFFFF',
+                border: `1px solid ${msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(29,78,216,0.15)'}`,
+                borderLeft: isOffer ? '3px solid #1D4ED8' : undefined,
                 borderRadius: '0.75rem', padding: '1.25rem',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
@@ -148,7 +148,7 @@ export default function AdminMessages() {
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: expandedId === msg.id ? '1rem' : 0 }}>
                 <div style={{
                   width: 10, height: 10, borderRadius: '50%',
-                  backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#f59e0b',
+                  backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#1D4ED8',
                   flexShrink: 0, marginTop: '0.5rem',
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -169,16 +169,16 @@ export default function AdminMessages() {
                       <div style={{ marginBottom: '0.75rem' }}>
                         <div style={{
                           display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
-                          backgroundColor: 'rgba(245,158,11,0.15)', color: '#f59e0b',
+                          backgroundColor: 'rgba(29,78,216,0.15)', color: '#1D4ED8',
                           fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit', marginBottom: '0.5rem',
                         }}>
                           OFFER
                         </div>
                       </div>
-                      <p className="font-bebas" style={{ fontSize: '1rem', color: '#f59e0b', marginBottom: '0.25rem' }}>
+                      <p className="font-bebas" style={{ fontSize: '1rem', color: '#1D4ED8', marginBottom: '0.25rem' }}>
                         {(msg as any).carTitle || 'Vehicle'}
                       </p>
-                      <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#f59e0b', marginBottom: '0.25rem' }}>
+                      <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#1D4ED8', marginBottom: '0.25rem' }}>
                         {fmt((msg as any).offerPrice || 0)}
                       </p>
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
@@ -187,7 +187,7 @@ export default function AdminMessages() {
                     </>
                   ) : (
                     <>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#f59e0b', marginBottom: '0.25rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#1D4ED8', marginBottom: '0.25rem' }}>
                         {msg.reason}
                       </p>
                       <p style={{
@@ -271,16 +271,16 @@ export default function AdminMessages() {
                       window.location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${body}`
                     }}
                     style={{
-                      border: '1px solid rgba(245,158,11,0.5)', color: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.08)',
+                      border: '1px solid rgba(29,78,216,0.5)', color: '#1D4ED8', backgroundColor: 'rgba(29,78,216,0.08)',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#f59e0b'
-                      e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.15)'
-                      e.currentTarget.style.boxShadow = '0 0 10px rgba(245,158,11,0.2)'
+                      e.currentTarget.style.borderColor = '#1D4ED8'
+                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.15)'
+                      e.currentTarget.style.boxShadow = '0 0 10px rgba(29,78,216,0.2)'
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(245,158,11,0.5)'
-                      e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.08)'
+                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.5)'
+                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.08)'
                       e.currentTarget.style.boxShadow = 'none'
                     }}
                   >
@@ -345,11 +345,11 @@ export default function AdminMessages() {
           justify-content: center;
           padding: 1rem;
           overflow-y: auto;
-          background-color: rgba(0, 0, 0, 0.9);
+          background-color: rgba(15, 23, 42, 0.9);
         }
         .message-modal-content {
-          background-color: #1a1a1a;
-          border: 1px solid rgba(245,158,11,0.2);
+          background-color: #F1F5F9;
+          border: 1px solid rgba(29,78,216,0.2);
           border-radius: 1rem;
           width: 100%;
           max-width: 85vw;
@@ -367,7 +367,7 @@ export default function AdminMessages() {
         .message-modal-header {
           position: sticky;
           top: 0;
-          background: linear-gradient(135deg, #f59e0b, #d97706);
+          background: linear-gradient(135deg, #1D4ED8, #1E40AF);
           padding: clamp(1rem, 2vw, 1.5rem);
           display: flex;
           justify-content: space-between;
@@ -418,12 +418,12 @@ export default function AdminMessages() {
         }
         .message-modal-value-highlight {
           font-size: clamp(1rem, 3vw, 1.2rem);
-          color: #f59e0b;
+          color: #1D4ED8;
           font-weight: 600;
         }
         .message-modal-footer {
           padding: clamp(1rem, 2vw, 1.75rem);
-          border-top: 1px solid rgba(245,158,11,0.1);
+          border-top: 1px solid rgba(29,78,216,0.1);
           display: flex;
           gap: clamp(0.5rem, 1.5vw, 0.75rem);
           flex-direction: column;
@@ -493,12 +493,12 @@ export default function AdminMessages() {
                     {/* Offer Details */}
                     <div className="message-modal-section" style={{ paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                       <p className="font-bebas" style={{
-                        fontSize: 'clamp(1.15rem, 4vw, 1.4rem)', color: '#f59e0b', marginBottom: '0.75rem', fontWeight: 600
+                        fontSize: 'clamp(1.15rem, 4vw, 1.4rem)', color: '#1D4ED8', marginBottom: '0.75rem', fontWeight: 600
                       }}>
                         {(selectedMessage as any).carTitle || 'Vehicle'}
                       </p>
                       <p className="font-bebas" style={{
-                        fontSize: 'clamp(1.5rem, 5vw, 2rem)', color: '#f59e0b', marginBottom: '0.75rem', fontWeight: 600
+                        fontSize: 'clamp(1.5rem, 5vw, 2rem)', color: '#1D4ED8', marginBottom: '0.75rem', fontWeight: 600
                       }}>
                         {fmt((selectedMessage as any).offerPrice || 0)}
                       </p>
@@ -541,7 +541,7 @@ export default function AdminMessages() {
                     {/* Message */}
                     {selectedMessage.message && (
                       <div>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#f59e0b', marginBottom: '0.75rem' }}>Note from buyer</p>
+                        <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#1D4ED8', marginBottom: '0.75rem' }}>Note from buyer</p>
                         <p style={{
                           fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)', fontStyle: 'italic',
                           whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word',
@@ -607,7 +607,7 @@ export default function AdminMessages() {
                   }}
                   style={{
                     width: '100%', padding: '0.75rem 1rem',
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    background: 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
                     color: 'black', fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
                     border: 'none', borderRadius: '0.5rem', cursor: 'pointer',
                     minHeight: '44px',

@@ -86,10 +86,10 @@ export default function SeedButton() {
           alignItems: 'center',
           gap: '0.5rem',
           padding: '0.75rem 1.25rem',
-          backgroundColor: importing ? 'rgba(245,158,11,0.3)' : 'rgba(245,158,11,0.2)',
-          border: '1px solid rgba(245,158,11,0.4)',
+          backgroundColor: importing ? 'rgba(29,78,216,0.3)' : 'rgba(29,78,216,0.2)',
+          border: '1px solid rgba(29,78,216,0.4)',
           borderRadius: '0.625rem',
-          color: '#f59e0b',
+          color: '#1D4ED8',
           fontFamily: 'Outfit',
           fontSize: '0.875rem',
           fontWeight: 600,
@@ -99,14 +99,14 @@ export default function SeedButton() {
         }}
         onMouseEnter={(e) => {
           if (!importing) {
-            e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.3)'
-            e.currentTarget.style.borderColor = 'rgba(245,158,11,0.6)'
+            e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.3)'
+            e.currentTarget.style.borderColor = 'rgba(29,78,216,0.6)'
           }
         }}
         onMouseLeave={(e) => {
           if (!importing) {
-            e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.2)'
-            e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)'
+            e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.2)'
+            e.currentTarget.style.borderColor = 'rgba(29,78,216,0.4)'
           }
         }}
       >

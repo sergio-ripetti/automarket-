@@ -121,18 +121,18 @@ export default function AdminDashboard() {
           const val = stats[key as keyof Stats]
           return (
             <div key={key} id={`admin-dashboard-stat-card-${idx + 1}`} className={`admin-dashboard-stat-card admin-dashboard-stat-card-${key}`} style={{
-              backgroundColor: '#1a1a1a', border: '1px solid rgba(245,158,11,0.1)',
+              backgroundColor: '#F1F5F9', border: '1px solid rgba(29,78,216,0.1)',
               borderRadius: 'clamp(0.75rem, 2vw, 1rem)', padding: 'clamp(0.25rem, 2vw, 1.5rem)',
               display: 'flex', alignItems: 'flex-start', gap: 'clamp(0.75rem, 2vw, 1.25rem)',
             }}>
               <div style={{
-                width: 44, height: 44, backgroundColor: 'rgba(245,158,11,0.1)',
+                width: 44, height: 44, backgroundColor: 'rgba(29,78,216,0.1)',
                 borderRadius: '0.625rem', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
               }}>
-                <Icon size={20} color="#f59e0b" />
+                <Icon size={20} color="#1D4ED8" />
               </div>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <p className="font-bebas" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.25rem)', color: '#f59e0b', lineHeight: 1 }}>
+                <p className="font-bebas" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.25rem)', color: '#1D4ED8', lineHeight: 1 }}>
                   {loading ? '—' : money ? fmt(val) : val.toLocaleString()}
                 </p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.25rem' }}>
@@ -150,7 +150,7 @@ export default function AdminDashboard() {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
           margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
-          background-color: #111111;
+          background-color: #FFFFFF;
           border: 1px solid rgba(255,255,255,0.05);
           border-radius: 1rem;
         }
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
           font-size: clamp(0.75rem, 1.5vw, 0.875rem);
         }
         .recent-sales-table thead tr {
-          background-color: #1a1a1a;
+          background-color: #F1F5F9;
         }
         .recent-sales-table th {
           padding: clamp(0.75rem, 2vw, 1.25rem);
@@ -207,7 +207,7 @@ export default function AdminDashboard() {
               <tr key={sale.id} id={`admin-dashboard-recent-sales-row-${idx}`} className="admin-dashboard-recent-sales-row">
                 <td style={{ fontFamily: 'Outfit' }}>{sale.carTitle}</td>
                 <td style={{ fontFamily: 'Outfit' }}>{sale.buyer.name}</td>
-                <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#f59e0b', fontSize: '1rem' }}>{fmt(sale.paymentPlan.salePrice)}</td>
+                <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#1D4ED8', fontSize: '1rem' }}>{fmt(sale.paymentPlan.salePrice)}</td>
                 <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)' }}>{paymentTypeLabel[sale.paymentPlan.type] || sale.paymentPlan.type}</td>
                 <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)' }}>{fmtDate(sale.saleDate)}</td>
               </tr>
@@ -225,7 +225,7 @@ export default function AdminDashboard() {
           display: flex;
           gap: clamp(0.75rem, 2vw, 1rem);
           padding: clamp(0.75rem, 2vw, 1.25rem);
-          background-color: #111111;
+          background-color: #FFFFFF;
           border-radius: 0.75rem;
           margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
           border: 1px solid;
@@ -253,7 +253,7 @@ export default function AdminDashboard() {
       `}</style>
       <div id="admin-dashboard-recent-messages-header" className="admin-dashboard-recent-messages-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', flexWrap: 'wrap', gap: 'clamp(0.5rem, 2vw, 1rem)' }}>
         <h2 className="font-bebas recent-messages-title text-white" style={{ fontWeight: 600 }}>Recent Messages</h2>
-        <Link to="/admin/messages" style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#f59e0b', textDecoration: 'none' }}>
+        <Link to="/admin/messages" style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.7rem, 1.5vw, 0.8rem)', color: '#1D4ED8', textDecoration: 'none' }}>
           View All →
         </Link>
       </div>
@@ -261,9 +261,9 @@ export default function AdminDashboard() {
         <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)', padding: 'clamp(1rem, 2vw, 1.5rem) 0' }}>No messages yet.</p>
       ) : recentMessages.map((msg, idx) => (
         <div key={msg.id} id={`admin-dashboard-recent-messages-item-${idx}`} className="admin-dashboard-recent-messages-item message-item" style={{
-          borderColor: msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(245,158,11,0.15)',
+          borderColor: msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(29,78,216,0.15)',
         }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#f59e0b', flexShrink: 0, marginTop: '0.4rem' }} />
+          <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#1D4ED8', flexShrink: 0, marginTop: '0.4rem' }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="message-item-header">
               <p className="font-bebas message-sender" style={{ color: 'white', letterSpacing: '0.03em' }}>{msg.senderName}</p>
@@ -271,7 +271,7 @@ export default function AdminDashboard() {
                 {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
               </p>
             </div>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#f59e0b', marginBottom: '0.25rem' }}>{msg.reason}</p>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#1D4ED8', marginBottom: '0.25rem' }}>{msg.reason}</p>
             <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.45)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {msg.message}
             </p>

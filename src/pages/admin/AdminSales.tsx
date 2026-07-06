@@ -87,7 +87,7 @@ export default function AdminSales() {
         .sales-table-wrapper {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
-          background-color: #0a0a0a;
+          background-color: #FAFBFC;
           border: 1px solid rgba(255,255,255,0.05);
           border-radius: 1rem;
           margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
@@ -99,7 +99,7 @@ export default function AdminSales() {
           font-size: clamp(0.7rem, 1.5vw, 0.875rem);
         }
         .sales-table thead tr {
-          background-color: #1a1a1a;
+          background-color: #F1F5F9;
         }
         .sales-table th {
           padding: clamp(0.75rem, 2vw, 1.25rem);
@@ -129,9 +129,9 @@ export default function AdminSales() {
           transition: all 0.3s ease;
         }
         .admin-sales-stat-card:hover {
-          border-color: rgba(245,158,11,0.3);
+          border-color: rgba(29,78,216,0.3);
           background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
-          box-shadow: 0 4px 12px rgba(245,158,11,0.1);
+          box-shadow: 0 4px 12px rgba(29,78,216,0.1);
         }
         .admin-sales-stat-label {
           font-size: clamp(0.75rem, 2vw, 0.875rem);
@@ -143,7 +143,7 @@ export default function AdminSales() {
         }
         .admin-sales-stat-value {
           font-size: clamp(1.5rem, 5vw, 2.25rem);
-          color: #f59e0b;
+          color: #1D4ED8;
           font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.05em;
           line-height: 1;
@@ -153,9 +153,9 @@ export default function AdminSales() {
           align-items: center;
           gap: clamp(0.5rem, 1.5vw, 0.75rem);
           padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem);
-          border: 1px solid #f59e0b;
-          background: linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.1) 100%);
-          color: #f59e0b;
+          border: 1px solid #1D4ED8;
+          background: linear-gradient(135deg, rgba(29,78,216,0.2) 0%, rgba(29,78,216,0.1) 100%);
+          color: #1D4ED8;
           font-size: clamp(0.875rem, 2vw, 1rem);
           font-weight: 600;
           font-family: 'Outfit', sans-serif;
@@ -167,14 +167,14 @@ export default function AdminSales() {
           text-decoration: none;
         }
         .admin-sales-new-btn:hover {
-          background: linear-gradient(135deg, rgba(245,158,11,0.3) 0%, rgba(245,158,11,0.2) 100%);
-          color: #fcd34d;
-          box-shadow: 0 0 20px rgba(245,158,11,0.3);
+          background: linear-gradient(135deg, rgba(29,78,216,0.3) 0%, rgba(29,78,216,0.2) 100%);
+          color: #93C5FD;
+          box-shadow: 0 0 20px rgba(29,78,216,0.3);
           transform: translateY(-2px);
         }
         .admin-sales-new-btn:active {
           transform: translateY(0);
-          box-shadow: 0 0 10px rgba(245,158,11,0.2);
+          box-shadow: 0 0 10px rgba(29,78,216,0.2);
         }
         .admin-sales-filter-btn {
           padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2.5vw, 1.5rem);
@@ -190,15 +190,15 @@ export default function AdminSales() {
           white-space: nowrap;
         }
         .admin-sales-filter-btn:hover {
-          border-color: rgba(245,158,11,0.5);
-          background: rgba(245,158,11,0.1);
-          color: #f59e0b;
+          border-color: rgba(29,78,216,0.5);
+          background: rgba(29,78,216,0.1);
+          color: #1D4ED8;
         }
         .admin-sales-filter-btn.active {
-          border-color: #f59e0b;
-          background: rgba(245,158,11,0.2);
-          color: #f59e0b;
-          box-shadow: 0 0 10px rgba(245,158,11,0.2);
+          border-color: #1D4ED8;
+          background: rgba(29,78,216,0.2);
+          color: #1D4ED8;
+          box-shadow: 0 0 10px rgba(29,78,216,0.2);
         }
         .admin-sales-search-input {
           width: 100%;
@@ -217,9 +217,9 @@ export default function AdminSales() {
           color: rgba(229,231,235,0.5);
         }
         .admin-sales-search-input:focus {
-          border-color: rgba(245,158,11,0.5);
+          border-color: rgba(29,78,216,0.5);
           background: rgba(255,255,255,0.08);
-          box-shadow: 0 0 0 3px rgba(245,158,11,0.1);
+          box-shadow: 0 0 0 3px rgba(29,78,216,0.1);
         }
       `}</style>
 
@@ -341,7 +341,7 @@ export default function AdminSales() {
               <tr>
                 <td colSpan={7} className="px-5 py-16 text-center">
                   <ShoppingBag size={32} className="mx-auto mb-4 text-white/20" />
-                  <p className="text-white/30 font-outfit">No sales found</p>
+                  <p className="text-white/30 font-inter">No sales found</p>
                 </td>
               </tr>
             ) : (
@@ -363,7 +363,7 @@ export default function AdminSales() {
                     <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>{sale.buyer.email}</p>
                   </td>
                   {/* Price */}
-                  <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#f59e0b', fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}>{fmt(sale.paymentPlan.salePrice)}</td>
+                  <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#1D4ED8', fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}>{fmt(sale.paymentPlan.salePrice)}</td>
                   {/* Type */}
                   <td>
                     <Badge
@@ -389,7 +389,7 @@ export default function AdminSales() {
                     <div className="flex gap-2">
                       <Link
                         to={`/admin/sales/${sale.id}`}
-                        className="inline-flex items-center justify-center rounded bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 transition-colors"
+                        className="inline-flex items-center justify-center rounded bg-blue-700/10 text-blue-700 hover:bg-blue-700/20 transition-colors"
                         style={{ minWidth: '44px', minHeight: '44px', width: '44px', height: '44px' }}
                         title="View details"
                       >

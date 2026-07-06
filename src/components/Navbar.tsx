@@ -32,20 +32,20 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-md ${
         scrolled
-          ? 'bg-black/95 backdrop-blur-md border-b border-amber-500/10 shadow-xl shadow-black/50'
+          ? 'bg-[#FAFBFC]/95 backdrop-blur-md border-b border-blue-700/10 shadow-xl shadow-black/50'
           : 'bg-transparent border-b border-transparent'
       }`}
       role="banner"
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between" aria-label="Main navigation">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 sm:gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-lg px-2 py-1">
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 rounded-lg px-2 py-1">
           <svg
             width="28"
             height="18"
             viewBox="0 0 32 20"
             fill="none"
-            className="text-amber-500 transition-transform duration-md group-hover:scale-110 flex-shrink-0"
+            className="text-blue-700 transition-transform duration-md group-hover:scale-110 flex-shrink-0"
             aria-hidden="true"
           >
             <path d="M2 14L5 6H27L30 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -54,7 +54,7 @@ export default function Navbar() {
             <circle cx="24" cy="18" r="2" fill="currentColor" />
           </svg>
           <span className="font-bebas text-lg sm:text-xl tracking-wider text-white hidden sm:inline">
-            <span className="text-amber-500">AUTO</span>MARKET
+            <span className="text-blue-700">AUTO</span>MARKET
           </span>
         </Link>
 
@@ -65,11 +65,11 @@ export default function Navbar() {
               <Link
                 to={link.to}
                 id={link.id}
-                className="font-poppins text-sm font-medium text-white/70 hover:text-white transition-colors duration-sm relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded px-2 py-1"
+                className="font-poppins text-sm font-medium text-white/70 hover:text-white transition-colors duration-sm relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 rounded px-2 py-1"
                 aria-current={location.pathname === link.to ? 'page' : undefined}
               >
                 {link.label}
-                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-amber-500 to-yellow-500 group-hover:w-full transition-all duration-md" />
+                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-blue-700 to-yellow-500 group-hover:w-full transition-all duration-md" />
               </Link>
             </li>
           ))}
@@ -80,7 +80,7 @@ export default function Navbar() {
           <Link
             to="/favourites"
             aria-label="Go to favorites"
-            className="inline-flex items-center gap-2 font-outfit text-black rounded-lg cursor-pointer transition-all duration-200 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 hover:shadow-[0_4px_15px_rgba(245,158,11,0.4)] hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+            className="inline-flex items-center gap-2 font-inter text-black rounded-lg cursor-pointer transition-all duration-200 bg-gradient-to-br from-blue-700 to-amber-600 hover:from-blue-600 hover:to-blue-700 hover:shadow-[0_4px_15px_rgba(29,78,216,0.4)] hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
             style={{ padding: '0.625rem 1.25rem', fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.04em' }}
           >
             <Heart size={16} />
@@ -91,7 +91,7 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+          className="lg:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         >
@@ -107,7 +107,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden bg-gray-900/95 backdrop-blur-md border-t border-amber-500/10 overflow-hidden"
+            className="lg:hidden bg-gray-900/95 backdrop-blur-md border-t border-blue-700/10 overflow-hidden"
           >
             <nav className="px-4 sm:px-6 py-4" aria-label="Mobile navigation">
               <ul className="flex flex-col gap-1 mb-4">
@@ -121,7 +121,7 @@ export default function Navbar() {
                     <Link
                       to={link.to}
                       id={`mobile-${link.id}`}
-                      className="block font-poppins font-medium text-white/80 hover:text-amber-500 py-3 px-4 rounded-lg transition-colors duration-sm active:bg-white/10"
+                      className="block font-poppins font-medium text-white/80 hover:text-blue-700 py-3 px-4 rounded-lg transition-colors duration-sm active:bg-white/10"
                       aria-current={location.pathname === link.to ? 'page' : undefined}
                     >
                       {link.label}
@@ -137,7 +137,7 @@ export default function Navbar() {
                 <Link
                   to="/favourites"
                   aria-label="Go to favorites"
-                  className="w-full flex items-center justify-center gap-2 font-outfit text-black rounded-lg cursor-pointer transition-all duration-200 bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 hover:shadow-[0_4px_15px_rgba(245,158,11,0.4)]"
+                  className="w-full flex items-center justify-center gap-2 font-inter text-black rounded-lg cursor-pointer transition-all duration-200 bg-gradient-to-br from-blue-700 to-amber-600 hover:from-blue-600 hover:to-blue-700 hover:shadow-[0_4px_15px_rgba(29,78,216,0.4)]"
                   style={{ height: '48px', fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.04em' }}
                 >
                   <Heart size={16} />

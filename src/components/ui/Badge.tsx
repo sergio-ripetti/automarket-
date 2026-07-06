@@ -14,7 +14,7 @@ const variants: Record<BadgeVariant, string> = {
   danger: 'bg-red-500/20 text-red-400 border border-red-500/30',
   warning: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
   info: 'bg-sky-500/20 text-sky-400 border border-sky-500/30',
-  gold: 'bg-amber-500/20 text-amber-500 border border-amber-500/30',
+  gold: 'bg-blue-700/20 text-blue-700 border border-blue-700/30',
 }
 
 // Small pill-shaped label used to display status/tags (e.g. Sale, Featured) with semantic color variants

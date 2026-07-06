@@ -27,13 +27,13 @@ export default function Input({
         </label>
       )}
       <div className="relative">
-        {icon && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-500">{icon}</div>}
+        {icon && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-700">{icon}</div>}
         <input
           className={`
             w-full px-4 py-2.5 rounded-lg
             bg-gray-800/50 border border-gray-700 text-white
             placeholder:text-white/30
-            focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20
+            focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20
             transition-all duration-200
             ${icon ? 'pl-10' : ''}
             ${error ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : ''}
@@ -78,7 +78,7 @@ export function TextArea({
           w-full px-4 py-2.5 rounded-lg
           bg-gray-800/50 border border-gray-700 text-white
           placeholder:text-white/30 resize-none
-          focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20
+          focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-700/20
           transition-all duration-200
           ${error ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : ''}
           disabled:bg-gray-900/30 disabled:opacity-50 disabled:cursor-not-allowed

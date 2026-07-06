@@ -39,7 +39,7 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
         onClick={onChange}
         style={{
           width: 44, height: 24, borderRadius: 12, cursor: 'pointer',
-          backgroundColor: value ? '#f59e0b' : 'rgba(255,255,255,0.12)',
+          backgroundColor: value ? '#1D4ED8' : 'rgba(255,255,255,0.12)',
           position: 'relative', transition: 'background-color 0.2s', flexShrink: 0,
         }}
       >
@@ -75,10 +75,10 @@ export default function AdminAddCar() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#0f0f0f',
-    border: `1px solid ${focused === name ? '#f59e0b' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#FAFBFC',
+    border: `1px solid ${focused === name ? '#1D4ED8' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
-    color: 'white', fontFamily: 'Outfit, sans-serif', fontSize: '0.875rem',
+    color: 'white', fontFamily: 'Inter, sans-serif', fontSize: '0.875rem',
     outline: 'none', transition: 'border-color 0.2s',
   })
 
@@ -218,7 +218,7 @@ export default function AdminAddCar() {
 
       {/* Search Section */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#f59e0b', marginBottom: '0.5rem' }}>
+        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1D4ED8', marginBottom: '0.5rem' }}>
           Search Vehicle Database
         </h2>
         <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1rem' }}>
@@ -278,7 +278,7 @@ export default function AdminAddCar() {
               width: '100%',
               height: '44px',
               padding: '0 1.5rem',
-              background: searching ? 'rgba(245,158,11,0.3)' : 'linear-gradient(135deg, #f59e0b, #d97706)',
+              background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
               color: 'white',
               fontFamily: 'Outfit',
               fontSize: '0.875rem',
@@ -298,8 +298,8 @@ export default function AdminAddCar() {
         {/* Results Dropdown */}
         {searchResults.length > 0 && (
           <div style={{
-            backgroundColor: '#111111',
-            border: '1px solid rgba(245,158,11,0.2)',
+            backgroundColor: '#FFFFFF',
+            border: '1px solid rgba(29,78,216,0.2)',
             borderRadius: '0.75rem',
             maxHeight: '300px',
             overflowY: 'auto',
@@ -315,7 +315,7 @@ export default function AdminAddCar() {
                   cursor: 'pointer',
                   transition: 'background-color 0.2s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1a1a1a' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F1F5F9' }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
               >
                 <div className="font-bebas" style={{ fontSize: '1rem', color: 'white', marginBottom: '0.25rem' }}>
@@ -342,7 +342,7 @@ export default function AdminAddCar() {
           left: '50%',
           top: '-8px',
           transform: 'translateX(-50%)',
-          backgroundColor: '#0a0a0a',
+          backgroundColor: '#FAFBFC',
           padding: '0 0.75rem',
           fontFamily: 'Outfit',
           fontSize: '0.7rem',
@@ -450,7 +450,7 @@ export default function AdminAddCar() {
                     left: "1rem",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    color: "#f59e0b",
+                    color: "#1D4ED8",
                     fontFamily: "Outfit",
                     fontWeight: 600,
                     pointerEvents: "none",
@@ -478,7 +478,7 @@ export default function AdminAddCar() {
                       left: "1rem",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      color: "#f59e0b",
+                      color: "#1D4ED8",
                       fontFamily: "Outfit",
                       fontWeight: 600,
                       pointerEvents: "none",
@@ -523,10 +523,10 @@ export default function AdminAddCar() {
                 {...fp("trans")}>
                 <option
                   value="automatico"
-                  style={{ backgroundColor: "#0f0f0f" }}>
+                  style={{ backgroundColor: "#FAFBFC" }}>
                   Automatic
                 </option>
-                <option value="manual" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="manual" style={{ backgroundColor: "#FAFBFC" }}>
                   Manual
                 </option>
               </select>
@@ -540,18 +540,18 @@ export default function AdminAddCar() {
                 }
                 style={selectStyle("fuel")}
                 {...fp("fuel")}>
-                <option value="gasolina" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="gasolina" style={{ backgroundColor: "#FAFBFC" }}>
                   Petrol
                 </option>
-                <option value="diesel" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="diesel" style={{ backgroundColor: "#FAFBFC" }}>
                   Diesel
                 </option>
                 <option
                   value="electrico"
-                  style={{ backgroundColor: "#0f0f0f" }}>
+                  style={{ backgroundColor: "#FAFBFC" }}>
                   Electric
                 </option>
-                <option value="hibrido" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="hibrido" style={{ backgroundColor: "#FAFBFC" }}>
                   Hybrid
                 </option>
               </select>
@@ -672,7 +672,7 @@ export default function AdminAddCar() {
             style={{
               flex: 2,
               height: "48px",
-              background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+              background: "linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)",
               color: "#000",
               fontWeight: 700,
               fontFamily: "Outfit",

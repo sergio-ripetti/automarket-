@@ -88,12 +88,12 @@ export default function AdminCars() {
             alignItems: 'center',
             gap: 'clamp(0.5rem, 1.5vw, 0.75rem)',
             padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem)',
-            border: '1px solid #f59e0b',
-            background: 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.1) 100%)',
-            color: '#f59e0b',
+            border: '1px solid #1D4ED8',
+            background: 'linear-gradient(135deg, rgba(29,78,216,0.2) 0%, rgba(29,78,216,0.1) 100%)',
+            color: '#1D4ED8',
             fontSize: 'clamp(0.875rem, 2vw, 1rem)',
             fontWeight: 600,
-            fontFamily: 'Outfit, sans-serif',
+            fontFamily: 'Inter, sans-serif',
             borderRadius: '0.375rem',
             cursor: 'pointer',
             transition: 'all 0.3s ease',
@@ -101,14 +101,14 @@ export default function AdminCars() {
             letterSpacing: '0.05em',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.3) 0%, rgba(245,158,11,0.2) 100%)'
-            e.currentTarget.style.color = '#fcd34d'
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(245,158,11,0.3)'
+            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(29,78,216,0.3) 0%, rgba(29,78,216,0.2) 100%)'
+            e.currentTarget.style.color = '#93C5FD'
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(29,78,216,0.3)'
             e.currentTarget.style.transform = 'translateY(-2px)'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(245,158,11,0.2) 0%, rgba(245,158,11,0.1) 100%)'
-            e.currentTarget.style.color = '#f59e0b'
+            e.currentTarget.style.background = 'linear-gradient(135deg, rgba(29,78,216,0.2) 0%, rgba(29,78,216,0.1) 100%)'
+            e.currentTarget.style.color = '#1D4ED8'
             e.currentTarget.style.boxShadow = 'none'
             e.currentTarget.style.transform = 'translateY(0)'
           }}
@@ -133,16 +133,16 @@ export default function AdminCars() {
               gap: '0.625rem',
               cursor: 'pointer',
               padding: '0.5rem 0.875rem',
-              border: `1px solid ${checked ? 'rgba(245,158,11,0.5)' : 'rgba(255,255,255,0.1)'}`,
-              background: checked ? 'rgba(245,158,11,0.1)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${checked ? 'rgba(29,78,216,0.5)' : 'rgba(255,255,255,0.1)'}`,
+              background: checked ? 'rgba(29,78,216,0.1)' : 'rgba(255,255,255,0.03)',
               borderRadius: '0.375rem',
               transition: 'all 0.2s ease',
               userSelect: 'none',
             }}
             onMouseEnter={(e) => {
               if (!checked) {
-                e.currentTarget.style.borderColor = 'rgba(245,158,11,0.3)'
-                e.currentTarget.style.background = 'rgba(245,158,11,0.05)'
+                e.currentTarget.style.borderColor = 'rgba(29,78,216,0.3)'
+                e.currentTarget.style.background = 'rgba(29,78,216,0.05)'
               }
             }}
             onMouseLeave={(e) => {
@@ -156,8 +156,8 @@ export default function AdminCars() {
               width: 16,
               height: 16,
               borderRadius: '0.25rem',
-              border: `1.5px solid ${checked ? '#f59e0b' : 'rgba(255,255,255,0.2)'}`,
-              background: checked ? '#f59e0b' : 'transparent',
+              border: `1.5px solid ${checked ? '#1D4ED8' : 'rgba(255,255,255,0.2)'}`,
+              background: checked ? '#1D4ED8' : 'transparent',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -171,9 +171,9 @@ export default function AdminCars() {
               )}
             </div>
             <span style={{
-              fontFamily: 'Outfit, sans-serif',
+              fontFamily: 'Inter, sans-serif',
               fontSize: '0.875rem',
-              color: checked ? '#f59e0b' : 'rgba(255,255,255,0.6)',
+              color: checked ? '#1D4ED8' : 'rgba(255,255,255,0.6)',
               fontWeight: checked ? 500 : 400,
               transition: 'color 0.2s ease',
             }}>
@@ -202,7 +202,7 @@ export default function AdminCars() {
         </div>
       ) : displayed.length === 0 ? (
         <div className="text-center py-16 text-white/30">
-          <p className="text-lg font-outfit">No vehicles found</p>
+          <p className="text-lg font-inter">No vehicles found</p>
         </div>
       ) : (
         <div id="admin-inventory-cards-grid" className="admin-inventory-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
@@ -210,7 +210,7 @@ export default function AdminCars() {
             <div
               key={car.id}
               id={`admin-inventory-card-${idx}`}
-              className={`admin-inventory-card admin-inventory-card-${idx} group relative bg-carbon border border-white/5 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all duration-200 hover:shadow-xl hover:shadow-black/40`}
+              className={`admin-inventory-card admin-inventory-card-${idx} group relative bg-carbon border border-white/5 rounded-xl overflow-hidden hover:border-blue-700/30 transition-all duration-200 hover:shadow-xl hover:shadow-black/40`}
             >
               {/* Image */}
               <div className="relative h-60 overflow-hidden bg-slate-900">
@@ -238,11 +238,11 @@ export default function AdminCars() {
                 {/* Year & Mileage */}
                 <div className="flex gap-4 mb-4 text-xs lg:text-sm">
                   <div className="flex items-center gap-1.5 text-white/60">
-                    <Calendar size={14} className="text-amber-500" />
+                    <Calendar size={14} className="text-blue-700" />
                     <span>{car.year}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-white/60">
-                    <Gauge size={14} className="text-amber-500" />
+                    <Gauge size={14} className="text-blue-700" />
                     <span>{formatKm(car.km)}</span>
                   </div>
                 </div>
@@ -262,7 +262,7 @@ export default function AdminCars() {
 
                 {/* Price */}
                 <div className="mb-6">
-                  <span className="font-bebas text-2xl text-amber-500 tracking-wider">{fmt(car.price)}</span>
+                  <span className="font-bebas text-2xl text-blue-700 tracking-wider">{fmt(car.price)}</span>
                 </div>
 
                 {/* Featured Toggle */}
@@ -281,8 +281,8 @@ export default function AdminCars() {
                     width: 16,
                     height: 16,
                     borderRadius: '0.25rem',
-                    border: `1.5px solid ${car.featured ? '#f59e0b' : 'rgba(255,255,255,0.2)'}`,
-                    background: car.featured ? '#f59e0b' : 'transparent',
+                    border: `1.5px solid ${car.featured ? '#1D4ED8' : 'rgba(255,255,255,0.2)'}`,
+                    background: car.featured ? '#1D4ED8' : 'transparent',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -296,9 +296,9 @@ export default function AdminCars() {
                     )}
                   </div>
                   <span style={{
-                    fontFamily: 'Outfit, sans-serif',
+                    fontFamily: 'Inter, sans-serif',
                     fontSize: '0.8rem',
-                    color: car.featured ? '#f59e0b' : 'rgba(255,255,255,0.5)',
+                    color: car.featured ? '#1D4ED8' : 'rgba(255,255,255,0.5)',
                     transition: 'color 0.2s ease',
                   }}>
                     Mark as Featured
@@ -322,15 +322,15 @@ export default function AdminCars() {
                       borderRadius: '0.375rem',
                       fontSize: '0.8rem',
                       fontWeight: 500,
-                      fontFamily: 'Outfit, sans-serif',
+                      fontFamily: 'Inter, sans-serif',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       minHeight: '36px',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(245,158,11,0.5)'
-                      e.currentTarget.style.background = 'rgba(245,158,11,0.08)'
-                      e.currentTarget.style.color = '#f59e0b'
+                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.5)'
+                      e.currentTarget.style.background = 'rgba(29,78,216,0.08)'
+                      e.currentTarget.style.color = '#1D4ED8'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
@@ -356,7 +356,7 @@ export default function AdminCars() {
                       borderRadius: '0.375rem',
                       fontSize: '0.8rem',
                       fontWeight: 500,
-                      fontFamily: 'Outfit, sans-serif',
+                      fontFamily: 'Inter, sans-serif',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       minHeight: '36px',

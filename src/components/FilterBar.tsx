@@ -12,7 +12,7 @@ interface FilterBarProps {
 const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'Outfit, sans-serif',
+  fontFamily: 'Inter, sans-serif',
   fontSize: '0.7rem',
   color: 'rgba(255,255,255,0.4)',
   letterSpacing: '0.1em',
@@ -54,12 +54,12 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
 
   // Builds inline styles for a text/number input, highlighting the border when the field is focused
   const inputBase = (name: string): React.CSSProperties => ({
-    backgroundColor: '#0f0f0f',
-    border: `1px solid ${focused === name ? '#f59e0b' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#FAFBFC',
+    border: `1px solid ${focused === name ? '#1D4ED8' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem',
     padding: '0.75rem 1rem',
     color: 'white',
-    fontFamily: 'Outfit, sans-serif',
+    fontFamily: 'Inter, sans-serif',
     fontSize: '0.875rem',
     outline: 'none',
     width: '100%',
@@ -82,7 +82,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
   return (
     <div
       style={{
-        backgroundColor: '#111111',
+        backgroundColor: '#FFFFFF',
         borderRadius: '1rem',
         padding: '1.5rem',
         border: '1px solid rgba(255,255,255,0.06)',
@@ -216,9 +216,9 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
             onMouseEnter={() => setClearHovered(true)}
             onMouseLeave={() => setClearHovered(false)}
             style={{
-              border: '1px solid rgba(245,158,11,0.3)',
-              color: '#f59e0b',
-              backgroundColor: clearHovered ? 'rgba(245,158,11,0.1)' : 'transparent',
+              border: '1px solid rgba(29,78,216,0.3)',
+              color: '#1D4ED8',
+              backgroundColor: clearHovered ? 'rgba(29,78,216,0.1)' : 'transparent',
               borderRadius: '0.625rem',
               padding: '0.75rem 1.25rem',
               cursor: 'pointer',

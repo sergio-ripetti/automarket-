@@ -7,8 +7,8 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: 'Outfit', color: '#f59e0b', fontSize: '0.9rem' }}>Loading…</p>
+      <div style={{ minHeight: '100vh', backgroundColor: '#FAFBFC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ fontFamily: 'Outfit', color: '#1D4ED8', fontSize: '0.9rem' }}>Loading…</p>
       </div>
     )
   }

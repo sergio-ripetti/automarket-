@@ -45,7 +45,7 @@ export default function Cars() {
   const displayed = hasActiveFilters ? filteredCars : allCars
 
   return (
-    <main style={{ paddingTop: '72px', minHeight: '100vh', backgroundColor: '#0a0a0a' }}>
+    <main style={{ paddingTop: '72px', minHeight: '100vh', backgroundColor: '#FAFBFC' }}>
       <div className="w-full flex justify-center py-12">
         <div className="mx-auto flex flex-col gap-10" style={{ width: '80%' }}>
 
@@ -55,11 +55,11 @@ export default function Cars() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="font-outfit text-amber-500 uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
+            <p className="font-inter text-blue-700 uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
             <h1 className="font-bebas text-5xl text-white tracking-wide leading-none">
-              Our <span className="text-amber-500">Vehicles</span>
+              Our <span className="text-blue-700">Vehicles</span>
             </h1>
-            <p className="font-outfit text-white/40 text-sm mt-2">Find your perfect match</p>
+            <p className="font-inter text-white/40 text-sm mt-2">Find your perfect match</p>
           </motion.div>
 
           {/* Filter bar */}
@@ -74,13 +74,13 @@ export default function Cars() {
           <div>
             {loading ? (
               <>
-                <div style={{ height: '2rem', width: '12rem', backgroundColor: '#111111', borderRadius: '0.5rem', marginBottom: '1.5rem' }} className="animate-pulse" />
+                <div style={{ height: '2rem', width: '12rem', backgroundColor: '#FFFFFF', borderRadius: '0.5rem', marginBottom: '1.5rem' }} className="animate-pulse" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
                   {[...Array(8)].map((_, i) => (
                     <div
                       key={i}
                       className="animate-pulse"
-                      style={{ backgroundColor: '#111111', borderRadius: '1rem', height: '380px' }}
+                      style={{ backgroundColor: '#FFFFFF', borderRadius: '1rem', height: '380px' }}
                     />
                   ))}
                 </div>
@@ -98,9 +98,9 @@ export default function Cars() {
               <>
                 <h2 className="font-bebas text-2xl text-white tracking-wide mb-6">
                   {hasActiveFilters ? (
-                    <><span className="text-amber-500">{filteredCars.length}</span> vehicles found</>
+                    <><span className="text-blue-700">{filteredCars.length}</span> vehicles found</>
                   ) : (
-                    <>All <span className="text-amber-500">Vehicles</span></>
+                    <>All <span className="text-blue-700">Vehicles</span></>
                   )}
                 </h2>
 
@@ -111,8 +111,8 @@ export default function Cars() {
                     className="flex flex-col items-center justify-center py-32 text-center"
                   >
                     <SearchX size={56} className="text-white/20 mb-4" />
-                    <p className="font-outfit text-white/50 text-lg">No vehicles found matching your criteria</p>
-                    <p className="font-outfit text-white/30 text-sm mt-1">Try adjusting your filters</p>
+                    <p className="font-inter text-white/50 text-lg">No vehicles found matching your criteria</p>
+                    <p className="font-inter text-white/30 text-sm mt-1">Try adjusting your filters</p>
                   </motion.div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-stretch pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>

@@ -58,7 +58,7 @@ function Toggle({
           height: 24,
           borderRadius: 12,
           cursor: "pointer",
-          backgroundColor: value ? "#f59e0b" : "rgba(255,255,255,0.12)",
+          backgroundColor: value ? "#1D4ED8" : "rgba(255,255,255,0.12)",
           position: "relative",
           transition: "background-color 0.2s",
           flexShrink: 0,
@@ -147,7 +147,7 @@ export default function AdminEditCar() {
 
   if (loading)
     return (
-      <div style={{ padding: "2rem", color: "#f59e0b", fontFamily: "Outfit" }}>
+      <div style={{ padding: "2rem", color: "#1D4ED8", fontFamily: "Outfit" }}>
         Loading vehicle…
       </div>
     );
@@ -164,12 +164,12 @@ const set = (field: keyof FormState, val: string | boolean) => {
   const inputStyle: React.CSSProperties = {
     width: "100%",
     boxSizing: "border-box",
-    backgroundColor: "#0f0f0f",
+    backgroundColor: "#FAFBFC",
     border: "1px solid rgba(255,255,255,0.08)",
     borderRadius: "0.625rem",
     padding: "0.875rem 1rem",
     color: "white",
-    fontFamily: "Outfit, sans-serif",
+    fontFamily: "Inter, sans-serif",
     fontSize: "0.875rem",
     outline: "none",
     transition: "border-color 0.2s",
@@ -338,10 +338,10 @@ const set = (field: keyof FormState, val: string | boolean) => {
           gap: '0.5rem',
           padding: '0.75rem 1rem',
           marginBottom: '1.5rem',
-          backgroundColor: 'rgba(245,158,11,0.1)',
-          border: '1px solid rgba(245,158,11,0.2)',
+          backgroundColor: 'rgba(29,78,216,0.1)',
+          border: '1px solid rgba(29,78,216,0.2)',
           borderRadius: '0.625rem',
-          color: '#f59e0b',
+          color: '#1D4ED8',
           fontFamily: 'Outfit',
           fontSize: '0.875rem',
           fontWeight: 600,
@@ -349,12 +349,12 @@ const set = (field: keyof FormState, val: string | boolean) => {
           transition: 'all 0.2s',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.2)'
-          e.currentTarget.style.borderColor = 'rgba(245,158,11,0.4)'
+          e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.2)'
+          e.currentTarget.style.borderColor = 'rgba(29,78,216,0.4)'
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(245,158,11,0.1)'
-          e.currentTarget.style.borderColor = 'rgba(245,158,11,0.2)'
+          e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.1)'
+          e.currentTarget.style.borderColor = 'rgba(29,78,216,0.2)'
         }}
       >
         <RefreshCw size={16} />
@@ -365,8 +365,8 @@ const set = (field: keyof FormState, val: string | boolean) => {
       {/* Search Panel */}
       {searchExpanded && (
         <div style={{
-          backgroundColor: 'rgba(245,158,11,0.05)',
-          border: '1px solid rgba(245,158,11,0.15)',
+          backgroundColor: 'rgba(29,78,216,0.05)',
+          border: '1px solid rgba(29,78,216,0.15)',
           borderRadius: '0.75rem',
           padding: '1rem',
           marginBottom: '1.5rem',
@@ -417,7 +417,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                 width: '100%',
                 height: '44px',
                 padding: '0 1.5rem',
-                background: searching ? 'rgba(245,158,11,0.3)' : 'linear-gradient(135deg, #f59e0b, #d97706)',
+                background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
                 color: 'white',
                 fontFamily: 'Outfit',
                 fontSize: '0.875rem',
@@ -437,8 +437,8 @@ const set = (field: keyof FormState, val: string | boolean) => {
           {/* Results Dropdown */}
           {searchResults.length > 0 && (
             <div style={{
-              backgroundColor: '#111111',
-              border: '1px solid rgba(245,158,11,0.2)',
+              backgroundColor: '#FFFFFF',
+              border: '1px solid rgba(29,78,216,0.2)',
               borderRadius: '0.75rem',
               maxHeight: '300px',
               overflowY: 'auto',
@@ -454,7 +454,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                     cursor: 'pointer',
                     transition: 'background-color 0.2s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1a1a1a' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F1F5F9' }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                 >
                   <div className="font-bebas" style={{ fontSize: '1rem', color: 'white', marginBottom: '0.25rem' }}>
@@ -564,7 +564,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                     left: "1rem",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    color: "#f59e0b",
+                    color: "#1D4ED8",
                     fontFamily: "Outfit",
                     fontWeight: 600,
                     pointerEvents: "none",
@@ -593,7 +593,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                       left: "1rem",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      color: "#f59e0b",
+                      color: "#1D4ED8",
                       fontFamily: "Outfit",
                       fontWeight: 600,
                       pointerEvents: "none",
@@ -639,10 +639,10 @@ const set = (field: keyof FormState, val: string | boolean) => {
                 style={selectStyle}>
                 <option
                   value="automatico"
-                  style={{ backgroundColor: "#0f0f0f" }}>
+                  style={{ backgroundColor: "#FAFBFC" }}>
                   Automatic
                 </option>
-                <option value="manual" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="manual" style={{ backgroundColor: "#FAFBFC" }}>
                   Manual
                 </option>
               </select>
@@ -656,18 +656,18 @@ const set = (field: keyof FormState, val: string | boolean) => {
                   set("fuel", e.target.value as FormState["fuel"])
                 }
                 style={selectStyle}>
-                <option value="gasolina" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="gasolina" style={{ backgroundColor: "#FAFBFC" }}>
                   Petrol
                 </option>
-                <option value="diesel" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="diesel" style={{ backgroundColor: "#FAFBFC" }}>
                   Diesel
                 </option>
                 <option
                   value="electrico"
-                  style={{ backgroundColor: "#0f0f0f" }}>
+                  style={{ backgroundColor: "#FAFBFC" }}>
                   Electric
                 </option>
-                <option value="hibrido" style={{ backgroundColor: "#0f0f0f" }}>
+                <option value="hibrido" style={{ backgroundColor: "#FAFBFC" }}>
                   Hybrid
                 </option>
               </select>
@@ -783,7 +783,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
             style={{
               flex: 2,
               height: "48px",
-              background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+              background: "linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)",
               color: "#000",
               fontWeight: 700,
               fontFamily: "Outfit",
