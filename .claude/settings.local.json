@@ -107,7 +107,8 @@
       "Bash(git commit -m 'fix: Fix JSX syntax errors from sed replacement - remove extra quotes in style objects *)",
       "Bash(git commit -m 'fix: Remove all remaining incorrect quote patterns in color properties *)",
       "Bash(git commit -m 'fix: Fix JSX syntax errors from sed replacements - fix double quotes and nowrap patterns *)",
-      "Bash(git commit -m 'fix: Remove unused red variable in Financing.tsx *)"
+      "Bash(git commit -m 'fix: Remove unused red variable in Financing.tsx *)",
+      "Bash(git commit -m 'refactor: Comprehensive color system redesign - premium palette & accessibility fixes *)"
     ]
   }
 }

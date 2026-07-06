@@ -106,7 +106,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-inter text-#2E86AB uppercase tracking-[0.25em] text-xs mb-5"
+            className="font-inter text-#2C6E9E uppercase tracking-[0.25em] text-xs mb-5"
           >
             New Zealand's Premier Car Marketplace
           </motion.p>
@@ -115,10 +115,11 @@ export default function Home() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-bebas text-[#0D1B2A] leading-none mb-6 tracking-wide"
+            className="font-bebas text-white leading-none mb-6 tracking-wide"
+            style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
           >
             FIND YOUR{' '}
-            <span className="text-#2E86AB">PERFECT</span>
+            <span className="text-[#2C6E9E]">PERFECT</span>
             {' '}CAR
           </motion.h1>
 
@@ -126,7 +127,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-inter text-lg text-[#0D1B2A]/80 mb-10 max-w-lg mx-auto"
+            className="font-inter text-lg text-white/90 mb-10 max-w-lg mx-auto"
           >
             Buy, sell, and finance with complete confidence. Quality vehicles, transparent pricing, expert support.
           </motion.p>
@@ -141,7 +142,7 @@ export default function Home() {
               to="/cars"
               className="font-inter font-bold text-sm inline-flex items-center gap-2"
               style={{
-                background: 'linear-gradient(135deg, #2E86AB 0%, #256E8C 100%)',
+                background: 'linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)',
                 color: '#000', padding: '0.875rem 2rem',
                 borderRadius: '0.5rem', letterSpacing: '0.04em',
               }}
@@ -172,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* ─── FEATURED VEHICLES ─── */}
-      <div className="w-full flex justify-center py-20" style={{ backgroundColor: '#EEF2F7' }}>
+      <div className="w-full flex justify-center py-20" style={{ backgroundColor: '#F4F7FA' }}>
         <div className="mx-auto flex flex-col gap-10" style={{ width: '80%' }}>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -180,9 +181,9 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <p className="font-inter text-#2E86AB uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
+            <p className="font-inter text-#2C6E9E uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
             <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              Featured <span className="text-#2E86AB">Vehicles</span>
+              Featured <span className="text-#2C6E9E">Vehicles</span>
             </h2>
             <p className="font-inter text-[#A8B8C8] text-sm mt-2">Hand-picked by our team</p>
           </motion.div>
@@ -225,7 +226,7 @@ export default function Home() {
         ref={statsRef}
         className="w-full"
         style={{
-          backgroundColor: '#EEF2F7',
+          backgroundColor: '#F4F7FA',
           borderTop: '1px solid rgba(255,255,255,0.05)',
           borderBottom: '1px solid rgba(255,255,255,0.05)',
           marginTop: '4rem',
@@ -243,7 +244,7 @@ export default function Home() {
               >
                 <p
                   className="font-bebas"
-                  style={{ fontSize: '3.5rem', color: '#2E86AB', lineHeight: 1, marginBottom: '0.25rem' }}
+                  style={{ fontSize: '3.5rem', color: '#2C6E9E', lineHeight: 1, marginBottom: '0.25rem' }}
                 >
                   {counts[i]}{stat.suffix}
                 </p>
@@ -257,7 +258,7 @@ export default function Home() {
       {/* ─── HOW IT WORKS ─── */}
       <div
         className="w-full flex justify-center"
-        style={{ backgroundColor: '#EEF2F7', paddingTop: '4rem', paddingBottom: '4rem' }}
+        style={{ backgroundColor: '#F4F7FA', paddingTop: '4rem', paddingBottom: '4rem' }}
       >
         <div className="mx-auto" style={{ width: '80%' }}>
           <motion.div
@@ -266,9 +267,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="mb-12"
           >
-            <p className="font-inter text-#2E86AB uppercase tracking-[0.2em] text-xs mb-2">Process</p>
+            <p className="font-inter text-#2C6E9E uppercase tracking-[0.2em] text-xs mb-2">Process</p>
             <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              How It <span className="text-#2E86AB">Works</span>
+              How It <span className="text-#2C6E9E">Works</span>
             </h2>
           </motion.div>
 
@@ -295,7 +296,7 @@ export default function Home() {
                       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                     }}
                   >
-                    <step.icon size={20} className="text-#2E86AB" />
+                    <step.icon size={20} className="text-#2C6E9E" />
                   </div>
                   <span
                     className="font-bebas"
@@ -316,7 +317,7 @@ export default function Home() {
       <div
         className="w-full flex justify-center"
         style={{
-          backgroundColor: '#EEF2F7',
+          backgroundColor: '#F4F7FA',
           borderTop: '1px solid rgba(255,255,255,0.05)',
           paddingTop: '4rem',
           paddingBottom: '6rem',
@@ -338,7 +339,7 @@ export default function Home() {
             to="/cars"
             className="font-inter font-bold text-base inline-flex items-center gap-2.5"
             style={{
-              background: 'linear-gradient(135deg, #2E86AB 0%, #256E8C 100%)',
+              background: 'linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)',
               color: '#000', padding: '1rem 2.5rem',
               borderRadius: '0.625rem', letterSpacing: '0.04em',
             }}

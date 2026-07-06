@@ -45,7 +45,7 @@ export default function Cars() {
   const displayed = hasActiveFilters ? filteredCars : allCars
 
   return (
-    <main style={{ paddingTop: '72px', minHeight: '100vh', backgroundColor: '#EEF2F7' }}>
+    <main style={{ paddingTop: '72px', minHeight: '100vh', backgroundColor: '#F4F7FA' }}>
       <div className="w-full flex justify-center py-12">
         <div className="mx-auto flex flex-col gap-10" style={{ width: '80%' }}>
 
@@ -55,9 +55,9 @@ export default function Cars() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="font-inter text-#2E86AB uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
+            <p className="font-inter text-#2C6E9E uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
             <h1 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              Our <span className="text-#2E86AB">Vehicles</span>
+              Our <span className="text-#2C6E9E">Vehicles</span>
             </h1>
             <p className="font-inter text-[#A8B8C8] text-sm mt-2">Find your perfect match</p>
           </motion.div>
@@ -98,9 +98,9 @@ export default function Cars() {
               <>
                 <h2 className="font-bebas text-[#0D1B2A] tracking-wide mb-6">
                   {hasActiveFilters ? (
-                    <><span className="text-#2E86AB">{filteredCars.length}</span> vehicles found</>
+                    <><span className="text-#2C6E9E">{filteredCars.length}</span> vehicles found</>
                   ) : (
-                    <>All <span className="text-#2E86AB">Vehicles</span></>
+                    <>All <span className="text-#2C6E9E">Vehicles</span></>
                   )}
                 </h2>
 

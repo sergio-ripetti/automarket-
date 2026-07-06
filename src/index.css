@@ -13,9 +13,9 @@ html {
 }
 
 body {
-  background-color: #EEF2F7;
-  background: linear-gradient(135deg, #EEF2F7 0%, #E4EAF0 100%);
-  color: #0D1B2A;
+  background-color: #F4F7FA;
+  background: linear-gradient(135deg, #F4F7FA 0%, #EBF0F6 100%);
+  color: #445566;
   font-family: "Inter", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

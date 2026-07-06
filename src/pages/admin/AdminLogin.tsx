@@ -13,8 +13,8 @@ export default function AdminLogin() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#EEF2F7',
-    border: `1px solid ${focused === name ? '#2E86AB' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#F4F7FA',
+    border: `1px solid ${focused === name ? '#2C6E9E' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
     color: "#0D1B2A", fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
     outline: 'none', transition: 'border-color 0.2s',
@@ -41,7 +41,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#EEF2F7', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#F4F7FA', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{
         width: '100%', maxWidth: '420px',
         backgroundColor: '#FFFFFF', border: '1px solid rgba(29,78,216,0.15)',
@@ -49,7 +49,7 @@ export default function AdminLogin() {
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <span className="font-bebas" style={{ fontSize: '2rem', color: '#2E86AB', display: 'block', lineHeight: 1 }}>
+          <span className="font-bebas" style={{ fontSize: '2rem', color: '#2C6E9E', display: 'block', lineHeight: 1 }}>
             AutoMarket
           </span>
           <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#C8D8E4', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
@@ -102,7 +102,7 @@ export default function AdminLogin() {
             disabled={loading}
             style={{
               width: '100%', height: '48px',
-              background: 'linear-gradient(135deg, #2E86AB 0%, #256E8C 100%)',
+              background: 'linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)',
               color: '#000', fontWeight: 700, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem',
               borderRadius: '0.75rem', border: 'none',
               cursor: loading ? 'default' : 'pointer',
