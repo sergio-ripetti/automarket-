@@ -126,7 +126,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-inter text-lg text-white/80 mb-10 max-w-lg mx-auto"
+            className="font-inter text-lg text-[#0D1B2A]/80 mb-10 max-w-lg mx-auto"
           >
             Buy, sell, and finance with complete confidence. Quality vehicles, transparent pricing, expert support.
           </motion.p>
@@ -150,7 +150,7 @@ export default function Home() {
             </Link>
             <Link
               to="/financing"
-              className="font-inter font-medium text-sm text-white/80 hover:text-white transition-colors"
+              className="font-inter font-medium text-sm text-[#0D1B2A]/80 hover:text-[#0D1B2A] transition-colors"
               style={{
                 padding: '0.875rem 2rem', borderRadius: '0.5rem',
                 letterSpacing: '0.04em', border: '1px solid rgba(255,255,255,0.2)',
@@ -167,7 +167,7 @@ export default function Home() {
           transition={{ delay: 1.3, duration: 1 }}
           className="absolute bottom-8 left-1/2 -translate-x-1/2"
         >
-          <ChevronDown size={26} className="text-white/30 animate-bounce" />
+          <ChevronDown size={26} className="text-[#0D1B2A]/30 animate-bounce" />
         </motion.div>
       </section>
 

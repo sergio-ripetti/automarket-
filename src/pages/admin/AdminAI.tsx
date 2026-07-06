@@ -327,7 +327,7 @@ export default function AdminAI() {
             <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.25rem' }}>
               AI Assistant
             </h1>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)' }}>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#A8B8C8' }}>
               Ask anything about your business
             </p>
           </div>
@@ -338,7 +338,7 @@ export default function AdminAI() {
                 display: 'flex', alignItems: 'center', gap: '0.5rem',
                 padding: '0.5rem 1rem', borderRadius: '0.5rem',
                 backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                color: 'rgba(255,255,255,0.5)', fontFamily: 'Outfit', fontSize: '0.75rem',
+                color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.75rem',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
@@ -366,7 +366,7 @@ export default function AdminAI() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
             <div style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
-              color: 'rgba(255,255,255,0.4)',
+              color: '#A8B8C8',
             }}>
               <Bot size={32} />
               <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem' }}>Loading AI Assistant...</p>
@@ -379,14 +379,14 @@ export default function AdminAI() {
               <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
                 Hello! I'm your AI Assistant
               </h2>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.4)', maxWidth: '400px' }}>
+              <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#A8B8C8', maxWidth: '400px' }}>
                 I can help you analyze your business data, answer questions about inventory, sales, financing, and more.
               </p>
             </div>
 
             <div>
               <p style={{
-                fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)',
+                fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8',
                 marginBottom: '1rem', textAlign: 'center',
               }}>
                 Try asking:
@@ -401,7 +401,7 @@ export default function AdminAI() {
                     style={{
                       backgroundColor: '#E4EAF0', border: '1px solid rgba(29,78,216,0.2)',
                       borderRadius: '2rem', padding: '0.5rem 1.25rem',
-                      color: 'rgba(255,255,255,0.7)', fontFamily: 'Outfit', fontSize: '0.75rem',
+                      color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.75rem',
                       cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left',
                     }}
                     onMouseEnter={(e) => {

@@ -113,7 +113,7 @@ export default function AdminFinancing() {
             className={`px-5 py-2 rounded-full text-sm font-inter font-medium transition-all ${
               activeTab === id
                 ? 'bg-#2E86AB text-black'
-                : 'bg-white/5 text-white/50 hover:bg-white/10'
+                : 'bg-white/5 text-[#0D1B2A]/50 hover:bg-white/10'
             }`}
           >
             {label}
@@ -131,7 +131,7 @@ export default function AdminFinancing() {
             />
           ))
         ) : filtered.length === 0 ? (
-          <p className="text-center py-8 text-white/30 font-inter text-sm">
+          <p className="text-center py-8 text-[#0D1B2A]/30 font-inter text-sm">
             No financing requests{" "}
             {activeTab !== "all" &&
               `with status "${statusLabel[activeTab as FinancingRequest["status"]]}"`}
@@ -359,7 +359,7 @@ export default function AdminFinancing() {
                 .admin-financing-view-btn:hover {
                   background: rgba(255,255,255,0.08) !important;
                   border-color: rgba(255,255,255,0.3) !important;
-                  color: white !important;
+                  color: '#0D1B2A' !important;
                 }
                 .admin-financing-delete-btn:hover {
                   background: rgba(239,68,68,0.08) !important;
@@ -569,7 +569,7 @@ export default function AdminFinancing() {
         }
         .financing-modal-value {
           font-size: 0.8rem;
-          color: white;
+          color: '#0D1B2A';
           font-weight: 500;
         }
         @media (min-width: 768px) {

@@ -99,7 +99,8 @@
       "Bash(git commit -m 'refactor: Complete color system redesign - Glacier & Midnight Navy *)",
       "Bash(tasklist)",
       "mcp__claude-in-chrome__browser_batch",
-      "Bash(git commit -m 'fix: Fix critical text contrast issues on light backgrounds - change white text to dark colors \\(#0D1B2A, #4A6070, #A8B8C8\\) on public pages \\(Home, Cars, CarDetail\\) and components *)"
+      "Bash(git commit -m 'fix: Fix critical text contrast issues on light backgrounds - change white text to dark colors \\(#0D1B2A, #4A6070, #A8B8C8\\) on public pages \\(Home, Cars, CarDetail\\) and components *)",
+      "Bash(git commit -m 'fix: Complete text contrast overhaul - replace all white text on light backgrounds with dark colors \\(#0D1B2A, #4A6070, #A8B8C8\\) *)"
     ]
   }
 }

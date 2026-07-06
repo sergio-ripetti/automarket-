@@ -181,7 +181,7 @@ export default function AdminCars() {
             </span>
           </label>
         ))}
-        <p className="text-xs text-white/35 ml-auto">
+        <p className="text-xs text-[#0D1B2A]/35 ml-auto">
           {displayed.length} vehicle{displayed.length !== 1 ? 's' : ''}
         </p>
       </div>
@@ -201,7 +201,7 @@ export default function AdminCars() {
           ))}
         </div>
       ) : displayed.length === 0 ? (
-        <div className="text-center py-16 text-white/30">
+        <div className="text-center py-16 text-[#0D1B2A]/30">
           <p className="text-lg font-inter">No vehicles found</p>
         </div>
       ) : (
@@ -237,11 +237,11 @@ export default function AdminCars() {
 
                 {/* Year & Mileage */}
                 <div className="flex gap-4 mb-4 text-xs lg:text-sm">
-                  <div className="flex items-center gap-1.5 text-white/60">
+                  <div className="flex items-center gap-1.5 text-[#0D1B2A]/60">
                     <Calendar size={14} className="text-#2E86AB" />
                     <span>{car.year}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-white/60">
+                  <div className="flex items-center gap-1.5 text-[#0D1B2A]/60">
                     <Gauge size={14} className="text-#2E86AB" />
                     <span>{formatKm(car.km)}</span>
                   </div>
@@ -318,7 +318,7 @@ export default function AdminCars() {
                       padding: '0.5rem 0.75rem',
                       border: '1px solid rgba(255,255,255,0.15)',
                       background: 'rgba(255,255,255,0.04)',
-                      color: 'rgba(255,255,255,0.6)',
+                      color: '#4A6070',
                       borderRadius: '0.375rem',
                       fontSize: '0.8rem',
                       fontWeight: 500,

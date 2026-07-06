@@ -89,7 +89,7 @@ export default function AdminDashboard() {
       <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.25rem', fontWeight: 600 }}>
         Dashboard
       </h1>
-      <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', color: 'rgba(255,255,255,0.4)', marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
+      <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', color: '#A8B8C8', marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
         {today}
       </p>
 
@@ -135,7 +135,7 @@ export default function AdminDashboard() {
                 <p className="font-bebas" style={{ fontSize: 'clamp(1.5rem, 5vw, 2.25rem)', color: '#2E86AB', lineHeight: 1 }}>
                   {loading ? '—' : money ? fmt(val) : val.toLocaleString()}
                 </p>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.25rem' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070', marginTop: '0.25rem' }}>
                   {label}
                 </p>
               </div>
@@ -168,7 +168,7 @@ export default function AdminDashboard() {
           text-align: left;
           font-family: 'Bebas Neue', sans-serif;
           font-size: clamp(0.7rem, 1.5vw, 0.8rem);
-          color: rgba(255,255,255,0.5);
+          color: '#4A6070';
           letter-spacing: 0.05em;
           font-weight: 400;
           text-transform: uppercase;
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
         .recent-sales-table td {
           padding: clamp(0.75rem, 2vw, 1.25rem);
           border-bottom: 1px solid rgba(255,255,255,0.04);
-          color: rgba(255,255,255,0.8);
+          color: '#0D1B2A';
         }
         @media (max-width: 767px) {
           .recent-sales-table {
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
           <tbody>
             {recentSales.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: '0.9rem' }}>
+                <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', fontFamily: 'Outfit', color: '#C8D8E4', fontSize: '0.9rem' }}>
                   No sales recorded yet
                 </td>
               </tr>
@@ -208,8 +208,8 @@ export default function AdminDashboard() {
                 <td style={{ fontFamily: 'Outfit' }}>{sale.carTitle}</td>
                 <td style={{ fontFamily: 'Outfit' }}>{sale.buyer.name}</td>
                 <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#2E86AB', fontSize: '1rem' }}>{fmt(sale.paymentPlan.salePrice)}</td>
-                <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)' }}>{paymentTypeLabel[sale.paymentPlan.type] || sale.paymentPlan.type}</td>
-                <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)' }}>{fmtDate(sale.saleDate)}</td>
+                <td style={{ fontFamily: 'Outfit', color: '#4A6070' }}>{paymentTypeLabel[sale.paymentPlan.type] || sale.paymentPlan.type}</td>
+                <td style={{ fontFamily: 'Outfit', color: '#4A6070' }}>{fmtDate(sale.saleDate)}</td>
               </tr>
             ))}
           </tbody>
@@ -258,7 +258,7 @@ export default function AdminDashboard() {
         </Link>
       </div>
       {recentMessages.length === 0 ? (
-        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.3)', fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)', padding: 'clamp(1rem, 2vw, 1.5rem) 0' }}>No messages yet.</p>
+        <p style={{ fontFamily: 'Outfit', color: '#C8D8E4', fontSize: 'clamp(0.8rem, 1.5vw, 0.9rem)', padding: 'clamp(1rem, 2vw, 1.5rem) 0' }}>No messages yet.</p>
       ) : recentMessages.map((msg, idx) => (
         <div key={msg.id} id={`admin-dashboard-recent-messages-item-${idx}`} className="admin-dashboard-recent-messages-item message-item" style={{
           borderColor: msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(29,78,216,0.15)',
@@ -267,7 +267,7 @@ export default function AdminDashboard() {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="message-item-header">
               <p className="font-bebas message-sender" style={{color: "#0D1B2A"', letterSpacing: '0.03em' }}>{msg.senderName}</p>
-              <p className="message-date" style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.35)' }}>
+              <p className="message-date" style={{ fontFamily: 'Outfit', color: '#A8B8C8' }}>
                 {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
               </p>
             </div>

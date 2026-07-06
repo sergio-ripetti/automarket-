@@ -38,7 +38,7 @@ export default function Footer() {
               </svg>
               <span className="font-bebas text-xl tracking-wider text-#2E86AB">AutoMarket</span>
             </div>
-            <p className="font-poppins text-sm text-white/60 leading-relaxed mb-6">
+            <p className="font-poppins text-sm text-[#0D1B2A]/60 leading-relaxed mb-6">
               New Zealand's premier automotive marketplace. We connect buyers and sellers with complete transparency,
               trust, and innovative AI-powered insights.
             </p>
@@ -48,7 +48,7 @@ export default function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-10 h-10 rounded-lg bg-white/5 hover:bg-#2E86AB/20 border border-white/10 hover:border-#2E86AB/30 flex items-center justify-center text-white/60 hover:text-#2E86AB transition-all duration-sm group focus:outline-none focus-visible:ring-2 focus-visible:ring-#2E86AB"
+                  className="w-10 h-10 rounded-lg bg-white/5 hover:bg-#2E86AB/20 border border-white/10 hover:border-#2E86AB/30 flex items-center justify-center text-[#0D1B2A]/60 hover:text-#2E86AB transition-all duration-sm group focus:outline-none focus-visible:ring-2 focus-visible:ring-#2E86AB"
                 >
                   <Icon size={18} />
                 </a>
@@ -64,7 +64,7 @@ export default function Footer() {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="font-poppins text-sm text-white/60 hover:text-#2E86AB transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-#2E86AB rounded px-2 py-1"
+                    className="font-poppins text-sm text-[#0D1B2A]/60 hover:text-#2E86AB transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-#2E86AB rounded px-2 py-1"
                   >
                     {link.label}
                   </Link>
@@ -79,7 +79,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin size={18} className="text-#2E86AB mt-0.5 shrink-0" aria-hidden="true" />
-                <span className="font-poppins text-sm text-white/60">
+                <span className="font-poppins text-sm text-[#0D1B2A]/60">
                   123 Queen Street
                   <br />
                   Auckland CBD, NZ 1010
@@ -89,7 +89,7 @@ export default function Footer() {
                 <Phone size={18} className="text-#2E86AB shrink-0" aria-hidden="true" />
                 <a
                   href="tel:+64912345 67"
-                  className="font-poppins text-sm text-white/60 hover:text-#2E86AB transition-colors duration-sm"
+                  className="font-poppins text-sm text-[#0D1B2A]/60 hover:text-#2E86AB transition-colors duration-sm"
                 >
                   +64 9 123 4567
                 </a>
@@ -98,7 +98,7 @@ export default function Footer() {
                 <Mail size={18} className="text-#2E86AB shrink-0" aria-hidden="true" />
                 <a
                   href="mailto:contact@automarket.co.nz"
-                  className="font-poppins text-sm text-white/60 hover:text-#2E86AB transition-colors duration-sm"
+                  className="font-poppins text-sm text-[#0D1B2A]/60 hover:text-#2E86AB transition-colors duration-sm"
                 >
                   contact@automarket.co.nz
                 </a>
@@ -112,7 +112,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center">
-          <p className="font-poppins text-xs text-white/40">
+          <p className="font-poppins text-xs text-[#0D1B2A]/40">
             © {new Date().getFullYear()} AutoMarket. All rights reserved. | Crafted with care in New Zealand.
           </p>
         </div>

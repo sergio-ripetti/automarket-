@@ -106,7 +106,7 @@ export default function AdminSales() {
           text-align: left;
           font-family: 'Bebas Neue', sans-serif;
           font-size: clamp(0.65rem, 1.5vw, 0.8rem);
-          color: rgba(255,255,255,0.5);
+          color: '#4A6070';
           letter-spacing: 0.05em;
           font-weight: 400;
           text-transform: uppercase;
@@ -253,7 +253,7 @@ export default function AdminSales() {
           >
             Sales Records
           </h1>
-          <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: 'rgba(255,255,255,0.4)' }}>
+          <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#A8B8C8' }}>
             {sales.length} sales recorded
           </p>
         </div>
@@ -340,8 +340,8 @@ export default function AdminSales() {
             ) : filtered.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-5 py-16 text-center">
-                  <ShoppingBag size={32} className="mx-auto mb-4 text-white/20" />
-                  <p className="text-white/30 font-inter">No sales found</p>
+                  <ShoppingBag size={32} className="mx-auto mb-4 text-[#0D1B2A]/20" />
+                  <p className="text-[#0D1B2A]/30 font-inter">No sales found</p>
                 </td>
               </tr>
             ) : (
@@ -353,14 +353,14 @@ export default function AdminSales() {
                       <img src={sale.carImages[0]} alt="" className="w-12 h-9 rounded object-cover flex-shrink-0" style={{ minWidth: '48px' }} />
                       <div style={{ minWidth: 0 }}>
                         <p className="font-bebas text-[#0D1B2A]" style={{ fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>{sale.carTitle}</p>
-                        <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontFamily: 'Outfit' }}>{sale.carYear}</p>
+                        <p style={{ fontSize: '0.7rem', color: '#A8B8C8', fontFamily: 'Outfit' }}>{sale.carYear}</p>
                       </div>
                     </div>
                   </td>
                   {/* Buyer */}
                   <td style={{ fontFamily: 'Outfit' }}>
                     <p style={{color: "#0D1B2A"' }}>{sale.buyer.name}</p>
-                    <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>{sale.buyer.email}</p>
+                    <p style={{ fontSize: '0.7rem', color: '#A8B8C8' }}>{sale.buyer.email}</p>
                   </td>
                   {/* Price */}
                   <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#2E86AB', fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}>{fmt(sale.paymentPlan.salePrice)}</td>
@@ -374,7 +374,7 @@ export default function AdminSales() {
                     </Badge>
                   </td>
                   {/* Date */}
-                  <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem' }}>{fmtDate(sale.saleDate)}</td>
+                  <td style={{ fontFamily: 'Outfit', color: '#4A6070', fontSize: '0.8rem' }}>{fmtDate(sale.saleDate)}</td>
                   {/* Status */}
                   <td>
                     <Badge

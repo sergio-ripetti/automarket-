@@ -92,7 +92,7 @@ export default function CarCard({ car }: CarCardProps) {
         <div className="absolute top-3 left-3 flex gap-1.5">
           {car.isOnSale && (
             <span
-              className="bg-red-500/90 text-white font-bebas rounded"
+              className="bg-red-500/90 text-[#0D1B2A] font-bebas rounded"
               style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', padding: '3px 10px' }}
             >
               SALE
@@ -114,7 +114,7 @@ export default function CarCard({ car }: CarCardProps) {
           className={`absolute top-2.5 right-2.5 w-11 h-11 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-#2E86AB ${
             isFav
               ? 'bg-red-500/50 border-red-500/60 text-red-400'
-              : 'bg-[#EEF2F7]/50 border-white/15 text-white/70 hover:bg-white/10'
+              : 'bg-[#EEF2F7]/50 border-white/15 text-[#0D1B2A]/70 hover:bg-white/10'
           }`}
           aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
           aria-pressed={isFav}

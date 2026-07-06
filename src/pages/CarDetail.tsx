@@ -478,7 +478,7 @@ export default function CarDetail() {
                     <input type="tel" required value={offerForm.phone}
                       onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
                       placeholder="+64 21 123 4567"
-                      className="font-inter text-sm text-white focus:outline-none focus:border-[#2E86AB]"
+                      className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#2E86AB]"
                       style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#EEF2F7", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem" }}
                     />
                   </div>
@@ -503,7 +503,7 @@ export default function CarDetail() {
                     <input type="email" required value={offerForm.email}
                       onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
                       placeholder="john@example.com"
-                      className="font-inter text-sm text-white focus:outline-none focus:border-[#2E86AB]"
+                      className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#2E86AB]"
                       style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#EEF2F7", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem" }}
                     />
                   </div>
@@ -515,7 +515,7 @@ export default function CarDetail() {
                       onChange={(e) => setOfferForm({ ...offerForm, message: e.target.value })}
                       placeholder="Any questions or comments about this vehicle?"
                       rows={3}
-                      className="font-inter text-sm text-white focus:outline-none focus:border-[#2E86AB] resize-none"
+                      className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#2E86AB] resize-none"
                       style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#EEF2F7", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem" }}
                     />
                   </div>
@@ -544,7 +544,7 @@ export default function CarDetail() {
         {showToast && (
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-green-700 text-white font-inter text-sm px-5 py-3 rounded-xl shadow-xl"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-green-700 text-[#0D1B2A] font-inter text-sm px-5 py-3 rounded-xl shadow-xl"
           >
             <CheckCircle2 size={18} />
             Offer sent successfully! We'll be in touch soon.

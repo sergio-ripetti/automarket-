@@ -176,7 +176,7 @@ export default function AdminEditSale() {
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
-        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)' }}>Loading...</p>
+        <p style={{ fontFamily: 'Outfit', color: '#A8B8C8' }}>Loading...</p>
       </div>
     )
   }
@@ -184,7 +184,7 @@ export default function AdminEditSale() {
   if (!sale) {
     return (
       <div style={{ textAlign: 'center', padding: '3rem' }}>
-        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', marginBottom: '1rem' }}>Sale not found</p>
+        <p style={{ fontFamily: 'Outfit', color: '#A8B8C8', marginBottom: '1rem' }}>Sale not found</p>
         <button onClick={() => navigate('/admin/sales')} style={{
           padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
           background: 'linear-gradient(135deg, #2E86AB, #256E8C)', color: "#0D1B2A",
@@ -232,7 +232,7 @@ export default function AdminEditSale() {
           display: 'flex', alignItems: 'center', gap: '0.5rem',
           padding: '0.5rem 1rem', borderRadius: '0.625rem',
           backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-          color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.875rem',
+          color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.875rem',
           cursor: 'pointer', marginBottom: '1.5rem',
         }}
       >
@@ -266,7 +266,7 @@ export default function AdminEditSale() {
                 <div key={key} style={{ gridColumn: span ? '1 / -1' : 'auto' }}>
                   <label style={{
                     display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                    color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                    color: '#A8B8C8', letterSpacing: '0.1em',
                     textTransform: 'uppercase', marginBottom: '0.5rem',
                   }}>
                     {label}
@@ -296,7 +296,7 @@ export default function AdminEditSale() {
               <div>
                 <label style={{
                   display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                  color: '#A8B8C8', letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: '0.5rem',
                 }}>
                   Sale Date
@@ -313,7 +313,7 @@ export default function AdminEditSale() {
               <div>
                 <label style={{
                   display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                  color: '#A8B8C8', letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: '0.5rem',
                 }}>
                   Sale Price (NZD)
@@ -332,7 +332,7 @@ export default function AdminEditSale() {
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                      color: '#A8B8C8', letterSpacing: '0.1em',
                       textTransform: 'uppercase', marginBottom: '0.5rem',
                     }}>
                       Down Payment (NZD)
@@ -349,7 +349,7 @@ export default function AdminEditSale() {
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                      color: '#A8B8C8', letterSpacing: '0.1em',
                       textTransform: 'uppercase', marginBottom: '0.5rem',
                     }}>
                       Loan Term (months)
@@ -369,7 +369,7 @@ export default function AdminEditSale() {
             <div style={{ marginTop: '1rem' }}>
               <label style={{
                 display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                color: '#A8B8C8', letterSpacing: '0.1em',
                 textTransform: 'uppercase', marginBottom: '0.5rem',
               }}>
                 Notes
@@ -386,10 +386,10 @@ export default function AdminEditSale() {
             {/* Additional NZ Costs */}
             {/* Documents & Photos - Unified Upload */}
             <div style={{ marginTop: '1.5rem' }}>
-              <h3 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              <h3 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#4A6070', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                 Documents & Photos
               </h3>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem' }}>
+              <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8', marginBottom: '1.5rem' }}>
                 Upload vehicle photos, buyer's license, signed contracts or any other documents. Multiple files accepted.
               </p>
 
@@ -446,7 +446,7 @@ export default function AdminEditSale() {
                   <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
                     Drop files here or click to browse
                   </p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8' }}>
                     Images, PDFs, documents — all types accepted
                   </p>
                 </label>
@@ -485,7 +485,7 @@ export default function AdminEditSale() {
                             transition: 'width 0.3s',
                           }} />
                         </div>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070' }}>
                           {Math.round(progress)}%
                         </span>
                       </div>
@@ -500,7 +500,7 @@ export default function AdminEditSale() {
               {/* Uploaded Files Preview */}
               {form.uploadedDocuments.length > 0 && (
                 <div style={{ marginTop: '2rem' }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', marginBottom: '1rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#4A6070', marginBottom: '1rem' }}>
                     {form.uploadedDocuments.length} file(s) uploaded
                   </p>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
@@ -580,29 +580,29 @@ export default function AdminEditSale() {
             padding: 'clamp(1rem, 3vw, 1.5rem)', position: 'sticky', top: '1rem',
             width: '100%', boxSizing: 'border-box',
           }}>
-            <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1.5rem' }}>
+            <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#4A6070', marginBottom: '1.5rem' }}>
               Summary
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
               <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Sale Price</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Sale Price</p>
                 <p style={{color: "#0D1B2A"' }}>{fmt(form.salePrice)}</p>
               </div>
               {sale.paymentPlan.type !== 'cash' && (
                 <>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Down Payment</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Down Payment</p>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#22c55e' }}>{fmt(form.downPayment)}</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Amount Financed</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Amount Financed</p>
                     <p style={{color: "#0D1B2A"' }}>{fmt(form.salePrice - form.downPayment)}</p>
                   </div>
                   <div style={{
                     backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '0.75rem', padding: '1rem',
                     border: '1px solid rgba(29,78,216,0.1)',
                   }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>Monthly Payment</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.5rem' }}>Monthly Payment</p>
                     <p className="font-bebas" style={{ fontSize: '2rem', color: '#2E86AB' }}>{fmt(calc.monthlyPayment)}</p>
                   </div>
                 </>

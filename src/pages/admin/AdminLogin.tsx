@@ -21,7 +21,7 @@ export default function AdminLogin() {
   })
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)',
+    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8',
     textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px',
   }
 
@@ -52,7 +52,7 @@ export default function AdminLogin() {
           <span className="font-bebas" style={{ fontSize: '2rem', color: '#2E86AB', display: 'block', lineHeight: 1 }}>
             AutoMarket
           </span>
-          <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#C8D8E4', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
             Admin Panel
           </span>
         </div>
@@ -60,7 +60,7 @@ export default function AdminLogin() {
         <h1 className="font-bebas" style={{color: "#0D1B2A"', textAlign: 'center', lineHeight: 1, marginBottom: '0.5rem' }}>
           Admin Access
         </h1>
-        <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: '2rem' }}>
+        <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#4A6070', textAlign: 'center', marginBottom: '2rem' }}>
           Sign in to manage your inventory
         </p>
 

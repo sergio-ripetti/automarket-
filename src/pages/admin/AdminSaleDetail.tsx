@@ -50,7 +50,7 @@ export default function AdminSaleDetail() {
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50vh' }}>
-        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)' }}>Loading...</p>
+        <p style={{ fontFamily: 'Outfit', color: '#A8B8C8' }}>Loading...</p>
       </div>
     )
   }
@@ -58,7 +58,7 @@ export default function AdminSaleDetail() {
   if (!sale) {
     return (
       <div style={{ textAlign: 'center', padding: '3rem' }}>
-        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', marginBottom: '1rem' }}>Sale not found</p>
+        <p style={{ fontFamily: 'Outfit', color: '#A8B8C8', marginBottom: '1rem' }}>Sale not found</p>
         <button onClick={() => navigate('/admin/sales')} style={{
           padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
           background: 'linear-gradient(135deg, #2E86AB, #256E8C)', color: "#0D1B2A",
@@ -130,7 +130,7 @@ export default function AdminSaleDetail() {
         }
         .sale-detail-title {
           font-size: clamp(1.25rem, 5vw, 2rem);
-          color: white;
+          color: '#0D1B2A';
           margin-bottom: 0.5rem;
           font-weight: 600;
         }
@@ -273,7 +273,7 @@ export default function AdminSaleDetail() {
         }
         .sale-detail-value {
           font-size: 0.9rem;
-          color: white;
+          color: '#0D1B2A';
           font-weight: 500;
         }
       `}</style>
@@ -297,7 +297,7 @@ export default function AdminSaleDetail() {
             display: 'flex', alignItems: 'center', gap: '0.5rem',
             padding: '0.5rem 1rem', borderRadius: '0.625rem',
             backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-            color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.875rem',
+            color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.875rem',
             cursor: 'pointer', marginBottom: '1.5rem',
           }}
         >
@@ -309,7 +309,7 @@ export default function AdminSaleDetail() {
             <h1 className="font-bebas sale-detail-title">
               {sale.buyer.name}
             </h1>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#4A6070' }}>
               {fmtDate(sale.saleDate)} •{' '}
               <span style={{
                 display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
@@ -374,13 +374,13 @@ export default function AdminSaleDetail() {
             </h2>
             <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
               <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Year • KM</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Year • KM</p>
                 <p style={{color: "#0D1B2A"' }}>
                   {sale.carYear} • {0} km
                 </p>
               </div>
               <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Color</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Color</p>
                 <p style={{color: "#0D1B2A"' }}>{sale.carColor}</p>
               </div>
             </div>
@@ -403,15 +403,15 @@ export default function AdminSaleDetail() {
               </h3>
               <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>VIN</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>VIN</p>
                   <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.vin}</p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>License Plate</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>License Plate</p>
                   <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.plate}</p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Origin</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Origin</p>
                   <span style={{
                     display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
                     backgroundColor: sale.vehicleInfo?.isNZNew ? 'rgba(34,197,94,0.2)' : 'rgba(29,78,216,0.2)',
@@ -423,16 +423,16 @@ export default function AdminSaleDetail() {
                 </div>
                 {!sale.vehicleInfo?.isNZNew && (
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Country</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Country</p>
                     <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.originCountry}</p>
                   </div>
                 )}
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Previous Owners</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Previous Owners</p>
                   <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.previousOwners}</p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Maintenance History</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Maintenance History</p>
                   <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.hasMaintenanceHistory ? 'Yes' : 'No'}</p>
                 </div>
               </div>
@@ -460,7 +460,7 @@ export default function AdminSaleDetail() {
                 { label: 'Address', value: sale.buyer.address },
               ].map(({ label, value }) => (
                 <div key={label}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
                     {label}
                   </p>
                   <p style={{color: "#0D1B2A"' }}>{value}</p>
@@ -586,10 +586,10 @@ export default function AdminSaleDetail() {
             <div style={{
               backgroundColor: '#FFFFFF', borderRadius: '0.875rem', padding: '1.25rem', marginBottom: '1.5rem',
             }}>
-              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#A8B8C8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
                 Notes
               </h4>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
+              <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#4A6070' }}>
                 {sale.notes}
               </p>
             </div>
@@ -600,7 +600,7 @@ export default function AdminSaleDetail() {
             <div style={{
               backgroundColor: '#FFFFFF', borderRadius: '0.875rem', padding: '1.25rem', marginBottom: '1.5rem',
             }}>
-              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
+              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#A8B8C8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
                 Documents & Photos ({(sale.documents as any).uploadedDocuments.length})
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
@@ -682,7 +682,7 @@ export default function AdminSaleDetail() {
 
             {sale.paymentPlan.type === 'cash' ? (
               <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.5rem' }}>
                   Sale Price
                 </p>
                 <p className="font-bebas" style={{ fontSize: '2.5rem', color: '#2E86AB', lineHeight: 1 }}>
@@ -692,24 +692,24 @@ export default function AdminSaleDetail() {
             ) : (
               <div>
                 <div style={{ marginBottom: '1rem' }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Sale Price</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Sale Price</p>
                   <p style={{color: "#0D1B2A"' }}>{fmt(sale.paymentPlan.salePrice)}</p>
                 </div>
                 {sale.paymentPlan.downPayment > 0 && (
                   <div style={{ marginBottom: '1rem' }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Down Payment</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Down Payment</p>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#22c55e' }}>{fmt(sale.paymentPlan.downPayment)}</p>
                   </div>
                 )}
                 <div style={{ marginBottom: '1rem' }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Amount Financed</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Amount Financed</p>
                   <p style={{color: "#0D1B2A"' }}>{fmt(sale.paymentPlan.financedAmount)}</p>
                 </div>
                 <div style={{
                   backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '0.75rem', padding: '1rem',
                   border: '1px solid rgba(29,78,216,0.1)', marginBottom: '1rem',
                 }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.5rem' }}>
                     Monthly Payment
                   </p>
                   <p className="font-bebas" style={{ fontSize: '2rem', color: '#2E86AB', lineHeight: 1 }}>
@@ -720,13 +720,13 @@ export default function AdminSaleDetail() {
                   paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)',
                 }}>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>
                       Total Interest
                     </p>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#ef4444' }}>{fmt(sale.paymentPlan.totalInterest)}</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>
                       Total Repayment
                     </p>
                     <p style={{color: "#0D1B2A"' }}>{fmt(sale.paymentPlan.totalPayment)}</p>
@@ -774,7 +774,7 @@ export default function AdminSaleDetail() {
                       width: `${(paidCount / totalPayments) * 100}%`, transition: 'width 0.3s',
                     }} />
                   </div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.5rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginTop: '0.5rem' }}>
                     {paidCount} of {totalPayments} payments completed
                   </p>
                 </div>
@@ -783,7 +783,7 @@ export default function AdminSaleDetail() {
                 <div style={{
                   backgroundColor: 'rgba(29,78,216,0.05)', border: '1px solid rgba(29,78,216,0.1)',
                   borderRadius: '0.625rem', padding: '0.75rem 1rem', marginBottom: '1rem',
-                  fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)',
+                  fontFamily: 'Outfit', fontSize: '0.85rem', color: '#0D1B2A',
                 }}>
                   {paidCount} payments completed · {pendingCount} pending · {fmt(remaining)} remaining
                 </div>
@@ -844,7 +844,7 @@ export default function AdminSaleDetail() {
                     <tbody>
                       {visiblePayments.map((p, i) => (
                         <tr key={p.id} style={{ opacity: p.status === 'paid' ? 0.6 : 1 }}>
-                          <td style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.6)' }}>
+                          <td style={{ fontFamily: 'Outfit', color: '#4A6070' }}>
                             {paymentPage * paymentsPerPage + i + 1}
                           </td>
                           <td style={{color: "#0D1B2A"' }}>
@@ -874,7 +874,7 @@ export default function AdminSaleDetail() {
                                 )}
                               </div>
                               {p.status === 'paid' && p.paidDate && (
-                                <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)' }}>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#A8B8C8' }}>
                                   {fmtDate(p.paidDate)}
                                 </span>
                               )}
@@ -919,7 +919,7 @@ export default function AdminSaleDetail() {
                                     style={{
                                       padding: '0.25rem 0.375rem', borderRadius: '0.375rem',
                                       border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent',
-                                      color: 'rgba(255,255,255,0.6)', fontFamily: 'Outfit', fontSize: '0.6rem',
+                                      color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.6rem',
                                       fontWeight: 600, cursor: 'pointer',
                                     }}
                                   >

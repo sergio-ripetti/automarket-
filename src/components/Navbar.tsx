@@ -53,7 +53,7 @@ export default function Navbar() {
             <circle cx="8" cy="18" r="2" fill="currentColor" />
             <circle cx="24" cy="18" r="2" fill="currentColor" />
           </svg>
-          <span className="font-bebas text-white hidden sm:inline">
+          <span className="font-bebas text-[#0D1B2A] hidden sm:inline">
             <span className="text-[#2E86AB]">AUTO</span>MARKET
           </span>
         </Link>
@@ -65,7 +65,7 @@ export default function Navbar() {
               <Link
                 to={link.to}
                 id={link.id}
-                className="font-inter text-sm font-medium text-white/55 hover:text-white transition-colors duration-sm relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E86AB] rounded px-2 py-1"
+                className="font-inter text-sm font-medium text-[#0D1B2A]/55 hover:text-[#0D1B2A] transition-colors duration-sm relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E86AB] rounded px-2 py-1"
                 aria-current={location.pathname === link.to ? 'page' : undefined}
               >
                 {link.label}
@@ -80,7 +80,7 @@ export default function Navbar() {
           <Link
             to="/favourites"
             aria-label="Go to favorites"
-            className="inline-flex items-center gap-2 font-inter text-white rounded-lg cursor-pointer transition-all duration-200 bg-[#2E86AB] hover:bg-[#256E8C] hover:shadow-[0_4px_15px_rgba(46,134,171,0.4)] hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E86AB]"
+            className="inline-flex items-center gap-2 font-inter text-[#0D1B2A] rounded-lg cursor-pointer transition-all duration-200 bg-[#2E86AB] hover:bg-[#256E8C] hover:shadow-[0_4px_15px_rgba(46,134,171,0.4)] hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E86AB]"
             style={{ padding: '0.625rem 1.25rem', fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.04em' }}
           >
             <Heart size={16} />
@@ -91,7 +91,7 @@ export default function Navbar() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E86AB]"
+          className="lg:hidden text-[#0D1B2A] w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2E86AB]"
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         >
@@ -121,7 +121,7 @@ export default function Navbar() {
                     <Link
                       to={link.to}
                       id={`mobile-${link.id}`}
-                      className="block font-inter font-medium text-white/80 hover:text-[#2E86AB] py-3 px-4 rounded-lg transition-colors duration-sm active:bg-white/10"
+                      className="block font-inter font-medium text-[#0D1B2A]/80 hover:text-[#2E86AB] py-3 px-4 rounded-lg transition-colors duration-sm active:bg-white/10"
                       aria-current={location.pathname === link.to ? 'page' : undefined}
                     >
                       {link.label}
@@ -137,7 +137,7 @@ export default function Navbar() {
                 <Link
                   to="/favourites"
                   aria-label="Go to favorites"
-                  className="w-full flex items-center justify-center gap-2 font-inter text-white rounded-lg cursor-pointer transition-all duration-200 bg-[#2E86AB] hover:bg-[#256E8C] hover:shadow-[0_4px_15px_rgba(46,134,171,0.4)]"
+                  className="w-full flex items-center justify-center gap-2 font-inter text-[#0D1B2A] rounded-lg cursor-pointer transition-all duration-200 bg-[#2E86AB] hover:bg-[#256E8C] hover:shadow-[0_4px_15px_rgba(46,134,171,0.4)]"
                   style={{ height: '48px', fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.04em' }}
                 >
                   <Heart size={16} />

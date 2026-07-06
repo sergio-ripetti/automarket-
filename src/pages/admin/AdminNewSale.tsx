@@ -331,7 +331,7 @@ export default function AdminNewSale() {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', textAlign: 'center' }}>
         <CheckCircle size={64} color="#22c55e" style={{ marginBottom: '1.5rem' }} />
         <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1rem' }}>Sale Recorded!</h2>
-        <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.6)', marginBottom: '2rem', maxWidth: '400px' }}>
+        <p style={{ fontFamily: 'Outfit', color: '#4A6070', marginBottom: '2rem', maxWidth: '400px' }}>
           {selectedCar?.title} sold to {form.buyerName} for {fmt(form.salePrice)}. Redirecting...
         </p>
       </div>
@@ -368,7 +368,7 @@ export default function AdminNewSale() {
         <div>
           <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1.5rem' }}>Select Vehicle</h2>
           <div style={{ position: 'relative', marginBottom: '2rem' }}>
-            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.3)' }} />
+            <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#C8D8E4' }} />
             <input
               type="text"
               placeholder="Search vehicles..."
@@ -409,7 +409,7 @@ export default function AdminNewSale() {
                       <img src={c.images[0]} alt="" style={{ width: '50px', height: '36px', borderRadius: '0.375rem', objectFit: 'cover' }} />
                       <div style={{ flex: 1 }}>
                         <p className="font-bebas" style={{color: "#0D1B2A"' }}>{c.title}</p>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>
+                        <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>
                           {c.year} • {c.km.toLocaleString()} km
                         </p>
                       </div>
@@ -431,11 +431,11 @@ export default function AdminNewSale() {
                 <h3 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Year • KM</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Year • KM</p>
                     <p style={{color: "#0D1B2A"' }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Transmission • Fuel</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Transmission • Fuel</p>
                     <p style={{color: "#0D1B2A"' }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
                   </div>
                 </div>
@@ -465,7 +465,7 @@ export default function AdminNewSale() {
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                      color: '#A8B8C8', letterSpacing: '0.1em',
                       textTransform: 'uppercase', marginBottom: '0.5rem',
                     }}>
                       VIN / Chassis Number *
@@ -487,7 +487,7 @@ export default function AdminNewSale() {
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                      color: '#A8B8C8', letterSpacing: '0.1em',
                       textTransform: 'uppercase', marginBottom: '0.5rem',
                     }}>
                       License Plate *
@@ -511,7 +511,7 @@ export default function AdminNewSale() {
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{
                     display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                    color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                    color: '#A8B8C8', letterSpacing: '0.1em',
                     textTransform: 'uppercase', marginBottom: '1rem',
                   }}>
                     Vehicle Origin *
@@ -542,7 +542,7 @@ export default function AdminNewSale() {
                   <div style={{ marginBottom: '1.5rem' }}>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                      color: '#A8B8C8', letterSpacing: '0.1em',
                       textTransform: 'uppercase', marginBottom: '0.5rem',
                     }}>
                       Country of Origin
@@ -567,7 +567,7 @@ export default function AdminNewSale() {
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                      color: '#A8B8C8', letterSpacing: '0.1em',
                       textTransform: 'uppercase', marginBottom: '0.5rem',
                     }}>
                       Previous Owners
@@ -589,7 +589,7 @@ export default function AdminNewSale() {
                   <div>
                     <label style={{
                       display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                      color: '#A8B8C8', letterSpacing: '0.1em',
                       textTransform: 'uppercase', marginBottom: '0.5rem',
                     }}>
                       Maintenance History
@@ -670,7 +670,7 @@ export default function AdminNewSale() {
               <div key={key} style={{ gridColumn: key === 'buyerAddress' ? '1 / -1' : 'auto' }}>
                 <label style={{
                   display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                  color: '#A8B8C8', letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: '0.5rem',
                 }}>
                   {label} {required ? '*' : ''}
@@ -728,7 +728,7 @@ export default function AdminNewSale() {
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{
               display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-              color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+              color: '#A8B8C8', letterSpacing: '0.1em',
               textTransform: 'uppercase', marginBottom: '0.5rem',
             }}>
               Sale Date *
@@ -750,7 +750,7 @@ export default function AdminNewSale() {
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{
               display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-              color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+              color: '#A8B8C8', letterSpacing: '0.1em',
               textTransform: 'uppercase', marginBottom: '1rem',
             }}>
               Payment Type *
@@ -779,7 +779,7 @@ export default function AdminNewSale() {
                 >
                   <Icon size={24} color={form.paymentType === type ? '#2E86AB' : 'rgba(255,255,255,0.3)'} style={{ marginBottom: '0.75rem' }} />
                   <p className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.25rem' }}>{title}</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>{desc}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>{desc}</p>
                 </div>
               ))}
             </div>
@@ -791,7 +791,7 @@ export default function AdminNewSale() {
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{
                   display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                  color: '#A8B8C8', letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: '0.5rem',
                 }}>
                   Sale Price (NZD) *
@@ -814,7 +814,7 @@ export default function AdminNewSale() {
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{
                     display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                    color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                    color: '#A8B8C8', letterSpacing: '0.1em',
                     textTransform: 'uppercase', marginBottom: '0.5rem',
                   }}>
                     Down Payment (NZD) *
@@ -837,7 +837,7 @@ export default function AdminNewSale() {
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{
                   display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                  color: '#A8B8C8', letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: '1rem',
                 }}>
                   Loan Term (months) *
@@ -864,7 +864,7 @@ export default function AdminNewSale() {
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{
                   display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                  color: '#A8B8C8', letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: '0.5rem',
                 }}>
                   First Payment Date *
@@ -886,7 +886,7 @@ export default function AdminNewSale() {
               <div style={{
                 backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.05)',
                 borderRadius: '0.75rem', padding: '1rem', marginBottom: '1.5rem', fontSize: '0.8rem',
-                color: 'rgba(255,255,255,0.5)',
+                color: '#4A6070',
               }}>
                 <p>Fixed monthly rate: <strong style={{color: "#0D1B2A"' }}>0.8%</strong></p>
               </div>
@@ -898,7 +898,7 @@ export default function AdminNewSale() {
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{
                 display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                color: '#A8B8C8', letterSpacing: '0.1em',
                 textTransform: 'uppercase', marginBottom: '0.5rem',
               }}>
                 Sale Price (NZD) *
@@ -922,7 +922,7 @@ export default function AdminNewSale() {
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{
               display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-              color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+              color: '#A8B8C8', letterSpacing: '0.1em',
               textTransform: 'uppercase', marginBottom: '0.5rem',
             }}>
               Notes (Optional)
@@ -956,7 +956,7 @@ export default function AdminNewSale() {
             >
               <div>
                 ORC - On Road Costs (Optional)
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 400, marginTop: '0.25rem' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070', fontWeight: 400, marginTop: '0.25rem' }}>
                   Typical range: NZ$300–NZ$650
                 </p>
               </div>
@@ -990,7 +990,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         WoF (NZD)
@@ -1012,7 +1012,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Registration (NZD)
@@ -1048,7 +1048,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Grooming/Detailing (NZD)
@@ -1070,7 +1070,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Ownership Transfer (NZD)
@@ -1092,7 +1092,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Mechanical Inspection (NZD)
@@ -1114,7 +1114,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Other Cost Label
@@ -1137,7 +1137,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Other Cost Amount (NZD)
@@ -1159,7 +1159,7 @@ export default function AdminNewSale() {
                 )}
 
                 <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>ORC Total</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>ORC Total</p>
                   <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#2E86AB' }}>{fmt(orcTotal)}</p>
                 </div>
               </div>
@@ -1180,7 +1180,7 @@ export default function AdminNewSale() {
             >
               <div>
                 Extra Accessories / Add-ons (Optional)
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 400, marginTop: '0.25rem' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070', fontWeight: 400, marginTop: '0.25rem' }}>
                   Additional items installed or included with the vehicle
                 </p>
               </div>
@@ -1259,7 +1259,7 @@ export default function AdminNewSale() {
                 </button>
 
                 <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Accessories Total</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Accessories Total</p>
                   <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#2E86AB' }}>{fmt(accessoriesTotal)}</p>
                 </div>
               </div>
@@ -1281,7 +1281,7 @@ export default function AdminNewSale() {
               >
                 <div>
                   Financing Fees
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontWeight: 400, marginTop: '0.25rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070', fontWeight: 400, marginTop: '0.25rem' }}>
                     Standard NZ financing costs
                   </p>
                 </div>
@@ -1293,7 +1293,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Establishment Fee (NZD)
@@ -1311,7 +1311,7 @@ export default function AdminNewSale() {
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', marginTop: '0.25rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#A8B8C8', marginTop: '0.25rem' }}>
                         Typically NZ$150–500
                       </p>
                     </div>
@@ -1319,7 +1319,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         PPSR Fee (NZD)
@@ -1337,7 +1337,7 @@ export default function AdminNewSale() {
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', marginTop: '0.25rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#A8B8C8', marginTop: '0.25rem' }}>
                         Personal Property Securities Register ~$10
                       </p>
                     </div>
@@ -1345,7 +1345,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Monthly Account Fee (NZD)
@@ -1363,7 +1363,7 @@ export default function AdminNewSale() {
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', marginTop: '0.25rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#A8B8C8', marginTop: '0.25rem' }}>
                         Monthly admin fee
                       </p>
                     </div>
@@ -1371,7 +1371,7 @@ export default function AdminNewSale() {
                     <div>
                       <label style={{
                         display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                        color: '#A8B8C8', letterSpacing: '0.1em',
                         textTransform: 'uppercase', marginBottom: '0.5rem',
                       }}>
                         Dealer Origination Fee (NZD)
@@ -1389,14 +1389,14 @@ export default function AdminNewSale() {
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                         onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', marginTop: '0.25rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#A8B8C8', marginTop: '0.25rem' }}>
                         Typically NZ$350–500
                       </p>
                     </div>
                   </div>
 
                   <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Financing Fees Total</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Financing Fees Total</p>
                     <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#2E86AB' }}>{fmt(financingFeesTotal)}</p>
                   </div>
                 </div>
@@ -1438,7 +1438,7 @@ export default function AdminNewSale() {
                       <div>
                         <label style={{
                           display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                          color: '#A8B8C8', letterSpacing: '0.1em',
                           textTransform: 'uppercase', marginBottom: '0.5rem',
                         }}>
                           Months
@@ -1461,7 +1461,7 @@ export default function AdminNewSale() {
                       <div>
                         <label style={{
                           display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                          color: '#A8B8C8', letterSpacing: '0.1em',
                           textTransform: 'uppercase', marginBottom: '0.5rem',
                         }}>
                           Provider
@@ -1499,7 +1499,7 @@ export default function AdminNewSale() {
                       <div>
                         <label style={{
                           display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                          color: '#A8B8C8', letterSpacing: '0.1em',
                           textTransform: 'uppercase', marginBottom: '0.5rem',
                         }}>
                           Months
@@ -1522,7 +1522,7 @@ export default function AdminNewSale() {
                       <div>
                         <label style={{
                           display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+                          color: '#A8B8C8', letterSpacing: '0.1em',
                           textTransform: 'uppercase', marginBottom: '0.5rem',
                         }}>
                           Provider
@@ -1553,29 +1553,29 @@ export default function AdminNewSale() {
             backgroundColor: '#FFFFFF', border: '1px solid rgba(255,158,11,0.15)',
             borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
           }}>
-            <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#4A6070', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               Grand Total Breakdown
             </h4>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', fontSize: '0.875rem' }}>
               <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Vehicle Price</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Vehicle Price</p>
                 <p style={{color: "#0D1B2A"' }}>{fmt(form.salePrice)}</p>
               </div>
               {!form.orcIncluded && orcTotal > 0 && (
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>ORC</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>ORC</p>
                   <p style={{color: "#0D1B2A"' }}>{fmt(orcTotal)}</p>
                 </div>
               )}
               {accessoriesTotal > 0 && (
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Accessories</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Accessories</p>
                   <p style={{color: "#0D1B2A"' }}>{fmt(accessoriesTotal)}</p>
                 </div>
               )}
               {financingFeesTotal > 0 && (
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Financing Fees</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Financing Fees</p>
                   <p style={{color: "#0D1B2A"' }}>{fmt(financingFeesTotal)}</p>
                 </div>
               )}
@@ -1584,18 +1584,18 @@ export default function AdminNewSale() {
             <div style={{ paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>Subtotal</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Subtotal</p>
                   <p style={{color: "#0D1B2A"' }}>{fmt(subtotal)}</p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)' }}>GST (15%)</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>GST (15%)</p>
                   <p style={{ fontFamily: 'Outfit', color: '#2E86AB' }}>{fmt(gst)}</p>
                 </div>
               </div>
             </div>
 
             <div style={{ marginTop: '1rem' }}>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>TOTAL</p>
+              <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.5rem' }}>TOTAL</p>
               <p className="font-bebas" style={{ fontSize: '2rem', color: '#2E86AB', lineHeight: 1 }}>{fmt(totalCostToBuyer)}</p>
             </div>
           </div>
@@ -1606,16 +1606,16 @@ export default function AdminNewSale() {
               background: 'linear-gradient(135deg, #E4EAF0, #FFFFFF)', border: '1px solid rgba(29,78,216,0.2)',
               borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
             }}>
-              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1rem' }}>
+              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#4A6070', marginBottom: '1rem' }}>
                 Payment Summary
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Amount Financed</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Amount Financed</p>
                   <p style={{color: "#0D1B2A"' }}>{fmt(calc.financedAmount)}</p>
                 </div>
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Total Interest</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Total Interest</p>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#ef4444' }}>{fmt(calc.totalInterest)}</p>
                 </div>
               </div>
@@ -1623,11 +1623,11 @@ export default function AdminNewSale() {
                 backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '0.75rem', padding: '1rem',
                 border: '1px solid rgba(29,78,216,0.1)',
               }}>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>Monthly Payment</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.5rem' }}>Monthly Payment</p>
                 <p className="font-bebas" style={{ fontSize: '2rem', color: '#2E86AB', lineHeight: 1 }}>{fmt(calc.monthlyPayment)}</p>
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.25rem' }}>Total Repayment</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Total Repayment</p>
                 <p style={{color: "#0D1B2A"' }}>{fmt(calc.totalPayment)}</p>
               </div>
             </div>
@@ -1635,10 +1635,10 @@ export default function AdminNewSale() {
 
           {/* Documents & Photos - Unified Upload */}
           <div style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            <h3 style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#4A6070', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               Documents & Photos
             </h3>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1.5rem' }}>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8', marginBottom: '1.5rem' }}>
               Upload vehicle photos, buyer's license, signed contracts or any other documents. Multiple files accepted.
             </p>
 
@@ -1695,7 +1695,7 @@ export default function AdminNewSale() {
                 <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
                   Drop files here or click to browse
                 </p>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8' }}>
                   Images, PDFs, documents — all types accepted
                 </p>
               </label>
@@ -1734,7 +1734,7 @@ export default function AdminNewSale() {
                           transition: 'width 0.3s',
                         }} />
                       </div>
-                      <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                      <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070' }}>
                         {Math.round(progress)}%
                       </span>
                     </div>
@@ -1749,7 +1749,7 @@ export default function AdminNewSale() {
             {/* Uploaded Files Preview */}
             {form.uploadedDocuments.length > 0 && (
               <div style={{ marginTop: '2rem' }}>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', marginBottom: '1rem' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#4A6070', marginBottom: '1rem' }}>
                   {form.uploadedDocuments.length} file(s) uploaded
                 </p>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>

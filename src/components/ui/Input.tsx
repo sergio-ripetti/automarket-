@@ -21,7 +21,7 @@ export default function Input({
   return (
     <div className={fullWidth ? 'w-full' : ''}>
       {label && (
-        <label className="block text-sm font-medium text-white/90 mb-2">
+        <label className="block text-sm font-medium text-[#0D1B2A]/90 mb-2">
           {label}
           {props.required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -31,8 +31,8 @@ export default function Input({
         <input
           className={`
             w-full px-4 py-2.5 rounded-lg
-            bg-gray-800/50 border border-gray-700 text-white
-            placeholder:text-white/30
+            bg-gray-800/50 border border-gray-700 text-[#0D1B2A]
+            placeholder:text-[#0D1B2A]/30
             focus:outline-none focus:border-#2E86AB focus:ring-2 focus:ring-#2E86AB/20
             transition-all duration-200
             ${icon ? 'pl-10' : ''}
@@ -44,7 +44,7 @@ export default function Input({
         />
       </div>
       {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-      {helperText && !error && <p className="mt-2 text-sm text-white/50">{helperText}</p>}
+      {helperText && !error && <p className="mt-2 text-sm text-[#0D1B2A]/50">{helperText}</p>}
     </div>
   )
 }
@@ -68,7 +68,7 @@ export function TextArea({
   return (
     <div className={fullWidth ? 'w-full' : ''}>
       {label && (
-        <label className="block text-sm font-medium text-white/90 mb-2">
+        <label className="block text-sm font-medium text-[#0D1B2A]/90 mb-2">
           {label}
           {props.required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -76,8 +76,8 @@ export function TextArea({
       <textarea
         className={`
           w-full px-4 py-2.5 rounded-lg
-          bg-gray-800/50 border border-gray-700 text-white
-          placeholder:text-white/30 resize-none
+          bg-gray-800/50 border border-gray-700 text-[#0D1B2A]
+          placeholder:text-[#0D1B2A]/30 resize-none
           focus:outline-none focus:border-#2E86AB focus:ring-2 focus:ring-#2E86AB/20
           transition-all duration-200
           ${error ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : ''}
@@ -87,7 +87,7 @@ export function TextArea({
         {...props}
       />
       {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-      {helperText && !error && <p className="mt-2 text-sm text-white/50">{helperText}</p>}
+      {helperText && !error && <p className="mt-2 text-sm text-[#0D1B2A]/50">{helperText}</p>}
     </div>
   )
 }

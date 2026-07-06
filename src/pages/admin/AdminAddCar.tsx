@@ -48,7 +48,7 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
           borderRadius: '50%', backgroundColor: 'white', transition: 'left 0.2s',
         }} />
       </div>
-      <span style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: 'rgba(255,255,255,0.7)' }}>{label}</span>
+      <span style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#4A6070' }}>{label}</span>
     </label>
   )
 }
@@ -90,7 +90,7 @@ export default function AdminAddCar() {
   })
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)',
+    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8',
     textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px',
   }
 
@@ -221,7 +221,7 @@ export default function AdminAddCar() {
         <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#2E86AB', marginBottom: '0.5rem' }}>
           Search Vehicle Database
         </h2>
-        <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1rem' }}>
+        <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8', marginBottom: '1rem' }}>
           Search to auto-fill vehicle specifications
         </p>
 
@@ -321,7 +321,7 @@ export default function AdminAddCar() {
                 <div className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.25rem' }}>
                   {result.make} {result.model} {result.year}
                 </div>
-                <div style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                <div style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070' }}>
                   {result.fuel_type} • {result.transmission} • {result.class}
                 </div>
               </div>
