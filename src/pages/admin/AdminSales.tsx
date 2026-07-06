@@ -359,7 +359,7 @@ export default function AdminSales() {
                   </td>
                   {/* Buyer */}
                   <td style={{ fontFamily: 'Outfit' }}>
-                    <p style={{color: "#0D1B2A"' }}>{sale.buyer.name}</p>
+                    <p style={{color: "#0D1B2A"}}>{sale.buyer.name}</p>
                     <p style={{ fontSize: '0.7rem', color: '#A8B8C8' }}>{sale.buyer.email}</p>
                   </td>
                   {/* Price */}

@@ -57,7 +57,7 @@ export default function AdminLogin() {
           </span>
         </div>
 
-        <h1 className="font-bebas" style={{color: "#0D1B2A"', textAlign: 'center', lineHeight: 1, marginBottom: '0.5rem' }}>
+        <h1 className="font-bebas" style={{color: "#0D1B2A", textAlign: 'center', lineHeight: 1, marginBottom: '0.5rem' }}>
           Admin Access
         </h1>
         <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#4A6070', textAlign: 'center', marginBottom: '2rem' }}>

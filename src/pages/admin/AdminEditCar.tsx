@@ -457,7 +457,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                   onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E4EAF0' }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                 >
-                  <div className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.25rem' }}>
+                  <div className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.25rem' }}>
                     {result.make} {result.model} {result.year}
                   </div>
                   <div style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070' }}>

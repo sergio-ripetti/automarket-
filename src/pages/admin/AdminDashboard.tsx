@@ -86,7 +86,7 @@ export default function AdminDashboard() {
 
   return (
     <div id="admin-dashboard-main-container" className="admin-dashboard-main-container">
-      <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.25rem', fontWeight: 600 }}>
+      <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.25rem', fontWeight: 600 }}>
         Dashboard
       </h1>
       <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', color: '#A8B8C8', marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
