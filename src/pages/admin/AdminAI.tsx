@@ -324,7 +324,7 @@ export default function AdminAI() {
       <div id="admin-ai-header" className="admin-ai-header" style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.25rem' }}>
+            <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.25rem' }}>
               AI Assistant
             </h1>
             <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#A8B8C8' }}>
@@ -376,7 +376,7 @@ export default function AdminAI() {
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>
               <Bot size={48} style={{ color: '#2E86AB', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
-              <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+              <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                 Hello! I'm your AI Assistant
               </h2>
               <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#A8B8C8', maxWidth: '400px' }}>

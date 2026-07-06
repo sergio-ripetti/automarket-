@@ -204,7 +204,7 @@ export default function Financing() {
           }}>
             <CheckCircle2 size={38} color="#22c55e" />
           </div>
-          <h1 className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+          <h1 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
             Application Submitted!
           </h1>
           <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', marginBottom: '2.5rem', lineHeight: 1.65 }}>
@@ -239,7 +239,7 @@ export default function Financing() {
             </span>
             <div style={{ width: 40, height: 1, backgroundColor: '#2E86AB' }} />
           </div>
-          <h1 className="font-bebas" style={{color: "#0D1B2A"', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+          <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
             Smart Financing
           </h1>
           <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)', fontSize: '1rem' }}>
@@ -257,7 +257,7 @@ export default function Financing() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 700, color: '#000',
             }}>1</div>
-            <span style={{color: "#0D1B2A"', fontWeight: 600 }}>Calculator</span>
+            <span style={{color: "#0D1B2A", fontWeight: 600 }}>Calculator</span>
           </div>
           {/* Connector */}
           <div style={{
@@ -301,7 +301,7 @@ export default function Financing() {
                 }}>
                   <img src={car.images[0]} alt={car.title} style={{ width: 72, height: 50, objectFit: 'cover', borderRadius: '0.5rem', flexShrink: 0 }} />
                   <div>
-                    <p className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.05em' }}>{car.title}</p>
+                    <p className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em' }}>{car.title}</p>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#2E86AB', fontWeight: 600 }}>{formatPrice(car.price)}</p>
                   </div>
                 </div>
@@ -401,7 +401,7 @@ export default function Financing() {
                   ].map(({ label, value, red }) => (
                     <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.38)' }}>{label}</span>
-                      <span style={{color: "#0D1B2A"' }}>{value}</span>
+                      <span style={{color: "#0D1B2A" }}>{value}</span>
                     </div>
                   ))}
                 </div>
@@ -433,7 +433,7 @@ export default function Financing() {
         {step === 2 && (
           <form onSubmit={handleSubmit}>
             <div style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1.25rem', padding: '2.5rem' }}>
-              <h2 className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+              <h2 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
                 Complete Your Application
               </h2>
               <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.38)', marginBottom: '2rem' }}>
@@ -630,7 +630,7 @@ export default function Financing() {
                     />
                     <label htmlFor="doc-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
                       <Upload size={40} style={{ margin: '0 auto 1rem', color: '#2E86AB' }} />
-                      <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+                      <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                         Drop files here or click to browse
                       </p>
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
@@ -747,7 +747,7 @@ export default function Financing() {
                       style={{ marginTop: '0.35rem', cursor: 'pointer', width: '18px', height: '18px' }}
                     />
                     <div style={{ flex: 1 }}>
-                      <p style={{color: "#0D1B2A"', marginBottom: '0.3rem' }}>
+                      <p style={{color: "#0D1B2A", marginBottom: '0.3rem' }}>
                         I consent to a credit history check being performed *
                       </p>
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>

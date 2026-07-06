@@ -184,7 +184,7 @@ export default function AdminDashboard() {
           }
         }
       `}</style>
-      <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: 600 }}>
+      <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: 'clamp(0.75rem, 2vw, 1rem)', fontWeight: 600 }}>
         Recent Sales
       </h2>
       <div id="admin-dashboard-recent-sales" className="admin-dashboard-recent-sales table-wrapper">
@@ -266,7 +266,7 @@ export default function AdminDashboard() {
           <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#2E86AB', flexShrink: 0, marginTop: '0.4rem' }} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="message-item-header">
-              <p className="font-bebas message-sender" style={{color: "#0D1B2A"', letterSpacing: '0.03em' }}>{msg.senderName}</p>
+              <p className="font-bebas message-sender" style={{color: "#0D1B2A", letterSpacing: '0.03em' }}>{msg.senderName}</p>
               <p className="message-date" style={{ fontFamily: 'Outfit', color: '#A8B8C8' }}>
                 {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
               </p>

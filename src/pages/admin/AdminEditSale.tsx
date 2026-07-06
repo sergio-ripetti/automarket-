@@ -240,7 +240,7 @@ export default function AdminEditSale() {
         Back to Sale
       </button>
 
-      <h1 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '2rem' }}>
+      <h1 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '2rem' }}>
         Edit Sale - {sale.buyer.name}
       </h1>
 
@@ -443,7 +443,7 @@ export default function AdminEditSale() {
                 />
                 <label htmlFor="edit-unified-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
                   <Upload size={40} style={{ margin: '0 auto 1rem', color: '#2E86AB' }} />
-                  <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+                  <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                     Drop files here or click to browse
                   </p>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8' }}>
@@ -586,7 +586,7 @@ export default function AdminEditSale() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
               <div>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Sale Price</p>
-                <p style={{color: "#0D1B2A"' }}>{fmt(form.salePrice)}</p>
+                <p style={{color: "#0D1B2A" }}>{fmt(form.salePrice)}</p>
               </div>
               {sale.paymentPlan.type !== 'cash' && (
                 <>
@@ -596,7 +596,7 @@ export default function AdminEditSale() {
                   </div>
                   <div>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Amount Financed</p>
-                    <p style={{color: "#0D1B2A"' }}>{fmt(form.salePrice - form.downPayment)}</p>
+                    <p style={{color: "#0D1B2A" }}>{fmt(form.salePrice - form.downPayment)}</p>
                   </div>
                   <div style={{
                     backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '0.75rem', padding: '1rem',

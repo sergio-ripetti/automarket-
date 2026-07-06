@@ -369,19 +369,19 @@ export default function AdminSaleDetail() {
               width: '100%', maxWidth: '100%', height: 'auto', display: 'block',
               borderRadius: '0.75rem', marginBottom: '1rem',
             }} />
-            <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+            <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
               {sale.carTitle}
             </h2>
             <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
               <div>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Year • KM</p>
-                <p style={{color: "#0D1B2A"' }}>
+                <p style={{color: "#0D1B2A" }}>
                   {sale.carYear} • {0} km
                 </p>
               </div>
               <div>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Color</p>
-                <p style={{color: "#0D1B2A"' }}>{sale.carColor}</p>
+                <p style={{color: "#0D1B2A" }}>{sale.carColor}</p>
               </div>
             </div>
             <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#2E86AB' }}>
@@ -404,11 +404,11 @@ export default function AdminSaleDetail() {
               <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>VIN</p>
-                  <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.vin}</p>
+                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.vin}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>License Plate</p>
-                  <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.plate}</p>
+                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.plate}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Origin</p>
@@ -424,16 +424,16 @@ export default function AdminSaleDetail() {
                 {!sale.vehicleInfo?.isNZNew && (
                   <div>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Country</p>
-                    <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.originCountry}</p>
+                    <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.originCountry}</p>
                   </div>
                 )}
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Previous Owners</p>
-                  <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.previousOwners}</p>
+                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.previousOwners}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Maintenance History</p>
-                  <p style={{color: "#0D1B2A"' }}>{sale.vehicleInfo?.hasMaintenanceHistory ? 'Yes' : 'No'}</p>
+                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.hasMaintenanceHistory ? 'Yes' : 'No'}</p>
                 </div>
               </div>
             </div>
@@ -463,7 +463,7 @@ export default function AdminSaleDetail() {
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
                     {label}
                   </p>
-                  <p style={{color: "#0D1B2A"' }}>{value}</p>
+                  <p style={{color: "#0D1B2A" }}>{value}</p>
                 </div>
               ))}
             </div>
@@ -491,12 +491,12 @@ export default function AdminSaleDetail() {
                 </span>
               ) : (
                 <div style={{ fontSize: '0.875rem' }}>
-                  {sale.orc?.wof > 0 && <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>WoF: {fmt(sale.orc?.wof)}</p>}
-                  {sale.orc?.registration > 0 && <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>Registration: {fmt(sale.orc?.registration)}</p>}
-                  {sale.orc?.grooming > 0 && <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>Grooming: {fmt(sale.orc?.grooming)}</p>}
-                  {sale.orc?.ownershipTransfer > 0 && <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>Ownership Transfer: {fmt(sale.orc?.ownershipTransfer)}</p>}
-                  {sale.orc?.mechanicalInspection > 0 && <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>Mechanical Inspection: {fmt(sale.orc?.mechanicalInspection)}</p>}
-                  {sale.orc?.otherAmount > 0 && <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>{sale.orc?.otherLabel}: {fmt(sale.orc?.otherAmount)}</p>}
+                  {sale.orc?.wof > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>WoF: {fmt(sale.orc?.wof)}</p>}
+                  {sale.orc?.registration > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Registration: {fmt(sale.orc?.registration)}</p>}
+                  {sale.orc?.grooming > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Grooming: {fmt(sale.orc?.grooming)}</p>}
+                  {sale.orc?.ownershipTransfer > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Ownership Transfer: {fmt(sale.orc?.ownershipTransfer)}</p>}
+                  {sale.orc?.mechanicalInspection > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Mechanical Inspection: {fmt(sale.orc?.mechanicalInspection)}</p>}
+                  {sale.orc?.otherAmount > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>{sale.orc?.otherLabel}: {fmt(sale.orc?.otherAmount)}</p>}
                   <p style={{ color: '#2E86AB', fontWeight: 600, marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                     Total: {fmt(sale.orc?.orcTotal)}
                   </p>
@@ -519,7 +519,7 @@ export default function AdminSaleDetail() {
               </h3>
               <div style={{ fontSize: '0.875rem' }}>
                 {sale.extraAccessories?.items?.map((item, idx) => (
-                  <p key={idx} style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+                  <p key={idx} style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                     {item.description}: {fmt(item.price)}
                   </p>
                 ))}
@@ -543,10 +543,10 @@ export default function AdminSaleDetail() {
                 Financing Fees
               </h3>
               <div style={{ fontSize: '0.875rem' }}>
-                <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>Establishment: {fmt(sale.financingFees?.establishmentFee)}</p>
-                <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>PPSR: {fmt(sale.financingFees?.ppsr)}</p>
-                <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>Monthly Account Fee: {fmt(sale.financingFees?.monthlyAccountFee)}</p>
-                <p style={{color: "#0D1B2A"', marginBottom: '0.75rem' }}>Dealer Origination: {fmt(sale.financingFees?.dealerOriginationFee)}</p>
+                <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Establishment: {fmt(sale.financingFees?.establishmentFee)}</p>
+                <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>PPSR: {fmt(sale.financingFees?.ppsr)}</p>
+                <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Monthly Account Fee: {fmt(sale.financingFees?.monthlyAccountFee)}</p>
+                <p style={{color: "#0D1B2A", marginBottom: '0.75rem' }}>Dealer Origination: {fmt(sale.financingFees?.dealerOriginationFee)}</p>
                 <p style={{ color: '#2E86AB', fontWeight: 600, paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                   Total: {fmt(sale.financingFees?.total)}
                 </p>
@@ -568,12 +568,12 @@ export default function AdminSaleDetail() {
               </h3>
               <div style={{ fontSize: '0.875rem' }}>
                 {sale.warranty && (
-                  <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+                  <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                     Warranty: {sale.warranty?.months} months - {sale.warranty?.provider}
                   </p>
                 )}
                 {sale.mechanicalInsurance && (
-                  <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+                  <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                     Insurance: {sale.mechanicalInsurance?.months} months - {sale.mechanicalInsurance?.provider}
                   </p>
                 )}
@@ -693,7 +693,7 @@ export default function AdminSaleDetail() {
               <div>
                 <div style={{ marginBottom: '1rem' }}>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Sale Price</p>
-                  <p style={{color: "#0D1B2A"' }}>{fmt(sale.paymentPlan.salePrice)}</p>
+                  <p style={{color: "#0D1B2A" }}>{fmt(sale.paymentPlan.salePrice)}</p>
                 </div>
                 {sale.paymentPlan.downPayment > 0 && (
                   <div style={{ marginBottom: '1rem' }}>
@@ -703,7 +703,7 @@ export default function AdminSaleDetail() {
                 )}
                 <div style={{ marginBottom: '1rem' }}>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Amount Financed</p>
-                  <p style={{color: "#0D1B2A"' }}>{fmt(sale.paymentPlan.financedAmount)}</p>
+                  <p style={{color: "#0D1B2A" }}>{fmt(sale.paymentPlan.financedAmount)}</p>
                 </div>
                 <div style={{
                   backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '0.75rem', padding: '1rem',
@@ -729,7 +729,7 @@ export default function AdminSaleDetail() {
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>
                       Total Repayment
                     </p>
-                    <p style={{color: "#0D1B2A"' }}>{fmt(sale.paymentPlan.totalPayment)}</p>
+                    <p style={{color: "#0D1B2A" }}>{fmt(sale.paymentPlan.totalPayment)}</p>
                   </div>
                 </div>
               </div>
@@ -847,7 +847,7 @@ export default function AdminSaleDetail() {
                           <td style={{ fontFamily: 'Outfit', color: '#4A6070' }}>
                             {paymentPage * paymentsPerPage + i + 1}
                           </td>
-                          <td style={{color: "#0D1B2A"' }}>
+                          <td style={{color: "#0D1B2A" }}>
                             {fmtDate(p.dueDate)}
                           </td>
                           <td style={{ fontFamily: 'Bebas', color: '#2E86AB' }}>

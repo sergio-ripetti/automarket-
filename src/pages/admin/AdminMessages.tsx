@@ -153,7 +153,7 @@ export default function AdminMessages() {
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.25rem' }}>
-                    <p className="font-bebas" style={{color: "#0D1B2A"', letterSpacing: '0.03em', lineHeight: 1 }}>
+                    <p className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.03em', lineHeight: 1 }}>
                       {msg.senderName}
                     </p>
                     <p style={{color: "#0D1B2A"Space: 'nowrap' }}>
@@ -521,19 +521,19 @@ export default function AdminMessages() {
                       <div className="message-modal-grid-2col">
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>First Name</p>
-                          <p style={{color: "#0D1B2A"' }}>{(selectedMessage as any).firstName}</p>
+                          <p style={{color: "#0D1B2A" }}>{(selectedMessage as any).firstName}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Last Name</p>
-                          <p style={{color: "#0D1B2A"' }}>{(selectedMessage as any).lastName}</p>
+                          <p style={{color: "#0D1B2A" }}>{(selectedMessage as any).lastName}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
-                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.email}</p>
+                          <p style={{color: "#0D1B2A" }}>{selectedMessage.email}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
-                          <p style={{color: "#0D1B2A"' }}>{(selectedMessage as any).phone}</p>
+                          <p style={{color: "#0D1B2A" }}>{(selectedMessage as any).phone}</p>
                         </div>
                       </div>
                     </div>
@@ -559,21 +559,21 @@ export default function AdminMessages() {
                       <div className="message-modal-grid-2col">
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Name</p>
-                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.senderName}</p>
+                          <p style={{color: "#0D1B2A" }}>{selectedMessage.senderName}</p>
                         </div>
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
-                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.email}</p>
+                          <p style={{color: "#0D1B2A" }}>{selectedMessage.email}</p>
                         </div>
                         {selectedMessage.phone && (
                           <div>
                             <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
-                            <p style={{color: "#0D1B2A"' }}>{selectedMessage.phone}</p>
+                            <p style={{color: "#0D1B2A" }}>{selectedMessage.phone}</p>
                           </div>
                         )}
                         <div>
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Reason</p>
-                          <p style={{color: "#0D1B2A"' }}>{selectedMessage.reason}</p>
+                          <p style={{color: "#0D1B2A" }}>{selectedMessage.reason}</p>
                         </div>
                       </div>
                     </div>

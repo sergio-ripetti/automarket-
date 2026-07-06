@@ -330,7 +330,7 @@ export default function AdminNewSale() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', textAlign: 'center' }}>
         <CheckCircle size={64} color="#22c55e" style={{ marginBottom: '1.5rem' }} />
-        <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1rem' }}>Sale Recorded!</h2>
+        <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '1rem' }}>Sale Recorded!</h2>
         <p style={{ fontFamily: 'Outfit', color: '#4A6070', marginBottom: '2rem', maxWidth: '400px' }}>
           {selectedCar?.title} sold to {form.buyerName} for {fmt(form.salePrice)}. Redirecting...
         </p>
@@ -366,7 +366,7 @@ export default function AdminNewSale() {
       {/* Step 1: Select Vehicle */}
       {step === 1 && (
         <div>
-          <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1.5rem' }}>Select Vehicle</h2>
+          <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '1.5rem' }}>Select Vehicle</h2>
           <div style={{ position: 'relative', marginBottom: '2rem' }}>
             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#C8D8E4' }} />
             <input
@@ -408,7 +408,7 @@ export default function AdminNewSale() {
                     <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                       <img src={c.images[0]} alt="" style={{ width: '50px', height: '36px', borderRadius: '0.375rem', objectFit: 'cover' }} />
                       <div style={{ flex: 1 }}>
-                        <p className="font-bebas" style={{color: "#0D1B2A"' }}>{c.title}</p>
+                        <p className="font-bebas" style={{color: "#0D1B2A" }}>{c.title}</p>
                         <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>
                           {c.year} • {c.km.toLocaleString()} km
                         </p>
@@ -428,15 +428,15 @@ export default function AdminNewSale() {
                 borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
               }}>
                 <img src={selectedCar.images[0]} alt="" style={{ width: '100%', height: '180px', borderRadius: '0.75rem', objectFit: 'cover', marginBottom: '1rem' }} />
-                <h3 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
+                <h3 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                   <div>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Year • KM</p>
-                    <p style={{color: "#0D1B2A"' }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
                   </div>
                   <div>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Transmission • Fuel</p>
-                    <p style={{color: "#0D1B2A"' }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
                   </div>
                 </div>
                 <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#2E86AB', marginBottom: '1rem' }}>{fmt(selectedCar.price)}</p>
@@ -524,7 +524,7 @@ export default function AdminNewSale() {
                         onChange={() => setForm((f) => ({ ...f, isNZNew: true }))}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{color: "#0D1B2A"' }}>NZ New</span>
+                      <span style={{color: "#0D1B2A" }}>NZ New</span>
                     </label>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontFamily: 'Outfit' }}>
                       <input
@@ -533,7 +533,7 @@ export default function AdminNewSale() {
                         onChange={() => setForm((f) => ({ ...f, isNZNew: false }))}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span style={{color: "#0D1B2A"' }}>Used Import</span>
+                      <span style={{color: "#0D1B2A" }}>Used Import</span>
                     </label>
                   </div>
                 </div>
@@ -655,7 +655,7 @@ export default function AdminNewSale() {
       {/* Step 2: Buyer Details */}
       {step === 2 && (
         <div>
-          <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1.5rem' }}>Buyer Information</h2>
+          <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '1.5rem' }}>Buyer Information</h2>
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: '2rem',
           }}>
@@ -723,7 +723,7 @@ export default function AdminNewSale() {
       {/* Step 3: Payment Plan */}
       {step === 3 && selectedCar && (
         <div>
-          <h2 className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '1.5rem' }}>Payment Plan</h2>
+          <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '1.5rem' }}>Payment Plan</h2>
 
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{
@@ -778,7 +778,7 @@ export default function AdminNewSale() {
                   }}
                 >
                   <Icon size={24} color={form.paymentType === type ? '#2E86AB' : 'rgba(255,255,255,0.3)'} style={{ marginBottom: '0.75rem' }} />
-                  <p className="font-bebas" style={{color: "#0D1B2A"', marginBottom: '0.25rem' }}>{title}</p>
+                  <p className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.25rem' }}>{title}</p>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>{desc}</p>
                 </div>
               ))}
@@ -888,7 +888,7 @@ export default function AdminNewSale() {
                 borderRadius: '0.75rem', padding: '1rem', marginBottom: '1.5rem', fontSize: '0.8rem',
                 color: '#4A6070',
               }}>
-                <p>Fixed monthly rate: <strong style={{color: "#0D1B2A"' }}>0.8%</strong></p>
+                <p>Fixed monthly rate: <strong style={{color: "#0D1B2A" }}>0.8%</strong></p>
               </div>
             </div>
           )}
@@ -972,7 +972,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, orcIncluded: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>ORC Included in Price</span>
+                    <span style={{color: "#0D1B2A", fontSize: '0.875rem' }}>ORC Included in Price</span>
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontFamily: 'Outfit' }}>
                     <input
@@ -981,7 +981,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, driveAwayPrice: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>Drive Away Price</span>
+                    <span style={{color: "#0D1B2A", fontSize: '0.875rem' }}>Drive Away Price</span>
                   </label>
                 </div>
 
@@ -1431,7 +1431,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, warrantyIncluded: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>Mechanical Warranty</span>
+                    <span style={{color: "#0D1B2A", fontSize: '0.875rem' }}>Mechanical Warranty</span>
                   </label>
                   {form.warrantyIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
@@ -1492,7 +1492,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, mechInsuranceIncluded: e.target.checked }))}
                       style={{ cursor: 'pointer' }}
                     />
-                    <span style={{color: "#0D1B2A"', fontSize: '0.875rem' }}>Mechanical Insurance</span>
+                    <span style={{color: "#0D1B2A", fontSize: '0.875rem' }}>Mechanical Insurance</span>
                   </label>
                   {form.mechInsuranceIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
@@ -1559,24 +1559,24 @@ export default function AdminNewSale() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem', fontSize: '0.875rem' }}>
               <div>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Vehicle Price</p>
-                <p style={{color: "#0D1B2A"' }}>{fmt(form.salePrice)}</p>
+                <p style={{color: "#0D1B2A" }}>{fmt(form.salePrice)}</p>
               </div>
               {!form.orcIncluded && orcTotal > 0 && (
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>ORC</p>
-                  <p style={{color: "#0D1B2A"' }}>{fmt(orcTotal)}</p>
+                  <p style={{color: "#0D1B2A" }}>{fmt(orcTotal)}</p>
                 </div>
               )}
               {accessoriesTotal > 0 && (
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Accessories</p>
-                  <p style={{color: "#0D1B2A"' }}>{fmt(accessoriesTotal)}</p>
+                  <p style={{color: "#0D1B2A" }}>{fmt(accessoriesTotal)}</p>
                 </div>
               )}
               {financingFeesTotal > 0 && (
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Financing Fees</p>
-                  <p style={{color: "#0D1B2A"' }}>{fmt(financingFeesTotal)}</p>
+                  <p style={{color: "#0D1B2A" }}>{fmt(financingFeesTotal)}</p>
                 </div>
               )}
             </div>
@@ -1585,7 +1585,7 @@ export default function AdminNewSale() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>Subtotal</p>
-                  <p style={{color: "#0D1B2A"' }}>{fmt(subtotal)}</p>
+                  <p style={{color: "#0D1B2A" }}>{fmt(subtotal)}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>GST (15%)</p>
@@ -1612,7 +1612,7 @@ export default function AdminNewSale() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Amount Financed</p>
-                  <p style={{color: "#0D1B2A"' }}>{fmt(calc.financedAmount)}</p>
+                  <p style={{color: "#0D1B2A" }}>{fmt(calc.financedAmount)}</p>
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Total Interest</p>
@@ -1628,7 +1628,7 @@ export default function AdminNewSale() {
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.25rem' }}>Total Repayment</p>
-                <p style={{color: "#0D1B2A"' }}>{fmt(calc.totalPayment)}</p>
+                <p style={{color: "#0D1B2A" }}>{fmt(calc.totalPayment)}</p>
               </div>
             </div>
           )}
@@ -1692,7 +1692,7 @@ export default function AdminNewSale() {
               />
               <label htmlFor="unified-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
                 <Upload size={40} style={{ margin: '0 auto 1rem', color: '#2E86AB' }} />
-                <p style={{color: "#0D1B2A"', marginBottom: '0.5rem' }}>
+                <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                   Drop files here or click to browse
                 </p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8' }}>
