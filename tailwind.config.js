@@ -14,13 +14,8 @@ export default {
       },
       colors: {
         carbon: '#FFFFFF',
-        dark: '#0F172A',
-        'dark-secondary': '#1E293B',
-        amber: {
-          400: '#93C5FD',
-          500: '#1D4ED8',
-          600: '#1E40AF',
-        },
+        dark: '#0D1B2A',
+        'dark-secondary': '#16283B',
       },
     },
   },

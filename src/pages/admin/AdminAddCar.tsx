@@ -39,7 +39,7 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
         onClick={onChange}
         style={{
           width: 44, height: 24, borderRadius: 12, cursor: 'pointer',
-          backgroundColor: value ? '#1D4ED8' : 'rgba(255,255,255,0.12)',
+          backgroundColor: value ? '#2E86AB' : 'rgba(255,255,255,0.12)',
           position: 'relative', transition: 'background-color 0.2s', flexShrink: 0,
         }}
       >
@@ -75,8 +75,8 @@ export default function AdminAddCar() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#FAFBFC',
-    border: `1px solid ${focused === name ? '#1D4ED8' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#EEF2F7',
+    border: `1px solid ${focused === name ? '#2E86AB' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
     color: 'white', fontFamily: 'Inter, sans-serif', fontSize: '0.875rem',
     outline: 'none', transition: 'border-color 0.2s',
@@ -218,7 +218,7 @@ export default function AdminAddCar() {
 
       {/* Search Section */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1D4ED8', marginBottom: '0.5rem' }}>
+        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#2E86AB', marginBottom: '0.5rem' }}>
           Search Vehicle Database
         </h2>
         <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginBottom: '1rem' }}>
@@ -278,7 +278,7 @@ export default function AdminAddCar() {
               width: '100%',
               height: '44px',
               padding: '0 1.5rem',
-              background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
+              background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #2E86AB, #256E8C)',
               color: 'white',
               fontFamily: 'Outfit',
               fontSize: '0.875rem',
@@ -315,7 +315,7 @@ export default function AdminAddCar() {
                   cursor: 'pointer',
                   transition: 'background-color 0.2s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F1F5F9' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E4EAF0' }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
               >
                 <div className="font-bebas" style={{ fontSize: '1rem', color: 'white', marginBottom: '0.25rem' }}>
@@ -342,7 +342,7 @@ export default function AdminAddCar() {
           left: '50%',
           top: '-8px',
           transform: 'translateX(-50%)',
-          backgroundColor: '#FAFBFC',
+          backgroundColor: '#EEF2F7',
           padding: '0 0.75rem',
           fontFamily: 'Outfit',
           fontSize: '0.7rem',
@@ -450,7 +450,7 @@ export default function AdminAddCar() {
                     left: "1rem",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    color: "#1D4ED8",
+                    color: "#2E86AB",
                     fontFamily: "Outfit",
                     fontWeight: 600,
                     pointerEvents: "none",
@@ -478,7 +478,7 @@ export default function AdminAddCar() {
                       left: "1rem",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      color: "#1D4ED8",
+                      color: "#2E86AB",
                       fontFamily: "Outfit",
                       fontWeight: 600,
                       pointerEvents: "none",
@@ -523,10 +523,10 @@ export default function AdminAddCar() {
                 {...fp("trans")}>
                 <option
                   value="automatico"
-                  style={{ backgroundColor: "#FAFBFC" }}>
+                  style={{ backgroundColor: "#EEF2F7" }}>
                   Automatic
                 </option>
-                <option value="manual" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="manual" style={{ backgroundColor: "#EEF2F7" }}>
                   Manual
                 </option>
               </select>
@@ -540,18 +540,18 @@ export default function AdminAddCar() {
                 }
                 style={selectStyle("fuel")}
                 {...fp("fuel")}>
-                <option value="gasolina" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="gasolina" style={{ backgroundColor: "#EEF2F7" }}>
                   Petrol
                 </option>
-                <option value="diesel" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="diesel" style={{ backgroundColor: "#EEF2F7" }}>
                   Diesel
                 </option>
                 <option
                   value="electrico"
-                  style={{ backgroundColor: "#FAFBFC" }}>
+                  style={{ backgroundColor: "#EEF2F7" }}>
                   Electric
                 </option>
-                <option value="hibrido" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="hibrido" style={{ backgroundColor: "#EEF2F7" }}>
                   Hybrid
                 </option>
               </select>
@@ -672,7 +672,7 @@ export default function AdminAddCar() {
             style={{
               flex: 2,
               height: "48px",
-              background: "linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)",
+              background: "linear-gradient(135deg, #2E86AB 0%, #256E8C 100%)",
               color: "#000",
               fontWeight: 700,
               fontFamily: "Outfit",

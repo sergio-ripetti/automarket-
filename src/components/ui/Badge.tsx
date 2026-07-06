@@ -9,12 +9,12 @@ interface BadgeProps {
 }
 
 const variants: Record<BadgeVariant, string> = {
-  default: 'bg-slate-700/50 text-white',
+  default: 'bg-#0D1B2A/50 text-white',
   success: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
   danger: 'bg-red-500/20 text-red-400 border border-red-500/30',
   warning: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
   info: 'bg-sky-500/20 text-sky-400 border border-sky-500/30',
-  gold: 'bg-blue-700/20 text-blue-700 border border-blue-700/30',
+  gold: 'bg-#2E86AB/20 text-#2E86AB border border-#2E86AB/30',
 }
 
 // Small pill-shaped label used to display status/tags (e.g. Sale, Featured) with semantic color variants

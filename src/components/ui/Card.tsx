@@ -13,7 +13,7 @@ export function Card({ children, className = '', hoverable = false, interactive 
     <div
       className={`
         bg-gray-900 border border-white/5 rounded-xl
-        ${hoverable ? 'hover:border-blue-700/30 hover:shadow-lg transition-all duration-200 hover:shadow-black/20' : ''}
+        ${hoverable ? 'hover:border-#2E86AB/30 hover:shadow-lg transition-all duration-200 hover:shadow-black/20' : ''}
         ${interactive ? 'cursor-pointer' : ''}
         ${className}
       `}

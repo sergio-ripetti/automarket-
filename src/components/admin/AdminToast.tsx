@@ -19,9 +19,9 @@ export default function AdminToast({ message, type, onDismiss }: AdminToastProps
       boxShadow: '0 8px 32px rgba(0,0,0,0.5)', maxWidth: '360px',
     }}>
       {ok
-        ? <CheckCircle2 size={18} color="#1D4ED8" />
+        ? <CheckCircle2 size={18} color="#2E86AB" />
         : <XCircle size={18} color="#ef4444" />}
-      <span style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: ok ? '#1D4ED8' : '#fca5a5', flex: 1 }}>
+      <span style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: ok ? '#2E86AB' : '#fca5a5', flex: 1 }}>
         {message}
       </span>
       <button onClick={onDismiss} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.4)', padding: 0 }}>

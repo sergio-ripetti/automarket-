@@ -82,7 +82,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const isExpanded = sidebarOpen || screenSize === 'desktop'
 
   return (
-    <div id="admin-layout-root" className="admin-layout-root" style={{ display: 'flex', height: '100vh', backgroundColor: '#FAFBFC' }}>
+    <div id="admin-layout-root" className="admin-layout-root" style={{ display: 'flex', height: '100vh', backgroundColor: '#EEF2F7' }}>
       {/* BACKDROP (for mobile/tablet when expanded) */}
       {sidebarOpen && screenSize !== 'desktop' && (
         <div
@@ -109,7 +109,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           top: 0,
           height: '100vh',
           width: sidebarDisplayWidth,
-          backgroundColor: '#FAFBFC',
+          backgroundColor: '#EEF2F7',
           borderRight: '1px solid rgba(29,78,216,0.15)',
           display: 'flex',
           flexDirection: 'column',
@@ -130,7 +130,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               width: '100%',
               padding: '1rem',
               border: 'none',
-              backgroundColor: '#1D4ED8',
+              backgroundColor: '#2E86AB',
               color: 'black',
               cursor: 'pointer',
               fontSize: '1.5rem',
@@ -140,7 +140,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               transition: 'background-color 0.2s',
             }}
             onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f6ad1b'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1D4ED8'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2E86AB'}
             aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={sidebarOpen}
           >
@@ -151,7 +151,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* LOGO (only visible when expanded) */}
         {isExpanded && (
           <div style={{ marginBottom: '2.5rem', marginTop: screenSize !== 'desktop' ? '1rem' : '1.5rem', paddingLeft: '0.5rem' }}>
-            <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#1D4ED8', display: 'block' }}>
+            <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#2E86AB', display: 'block' }}>
               AutoMarket
             </span>
             <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
@@ -185,9 +185,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 background: 'none',
                 width: '100%',
                 textAlign: 'left' as const,
-                color: isActive ? '#1D4ED8' : 'rgba(255,255,255,0.5)',
+                color: isActive ? '#2E86AB' : 'rgba(255,255,255,0.5)',
                 backgroundColor: isActive ? 'rgba(29,78,216,0.1)' : 'transparent',
-                borderLeft: isActive ? '3px solid #1D4ED8' : 'none',
+                borderLeft: isActive ? '3px solid #2E86AB' : 'none',
                 paddingLeft: isActive ? 'calc(1rem - 3px)' : '1rem',
                 justifyContent: isExpanded ? 'flex-start' : 'center',
               })}
@@ -268,7 +268,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           marginLeft: collapsedWidth,
           width: `calc(100% - ${collapsedWidth}px)`,
           height: '100vh',
-          backgroundColor: '#FAFBFC',
+          backgroundColor: '#EEF2F7',
           overflow: 'hidden',
           overflowY: 'auto',
           padding: screenSize === 'desktop' ? '2rem' : screenSize === 'tablet' ? '1.25rem' : '1rem',

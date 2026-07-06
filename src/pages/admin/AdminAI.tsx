@@ -295,7 +295,7 @@ export default function AdminAI() {
   return (
     <div id="admin-ai-main-container" className="admin-ai-main-container" style={{
       display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0px)',
-      backgroundColor: '#FAFBFC', width: '100%', maxWidth: '100%',
+      backgroundColor: '#EEF2F7', width: '100%', maxWidth: '100%',
       boxSizing: 'border-box', overflow: 'hidden',
     }}>
       <style>{`
@@ -375,7 +375,7 @@ export default function AdminAI() {
         ) : messages.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>
-              <Bot size={48} style={{ color: '#1D4ED8', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
+              <Bot size={48} style={{ color: '#2E86AB', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
               <h2 className="font-bebas" style={{ fontSize: '1.5rem', color: 'white', marginBottom: '0.5rem' }}>
                 Hello! I'm your AI Assistant
               </h2>
@@ -399,14 +399,14 @@ export default function AdminAI() {
                     className={`admin-ai-suggestion admin-ai-suggestion-${idx}`}
                     onClick={() => handleSuggestionClick(question)}
                     style={{
-                      backgroundColor: '#F1F5F9', border: '1px solid rgba(29,78,216,0.2)',
+                      backgroundColor: '#E4EAF0', border: '1px solid rgba(29,78,216,0.2)',
                       borderRadius: '2rem', padding: '0.5rem 1.25rem',
                       color: 'rgba(255,255,255,0.7)', fontFamily: 'Outfit', fontSize: '0.75rem',
                       cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#1D4ED8'
-                      e.currentTarget.style.color = '#1D4ED8'
+                      e.currentTarget.style.borderColor = '#2E86AB'
+                      e.currentTarget.style.color = '#2E86AB'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(29,78,216,0.2)'
@@ -430,8 +430,8 @@ export default function AdminAI() {
                 <div style={{
                   maxWidth: msg.role === 'user' ? '70%' : '80%',
                   backgroundColor: msg.role === 'user'
-                    ? '#1D4ED8'
-                    : '#F1F5F9',
+                    ? '#2E86AB'
+                    : '#E4EAF0',
                   border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)',
                   color: msg.role === 'user' ? 'white' : 'white',
                   borderRadius: msg.role === 'user' ? '1rem 1rem 0.25rem 1rem' : '1rem 1rem 1rem 0.25rem',
@@ -459,7 +459,7 @@ export default function AdminAI() {
             {loading && (
               <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '0.75rem' }}>
                 <div style={{
-                  backgroundColor: '#F1F5F9', border: '1px solid rgba(255,255,255,0.08)',
+                  backgroundColor: '#E4EAF0', border: '1px solid rgba(255,255,255,0.08)',
                   borderRadius: '1rem 1rem 1rem 0.25rem', padding: '0.875rem 1.25rem',
                   display: 'flex', gap: '0.4rem',
                 }}>
@@ -496,7 +496,7 @@ export default function AdminAI() {
       {/* Input Area */}
       <div id="admin-ai-input-wrapper" className="admin-ai-input-wrapper" style={{
         padding: 'clamp(0.75rem, 3vw, 1.5rem)', borderTop: '1px solid rgba(255,255,255,0.06)',
-        backgroundColor: '#FAFBFC', width: '100%', boxSizing: 'border-box',
+        backgroundColor: '#EEF2F7', width: '100%', boxSizing: 'border-box',
       }}>
         <div style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 0.75rem)', width: '100%', boxSizing: 'border-box' }}>
           <input
@@ -518,7 +518,7 @@ export default function AdminAI() {
             }}
             onFocus={(e) => {
               if (!loading) {
-                e.currentTarget.style.borderColor = '#1D4ED8'
+                e.currentTarget.style.borderColor = '#2E86AB'
               }
             }}
             onBlur={(e) => {
@@ -535,7 +535,7 @@ export default function AdminAI() {
               borderRadius: '0.75rem', minWidth: '44px', flexShrink: 0,
               background: loading || !inputValue.trim()
                 ? 'rgba(29,78,216,0.3)'
-                : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
+                : 'linear-gradient(135deg, #2E86AB, #256E8C)',
               color: loading || !inputValue.trim() ? 'rgba(0,0,0,0.3)' : 'black',
               fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
               border: 'none', cursor: loading || !inputValue.trim() ? 'not-allowed' : 'pointer',

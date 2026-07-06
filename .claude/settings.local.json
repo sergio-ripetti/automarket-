@@ -95,7 +95,8 @@
       "Bash(awk '{print $9, \"\\(\" $5 \"\\)\"}')",
       "Bash(git pull *)",
       "Bash(awk '{printf \"%-40s %10s\\\\n\", $9, $5}')",
-      "Bash(git commit -m 'refactor: Complete color system redesign - Mercedes Slate & Sapphire *)"
+      "Bash(git commit -m 'refactor: Complete color system redesign - Mercedes Slate & Sapphire *)",
+      "Bash(git commit -m 'refactor: Complete color system redesign - Glacier & Midnight Navy *)"
     ]
   }
 }

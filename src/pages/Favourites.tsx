@@ -42,20 +42,20 @@ export default function Favourites() {
   const savedCars = allCars.filter((c) => favIds.includes(c.id))
 
   return (
-    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#FAFBFC', minHeight: '100vh' }}>
+    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#EEF2F7', minHeight: '100vh' }}>
       <div style={{ width: '80%', margin: '0 auto' }}>
 
         {/* ── Page Header ── */}
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-            <div style={{ width: 40, height: 1, backgroundColor: '#1D4ED8' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: '#2E86AB' }} />
             <span
               className="font-bebas"
-              style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#1D4ED8' }}
+              style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#2E86AB' }}
             >
               YOUR COLLECTION
             </span>
-            <div style={{ width: 40, height: 1, backgroundColor: '#1D4ED8' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: '#2E86AB' }} />
           </div>
           <h1
             className="font-bebas"
@@ -92,7 +92,7 @@ export default function Favourites() {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 1.5rem',
             }}>
-              <Heart size={32} color="#1D4ED8" />
+              <Heart size={32} color="#2E86AB" />
             </div>
             <p
               className="font-bebas"
@@ -110,7 +110,7 @@ export default function Favourites() {
               to="/cars"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                background: 'linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)',
+                background: 'linear-gradient(135deg, #2E86AB 0%, #256E8C 100%)',
                 color: '#000', fontFamily: 'Outfit', fontWeight: 700, fontSize: '0.875rem',
                 padding: '0.875rem 2rem', borderRadius: '0.625rem',
                 textDecoration: 'none', letterSpacing: '0.04em',

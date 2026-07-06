@@ -89,7 +89,7 @@ export default function SeedButton() {
           backgroundColor: importing ? 'rgba(29,78,216,0.3)' : 'rgba(29,78,216,0.2)',
           border: '1px solid rgba(29,78,216,0.4)',
           borderRadius: '0.625rem',
-          color: '#1D4ED8',
+          color: '#2E86AB',
           fontFamily: 'Outfit',
           fontSize: '0.875rem',
           fontWeight: 600,

@@ -84,7 +84,7 @@ export const cars: Car[] = [
     featured: true,
     transmission: 'automatico',
     fuel: 'gasolina',
-    color: '#0F172A',
+    color: '#0D1B2A',
     images: [
       'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&q=80',
       'https://images.unsplash.com/photo-1503376780353-7e6692858b7c?w=800&q=80',
@@ -316,7 +316,7 @@ export const cars: Car[] = [
     featured: false,
     transmission: 'automatico',
     fuel: 'gasolina',
-    color: '#F1F5F9',
+    color: '#E4EAF0',
     images: [
       'https://images.unsplash.com/photo-1471444928139-48c5bf5173f8?w=800&q=80',
       'https://images.unsplash.com/photo-1502161254066-6c74afbf07aa?w=800&q=80',

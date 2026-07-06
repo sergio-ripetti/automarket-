@@ -187,7 +187,7 @@ export default function AdminEditSale() {
         <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', marginBottom: '1rem' }}>Sale not found</p>
         <button onClick={() => navigate('/admin/sales')} style={{
           padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-          background: 'linear-gradient(135deg, #1D4ED8, #1E40AF)', color: 'white',
+          background: 'linear-gradient(135deg, #2E86AB, #256E8C)', color: 'white',
           fontFamily: 'Outfit', cursor: 'pointer', border: 'none',
         }}>Back to Sales</button>
       </div>
@@ -196,7 +196,7 @@ export default function AdminEditSale() {
 
   const inputStyle = (hasErr = false): React.CSSProperties => ({
     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-    backgroundColor: '#FAFBFC', border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#EEF2F7', border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : 'rgba(255,255,255,0.08)'}`,
     color: 'white', fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
   })
 
@@ -251,7 +251,7 @@ export default function AdminEditSale() {
             backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
-            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1D4ED8', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
+            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#2E86AB', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               Buyer Information
             </h3>
             <div className="admin-edit-sale-grid-2col">
@@ -276,7 +276,7 @@ export default function AdminEditSale() {
                     value={form[key as keyof typeof form] as string}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                     style={inputStyle()}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#1D4ED8' }}
+                    onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                     onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                   />
                 </div>
@@ -289,7 +289,7 @@ export default function AdminEditSale() {
             backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
-            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1D4ED8', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
+            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#2E86AB', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               Payment Information
             </h3>
             <div className="admin-edit-sale-grid-2col">
@@ -306,7 +306,7 @@ export default function AdminEditSale() {
                   value={form.saleDate}
                   onChange={(e) => setForm((f) => ({ ...f, saleDate: e.target.value }))}
                   style={inputStyle()}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = '#1D4ED8' }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                 />
               </div>
@@ -323,7 +323,7 @@ export default function AdminEditSale() {
                   value={form.salePrice}
                   onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
                   style={inputStyle()}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = '#1D4ED8' }}
+                  onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                   onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                 />
               </div>
@@ -342,7 +342,7 @@ export default function AdminEditSale() {
                       value={form.downPayment}
                       onChange={(e) => setForm((f) => ({ ...f, downPayment: Number(e.target.value) }))}
                       style={inputStyle()}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1D4ED8' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                     />
                   </div>
@@ -359,7 +359,7 @@ export default function AdminEditSale() {
                       value={form.loanTerm}
                       onChange={(e) => setForm((f) => ({ ...f, loanTerm: Number(e.target.value) }))}
                       style={inputStyle()}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#1D4ED8' }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                       onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
                     />
                   </div>
@@ -378,7 +378,7 @@ export default function AdminEditSale() {
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                 style={{ ...inputStyle(), minHeight: '100px', resize: 'vertical' } as React.CSSProperties}
-                onFocus={(e) => { e.currentTarget.style.borderColor = '#1D4ED8' }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = '#2E86AB' }}
                 onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
               />
             </div>
@@ -442,7 +442,7 @@ export default function AdminEditSale() {
                   id="edit-unified-upload"
                 />
                 <label htmlFor="edit-unified-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
-                  <Upload size={40} style={{ margin: '0 auto 1rem', color: '#1D4ED8' }} />
+                  <Upload size={40} style={{ margin: '0 auto 1rem', color: '#2E86AB' }} />
                   <p style={{ fontFamily: 'Outfit', fontSize: '1rem', color: 'white', marginBottom: '0.5rem' }}>
                     Drop files here or click to browse
                   </p>
@@ -457,7 +457,7 @@ export default function AdminEditSale() {
                 <div style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
                   {Array.from(form.uploadingFiles.entries()).map(([fileId, { file, progress }]) => (
                     <div key={fileId} style={{
-                      backgroundColor: '#F1F5F9',
+                      backgroundColor: '#E4EAF0',
                       borderRadius: '0.75rem',
                       overflow: 'hidden',
                       border: '1px solid rgba(255,255,255,0.06)',
@@ -465,7 +465,7 @@ export default function AdminEditSale() {
                     }}>
                       <div style={{
                         height: '80px',
-                        backgroundColor: '#FAFBFC',
+                        backgroundColor: '#EEF2F7',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -480,7 +480,7 @@ export default function AdminEditSale() {
                         }}>
                           <div style={{
                             height: '100%',
-                            backgroundColor: '#1D4ED8',
+                            backgroundColor: '#2E86AB',
                             width: `${progress}%`,
                             transition: 'width 0.3s',
                           }} />
@@ -506,7 +506,7 @@ export default function AdminEditSale() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
                     {form.uploadedDocuments.map((url) => (
                       <div key={url} style={{
-                        backgroundColor: '#F1F5F9',
+                        backgroundColor: '#E4EAF0',
                         borderRadius: '0.75rem',
                         overflow: 'hidden',
                         border: '1px solid rgba(255,255,255,0.06)',
@@ -519,11 +519,11 @@ export default function AdminEditSale() {
                         ) : (
                           <div style={{
                             height: '100px',
-                            backgroundColor: '#FAFBFC',
+                            backgroundColor: '#EEF2F7',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#1D4ED8',
+                            color: '#2E86AB',
                             fontSize: '2rem',
                           }}>
                             📄
@@ -555,7 +555,7 @@ export default function AdminEditSale() {
                           padding: '0.5rem',
                           fontFamily: 'Outfit',
                           fontSize: '0.65rem',
-                          color: '#1D4ED8',
+                          color: '#2E86AB',
                           textDecoration: 'none',
                           textAlign: 'center',
                           borderTop: '1px solid rgba(255,255,255,0.06)',
@@ -575,7 +575,7 @@ export default function AdminEditSale() {
         <div>
           {/* Summary */}
           <div style={{
-            background: 'linear-gradient(135deg, #F1F5F9, #FFFFFF)',
+            background: 'linear-gradient(135deg, #E4EAF0, #FFFFFF)',
             border: '1px solid rgba(29,78,216,0.15)', borderRadius: '1rem',
             padding: 'clamp(1rem, 3vw, 1.5rem)', position: 'sticky', top: '1rem',
             width: '100%', boxSizing: 'border-box',
@@ -603,7 +603,7 @@ export default function AdminEditSale() {
                     border: '1px solid rgba(29,78,216,0.1)',
                   }}>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem' }}>Monthly Payment</p>
-                    <p className="font-bebas" style={{ fontSize: '2rem', color: '#1D4ED8' }}>{fmt(calc.monthlyPayment)}</p>
+                    <p className="font-bebas" style={{ fontSize: '2rem', color: '#2E86AB' }}>{fmt(calc.monthlyPayment)}</p>
                   </div>
                 </>
               )}
@@ -625,7 +625,7 @@ export default function AdminEditSale() {
                 disabled={saving}
                 style={{
                   flex: 1, padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-                  background: 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
+                  background: 'linear-gradient(135deg, #2E86AB, #256E8C)',
                   color: 'white', fontFamily: 'Outfit', fontWeight: 600,
                   cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.5 : 1,
                   border: 'none',

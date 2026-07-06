@@ -58,7 +58,7 @@ function Toggle({
           height: 24,
           borderRadius: 12,
           cursor: "pointer",
-          backgroundColor: value ? "#1D4ED8" : "rgba(255,255,255,0.12)",
+          backgroundColor: value ? "#2E86AB" : "rgba(255,255,255,0.12)",
           position: "relative",
           transition: "background-color 0.2s",
           flexShrink: 0,
@@ -147,7 +147,7 @@ export default function AdminEditCar() {
 
   if (loading)
     return (
-      <div style={{ padding: "2rem", color: "#1D4ED8", fontFamily: "Outfit" }}>
+      <div style={{ padding: "2rem", color: "#2E86AB", fontFamily: "Outfit" }}>
         Loading vehicle…
       </div>
     );
@@ -164,7 +164,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
   const inputStyle: React.CSSProperties = {
     width: "100%",
     boxSizing: "border-box",
-    backgroundColor: "#FAFBFC",
+    backgroundColor: "#EEF2F7",
     border: "1px solid rgba(255,255,255,0.08)",
     borderRadius: "0.625rem",
     padding: "0.875rem 1rem",
@@ -341,7 +341,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
           backgroundColor: 'rgba(29,78,216,0.1)',
           border: '1px solid rgba(29,78,216,0.2)',
           borderRadius: '0.625rem',
-          color: '#1D4ED8',
+          color: '#2E86AB',
           fontFamily: 'Outfit',
           fontSize: '0.875rem',
           fontWeight: 600,
@@ -417,7 +417,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                 width: '100%',
                 height: '44px',
                 padding: '0 1.5rem',
-                background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #1D4ED8, #1E40AF)',
+                background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #2E86AB, #256E8C)',
                 color: 'white',
                 fontFamily: 'Outfit',
                 fontSize: '0.875rem',
@@ -454,7 +454,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                     cursor: 'pointer',
                     transition: 'background-color 0.2s',
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F1F5F9' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E4EAF0' }}
                   onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
                 >
                   <div className="font-bebas" style={{ fontSize: '1rem', color: 'white', marginBottom: '0.25rem' }}>
@@ -564,7 +564,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                     left: "1rem",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    color: "#1D4ED8",
+                    color: "#2E86AB",
                     fontFamily: "Outfit",
                     fontWeight: 600,
                     pointerEvents: "none",
@@ -593,7 +593,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                       left: "1rem",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      color: "#1D4ED8",
+                      color: "#2E86AB",
                       fontFamily: "Outfit",
                       fontWeight: 600,
                       pointerEvents: "none",
@@ -639,10 +639,10 @@ const set = (field: keyof FormState, val: string | boolean) => {
                 style={selectStyle}>
                 <option
                   value="automatico"
-                  style={{ backgroundColor: "#FAFBFC" }}>
+                  style={{ backgroundColor: "#EEF2F7" }}>
                   Automatic
                 </option>
-                <option value="manual" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="manual" style={{ backgroundColor: "#EEF2F7" }}>
                   Manual
                 </option>
               </select>
@@ -656,18 +656,18 @@ const set = (field: keyof FormState, val: string | boolean) => {
                   set("fuel", e.target.value as FormState["fuel"])
                 }
                 style={selectStyle}>
-                <option value="gasolina" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="gasolina" style={{ backgroundColor: "#EEF2F7" }}>
                   Petrol
                 </option>
-                <option value="diesel" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="diesel" style={{ backgroundColor: "#EEF2F7" }}>
                   Diesel
                 </option>
                 <option
                   value="electrico"
-                  style={{ backgroundColor: "#FAFBFC" }}>
+                  style={{ backgroundColor: "#EEF2F7" }}>
                   Electric
                 </option>
-                <option value="hibrido" style={{ backgroundColor: "#FAFBFC" }}>
+                <option value="hibrido" style={{ backgroundColor: "#EEF2F7" }}>
                   Hybrid
                 </option>
               </select>
@@ -783,7 +783,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
             style={{
               flex: 2,
               height: "48px",
-              background: "linear-gradient(135deg, #1D4ED8 0%, #1E40AF 100%)",
+              background: "linear-gradient(135deg, #2E86AB 0%, #256E8C 100%)",
               color: "#000",
               fontWeight: 700,
               fontFamily: "Outfit",
