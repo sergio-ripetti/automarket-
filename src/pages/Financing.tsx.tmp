@@ -1,0 +1,286 @@
+import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { CheckCircle2, Upload, X } from 'lucide-react'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '../lib/firebase'
+import { cars } from '../data/cars'
+import { uploadDocument } from '../lib/cloudinaryService'
+import { sanitizeForFirestore } from '../lib/sanitize'
+import type { FinancingForm, FinancingDocument } from '../types'
+
+// Formats a numeric price into NZD currency display format
+function formatPrice(price: number): string {
+  return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
+}
+
+const MONTHLY_RATE = 0.008
+const MONTH_OPTIONS = [12, 24, 36, 48, 60]
+
+const emptyForm: FinancingForm = {
+  firstName: '', lastName: '', email: '', phone: '',
+  licenseNumber: '', income: '',
+  downPayment: 20, months: 36,
+  employer: '', jobTitle: '', employmentType: 'fulltime', yearsEmployed: 0, monthlyExpenses: '',
+  documents: [], creditHistoryConsent: false,
+}
+
+type FormErrors = Partial<Record<keyof FinancingForm, string>>
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: '#767676',
+  letterSpacing: '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '6px',
+}
+
+const errorStyle: React.CSSProperties = {
+  fontFamily: 'Outfit', fontSize: '0.7rem',
+  color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem',
+}
+
+// Two-step financing page: step 1 is a loan calculator (down payment, term, monthly payment), step 2 is a full application form - uploads supporting documents to Cloudinary and saves the completed application to Firestore
+export default function Financing() {
+  const [searchParams] = useSearchParams()
+  const carId = searchParams.get('carId')
+  const car = carId ? cars.find((c) => c.id === carId) : undefined
+
+  const [step, setStep] = useState<1 | 2>(1)
+  const [form, setForm] = useState<FinancingForm>(emptyForm)
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [submitted, setSubmitted] = useState(false)
+  const [manualPrice, setManualPrice] = useState('25000')
+  const [focused, setFocused] = useState<string | null>(null)
+  const [applyHovered, setApplyHovered] = useState(false)
+  const [submitHovered, setSubmitHovered] = useState(false)
+  const [uploadingFiles, setUploadingFiles] = useState<Map<string, { file: File; progress: number; uploaded: boolean }>>(new Map())
+
+  const basePrice = car ? car.price : Number(manualPrice) || 25000
+  const downPaymentAmt = Math.round((form.downPayment / 100) * basePrice)
+  const financed = basePrice - downPaymentAmt
+  const r = MONTHLY_RATE
+  const n = form.months
+  const monthly = financed > 0 ? financed * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : 0
+  const totalRepay = monthly * n + downPaymentAmt
+  const totalInterest = totalRepay - basePrice
+  const sliderPct = ((form.downPayment - 10) / 40) * 100
+
+  const inputStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
+    width: '100%', boxSizing: 'border-box',
+    backgroundColor: '#FFFFFF',
+    border: `1px solid ${hasErr ? '#D64545' : focused === name ? '#1A1A1A' : '#E0E0DC'}`,
+    borderRadius: '0.375rem', padding: '0.75rem 1rem',
+    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#1A1A1A', outline: 'none',
+    transition: 'border-color 0.2s',
+  })
+
+  // Validates all required application fields (personal info, employment, consent checkbox) and sets error messages for any invalid fields
+  const validate = (): boolean => {
+    const e: FormErrors = {}
+    if (!form.firstName.trim()) e.firstName = 'Required'
+    if (!form.lastName.trim()) e.lastName = 'Required'
+    if (!form.email.trim()) e.email = 'Required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email'
+    if (!form.phone.trim()) e.phone = 'Required'
+    if (!form.licenseNumber.trim()) e.licenseNumber = 'Required'
+    if (!form.income.trim()) e.income = 'Required'
+    if (!form.employer.trim()) e.employer = 'Required'
+    if (!form.jobTitle.trim()) e.jobTitle = 'Required'
+    if (form.yearsEmployed === 0) e.yearsEmployed = 'Required'
+    if (!form.monthlyExpenses.trim()) e.monthlyExpenses = 'Required'
+    if (!form.creditHistoryConsent) e.creditHistoryConsent = 'You must consent to a credit check'
+    setErrors(e)
+    return Object.keys(e).length === 0
+  }
+
+  // Handles supporting document selection/drop - uploads each selected file to Cloudinary, tracks per-file upload progress in state, and appends the resulting URLs to the financing form's documents list
+  const handleFilesSelected = async (files: FileList) => {
+    const newFiles = Array.from(files)
+    const newUploading = new Map(uploadingFiles)
+
+    for (const file of newFiles) {
+      const fileId = `${file.name}-${Date.now()}`
+      newUploading.set(fileId, { file, progress: 0, uploaded: false })
+    }
+
+    setUploadingFiles(newUploading)
+
+    for (const file of newFiles) {
+      const fileId = `${file.name}-${Date.now()}`
+      try {
+        const url = await uploadDocument(file, 'financing-docs')
+
+        setUploadingFiles((prev) => {
+          const updated = new Map(prev)
+          updated.set(fileId, { ...updated.get(fileId)!, progress: 100, uploaded: true })
+          return updated
+        })
+
+        setForm((f) => ({
+          ...f,
+          documents: [...f.documents, { url, type: 'other' as const, filename: file.name }],
+        }))
+
+        setTimeout(() => {
+          setUploadingFiles((prev) => {
+            const updated = new Map(prev)
+            updated.delete(fileId)
+            return updated
+          })
+        }, 1000)
+      } catch (err) {
+        console.error('File upload error:', err)
+        setUploadingFiles((prev) => {
+          const updated = new Map(prev)
+          updated.delete(fileId)
+          return updated
+        })
+      }
+    }
+  }
+
+  // Updates the document-type classification (e.g. passport, payslip) for an already-uploaded document, matched by its URL
+  const handleDocumentTypeChange = (url: string, type: FinancingDocument['type']) => {
+    setForm((f) => ({
+      ...f,
+      documents: f.documents.map((d) => d.url === url ? { ...d, type } : d),
+    }))
+  }
+
+  // Removes an uploaded document from the financing form's documents list by URL
+  const handleRemoveDocument = (url: string) => {
+    setForm((f) => ({
+      ...f,
+      documents: f.documents.filter((d) => d.url !== url),
+    }))
+  }
+
+  // Handles the financing application form submission - validates input, computes final loan figures, sanitizes the data, and saves it as a new "pending" financing document in Firestore
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!validate()) return
+
+    try {
+      const selectedCar = car || { id: 'manual', title: `Manual Entry - $${manualPrice}`, price: Number(manualPrice) || 25000 }
+      const financingData = {
+        carId: selectedCar.id,
+        carTitle: selectedCar.title,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        phone: form.phone,
+        licenseNumber: form.licenseNumber,
+        monthlyIncome: Number(form.income),
+        downPayment: downPaymentAmt,
+        loanTerm: form.months,
+        monthlyPayment: Math.round(monthly),
+        totalAmount: Math.round(financed),
+        totalInterest: Math.round(totalInterest),
+        employer: form.employer,
+        jobTitle: form.jobTitle,
+        employmentType: form.employmentType,
+        yearsEmployed: Number(form.yearsEmployed),
+        monthlyExpenses: Number(form.monthlyExpenses),
+        documents: form.documents,
+        creditHistoryConsent: form.creditHistoryConsent,
+        status: 'pending',
+        createdAt: serverTimestamp(),
+      }
+      const safeFinancingData = sanitizeForFirestore(financingData) as Record<string, unknown>
+      await addDoc(collection(db, 'financing'), safeFinancingData)
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Failed to submit financing application:', err)
+      alert('Failed to submit application. Please try again.')
+    }
+  }
+
+  /* "EUR"EUR"EUR SUCCESS "EUR"EUR"EUR */
+  if (submitted) {
+    return (
+      <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#F2F2F0', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', maxWidth: '28rem', padding: '0 1rem' }}>
+          <div style={{
+            width: '5rem', height: '5rem', borderRadius: '50%',
+            backgroundColor: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem',
+          }}>
+            <CheckCircle2 size={38} color="#22c55e" />
+          </div>
+          <h1 className="font-bebas" style={{color: '#1A1A1A', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
+            Application Submitted!
+          </h1>
+          <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '0.9rem', marginBottom: '2.5rem', lineHeight: 1.65 }}>
+            We'll be in touch within 24 to 48 business hours to continue the process.
+          </p>
+          <button
+            onClick={() => { setSubmitted(false); setStep(1); setForm(emptyForm) }}
+            style={{
+              fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', letterSpacing: '0.04em',
+              padding: '0.75rem 2rem', border: '1px solid #E0E0DC', color: '#1A1A1A',
+              borderRadius: '0.375rem', backgroundColor: 'transparent', cursor: 'pointer',
+            }}
+          >
+            Back to Calculator
+          </button>
+        </div>
+      </main>
+    )
+  }
+
+  /* "EUR"EUR"EUR MAIN "EUR"EUR"EUR */
+  return (
+    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#F2F2F0', minHeight: '100vh' }}>
+      <div style={{ width: '80%', margin: '0 auto' }}>
+
+        {/* "EUR"EUR Page Header "EUR"EUR */}
+        <div style={{ marginBottom: '3rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+            <div style={{ width: 40, height: 1, backgroundColor: '#1A1A1A' }} />
+            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#C4FF00' }}>
+              FINANCE YOUR VEHICLE
+            </span>
+            <div style={{ width: 40, height: 1, backgroundColor: '#1A1A1A' }} />
+          </div>
+          <h1 className="font-bebas" style={{color: '#1A1A1A', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+            Smart Financing
+          </h1>
+          <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '1rem' }}>
+            Calculate your monthly payments and apply for financing in minutes.
+          </p>
+        </div>
+
+        {/* "EUR"EUR Step Indicator "EUR"EUR */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '3rem' }}>
+          {/* Step 1 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+            <div style={{
+              width: '2rem', height: '2rem', borderRadius: '50%',
+              backgroundColor: '#1A1A1A',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 700, color: '#000',
+            }}>1</div>
+            <span style={{color: "#0D1B2A", fontWeight: 600 }}>Calculator</span>
+          </div>
+          {/* Connector */}
+          <div style={{
+            width: 80, height: 1,
+            backgroundColor: step >= 2 ? '#1A1A1A' : 'rgba(255,255,255,0.1)',
+            margin: '0 1.25rem', transition: 'background-color 0.3s ease',
+          }} />
+          {/* Step 2 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+            <div style={{
+              width: '2rem', height: '2rem', borderRadius: '50%',
+              backgroundColor: step >= 2 ? '#1A1A1A' : 'rgba(255,255,255,0.08)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 700,
+              color: step >= 2 ? '#FFFFFF' : 'rgba(255,255,255,0.3)',
+              transition: 'all 0.3s ease',
+            }}>2</div>
+            <span style={{
+              fontFamily: 'Outfit', fontSize: '0.875rem',
+              color: step >= 2 ? 'white' : 'rgba(255,255,255,0.3)',
+              fontWeight: step >= 2 ? 600 : 400, transition: 'all 0.3s ease',
+            }}>Application</span>
+          </div>
+        </div>
+
+        {/* o

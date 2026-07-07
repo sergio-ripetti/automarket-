@@ -13,15 +13,15 @@ export default function AdminLogin() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#F4F7FA',
-    border: `1px solid ${focused === name ? '#2C6E9E' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#F2F2F0',
+    border: `1px solid ${focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
-    color: "#0D1B2A", fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
+    color: "#1A1A1A", fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
     outline: 'none', transition: 'border-color 0.2s',
   })
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8',
+    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676',
     textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px',
   }
 
@@ -41,26 +41,26 @@ export default function AdminLogin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F4F7FA', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#F2F2F0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{
         width: '100%', maxWidth: '420px',
-        backgroundColor: '#FFFFFF', border: '1px solid rgba(29,78,216,0.15)',
+        backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
         borderRadius: '1.25rem', padding: '2.5rem',
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <span className="font-bebas" style={{ fontSize: '2rem', color: '#2C6E9E', display: 'block', lineHeight: 1 }}>
+          <span className="font-bebas" style={{ fontSize: '2rem', color: '#C4FF00', display: 'block', lineHeight: 1 }}>
             AutoMarket
           </span>
-          <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#C8D8E4', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
             Admin Panel
           </span>
         </div>
 
-        <h1 className="font-bebas" style={{color: "#0D1B2A", textAlign: 'center', lineHeight: 1, marginBottom: '0.5rem' }}>
+        <h1 className="font-bebas" style={{color: "#1A1A1A", textAlign: 'center', lineHeight: 1, marginBottom: '0.5rem' }}>
           Admin Access
         </h1>
-        <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#4A6070', textAlign: 'center', marginBottom: '2rem' }}>
+        <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#767676', textAlign: 'center', marginBottom: '2rem' }}>
           Sign in to manage your inventory
         </p>
 
@@ -102,8 +102,8 @@ export default function AdminLogin() {
             disabled={loading}
             style={{
               width: '100%', height: '48px',
-              background: 'linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)',
-              color: '#000', fontWeight: 700, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem',
+              background: '#1A1A1A',
+              color: '#FFFFFF', fontWeight: 700, fontFamily: 'Inter, sans-serif', fontSize: '0.95rem',
               borderRadius: '0.75rem', border: 'none',
               cursor: loading ? 'default' : 'pointer',
               opacity: loading ? 0.7 : 1, transition: 'opacity 0.2s',

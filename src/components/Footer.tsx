@@ -16,7 +16,7 @@ const socialLinks = [
 // Renders the site-wide footer with brand info, quick links, and contact details
 export default function Footer() {
   return (
-    <footer className="bg-[#F4F7FA] border-t border-#2C6E9E/10 mt-20 lg:mt-32">
+    <footer className="bg-[#1A1A1A] border-t border-white/10 mt-20 lg:mt-32">
       <div className="max-w-7xl mx-auto px-6 py-16 lg:py-20">
         {/* Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16 mb-12">
@@ -28,7 +28,7 @@ export default function Footer() {
                 height="18"
                 viewBox="0 0 32 20"
                 fill="none"
-                className="text-#2C6E9E"
+                className="text-[#C4FF00]"
                 aria-hidden="true"
               >
                 <path d="M2 14L5 6H27L30 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -36,9 +36,9 @@ export default function Footer() {
                 <circle cx="8" cy="18" r="2" fill="currentColor" />
                 <circle cx="24" cy="18" r="2" fill="currentColor" />
               </svg>
-              <span className="font-bebas text-xl tracking-wider text-#2C6E9E">AutoMarket</span>
+              <span className="font-bebas text-xl tracking-wider text-white">AutoMarket</span>
             </div>
-            <p className="font-poppins text-sm text-[#0D1B2A]/60 leading-relaxed mb-6">
+            <p className="font-poppins text-sm text-white/65 leading-relaxed mb-6">
               New Zealand's premier automotive marketplace. We connect buyers and sellers with complete transparency,
               trust, and innovative AI-powered insights.
             </p>
@@ -48,7 +48,7 @@ export default function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="w-10 h-10 rounded-lg bg-white/5 hover:bg-#2C6E9E/20 border border-white/10 hover:border-#2C6E9E/30 flex items-center justify-center text-[#0D1B2A]/60 hover:text-#2C6E9E transition-all duration-sm group focus:outline-none focus-visible:ring-2 focus-visible:ring-#2C6E9E"
+                  className="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/30 flex items-center justify-center text-white/65 hover:text-white transition-all duration-sm group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00]"
                 >
                   <Icon size={18} />
                 </a>
@@ -58,13 +58,13 @@ export default function Footer() {
 
           {/* Quick Links Column */}
           <div>
-            <h3 className="font-bebas text-[#0D1B2A] mb-6">Quick Links</h3>
+            <h3 className="font-bebas text-white mb-6">Quick Links</h3>
             <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="font-poppins text-sm text-[#0D1B2A]/60 hover:text-#2C6E9E transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-#2C6E9E rounded px-2 py-1"
+                    className="font-poppins text-sm text-white/65 hover:text-white transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] rounded px-2 py-1"
                   >
                     {link.label}
                   </Link>
@@ -75,30 +75,30 @@ export default function Footer() {
 
           {/* Contact Column */}
           <div>
-            <h3 className="font-bebas text-[#0D1B2A] mb-6">Contact Info</h3>
+            <h3 className="font-bebas text-white mb-6">Contact Info</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin size={18} className="text-#2C6E9E mt-0.5 shrink-0" aria-hidden="true" />
-                <span className="font-poppins text-sm text-[#0D1B2A]/60">
+                <MapPin size={18} className="text-[#C4FF00] mt-0.5 shrink-0" aria-hidden="true" />
+                <span className="font-poppins text-sm text-white/65">
                   123 Queen Street
                   <br />
                   Auckland CBD, NZ 1010
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone size={18} className="text-#2C6E9E shrink-0" aria-hidden="true" />
+                <Phone size={18} className="text-[#C4FF00] shrink-0" aria-hidden="true" />
                 <a
                   href="tel:+64912345 67"
-                  className="font-poppins text-sm text-[#0D1B2A]/60 hover:text-#2C6E9E transition-colors duration-sm"
+                  className="font-poppins text-sm text-white/65 hover:text-white transition-colors duration-sm"
                 >
                   +64 9 123 4567
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail size={18} className="text-#2C6E9E shrink-0" aria-hidden="true" />
+                <Mail size={18} className="text-[#C4FF00] shrink-0" aria-hidden="true" />
                 <a
                   href="mailto:contact@automarket.co.nz"
-                  className="font-poppins text-sm text-[#0D1B2A]/60 hover:text-#2C6E9E transition-colors duration-sm"
+                  className="font-poppins text-sm text-white/65 hover:text-white transition-colors duration-sm"
                 >
                   contact@automarket.co.nz
                 </a>
@@ -112,7 +112,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-center">
-          <p className="font-poppins text-xs text-[#0D1B2A]/40">
+          <p className="font-poppins text-xs text-white/40">
             © {new Date().getFullYear()} AutoMarket. All rights reserved. | Crafted with care in New Zealand.
           </p>
         </div>

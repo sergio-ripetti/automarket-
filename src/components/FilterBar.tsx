@@ -54,8 +54,8 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
 
   // Builds inline styles for a text/number input, highlighting the border when the field is focused
   const inputBase = (name: string): React.CSSProperties => ({
-    backgroundColor: '#F4F7FA',
-    border: `1px solid ${focused === name ? '#2C6E9E' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#F2F2F0',
+    border: `1px solid ${focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem',
     padding: '0.75rem 1rem',
     color: "#0D1B2A",
@@ -217,7 +217,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
             onMouseLeave={() => setClearHovered(false)}
             style={{
               border: '1px solid rgba(29,78,216,0.3)',
-              color: '#2C6E9E',
+              color: '#C4FF00',
               backgroundColor: clearHovered ? 'rgba(29,78,216,0.1)' : 'transparent',
               borderRadius: '0.625rem',
               padding: '0.75rem 1.25rem',

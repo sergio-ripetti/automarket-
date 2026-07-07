@@ -82,7 +82,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const isExpanded = sidebarOpen || screenSize === 'desktop'
 
   return (
-    <div id="admin-layout-root" className="admin-layout-root" style={{ display: 'flex', height: '100vh', backgroundColor: '#F4F7FA' }}>
+    <div id="admin-layout-root" className="admin-layout-root" style={{ display: 'flex', height: '100vh', backgroundColor: '#F2F2F0' }}>
       {/* BACKDROP (for mobile/tablet when expanded) */}
       {sidebarOpen && screenSize !== 'desktop' && (
         <div
@@ -109,8 +109,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           top: 0,
           height: '100vh',
           width: sidebarDisplayWidth,
-          backgroundColor: '#F4F7FA',
-          borderRight: '1px solid rgba(29,78,216,0.15)',
+          backgroundColor: '#1A1A1A',
+          borderRight: '1px solid rgba(255,255,255,0.1)',
           display: 'flex',
           flexDirection: 'column',
           padding: screenSize === 'desktop' ? '1.5rem 1rem' : '0',
@@ -130,8 +130,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               width: '100%',
               padding: '1rem',
               border: 'none',
-              backgroundColor: '#2C6E9E',
-              color: 'black',
+              backgroundColor: '#1A1A1A',
+              color: '#FFFFFF',
               cursor: 'pointer',
               fontSize: '1.5rem',
               display: 'flex',
@@ -139,8 +139,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               justifyContent: 'center',
               transition: 'background-color 0.2s',
             }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f6ad1b'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2C6E9E'}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2A2A2A'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1A1A1A'}
             aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={sidebarOpen}
           >
@@ -151,10 +151,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* LOGO (only visible when expanded) */}
         {isExpanded && (
           <div style={{ marginBottom: '2.5rem', marginTop: screenSize !== 'desktop' ? '1rem' : '1.5rem', paddingLeft: '0.5rem' }}>
-            <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#2C6E9E', display: 'block' }}>
+            <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#FFFFFF', display: 'block' }}>
               AutoMarket
             </span>
-            <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Admin Panel
             </span>
           </div>
@@ -185,9 +185,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 background: 'none',
                 width: '100%',
                 textAlign: 'left' as const,
-                color: isActive ? '#2C6E9E' : 'rgba(255,255,255,0.5)',
-                backgroundColor: isActive ? 'rgba(29,78,216,0.1)' : 'transparent',
-                borderLeft: isActive ? '3px solid #2C6E9E' : 'none',
+                color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.65)',
+                backgroundColor: isActive ? 'rgba(196,255,0,0.15)' : 'transparent',
+                borderLeft: isActive ? '3px solid #C4FF00' : 'none',
                 paddingLeft: isActive ? 'calc(1rem - 3px)' : '1rem',
                 justifyContent: isExpanded ? 'flex-start' : 'center',
               })}
@@ -268,7 +268,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           marginLeft: collapsedWidth,
           width: `calc(100% - ${collapsedWidth}px)`,
           height: '100vh',
-          backgroundColor: '#F4F7FA',
+          backgroundColor: '#F2F2F0',
           overflow: 'hidden',
           overflowY: 'auto',
           padding: screenSize === 'desktop' ? '2rem' : screenSize === 'tablet' ? '1.25rem' : '1rem',

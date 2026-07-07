@@ -1,0 +1,127 @@
+import { useState } from 'react'
+import { MapPin, Phone, Mail, Clock, Camera, Share2 } from 'lucide-react'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '../lib/firebase'
+import { sanitizeForFirestore } from '../lib/sanitize'
+
+interface ContactFormData {
+  name: string
+  email: string
+  phone: string
+  reason: string
+  message: string
+}
+
+type ContactErrors = Partial<Record<keyof ContactFormData, string>>
+
+const emptyForm: ContactFormData = { name: '', email: '', phone: '', reason: '', message: '' }
+
+const infoItems = [
+  { icon: MapPin, label: 'Address', value: '123 Queen Street, Auckland CBD, Auckland 1010' },
+  { icon: Phone, label: 'Phone', value: '+64 9 123 4567' },
+  { icon: Mail, label: 'Email', value: 'contact@automarket.co.nz' },
+  { icon: Clock, label: 'Hours', value: 'Monday to Friday: 9:00am "" 6:00pm' },
+]
+
+const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
+
+const labelStyle: React.CSSProperties = {
+  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: '#767676',
+  letterSpacing: '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '6px',
+}
+
+const errorStyle: React.CSSProperties = {
+  fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem',
+}
+
+// Renders the public contact page with a message form and business info - validates form fields client-side and saves submissions to Firestore
+export default function Contact() {
+  const [form, setForm] = useState<ContactFormData>(emptyForm)
+  const [errors, setErrors] = useState<ContactErrors>({})
+  const [submitted, setSubmitted] = useState(false)
+  const [focused, setFocused] = useState<string | null>(null)
+  const [submitHovered, setSubmitHovered] = useState(false)
+
+  const inputStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
+    width: '100%', boxSizing: 'border-box',
+    backgroundColor: '#FFFFFF',
+    border: `1px solid ${hasErr ? '#D64545' : focused === name ? '#1A1A1A' : '#E0E0DC'}`,
+    borderRadius: '0.375rem', padding: '0.75rem 1rem',
+    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: '#1A1A1A', outline: 'none',
+    transition: 'border-color 0.2s',
+  })
+
+  const selectStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
+    ...inputStyle(name, hasErr),
+    appearance: 'none',
+    backgroundImage: CHEVRON,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 1rem center',
+    paddingRight: '2.5rem',
+    cursor: 'pointer',
+  })
+
+  // Validates required contact form fields (name, email format, phone, reason, message length) and sets error messages for any invalid fields
+  const validate = (): boolean => {
+    const e: ContactErrors = {}
+    if (!form.name.trim()) e.name = 'Required'
+    if (!form.email.trim()) e.email = 'Required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email'
+    if (!form.phone.trim()) e.phone = 'Required'
+    if (!form.reason) e.reason = 'Required'
+    if (!form.message.trim()) e.message = 'Required'
+    else if (form.message.trim().length < 10) e.message = 'Message too short'
+    setErrors(e)
+    return Object.keys(e).length === 0
+  }
+
+  // Handles the contact form submission - validates input, sanitizes it, then sends it to Firestore as a new "contact" type message document
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!validate()) return
+
+    try {
+      const messageData = {
+        senderName: form.name,
+        email: form.email,
+        phone: form.phone,
+        reason: form.reason,
+        message: form.message,
+        read: false,
+        type: 'contact',
+        createdAt: serverTimestamp(),
+      }
+      const safeMessageData = sanitizeForFirestore(messageData) as Record<string, unknown>
+      await addDoc(collection(db, 'messages'), safeMessageData)
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Failed to send message:', err)
+      alert('Failed to send message. Please try again.')
+    }
+  }
+
+  return (
+    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#F2F2F0', minHeight: '100vh' }}>
+      <div style={{ width: '80%', margin: '0 auto' }}>
+
+        {/* "EUR"EUR Page Header "EUR"EUR */}
+        <div style={{ marginBottom: '3rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+            <div style={{ width: 40, height: 1, backgroundColor: '#1A1A1A' }} />
+            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#C4FF00' }}>
+              GET IN TOUCH
+            </span>
+            <div style={{ width: 40, height: 1, backgroundColor: '#1A1A1A' }} />
+          </div>
+          <h1 className="font-bebas" style={{color: '#1A1A1A', lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+            Contact Us
+          </h1>
+          <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '1rem' }}>
+            We'd love to hear from you
+          </p>
+        </div>
+
+        {/* "EUR"EUR Two-column layout "EUR"EUR */}
+        <div style={{ display: 'grid', gridTemplateColumns: '58% 42%', gap: '3rem', alignItems: 'start' }}>
+
+          {/* o

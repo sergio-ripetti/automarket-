@@ -18,7 +18,7 @@ export default function SeedButton() {
       setTimeout(() => setVisible(false), 2500)
     } catch (err) {
       console.error('Reseed failed:', err)
-      alert('Seeding failed — check console for details.')
+      alert('Seeding failed "" check console for details.')
     } finally {
       setSeeding(false)
     }
@@ -35,7 +35,7 @@ export default function SeedButton() {
         zIndex: 9999,
         background: done
           ? 'linear-gradient(135deg, #16a34a, #15803d)'
-          : 'linear-gradient(135deg, #C4FF00, #1F5680)',
+          : 'linear-gradient(135deg, #1A1A1A, #1A1A1A)',
         color: '#000',
         fontFamily: 'Inter, sans-serif',
         fontWeight: 700,
@@ -53,7 +53,4 @@ export default function SeedButton() {
         gap: '0.5rem',
       }}
     >
-      {done ? '✓ Done!' : seeding ? 'Updating…' : '⚡ Update Car Images'}
-    </button>
-  )
-}
+      {done ? '

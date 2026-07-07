@@ -39,7 +39,7 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
         onClick={onChange}
         style={{
           width: 44, height: 24, borderRadius: 12, cursor: 'pointer',
-          backgroundColor: value ? '#2C6E9E' : 'rgba(255,255,255,0.12)',
+          backgroundColor: value ? '#C4FF00' : 'rgba(255,255,255,0.12)',
           position: 'relative', transition: 'background-color 0.2s', flexShrink: 0,
         }}
       >
@@ -48,7 +48,7 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
           borderRadius: '50%', backgroundColor: 'white', transition: 'left 0.2s',
         }} />
       </div>
-      <span style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#4A6070' }}>{label}</span>
+      <span style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#767676' }}>{label}</span>
     </label>
   )
 }
@@ -75,8 +75,8 @@ export default function AdminAddCar() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#F4F7FA',
-    border: `1px solid ${focused === name ? '#2C6E9E' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#F2F2F0',
+    border: `1px solid ${focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
     color: "#0D1B2A", fontFamily: 'Inter, sans-serif', fontSize: '0.875rem',
     outline: 'none', transition: 'border-color 0.2s',
@@ -90,7 +90,7 @@ export default function AdminAddCar() {
   })
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8',
+    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676',
     textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px',
   }
 
@@ -218,10 +218,10 @@ export default function AdminAddCar() {
 
       {/* Search Section */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#2C6E9E', marginBottom: '0.5rem' }}>
+        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#C4FF00', marginBottom: '0.5rem' }}>
           Search Vehicle Database
         </h2>
-        <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8', marginBottom: '1rem' }}>
+        <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676', marginBottom: '1rem' }}>
           Search to auto-fill vehicle specifications
         </p>
 
@@ -278,7 +278,7 @@ export default function AdminAddCar() {
               width: '100%',
               height: '44px',
               padding: '0 1.5rem',
-              background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #2C6E9E, #1F5680)',
+              background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #C4FF00, #1F5680)',
               color: "#0D1B2A",
               fontFamily: 'Outfit',
               fontSize: '0.875rem',
@@ -321,7 +321,7 @@ export default function AdminAddCar() {
                 <div className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.25rem' }}>
                   {result.make} {result.model} {result.year}
                 </div>
-                <div style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#4A6070' }}>
+                <div style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>
                   {result.fuel_type} • {result.transmission} • {result.class}
                 </div>
               </div>
@@ -342,7 +342,7 @@ export default function AdminAddCar() {
           left: '50%',
           top: '-8px',
           transform: 'translateX(-50%)',
-          backgroundColor: '#F4F7FA',
+          backgroundColor: '#F2F2F0',
           padding: '0 0.75rem',
           fontFamily: 'Outfit',
           fontSize: '0.7rem',
@@ -450,7 +450,7 @@ export default function AdminAddCar() {
                     left: "1rem",
                     top: "50%",
                     transform: "translateY(-50%)",
-                    color: "#2C6E9E",
+                    color: "#C4FF00",
                     fontFamily: "Outfit",
                     fontWeight: 600,
                     pointerEvents: "none",
@@ -478,7 +478,7 @@ export default function AdminAddCar() {
                       left: "1rem",
                       top: "50%",
                       transform: "translateY(-50%)",
-                      color: "#2C6E9E",
+                      color: "#C4FF00",
                       fontFamily: "Outfit",
                       fontWeight: 600,
                       pointerEvents: "none",
@@ -523,10 +523,10 @@ export default function AdminAddCar() {
                 {...fp("trans")}>
                 <option
                   value="automatico"
-                  style={{ backgroundColor: "#F4F7FA" }}>
+                  style={{ backgroundColor: "#F2F2F0" }}>
                   Automatic
                 </option>
-                <option value="manual" style={{ backgroundColor: "#F4F7FA" }}>
+                <option value="manual" style={{ backgroundColor: "#F2F2F0" }}>
                   Manual
                 </option>
               </select>
@@ -540,18 +540,18 @@ export default function AdminAddCar() {
                 }
                 style={selectStyle("fuel")}
                 {...fp("fuel")}>
-                <option value="gasolina" style={{ backgroundColor: "#F4F7FA" }}>
+                <option value="gasolina" style={{ backgroundColor: "#F2F2F0" }}>
                   Petrol
                 </option>
-                <option value="diesel" style={{ backgroundColor: "#F4F7FA" }}>
+                <option value="diesel" style={{ backgroundColor: "#F2F2F0" }}>
                   Diesel
                 </option>
                 <option
                   value="electrico"
-                  style={{ backgroundColor: "#F4F7FA" }}>
+                  style={{ backgroundColor: "#F2F2F0" }}>
                   Electric
                 </option>
-                <option value="hibrido" style={{ backgroundColor: "#F4F7FA" }}>
+                <option value="hibrido" style={{ backgroundColor: "#F2F2F0" }}>
                   Hybrid
                 </option>
               </select>
@@ -672,7 +672,7 @@ export default function AdminAddCar() {
             style={{
               flex: 2,
               height: "48px",
-              background: "linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)",
+              background: "linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)",
               color: "#000",
               fontWeight: 700,
               fontFamily: "Outfit",

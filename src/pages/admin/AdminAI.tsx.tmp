@@ -1,0 +1,186 @@
+import { useEffect, useState, useRef } from 'react'
+import { Send, Bot, Trash2 } from 'lucide-react'
+import { collection, getDocs } from 'firebase/firestore'
+import { db } from '../../lib/firebase'
+
+interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+  timestamp?: Date
+  id?: string
+}
+
+interface BusinessContext {
+  totalCars: number
+  availableCars: number
+  featuredCars: number
+  carsOnSale: number
+  recentCars: string
+  totalSales: number
+  totalRevenue: number
+  cashSales: number
+  financedSales: number
+  completedSales: number
+  recentSalesJSON: string
+  totalFinancing: number
+  pendingFinancing: number
+  approvedFinancing: number
+  activeFinancing: number
+  recentFinancingJSON: string
+  totalMessages: number
+  unreadMessages: number
+  offerMessages: number
+  contactMessages: number
+}
+
+// Fetch business data from Firebase for AI context
+async function getBusinessContext(): Promise<BusinessContext> {
+  try {
+    // Fetch all collections in parallel
+    const [carsSnap, salesSnap, financingSnap, messagesSnap] = await Promise.all([
+      getDocs(collection(db, 'cars')),
+      getDocs(collection(db, 'sales')),
+      getDocs(collection(db, 'financing')),
+      getDocs(collection(db, 'messages')),
+    ])
+
+    const cars = carsSnap.docs.map((d) => d.data())
+    const sales = salesSnap.docs.map((d) => d.data())
+    const financing = financingSnap.docs.map((d) => d.data())
+    const messages = messagesSnap.docs.map((d) => d.data())
+
+    const availableCars = cars.filter((c: any) => !c.isOnSale).length
+    const featuredCars = cars.filter((c: any) => c.featured).length
+    const carsOnSaleCount = cars.filter((c: any) => c.isOnSale).length
+    const recentCarsArray = cars.slice(-5).map((c: any) => ({
+      title: c.title, brand: c.brand, model: c.model, year: c.year, price: c.price,
+    }))
+
+    const totalRevenue = sales.reduce((sum: number, s: any) => sum + (s.paymentPlan?.salePrice || 0), 0)
+    const cashSalesCount = sales.filter((s: any) => s.paymentPlan?.type === 'cash').length
+    const financedSalesCount = sales.filter((s: any) => s.paymentPlan?.type === 'financing').length
+    const completedSalesCount = sales.filter((s: any) => s.status === 'completed').length
+    const recentSalesArray = sales.slice(-10).map((s: any) => ({
+      carTitle: s.carTitle,
+      carBrand: s.carBrand,
+      carModel: s.carModel,
+      carYear: s.carYear,
+      buyerName: s.buyer?.name,
+      buyerPhone: s.buyer?.phone,
+      buyerEmail: s.buyer?.email,
+      buyerAddress: s.buyer?.address,
+      buyerLicense: s.buyer?.licenseNumber,
+      salePrice: s.paymentPlan?.salePrice,
+      paymentType: s.paymentPlan?.type,
+      downPayment: s.paymentPlan?.downPayment,
+      createdAt: s.createdAt,
+    }))
+
+    const pendingFinancingCount = financing.filter((f: any) => f.status === 'pending').length
+    const approvedFinancingCount = financing.filter((f: any) => f.status === 'approved').length
+    const activeFinancingCount = financing.filter((f: any) => f.status === 'active').length
+    const recentFinancingArray = financing.slice(-5).map((f: any) => ({
+      name: `${f.firstName} ${f.lastName}`, carTitle: f.carTitle, totalAmount: f.totalAmount, status: f.status,
+    }))
+
+    const unreadMessagesCount = messages.filter((m: any) => !m.read).length
+    const offerMessagesCount = messages.filter((m: any) => m.type === 'offer').length
+    const contactMessagesCount = messages.filter((m: any) => m.type === 'contact').length
+
+    return {
+      totalCars: cars.length,
+      availableCars,
+      featuredCars,
+      carsOnSale: carsOnSaleCount,
+      recentCars: JSON.stringify(recentCarsArray),
+      totalSales: sales.length,
+      totalRevenue,
+      cashSales: cashSalesCount,
+      financedSales: financedSalesCount,
+      completedSales: completedSalesCount,
+      recentSalesJSON: JSON.stringify(recentSalesArray),
+      totalFinancing: financing.length,
+      pendingFinancing: pendingFinancingCount,
+      approvedFinancing: approvedFinancingCount,
+      activeFinancing: activeFinancingCount,
+      recentFinancingJSON: JSON.stringify(recentFinancingArray),
+      totalMessages: messages.length,
+      unreadMessages: unreadMessagesCount,
+      offerMessages: offerMessagesCount,
+      contactMessages: contactMessagesCount,
+    }
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      console.error('Error fetching business context:', err)
+    }
+    return {
+      totalCars: 0, availableCars: 0, featuredCars: 0, carsOnSale: 0, recentCars: '[]',
+      totalSales: 0, totalRevenue: 0, cashSales: 0, financedSales: 0, completedSales: 0, recentSalesJSON: '[]',
+      totalFinancing: 0, pendingFinancing: 0, approvedFinancing: 0, activeFinancing: 0, recentFinancingJSON: '[]',
+      totalMessages: 0, unreadMessages: 0, offerMessages: 0, contactMessages: 0,
+    }
+  }
+}
+
+const suggestionQuestions = [
+  'How many cars have I sold?',
+  'What is my total revenue?',
+  'Show me pending financing requests',
+  'Which cars are still available?',
+  'Who are my recent buyers?',
+  'What was sold this month?',
+  'How many cars are in inventory?',
+  'Show me unread messages',
+]
+
+// Admin AI Assistant chat page - lets the admin ask questions about business data; fetches Firestore stats for context and sends messages to the Claude AI backend
+export default function AdminAI() {
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [inputValue, setInputValue] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [isLoadingContext, setIsLoadingContext] = useState(true)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Logs message list changes for debugging and auto-scrolls chat to the latest message
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log('d"Y"S Messages state updated:', messages.length, 'messages')
+      messages.forEach((m, i) => {
+        console.log(`  ${i}: ${m.role} - ${m.content.substring(0, 30)}...`)
+      })
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  // Fills the chat input with a preset suggestion question when clicked
+  const handleSuggestionClick = (question: string) => {
+    setInputValue(question)
+  }
+
+  // Handles sending the user's chat message - builds business context from Firestore, posts message + context + history to the AI Assistant API, and appends the reply
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || loading) return
+
+    // Create user message object
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: inputValue,
+      timestamp: new Date(),
+      id: Date.now() + '-user',
+    }
+
+    // Add user message to chat
+    setMessages((prev) => [...prev, userMessage])
+    setInputValue('')
+    setLoading(true)
+
+    try {
+      const context = await getBusinessContext()
+
+      const conversationHistory = messages.map((m) => ({
+        role: m.role,
+        content: m.content,
+      }))
+
+      if (import.meta.env.DEV) {
+        console.log('d"Y"

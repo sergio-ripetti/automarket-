@@ -295,7 +295,7 @@ export default function AdminAI() {
   return (
     <div id="admin-ai-main-container" className="admin-ai-main-container" style={{
       display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0px)',
-      backgroundColor: '#F4F7FA', width: '100%', maxWidth: '100%',
+      backgroundColor: '#F2F2F0', width: '100%', maxWidth: '100%',
       boxSizing: 'border-box', overflow: 'hidden',
     }}>
       <style>{`
@@ -327,7 +327,7 @@ export default function AdminAI() {
             <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.25rem' }}>
               AI Assistant
             </h1>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#A8B8C8' }}>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#767676' }}>
               Ask anything about your business
             </p>
           </div>
@@ -338,7 +338,7 @@ export default function AdminAI() {
                 display: 'flex', alignItems: 'center', gap: '0.5rem',
                 padding: '0.5rem 1rem', borderRadius: '0.5rem',
                 backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.75rem',
+                color: '#767676', fontFamily: 'Outfit', fontSize: '0.75rem',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
@@ -366,7 +366,7 @@ export default function AdminAI() {
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
             <div style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
-              color: '#A8B8C8',
+              color: '#767676',
             }}>
               <Bot size={32} />
               <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem' }}>Loading AI Assistant...</p>
@@ -375,18 +375,18 @@ export default function AdminAI() {
         ) : messages.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>
-              <Bot size={48} style={{ color: '#2C6E9E', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
+              <Bot size={48} style={{ color: '#C4FF00', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
               <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                 Hello! I'm your AI Assistant
               </h2>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#A8B8C8', maxWidth: '400px' }}>
+              <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#767676', maxWidth: '400px' }}>
                 I can help you analyze your business data, answer questions about inventory, sales, financing, and more.
               </p>
             </div>
 
             <div>
               <p style={{
-                fontFamily: 'Outfit', fontSize: '0.8rem', color: '#A8B8C8',
+                fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676',
                 marginBottom: '1rem', textAlign: 'center',
               }}>
                 Try asking:
@@ -401,12 +401,12 @@ export default function AdminAI() {
                     style={{
                       backgroundColor: '#E4EAF0', border: '1px solid rgba(29,78,216,0.2)',
                       borderRadius: '2rem', padding: '0.5rem 1.25rem',
-                      color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.75rem',
+                      color: '#767676', fontFamily: 'Outfit', fontSize: '0.75rem',
                       cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#2C6E9E'
-                      e.currentTarget.style.color = '#2C6E9E'
+                      e.currentTarget.style.borderColor = '#C4FF00'
+                      e.currentTarget.style.color = '#C4FF00'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(29,78,216,0.2)'
@@ -430,7 +430,7 @@ export default function AdminAI() {
                 <div style={{
                   maxWidth: msg.role === 'user' ? '70%' : '80%',
                   backgroundColor: msg.role === 'user'
-                    ? '#2C6E9E'
+                    ? '#C4FF00'
                     : '#E4EAF0',
                   border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)',
                   color: msg.role === 'user' ? 'white' : 'white',
@@ -496,7 +496,7 @@ export default function AdminAI() {
       {/* Input Area */}
       <div id="admin-ai-input-wrapper" className="admin-ai-input-wrapper" style={{
         padding: 'clamp(0.75rem, 3vw, 1.5rem)', borderTop: '1px solid rgba(255,255,255,0.06)',
-        backgroundColor: '#F4F7FA', width: '100%', boxSizing: 'border-box',
+        backgroundColor: '#F2F2F0', width: '100%', boxSizing: 'border-box',
       }}>
         <div style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 0.75rem)', width: '100%', boxSizing: 'border-box' }}>
           <input
@@ -518,7 +518,7 @@ export default function AdminAI() {
             }}
             onFocus={(e) => {
               if (!loading) {
-                e.currentTarget.style.borderColor = '#2C6E9E'
+                e.currentTarget.style.borderColor = '#C4FF00'
               }
             }}
             onBlur={(e) => {
@@ -535,7 +535,7 @@ export default function AdminAI() {
               borderRadius: '0.75rem', minWidth: '44px', flexShrink: 0,
               background: loading || !inputValue.trim()
                 ? 'rgba(29,78,216,0.3)'
-                : 'linear-gradient(135deg, #2C6E9E, #1F5680)',
+                : 'linear-gradient(135deg, #C4FF00, #1F5680)',
               color: loading || !inputValue.trim() ? 'rgba(0,0,0,0.3)' : 'black',
               fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
               border: 'none', cursor: loading || !inputValue.trim() ? 'not-allowed' : 'pointer',

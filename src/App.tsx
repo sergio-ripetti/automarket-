@@ -81,7 +81,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="flex flex-col min-h-screen bg-[#F4F7FA] text-white font-inter">
+        <div className="flex flex-col min-h-screen bg-[#F2F2F0] text-white font-inter">
           <ScrollToTop />
           <RouteChecker />
         </div>

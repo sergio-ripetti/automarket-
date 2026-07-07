@@ -106,7 +106,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-inter text-#2C6E9E uppercase tracking-[0.25em] text-xs mb-5"
+            className="font-inter text-#C4FF00 uppercase tracking-[0.25em] text-xs mb-5"
           >
             New Zealand's Premier Car Marketplace
           </motion.p>
@@ -119,7 +119,7 @@ export default function Home() {
             style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
           >
             FIND YOUR{' '}
-            <span className="text-[#2C6E9E]">PERFECT</span>
+            <span className="text-[#C4FF00]">PERFECT</span>
             {' '}CAR
           </motion.h1>
 
@@ -142,7 +142,7 @@ export default function Home() {
               to="/cars"
               className="font-inter font-bold text-sm inline-flex items-center gap-2"
               style={{
-                background: 'linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)',
+                background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
                 color: '#000', padding: '0.875rem 2rem',
                 borderRadius: '0.5rem', letterSpacing: '0.04em',
               }}
@@ -173,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* ─── FEATURED VEHICLES ─── */}
-      <div className="w-full flex justify-center py-20" style={{ backgroundColor: '#F4F7FA' }}>
+      <div className="w-full flex justify-center py-20" style={{ backgroundColor: '#F2F2F0' }}>
         <div className="mx-auto flex flex-col gap-10" style={{ width: '80%' }}>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -181,11 +181,11 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <p className="font-inter text-#2C6E9E uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
+            <p className="font-inter text-#C4FF00 uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
             <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              Featured <span className="text-#2C6E9E">Vehicles</span>
+              Featured <span className="text-#C4FF00">Vehicles</span>
             </h2>
-            <p className="font-inter text-[#A8B8C8] text-sm mt-2">Hand-picked by our team</p>
+            <p className="font-inter text-[#767676] text-sm mt-2">Hand-picked by our team</p>
           </motion.div>
 
           {carsLoading ? (
@@ -199,7 +199,7 @@ export default function Home() {
               ))}
             </div>
           ) : carsError ? (
-            <p style={{ fontFamily: 'Outfit', color: '#A8B8C8', fontSize: '0.9rem' }}>
+            <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '0.9rem' }}>
               {carsError} Please try again later.
             </p>
           ) : (
@@ -226,7 +226,7 @@ export default function Home() {
         ref={statsRef}
         className="w-full"
         style={{
-          backgroundColor: '#F4F7FA',
+          backgroundColor: '#F2F2F0',
           borderTop: '1px solid rgba(255,255,255,0.05)',
           borderBottom: '1px solid rgba(255,255,255,0.05)',
           marginTop: '4rem',
@@ -244,11 +244,11 @@ export default function Home() {
               >
                 <p
                   className="font-bebas"
-                  style={{ fontSize: '3.5rem', color: '#2C6E9E', lineHeight: 1, marginBottom: '0.25rem' }}
+                  style={{ fontSize: '3.5rem', color: '#C4FF00', lineHeight: 1, marginBottom: '0.25rem' }}
                 >
                   {counts[i]}{stat.suffix}
                 </p>
-                <p className="font-inter text-xs text-[#A8B8C8] uppercase tracking-widest">{stat.label}</p>
+                <p className="font-inter text-xs text-[#767676] uppercase tracking-widest">{stat.label}</p>
               </motion.div>
             ))}
           </div>
@@ -258,7 +258,7 @@ export default function Home() {
       {/* ─── HOW IT WORKS ─── */}
       <div
         className="w-full flex justify-center"
-        style={{ backgroundColor: '#F4F7FA', paddingTop: '4rem', paddingBottom: '4rem' }}
+        style={{ backgroundColor: '#F2F2F0', paddingTop: '4rem', paddingBottom: '4rem' }}
       >
         <div className="mx-auto" style={{ width: '80%' }}>
           <motion.div
@@ -267,9 +267,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="mb-12"
           >
-            <p className="font-inter text-#2C6E9E uppercase tracking-[0.2em] text-xs mb-2">Process</p>
+            <p className="font-inter text-#C4FF00 uppercase tracking-[0.2em] text-xs mb-2">Process</p>
             <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              How It <span className="text-#2C6E9E">Works</span>
+              How It <span className="text-#C4FF00">Works</span>
             </h2>
           </motion.div>
 
@@ -296,7 +296,7 @@ export default function Home() {
                       display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                     }}
                   >
-                    <step.icon size={20} className="text-#2C6E9E" />
+                    <step.icon size={20} className="text-#C4FF00" />
                   </div>
                   <span
                     className="font-bebas"
@@ -306,7 +306,7 @@ export default function Home() {
                   </span>
                 </div>
                 <h3 className="font-bebas text-[#0D1B2A] tracking-wide mb-2">{step.title}</h3>
-                <p className="font-inter text-sm text-[#A8B8C8] leading-relaxed">{step.description}</p>
+                <p className="font-inter text-sm text-[#767676] leading-relaxed">{step.description}</p>
               </motion.div>
             ))}
           </div>
@@ -317,7 +317,7 @@ export default function Home() {
       <div
         className="w-full flex justify-center"
         style={{
-          backgroundColor: '#F4F7FA',
+          backgroundColor: '#F2F2F0',
           borderTop: '1px solid rgba(255,255,255,0.05)',
           paddingTop: '4rem',
           paddingBottom: '6rem',
@@ -332,14 +332,14 @@ export default function Home() {
           <h2 className="font-bebas text-[#0D1B2A] tracking-wide mb-4">
             Ready to Find Your Car?
           </h2>
-          <p className="font-inter text-[#A8B8C8] text-sm mb-10 max-w-xs mx-auto leading-relaxed">
+          <p className="font-inter text-[#767676] text-sm mb-10 max-w-xs mx-auto leading-relaxed">
             Browse our full catalogue of 500+ quality vehicles with advanced filtering.
           </p>
           <Link
             to="/cars"
             className="font-inter font-bold text-base inline-flex items-center gap-2.5"
             style={{
-              background: 'linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)',
+              background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
               color: '#000', padding: '1rem 2.5rem',
               borderRadius: '0.625rem', letterSpacing: '0.04em',
             }}

@@ -44,8 +44,8 @@ export default function Contact() {
 
   const inputStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#F4F7FA',
-    border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : focused === name ? '#2C6E9E' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#F2F2F0',
+    border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
     borderRadius: '0.625rem', padding: '0.75rem 1rem',
     fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: "#0D1B2A", outline: 'none',
     transition: 'border-color 0.2s',
@@ -101,17 +101,17 @@ export default function Contact() {
   }
 
   return (
-    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#F4F7FA', minHeight: '100vh' }}>
+    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#F2F2F0', minHeight: '100vh' }}>
       <div style={{ width: '80%', margin: '0 auto' }}>
 
         {/* ── Page Header ── */}
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-            <div style={{ width: 40, height: 1, backgroundColor: '#2C6E9E' }} />
-            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#2C6E9E' }}>
+            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
+            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#C4FF00' }}>
               GET IN TOUCH
             </span>
-            <div style={{ width: 40, height: 1, backgroundColor: '#2C6E9E' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
           </div>
           <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
             Contact Us
@@ -155,7 +155,7 @@ export default function Contact() {
                   onClick={() => { setSubmitted(false); setForm(emptyForm) }}
                   style={{
                     fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 600,
-                    color: '#2C6E9E', border: '1px solid rgba(29,78,216,0.35)',
+                    color: '#C4FF00', border: '1px solid rgba(29,78,216,0.35)',
                     backgroundColor: 'transparent', borderRadius: '0.5rem',
                     padding: '0.625rem 1.5rem', cursor: 'pointer', letterSpacing: '0.04em',
                   }}
@@ -235,7 +235,7 @@ export default function Contact() {
                   onMouseLeave={() => setSubmitHovered(false)}
                   style={{
                     width: '100%', height: '52px',
-                    background: 'linear-gradient(135deg, #2C6E9E 0%, #1F5680 100%)',
+                    background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
                     color: '#000', fontFamily: 'Outfit', fontWeight: 700,
                     fontSize: '0.95rem', letterSpacing: '0.04em',
                     border: 'none', borderRadius: '0.75rem', cursor: 'pointer',
@@ -268,7 +268,7 @@ export default function Contact() {
                       backgroundColor: 'rgba(29,78,216,0.1)', border: '1px solid rgba(29,78,216,0.2)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <Icon size={16} color="#2C6E9E" />
+                      <Icon size={16} color="#C4FF00" />
                     </div>
                     <div>
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.32)', letterSpacing: '0.1em', marginBottom: '0.15rem' }}>
@@ -333,7 +333,7 @@ export default function Contact() {
               display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
             }}>
-              <MapPin size={32} color="#2C6E9E" />
+              <MapPin size={32} color="#C4FF00" />
               <p className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.1em' }}>
                 Find Us in Auckland
               </p>

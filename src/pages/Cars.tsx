@@ -45,7 +45,7 @@ export default function Cars() {
   const displayed = hasActiveFilters ? filteredCars : allCars
 
   return (
-    <main style={{ paddingTop: '72px', minHeight: '100vh', backgroundColor: '#F4F7FA' }}>
+    <main style={{ paddingTop: '72px', minHeight: '100vh', backgroundColor: '#F2F2F0' }}>
       <div className="w-full flex justify-center py-12">
         <div className="mx-auto flex flex-col gap-10" style={{ width: '80%' }}>
 
@@ -55,11 +55,11 @@ export default function Cars() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <p className="font-inter text-#2C6E9E uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
+            <p className="font-inter text-#C4FF00 uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
             <h1 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              Our <span className="text-#2C6E9E">Vehicles</span>
+              Our <span className="text-#C4FF00">Vehicles</span>
             </h1>
-            <p className="font-inter text-[#A8B8C8] text-sm mt-2">Find your perfect match</p>
+            <p className="font-inter text-[#767676] text-sm mt-2">Find your perfect match</p>
           </motion.div>
 
           {/* Filter bar */}
@@ -87,7 +87,7 @@ export default function Cars() {
               </>
             ) : error ? (
               <div style={{ textAlign: 'center', padding: '5rem 0' }}>
-                <p style={{ fontFamily: 'Outfit', color: '#A8B8C8', fontSize: '1rem', marginBottom: '0.5rem' }}>
+                <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '1rem', marginBottom: '0.5rem' }}>
                   {error}
                 </p>
                 <p style={{ fontFamily: 'Outfit', color: '#C8D8E4', fontSize: '0.8rem' }}>
@@ -98,9 +98,9 @@ export default function Cars() {
               <>
                 <h2 className="font-bebas text-[#0D1B2A] tracking-wide mb-6">
                   {hasActiveFilters ? (
-                    <><span className="text-#2C6E9E">{filteredCars.length}</span> vehicles found</>
+                    <><span className="text-#C4FF00">{filteredCars.length}</span> vehicles found</>
                   ) : (
-                    <>All <span className="text-#2C6E9E">Vehicles</span></>
+                    <>All <span className="text-#C4FF00">Vehicles</span></>
                   )}
                 </h2>
 
@@ -111,8 +111,8 @@ export default function Cars() {
                     className="flex flex-col items-center justify-center py-32 text-center"
                   >
                     <SearchX size={56} className="text-[#C8D8E4] mb-4" />
-                    <p className="font-inter text-[#4A6070] text-lg">No vehicles found matching your criteria</p>
-                    <p className="font-inter text-[#A8B8C8] text-sm mt-1">Try adjusting your filters</p>
+                    <p className="font-inter text-[#767676] text-lg">No vehicles found matching your criteria</p>
+                    <p className="font-inter text-[#767676] text-sm mt-1">Try adjusting your filters</p>
                   </motion.div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-stretch pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>

@@ -87,7 +87,7 @@ export default function AdminSales() {
         .sales-table-wrapper {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
-          background-color: #F4F7FA;
+          background-color: #F2F2F0;
           border: 1px solid rgba(255,255,255,0.05);
           border-radius: 1rem;
           margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
@@ -106,7 +106,7 @@ export default function AdminSales() {
           text-align: left;
           font-family: 'Bebas Neue', sans-serif;
           font-size: clamp(0.65rem, 1.5vw, 0.8rem);
-          color: '#4A6070';
+          color: '#767676';
           letter-spacing: 0.05em;
           font-weight: 400;
           text-transform: uppercase;
@@ -143,7 +143,7 @@ export default function AdminSales() {
         }
         .admin-sales-stat-value {
           font-size: clamp(1.5rem, 5vw, 2.25rem);
-          color: #2C6E9E;
+          color: #C4FF00;
           font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.05em;
           line-height: 1;
@@ -153,9 +153,9 @@ export default function AdminSales() {
           align-items: center;
           gap: clamp(0.5rem, 1.5vw, 0.75rem);
           padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem);
-          border: 1px solid #2C6E9E;
+          border: 1px solid #C4FF00;
           background: linear-gradient(135deg, rgba(29,78,216,0.2) 0%, rgba(29,78,216,0.1) 100%);
-          color: #2C6E9E;
+          color: #C4FF00;
           font-size: clamp(0.875rem, 2vw, 1rem);
           font-weight: 600;
           font-family: 'Outfit', sans-serif;
@@ -192,12 +192,12 @@ export default function AdminSales() {
         .admin-sales-filter-btn:hover {
           border-color: rgba(29,78,216,0.5);
           background: rgba(29,78,216,0.1);
-          color: #2C6E9E;
+          color: #C4FF00;
         }
         .admin-sales-filter-btn.active {
-          border-color: #2C6E9E;
+          border-color: #C4FF00;
           background: rgba(29,78,216,0.2);
-          color: #2C6E9E;
+          color: #C4FF00;
           box-shadow: 0 0 10px rgba(29,78,216,0.2);
         }
         .admin-sales-search-input {
@@ -253,7 +253,7 @@ export default function AdminSales() {
           >
             Sales Records
           </h1>
-          <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#A8B8C8' }}>
+          <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#767676' }}>
             {sales.length} sales recorded
           </p>
         </div>
@@ -353,17 +353,17 @@ export default function AdminSales() {
                       <img src={sale.carImages[0]} alt="" className="w-12 h-9 rounded object-cover flex-shrink-0" style={{ minWidth: '48px' }} />
                       <div style={{ minWidth: 0 }}>
                         <p className="font-bebas text-[#0D1B2A]" style={{ fontSize: 'clamp(0.75rem, 2vw, 0.9rem)' }}>{sale.carTitle}</p>
-                        <p style={{ fontSize: '0.7rem', color: '#A8B8C8', fontFamily: 'Outfit' }}>{sale.carYear}</p>
+                        <p style={{ fontSize: '0.7rem', color: '#767676', fontFamily: 'Outfit' }}>{sale.carYear}</p>
                       </div>
                     </div>
                   </td>
                   {/* Buyer */}
                   <td style={{ fontFamily: 'Outfit' }}>
                     <p style={{color: "#0D1B2A"}}>{sale.buyer.name}</p>
-                    <p style={{ fontSize: '0.7rem', color: '#A8B8C8' }}>{sale.buyer.email}</p>
+                    <p style={{ fontSize: '0.7rem', color: '#767676' }}>{sale.buyer.email}</p>
                   </td>
                   {/* Price */}
-                  <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#2C6E9E', fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}>{fmt(sale.paymentPlan.salePrice)}</td>
+                  <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#C4FF00', fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}>{fmt(sale.paymentPlan.salePrice)}</td>
                   {/* Type */}
                   <td>
                     <Badge
@@ -374,7 +374,7 @@ export default function AdminSales() {
                     </Badge>
                   </td>
                   {/* Date */}
-                  <td style={{ fontFamily: 'Outfit', color: '#4A6070', fontSize: '0.8rem' }}>{fmtDate(sale.saleDate)}</td>
+                  <td style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '0.8rem' }}>{fmtDate(sale.saleDate)}</td>
                   {/* Status */}
                   <td>
                     <Badge
@@ -389,7 +389,7 @@ export default function AdminSales() {
                     <div className="flex gap-2">
                       <Link
                         to={`/admin/sales/${sale.id}`}
-                        className="inline-flex items-center justify-center rounded bg-#2C6E9E/10 text-#2C6E9E hover:bg-#2C6E9E/20 transition-colors"
+                        className="inline-flex items-center justify-center rounded bg-#C4FF00/10 text-#C4FF00 hover:bg-#C4FF00/20 transition-colors"
                         style={{ minWidth: '44px', minHeight: '44px', width: '44px', height: '44px' }}
                         title="View details"
                       >

@@ -109,7 +109,7 @@ export default function AdminMessages() {
             onClick={() => setActiveTab(id)}
             className={`px-5 py-2 rounded-full text-sm font-inter font-medium transition-all ${
               activeTab === id
-                ? 'bg-#2C6E9E text-black'
+                ? 'bg-#C4FF00 text-black'
                 : 'bg-white/5 text-[#0D1B2A]/50 hover:bg-white/10'
             }`}
           >
@@ -140,7 +140,7 @@ export default function AdminMessages() {
               style={{
                 backgroundColor: '#FFFFFF',
                 border: `1px solid ${msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(29,78,216,0.15)'}`,
-                borderLeft: isOffer ? '3px solid #2C6E9E' : undefined,
+                borderLeft: isOffer ? '3px solid #C4FF00' : undefined,
                 borderRadius: '0.75rem', padding: '1.25rem',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
@@ -148,7 +148,7 @@ export default function AdminMessages() {
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: expandedId === msg.id ? '1rem' : 0 }}>
                 <div style={{
                   width: 10, height: 10, borderRadius: '50%',
-                  backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#2C6E9E',
+                  backgroundColor: msg.read ? 'rgba(255,255,255,0.15)' : '#C4FF00',
                   flexShrink: 0, marginTop: '0.5rem',
                 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -160,7 +160,7 @@ export default function AdminMessages() {
                       {fmtDate(msg.createdAt as unknown as { toDate: () => Date })}
                     </p>
                   </div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8', marginBottom: '0.5rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.5rem' }}>
                     {msg.email} {msg.phone && `· ${msg.phone}`}
                   </p>
 
@@ -169,29 +169,29 @@ export default function AdminMessages() {
                       <div style={{ marginBottom: '0.75rem' }}>
                         <div style={{
                           display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
-                          backgroundColor: 'rgba(29,78,216,0.15)', color: '#2C6E9E',
+                          backgroundColor: 'rgba(29,78,216,0.15)', color: '#C4FF00',
                           fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit', marginBottom: '0.5rem',
                         }}>
                           OFFER
                         </div>
                       </div>
-                      <p className="font-bebas" style={{ fontSize: '1rem', color: '#2C6E9E', marginBottom: '0.25rem' }}>
+                      <p className="font-bebas" style={{ fontSize: '1rem', color: '#C4FF00', marginBottom: '0.25rem' }}>
                         {(msg as any).carTitle || 'Vehicle'}
                       </p>
-                      <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#2C6E9E', marginBottom: '0.25rem' }}>
+                      <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#C4FF00', marginBottom: '0.25rem' }}>
                         {fmt((msg as any).offerPrice || 0)}
                       </p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#A8B8C8' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>
                         vs asking {fmt((msg as any).carPrice || 0)}
                       </p>
                     </>
                   ) : (
                     <>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#2C6E9E', marginBottom: '0.25rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#C4FF00', marginBottom: '0.25rem' }}>
                         {msg.reason}
                       </p>
                       <p style={{
-                        fontFamily: 'Outfit', fontSize: '0.8rem', color: '#4A6070',
+                        fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676',
                         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: expandedId === msg.id ? 'normal' : 'nowrap',
                         lineHeight: 1.5,
                       }}>
@@ -246,7 +246,7 @@ export default function AdminMessages() {
                     className="admin-messages-details-button"
                     onClick={(e) => { e.stopPropagation(); setSelectedMessage(msg) }}
                     style={{
-                      border: '1px solid rgba(255,255,255,0.15)', color: '#4A6070', backgroundColor: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.15)', color: '#767676', backgroundColor: 'rgba(255,255,255,0.04)',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
@@ -271,10 +271,10 @@ export default function AdminMessages() {
                       window.location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${body}`
                     }}
                     style={{
-                      border: '1px solid rgba(29,78,216,0.5)', color: '#2C6E9E', backgroundColor: 'rgba(29,78,216,0.08)',
+                      border: '1px solid rgba(29,78,216,0.5)', color: '#C4FF00', backgroundColor: 'rgba(29,78,216,0.08)',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#2C6E9E'
+                      e.currentTarget.style.borderColor = '#C4FF00'
                       e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.15)'
                       e.currentTarget.style.boxShadow = '0 0 10px rgba(29,78,216,0.2)'
                     }}
@@ -291,7 +291,7 @@ export default function AdminMessages() {
                     className="admin-messages-read-button"
                     onClick={(e) => { e.stopPropagation(); handleToggleRead(msg) }}
                     style={{
-                      border: '1px solid rgba(255,255,255,0.15)', color: '#4A6070', backgroundColor: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.15)', color: '#767676', backgroundColor: 'rgba(255,255,255,0.04)',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
@@ -367,7 +367,7 @@ export default function AdminMessages() {
         .message-modal-header {
           position: sticky;
           top: 0;
-          background: linear-gradient(135deg, #2C6E9E, #1F5680);
+          background: linear-gradient(135deg, #C4FF00, #1F5680);
           padding: clamp(1rem, 2vw, 1.5rem);
           display: flex;
           justify-content: space-between;
@@ -418,7 +418,7 @@ export default function AdminMessages() {
         }
         .message-modal-value-highlight {
           font-size: clamp(1rem, 3vw, 1.2rem);
-          color: #2C6E9E;
+          color: #C4FF00;
           font-weight: 600;
         }
         .message-modal-footer {
@@ -493,16 +493,16 @@ export default function AdminMessages() {
                     {/* Offer Details */}
                     <div className="message-modal-section" style={{ paddingBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                       <p className="font-bebas" style={{
-                        fontSize: 'clamp(1.15rem, 4vw, 1.4rem)', color: '#2C6E9E', marginBottom: '0.75rem', fontWeight: 600
+                        fontSize: 'clamp(1.15rem, 4vw, 1.4rem)', color: '#C4FF00', marginBottom: '0.75rem', fontWeight: 600
                       }}>
                         {(selectedMessage as any).carTitle || 'Vehicle'}
                       </p>
                       <p className="font-bebas" style={{
-                        fontSize: 'clamp(1.5rem, 5vw, 2rem)', color: '#2C6E9E', marginBottom: '0.75rem', fontWeight: 600
+                        fontSize: 'clamp(1.5rem, 5vw, 2rem)', color: '#C4FF00', marginBottom: '0.75rem', fontWeight: 600
                       }}>
                         {fmt((selectedMessage as any).offerPrice || 0)}
                       </p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#A8B8C8', marginBottom: '0.75rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#767676', marginBottom: '0.75rem' }}>
                         Listed at {fmt((selectedMessage as any).carPrice || 0)}
                       </p>
                       {(selectedMessage as any).offerPrice < (selectedMessage as any).carPrice ? (
@@ -520,19 +520,19 @@ export default function AdminMessages() {
                     <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                       <div className="message-modal-grid-2col">
                         <div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>First Name</p>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>First Name</p>
                           <p style={{color: "#0D1B2A" }}>{(selectedMessage as any).firstName}</p>
                         </div>
                         <div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Last Name</p>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Last Name</p>
                           <p style={{color: "#0D1B2A" }}>{(selectedMessage as any).lastName}</p>
                         </div>
                         <div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
                           <p style={{color: "#0D1B2A" }}>{selectedMessage.email}</p>
                         </div>
                         <div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
                           <p style={{color: "#0D1B2A" }}>{(selectedMessage as any).phone}</p>
                         </div>
                       </div>
@@ -541,9 +541,9 @@ export default function AdminMessages() {
                     {/* Message */}
                     {selectedMessage.message && (
                       <div>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#2C6E9E', marginBottom: '0.75rem' }}>Note from buyer</p>
+                        <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#C4FF00', marginBottom: '0.75rem' }}>Note from buyer</p>
                         <p style={{
-                          fontFamily: 'Outfit', fontSize: '0.875rem', color: '#4A6070', fontStyle: 'italic',
+                          fontFamily: 'Outfit', fontSize: '0.875rem', color: '#767676', fontStyle: 'italic',
                           whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word',
                           overflowX: 'hidden', width: '100%', maxWidth: '100%',
                         }}>
@@ -558,21 +558,21 @@ export default function AdminMessages() {
                     <div style={{ marginBottom: '2rem', paddingBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                       <div className="message-modal-grid-2col">
                         <div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Name</p>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Name</p>
                           <p style={{color: "#0D1B2A" }}>{selectedMessage.senderName}</p>
                         </div>
                         <div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Email</p>
                           <p style={{color: "#0D1B2A" }}>{selectedMessage.email}</p>
                         </div>
                         {selectedMessage.phone && (
                           <div>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Phone</p>
                             <p style={{color: "#0D1B2A" }}>{selectedMessage.phone}</p>
                           </div>
                         )}
                         <div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Reason</p>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Reason</p>
                           <p style={{color: "#0D1B2A" }}>{selectedMessage.reason}</p>
                         </div>
                       </div>
@@ -580,9 +580,9 @@ export default function AdminMessages() {
 
                     {/* Message */}
                     <div>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#A8B8C8', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Message</p>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Message</p>
                       <p style={{
-                        fontFamily: 'Outfit', fontSize: '0.875rem', color: '#4A6070',
+                        fontFamily: 'Outfit', fontSize: '0.875rem', color: '#767676',
                         whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word',
                         overflowX: 'hidden', width: '100%', maxWidth: '100%',
                       }}>
@@ -607,7 +607,7 @@ export default function AdminMessages() {
                   }}
                   style={{
                     width: '100%', padding: '0.75rem 1rem',
-                    background: 'linear-gradient(135deg, #2C6E9E, #1F5680)',
+                    background: 'linear-gradient(135deg, #C4FF00, #1F5680)',
                     color: 'black', fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
                     border: 'none', borderRadius: '0.5rem', cursor: 'pointer',
                     minHeight: '44px',
@@ -624,7 +624,7 @@ export default function AdminMessages() {
                     style={{
                       padding: '0.75rem 1rem',
                       backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                      color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.875rem',
+                      color: '#767676', fontFamily: 'Outfit', fontSize: '0.875rem',
                       borderRadius: '0.5rem', cursor: 'pointer',
                       minHeight: '44px',
                     }}
@@ -636,7 +636,7 @@ export default function AdminMessages() {
                     style={{
                       padding: '0.75rem 1rem',
                       backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                      color: '#4A6070', fontFamily: 'Outfit', fontSize: '0.875rem',
+                      color: '#767676', fontFamily: 'Outfit', fontSize: '0.875rem',
                       borderRadius: '0.5rem', cursor: 'pointer',
                       minHeight: '44px',
                     }}

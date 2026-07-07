@@ -19,7 +19,7 @@ function fmtDate(ts: { toDate: () => Date } | undefined) {
 }
 
 const statusColor: Record<FinancingRequest['status'], string> = {
-  pending: '#2C6E9E', approved: '#10b981', rejected: '#ef4444',
+  pending: '#C4FF00', approved: '#10b981', rejected: '#ef4444',
   paying: '#3b82f6', completed: '#6b7280',
 }
 
@@ -112,7 +112,7 @@ export default function AdminFinancing() {
             onClick={() => setActiveTab(id)}
             className={`px-5 py-2 rounded-full text-sm font-inter font-medium transition-all ${
               activeTab === id
-                ? 'bg-#2C6E9E text-black'
+                ? 'bg-#C4FF00 text-black'
                 : 'bg-white/5 text-[#0D1B2A]/50 hover:bg-white/10'
             }`}
           >
@@ -141,7 +141,7 @@ export default function AdminFinancing() {
             <div
               key={req.id}
               id={`admin-financing-card-${idx}`}
-              className={`admin-financing-card admin-financing-card-${idx} bg-dark border border-white/5 rounded-lg hover:border-#2C6E9E/20 transition-colors`}
+              className={`admin-financing-card admin-financing-card-${idx} bg-dark border border-white/5 rounded-lg hover:border-#C4FF00/20 transition-colors`}
               style={{ marginBottom: '1.5rem', padding: '10px' }}>
               {/* Header */}
               <div
@@ -234,7 +234,7 @@ export default function AdminFinancing() {
                     className="font-bebas"
                     style={{
                       fontSize: "1.25rem",
-                      color: "#2C6E9E",
+                      color: "#C4FF00",
                       lineHeight: 1,
                     }}>
                     {fmt(req.totalAmount)}
@@ -254,7 +254,7 @@ export default function AdminFinancing() {
                   </p>
                   <p
                     className="font-bebas"
-                    style={{ fontSize: "1rem", color: "#2C6E9E" }}>
+                    style={{ fontSize: "1rem", color: "#C4FF00" }}>
                     {fmt(req.monthlyPayment)}
                   </p>
                 </div>
@@ -420,7 +420,7 @@ export default function AdminFinancing() {
                   onClick={() => handleReply(req.email, req.carTitle)}
                   style={{
                     border: "1px solid rgba(29,78,216,0.45)",
-                    color: "#2C6E9E",
+                    color: "#C4FF00",
                     background: "rgba(29,78,216,0.08)",
                     transition: "all 0.2s ease",
                     fontWeight: 500,
@@ -536,7 +536,7 @@ export default function AdminFinancing() {
         .financing-modal-section-title {
           font-size: 0.7rem;
           margin-bottom: 0.75rem;
-          color: #2C6E9E;
+          color: #C4FF00;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -691,8 +691,8 @@ export default function AdminFinancing() {
         }
       `}</style>
       {selectedRequest && (
-        <div id="admin-financing-modal-overlay" className="admin-financing-modal-overlay fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-4 lg:p-6 bg-[#F4F7FA]/90 overflow-y-auto">
-          <div id="admin-financing-modal-detail" className="admin-financing-modal-detail w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-#2C6E9E/20" style={{ padding: '1.25rem' }}>
+        <div id="admin-financing-modal-overlay" className="admin-financing-modal-overlay fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-4 lg:p-6 bg-[#F2F2F0]/90 overflow-y-auto">
+          <div id="admin-financing-modal-detail" className="admin-financing-modal-detail w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-#C4FF00/20" style={{ padding: '1.25rem' }}>
             {/* Header */}
             <div
               id="admin-modal-header"
@@ -719,7 +719,7 @@ export default function AdminFinancing() {
                   style={{
                     fontFamily: "Outfit",
                     fontSize: "0.95rem",
-                    color: "#2C6E9E",
+                    color: "#C4FF00",
                     fontWeight: 500
                   }}>
                   {selectedRequest.firstName} {selectedRequest.lastName}
@@ -742,7 +742,7 @@ export default function AdminFinancing() {
             {/* SECTION 1: Personal Information */}
             <div className="pb-6 md:pb-8 border-b border-white/5 last:border-b-0 mb-6 md:mb-8">
               <h3
-                className="text-xs md:text-sm text-#2C6E9E font-semibold uppercase tracking-wider mb-3 md:mb-4"
+                className="text-xs md:text-sm text-#C4FF00 font-semibold uppercase tracking-wider mb-3 md:mb-4"
                 style={{
                   fontFamily: "Outfit",
                   textTransform: "uppercase",
@@ -858,7 +858,7 @@ export default function AdminFinancing() {
                 className="font-bebas"
                 style={{
                   fontSize: "1.5rem",
-                  color: "#2C6E9E",
+                  color: "#C4FF00",
                   marginBottom: "1.5rem",
                 }}>
                 {fmt(selectedRequest.totalAmount)}
@@ -1034,7 +1034,7 @@ export default function AdminFinancing() {
                       <div
                         key={doc.url}
                         style={{
-                          backgroundColor: "#F4F7FA",
+                          backgroundColor: "#F2F2F0",
                           borderRadius: "0.75rem",
                           padding: "1rem",
                           textAlign: "center",
@@ -1059,7 +1059,7 @@ export default function AdminFinancing() {
                             padding: "0.5rem 1rem",
                             backgroundColor: "rgba(29,78,216,0.1)",
                             border: "1px solid rgba(29,78,216,0.3)",
-                            color: "#2C6E9E",
+                            color: "#C4FF00",
                             borderRadius: "0.5rem",
                             fontFamily: "Outfit",
                             fontSize: "0.75rem",

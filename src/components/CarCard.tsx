@@ -75,7 +75,7 @@ export default function CarCard({ car }: CarCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onClick={() => navigate(`/auto/${car.id}`)}
-      className="group relative flex flex-col h-full bg-[#FFFFFF] border border-white/[0.08] rounded-xl overflow-hidden transition-all duration-300 hover:border-#2C6E9E/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] cursor-pointer"
+      className="group relative flex flex-col h-full bg-[#FFFFFF] border border-[#E0E0DC] rounded-xl overflow-hidden transition-all duration-300 hover:border-[#1A1A1A]/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.4)] cursor-pointer"
       role="article"
       aria-label={`${car.title} - ${formatPrice(car.price)}`}
     >
@@ -92,7 +92,7 @@ export default function CarCard({ car }: CarCardProps) {
         <div className="absolute top-3 left-3 flex gap-1.5">
           {car.isOnSale && (
             <span
-              className="bg-red-500/90 text-[#0D1B2A] font-bebas rounded"
+              className="bg-[#D64545] text-white font-bebas rounded"
               style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', padding: '3px 10px' }}
             >
               SALE
@@ -100,7 +100,7 @@ export default function CarCard({ car }: CarCardProps) {
           )}
           {car.featured && (
             <span
-              className="bg-#2C6E9E/90 text-black font-bebas rounded"
+              className="bg-[#C4FF00] text-[#1A1A1A] font-bebas rounded"
               style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', padding: '3px 10px' }}
             >
               FEATURED
@@ -111,10 +111,10 @@ export default function CarCard({ car }: CarCardProps) {
         {/* Favorite Button */}
         <button
           onClick={toggleFav}
-          className={`absolute top-2.5 right-2.5 w-11 h-11 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-#2C6E9E ${
+          className={`absolute top-2.5 right-2.5 w-11 h-11 rounded-full backdrop-blur-sm border flex items-center justify-center transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] ${
             isFav
-              ? 'bg-red-500/50 border-red-500/60 text-red-400'
-              : 'bg-[#F4F7FA]/50 border-white/15 text-[#0D1B2A]/70 hover:bg-white/10'
+              ? 'bg-[#D64545]/50 border-[#D64545]/60 text-[#D64545]'
+              : 'bg-white/50 border-white/15 text-[#1A1A1A]/70 hover:bg-white/20'
           }`}
           aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
           aria-pressed={isFav}
@@ -127,7 +127,7 @@ export default function CarCard({ car }: CarCardProps) {
       <div className="flex flex-col flex-1" style={{ padding: '1rem 1.25rem' }}>
         {/* Title */}
         <h3
-          className="font-bebas text-[#0D1B2A]"
+          className="font-bebas text-[#1A1A1A]"
           style={{
             fontSize: car.title.length > 20 ? 'clamp(0.875rem, 2vw, 1rem)' : 'clamp(1rem, 2.5vw, 1.25rem)',
             letterSpacing: '0.05em',
@@ -146,33 +146,33 @@ export default function CarCard({ car }: CarCardProps) {
         {/* Specs row */}
         <div className="flex flex-wrap gap-3" style={{ marginBottom: '0.75rem' }}>
           <div className="flex items-center gap-1">
-            <Calendar size={13} className="text-#2C6E9E" aria-hidden="true" />
-            <span className="font-inter text-[#4A6070]" style={{ fontSize: '0.75rem' }}>{car.year}</span>
+            <Calendar size={13} className="text-[#C4FF00]" aria-hidden="true" />
+            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{car.year}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Gauge size={13} className="text-#2C6E9E" aria-hidden="true" />
-            <span className="font-inter text-[#4A6070]" style={{ fontSize: '0.75rem' }}>{formatKm(car.km)}</span>
+            <Gauge size={13} className="text-[#C4FF00]" aria-hidden="true" />
+            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{formatKm(car.km)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Settings size={13} className="text-#2C6E9E" aria-hidden="true" />
-            <span className="font-inter text-[#4A6070]" style={{ fontSize: '0.75rem' }}>{transmissionLabel[car.transmission]}</span>
+            <Settings size={13} className="text-[#C4FF00]" aria-hidden="true" />
+            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{transmissionLabel[car.transmission]}</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-#2C6E9E inline-flex">{fuelIcon[car.fuel]}</span>
-            <span className="font-inter text-[#4A6070]" style={{ fontSize: '0.75rem' }}>{fuelLabel[car.fuel]}</span>
+            <span className="text-[#C4FF00] inline-flex">{fuelIcon[car.fuel]}</span>
+            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{fuelLabel[car.fuel]}</span>
           </div>
         </div>
 
         {/* Specs tags */}
         <div className="inline-flex flex-wrap gap-1.5" style={{ marginBottom: '0.75rem' }}>
           <span
-            className="inline-flex bg-#E4EAF0 border border-#C8D8E4 text-[#4A6070] font-inter rounded"
+            className="inline-flex bg-[#F2F2F0] border border-[#E0E0DC] text-[#767676] font-inter rounded"
             style={{ ...tagStyle, fontSize: '0.7rem' }}
           >
             {transmissionLabel[car.transmission]}
           </span>
           <span
-            className="inline-flex bg-#E4EAF0 border border-#C8D8E4 text-[#4A6070] font-inter rounded"
+            className="inline-flex bg-[#F2F2F0] border border-[#E0E0DC] text-[#767676] font-inter rounded"
             style={{ ...tagStyle, fontSize: '0.7rem' }}
           >
             {fuelLabel[car.fuel]}
@@ -192,11 +192,11 @@ export default function CarCard({ car }: CarCardProps) {
         >
           {car.isOnSale && car.originalPrice ? (
             <>
-              <span className="text-[#A8B8C8] line-through font-inter" style={{ fontSize: '0.875rem', lineHeight: 1 }}>
+              <span className="text-[#767676] line-through font-inter" style={{ fontSize: '0.875rem', lineHeight: 1 }}>
                 {formatPrice(car.originalPrice)}
               </span>
               <span
-                className="font-bebas text-#2C6E9E"
+                className="font-bebas text-[#1A1A1A]"
                 style={{ fontSize: 'clamp(1.5rem, 3vw, 1.875rem)', letterSpacing: '0.05em', lineHeight: 1 }}
               >
                 {formatPrice(car.price)}
@@ -218,7 +218,7 @@ export default function CarCard({ car }: CarCardProps) {
         {/* View Details Button */}
         <button
           aria-label={`View details for ${car.title}`}
-          className="w-full h-11 flex items-center justify-center gap-2 font-inter text-white rounded-lg border-none cursor-pointer transition-all duration-200 bg-#0D1B2A hover:bg-#1A2838 hover:shadow-[0_4px_15px_rgba(13,27,42,0.4)] hover:-translate-y-px"
+          className="w-full h-11 flex items-center justify-center gap-2 font-inter text-white rounded-lg border-none cursor-pointer transition-all duration-200 bg-[#1A1A1A] hover:bg-[#2A2A2A] hover:shadow-[0_4px_15px_rgba(26,26,26,0.4)] hover:-translate-y-px"
           style={{ fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.08em' }}
         >
           VIEW DETAILS <ArrowRight size={16} />
