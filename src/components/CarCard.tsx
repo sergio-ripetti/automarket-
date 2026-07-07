@@ -204,7 +204,7 @@ export default function CarCard({ car }: CarCardProps) {
             </>
           ) : (
             <span
-              className="font-bebas text-#2C6E9E"
+              className="font-bebas text-[#1A1A1A]"
               style={{ fontSize: 'clamp(1.5rem, 3vw, 1.875rem)', letterSpacing: '0.05em', lineHeight: 1 }}
             >
               {formatPrice(car.price)}
