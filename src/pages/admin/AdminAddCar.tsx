@@ -75,11 +75,11 @@ export default function AdminAddCar() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#F2F2F0',
-    border: `1px solid ${focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#FFFFFF',
+    border: `1px solid ${focused === name ? '#C4FF00' : '#E0E0DC'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
-    color: "#0D1B2A", fontFamily: 'Inter, sans-serif', fontSize: '0.875rem',
-    outline: 'none', transition: 'border-color 0.2s',
+    color: "#1A1A1A", fontFamily: 'Inter, sans-serif', fontSize: '0.875rem',
+    outline: 'none', transition: 'all 0.2s', boxShadow: focused === name ? '0 0 0 3px rgba(196,255,0,0.1)' : 'none',
   })
 
   const selectStyle = (name: string): React.CSSProperties => ({
@@ -90,8 +90,8 @@ export default function AdminAddCar() {
   })
 
   const labelStyle: React.CSSProperties = {
-    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676',
-    textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px',
+    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#4A4A4A',
+    textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px', fontWeight: 500,
   }
 
   const fp = (name: string) => ({ onFocus: () => setFocused(name), onBlur: () => setFocused(null) })
@@ -278,8 +278,8 @@ export default function AdminAddCar() {
               width: '100%',
               height: '44px',
               padding: '0 1.5rem',
-              background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #C4FF00, #1F5680)',
-              color: "#0D1B2A",
+              background: searching ? '#E0E0DC' : '#1A1A1A',
+              color: searching ? '#767676' : '#FFFFFF',
               fontFamily: 'Outfit',
               fontSize: '0.875rem',
               fontWeight: 600,
@@ -299,11 +299,12 @@ export default function AdminAddCar() {
         {searchResults.length > 0 && (
           <div style={{
             backgroundColor: '#FFFFFF',
-            border: '1px solid rgba(29,78,216,0.2)',
+            border: '1px solid #E0E0DC',
             borderRadius: '0.75rem',
             maxHeight: '300px',
             overflowY: 'auto',
             marginTop: '0.5rem',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
           }}>
             {searchResults.map((result, idx) => (
               <div
@@ -311,11 +312,11 @@ export default function AdminAddCar() {
                 onClick={() => handleSelectCar(result)}
                 style={{
                   padding: '0.875rem 1rem',
-                  borderBottom: idx < searchResults.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                  borderBottom: idx < searchResults.length - 1 ? '1px solid #F0F0EE' : 'none',
                   cursor: 'pointer',
                   transition: 'background-color 0.2s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#E4EAF0' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F9F9F8' }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
               >
                 <div className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.25rem' }}>
@@ -332,7 +333,7 @@ export default function AdminAddCar() {
 
       {/* Divider */}
       <div style={{
-        borderTop: '1px solid rgba(255,255,255,0.06)',
+        borderTop: '1px solid #E0E0DC',
         margin: '1.5rem 0',
         textAlign: 'center',
         position: 'relative',
@@ -346,9 +347,10 @@ export default function AdminAddCar() {
           padding: '0 0.75rem',
           fontFamily: 'Outfit',
           fontSize: '0.7rem',
-          color: 'rgba(255,255,255,0.2)',
+          color: '#767676',
           letterSpacing: '0.15em',
           textTransform: 'uppercase',
+          fontWeight: 500,
         }}>
           OR FILL MANUALLY
         </span>
@@ -672,8 +674,8 @@ export default function AdminAddCar() {
             style={{
               flex: 2,
               height: "48px",
-              background: "linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)",
-              color: "#000",
+              background: "#1A1A1A",
+              color: "#FFFFFF",
               fontWeight: 700,
               fontFamily: "Outfit",
               fontSize: "0.9rem",
