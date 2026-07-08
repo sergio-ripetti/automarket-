@@ -114,7 +114,18 @@
       "Bash(node -e \"require\\('./src/data/cars.ts'\\)\")",
       "Bash(perl -i -pe 's/\\\\x{201C}/\"/g; s/\\\\x{201D}/\"/g; s/\\\\x{2018}/'\"'\"'/g; s/\\\\x{2019}/'\"'\"'/g; s/\\\\x{2014}/-/g; s/\\\\x{2013}/-/g' src/data/cars.ts)",
       "Bash(python3)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 3\")",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 2\")",
+      "Bash(powershell -Command \"Start-Sleep -Seconds 1\")",
+      "Bash(grep -n \"\\\\\\\\$\" src/pages/CarDetail.tsx)",
+      "Bash(grep -n \"#C4FF00\\\\|text-\\\\\\\\[#C4FF00\\\\\\\\]\" src/pages/CarDetail.tsx)",
+      "Bash(findstr \":3001\")",
+      "Bash(grep -v \"// \")",
+      "Bash(cd /d C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket)",
+      "Bash(grep -n \"color: '\" C:\\\\\\\\Users\\\\\\\\ripetti\\\\\\\\Desktop\\\\\\\\testAppIA\\\\\\\\automarket\\\\\\\\src\\\\\\\\pages\\\\\\\\admin\\\\\\\\AdminDashboard.tsx)",
+      "Bash(xargs basename -a)",
+      "Bash(grep -r \"--color-\" C:/Users/ripetti/Desktop/testAppIA/automarket/src --include=\"*.css\" --include=\"*.tsx\")"
     ]
   }
 }

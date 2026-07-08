@@ -6,6 +6,11 @@ import { db } from '../../lib/firebase'
 import { searchCars, type CarAPIResult } from '../../lib/carApiService'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
+import AdminInput from '../../components/admin/AdminInput'
+import AdminSelect from '../../components/admin/AdminSelect'
+import AdminTextarea from '../../components/admin/AdminTextarea'
+import AdminButton from '../../components/admin/AdminButton'
+import AdminLabel from '../../components/admin/AdminLabel'
 import type { Car } from '../../types'
 
 type CarInput = Omit<Car, 'id'>
@@ -28,8 +33,6 @@ const empty: FormState = {
   image1: '', image2: '', image3: '',
   featured: false, isOnSale: false,
 }
-
-const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
 
 // Reusable on/off switch control used for the Featured/On Sale toggles
 function Toggle({ value, onChange, label }: { value: boolean; onChange: () => void; label: string }) {
@@ -57,7 +60,6 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
 export default function AdminAddCar() {
   const navigate = useNavigate()
   const [form, setForm] = useState<FormState>(empty)
-  const [focused, setFocused] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [searchMake, setSearchMake] = useState('')
   const [searchModel, setSearchModel] = useState('')
@@ -72,29 +74,6 @@ export default function AdminAddCar() {
     const value = typeof val === 'number' ? String(val) : val
     setForm((prev) => ({ ...prev, [field]: value }))
   }
-
-  const inputStyle = (name: string): React.CSSProperties => ({
-    width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#FFFFFF',
-    border: `1px solid ${focused === name ? '#C4FF00' : '#E0E0DC'}`,
-    borderRadius: '0.625rem', padding: '0.875rem 1rem',
-    color: "#1A1A1A", fontFamily: 'Inter, sans-serif', fontSize: '0.875rem',
-    outline: 'none', transition: 'all 0.2s', boxShadow: focused === name ? '0 0 0 3px rgba(196,255,0,0.1)' : 'none',
-  })
-
-  const selectStyle = (name: string): React.CSSProperties => ({
-    ...inputStyle(name),
-    appearance: 'none', backgroundImage: CHEVRON,
-    backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', paddingRight: '2.5rem',
-    cursor: 'pointer',
-  })
-
-  const labelStyle: React.CSSProperties = {
-    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#4A4A4A',
-    textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px', fontWeight: 500,
-  }
-
-  const fp = (name: string) => ({ onFocus: () => setFocused(name), onBlur: () => setFocused(null) })
 
   // Searches the external vehicle API by make/model/year to auto-fill car specs
   const handleSearch = async (e: React.FormEvent) => {
@@ -227,72 +206,46 @@ export default function AdminAddCar() {
 
         <form onSubmit={handleSearch} style={{ marginBottom: '1rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label style={labelStyle}>Make</label>
-              <input
-                type="text"
-                placeholder="e.g. Toyota"
-                value={searchMake}
-                onChange={(e) => setSearchMake(e.target.value)}
-                style={inputStyle('searchMake')}
-                {...fp('searchMake')}
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>Model</label>
-              <input
-                type="text"
-                placeholder="e.g. Corolla"
-                value={searchModel}
-                onChange={(e) => setSearchModel(e.target.value)}
-                style={inputStyle('searchModel')}
-                {...fp('searchModel')}
-              />
-            </div>
+            <AdminInput
+              label="Make"
+              type="text"
+              placeholder="e.g. Toyota"
+              value={searchMake}
+              onChange={(e) => setSearchMake(e.target.value)}
+            />
+            <AdminInput
+              label="Model"
+              type="text"
+              placeholder="e.g. Corolla"
+              value={searchModel}
+              onChange={(e) => setSearchModel(e.target.value)}
+            />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <div>
-              <label style={labelStyle}>Year (Optional)</label>
-              <input
-                type="number"
-                placeholder="e.g. 2022"
-                value={searchYear}
-                onChange={(e) => setSearchYear(e.target.value)}
-                min="1990"
-                max="2030"
-                style={inputStyle('searchYear')}
-                {...fp('searchYear')}
-              />
-            </div>
+            <AdminInput
+              label="Year (Optional)"
+              type="number"
+              placeholder="e.g. 2022"
+              value={searchYear}
+              onChange={(e) => setSearchYear(e.target.value)}
+              min="1990"
+              max="2030"
+            />
             <div />
           </div>
 
-          <button
+          <AdminButton
             type="submit"
             disabled={searching}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              width: '100%',
-              height: '44px',
-              padding: '0 1.5rem',
-              background: searching ? '#E0E0DC' : '#1A1A1A',
-              color: searching ? '#767676' : '#FFFFFF',
-              fontFamily: 'Outfit',
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              border: 'none',
-              borderRadius: '0.625rem',
-              cursor: searching ? 'not-allowed' : 'pointer',
-              justifyContent: 'center',
-              transition: 'all 0.2s',
-            }}
+            variant="secondary"
+            size="md"
+            isLoading={searching}
+            style={{ width: '100%', justifyContent: 'center', gap: '0.5rem' }}
           >
             <Search size={16} />
             {searching ? 'Searching...' : 'Search API'}
-          </button>
+          </AdminButton>
         </form>
 
         {/* Results Dropdown */}
@@ -371,67 +324,53 @@ export default function AdminAddCar() {
               flexDirection: "column",
               gap: "1.25rem",
             }}>
+            <AdminInput
+              label="Title"
+              required
+              value={form.title}
+              onChange={(e) => set("title", e.target.value)}
+              placeholder="Toyota Corolla 2022"
+            />
+            <AdminInput
+              label="Brand"
+              required
+              value={form.brand}
+              onChange={(e) => set("brand", e.target.value)}
+              placeholder="Toyota"
+            />
+            <AdminInput
+              label="Model"
+              required
+              value={form.model}
+              onChange={(e) => set("model", e.target.value)}
+              placeholder="Corolla"
+            />
+            <AdminInput
+              label="Year"
+              required
+              type="number"
+              min="1990"
+              max="2030"
+              value={form.year}
+              onChange={(e) => set("year", e.target.value)}
+              placeholder="2022"
+            />
             <div>
-              <label style={labelStyle}>Title *</label>
-              <input
-                required
-                value={form.title}
-                onChange={(e) => set("title", e.target.value)}
-                placeholder="Toyota Corolla 2022"
-                style={inputStyle("title")}
-                {...fp("title")}
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>Brand *</label>
-              <input
-                required
-                value={form.brand}
-                onChange={(e) => set("brand", e.target.value)}
-                placeholder="Toyota"
-                style={inputStyle("brand")}
-                {...fp("brand")}
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>Model *</label>
-              <input
-                required
-                value={form.model}
-                onChange={(e) => set("model", e.target.value)}
-                placeholder="Corolla"
-                style={inputStyle("model")}
-                {...fp("model")}
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>Year *</label>
-              <input
-                required
-                type="number"
-                min="1990"
-                max="2030"
-                value={form.year}
-                onChange={(e) => set("year", e.target.value)}
-                placeholder="2022"
-                style={inputStyle("year")}
-                {...fp("year")}
-              />
-            </div>
-            <div>
-              <label style={labelStyle}>Colour *</label>
+              <AdminLabel required>Colour</AdminLabel>
               <input
                 type="color"
                 required
                 value={form.color}
                 onChange={(e) => set("color", e.target.value)}
                 style={{
-                  ...inputStyle("color"),
+                  width: "100%",
+                  boxSizing: "border-box",
                   padding: "0.5rem",
                   height: "48px",
                   cursor: "pointer",
+                  border: "1px solid #E0E0DC",
+                  borderRadius: "0.625rem",
                 }}
-                {...fp("color")}
               />
             </div>
           </div>
@@ -443,121 +382,60 @@ export default function AdminAddCar() {
               flexDirection: "column",
               gap: "1.25rem",
             }}>
-            <div>
-              <label style={labelStyle}>Price (NZD) *</label>
-              <div style={{ position: "relative" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    left: "1rem",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    color: "#C4FF00",
-                    fontFamily: "Outfit",
-                    fontWeight: 600,
-                    pointerEvents: "none",
-                  }}>
-                  $
-                </span>
-                <input
-                  required
-                  type="number"
-                  value={form.price}
-                  onChange={(e) => set("price", e.target.value)}
-                  placeholder="28000"
-                  style={{ ...inputStyle("price"), paddingLeft: "2rem" }}
-                  {...fp("price")}
-                />
-              </div>
-            </div>
+            <AdminInput
+              label="Price (NZD)"
+              required
+              type="number"
+              value={form.price}
+              onChange={(e) => set("price", e.target.value)}
+              placeholder="28000"
+            />
             {form.isOnSale && (
-              <div>
-                <label style={labelStyle}>Original Price (NZD)</label>
-                <div style={{ position: "relative" }}>
-                  <span
-                    style={{
-                      position: "absolute",
-                      left: "1rem",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      color: "#C4FF00",
-                      fontFamily: "Outfit",
-                      fontWeight: 600,
-                      pointerEvents: "none",
-                    }}>
-                    $
-                  </span>
-                  <input
-                    type="number"
-                    value={form.originalPrice}
-                    onChange={(e) => set("originalPrice", e.target.value)}
-                    placeholder="35000"
-                    style={{ ...inputStyle("origPrice"), paddingLeft: "2rem" }}
-                    {...fp("origPrice")}
-                  />
-                </div>
-              </div>
-            )}
-            <div>
-              <label style={labelStyle}>Mileage (KM) *</label>
-              <input
-                required
+              <AdminInput
+                label="Original Price (NZD)"
                 type="number"
-                min="0"
-                max="999999"
-                value={form.km}
-                onChange={(e) => set("km", Number(e.target.value))}
-                placeholder="65000"
-                style={inputStyle("km")}
+                value={form.originalPrice}
+                onChange={(e) => set("originalPrice", e.target.value)}
+                placeholder="35000"
               />
-            </div>
-            <div>
-              <label style={labelStyle}>Transmission *</label>
-              <select
-                value={form.transmission}
-                onChange={(e) =>
-                  set(
-                    "transmission",
-                    e.target.value as FormState["transmission"],
-                  )
-                }
-                style={selectStyle("trans")}
-                {...fp("trans")}>
-                <option
-                  value="automatico"
-                  style={{ backgroundColor: "#F2F2F0" }}>
-                  Automatic
-                </option>
-                <option value="manual" style={{ backgroundColor: "#F2F2F0" }}>
-                  Manual
-                </option>
-              </select>
-            </div>
-            <div>
-              <label style={labelStyle}>Fuel *</label>
-              <select
-                value={form.fuel}
-                onChange={(e) =>
-                  set("fuel", e.target.value as FormState["fuel"])
-                }
-                style={selectStyle("fuel")}
-                {...fp("fuel")}>
-                <option value="gasolina" style={{ backgroundColor: "#F2F2F0" }}>
-                  Petrol
-                </option>
-                <option value="diesel" style={{ backgroundColor: "#F2F2F0" }}>
-                  Diesel
-                </option>
-                <option
-                  value="electrico"
-                  style={{ backgroundColor: "#F2F2F0" }}>
-                  Electric
-                </option>
-                <option value="hibrido" style={{ backgroundColor: "#F2F2F0" }}>
-                  Hybrid
-                </option>
-              </select>
-            </div>
+            )}
+            <AdminInput
+              label="Mileage (KM)"
+              required
+              type="number"
+              min="0"
+              max="999999"
+              value={form.km}
+              onChange={(e) => set("km", Number(e.target.value))}
+              placeholder="65000"
+            />
+            <AdminSelect
+              label="Transmission"
+              value={form.transmission}
+              onChange={(e) =>
+                set(
+                  "transmission",
+                  e.target.value as FormState["transmission"],
+                )
+              }
+              options={[
+                { value: "automatico", label: "Automatic" },
+                { value: "manual", label: "Manual" },
+              ]}
+            />
+            <AdminSelect
+              label="Fuel"
+              value={form.fuel}
+              onChange={(e) =>
+                set("fuel", e.target.value as FormState["fuel"])
+              }
+              options={[
+                { value: "gasolina", label: "Petrol" },
+                { value: "diesel", label: "Diesel" },
+                { value: "electrico", label: "Electric" },
+                { value: "hibrido", label: "Hybrid" },
+              ]}
+            />
           </div>
         </div>
 
@@ -569,71 +447,43 @@ export default function AdminAddCar() {
             gap: "1.25rem",
             marginBottom: "1.5rem",
           }}>
-          <div>
-            <label style={labelStyle}>Vehicle Description *</label>
-            <textarea
-              required
-              rows={5}
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-              placeholder="Describe the vehicle..."
-              style={
-                {
-                  ...inputStyle("desc"),
-                  resize: "none",
-                  lineHeight: 1.6,
-                } as React.CSSProperties
-              }
-              {...fp("desc")}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Seller's Note</label>
-            <textarea
-              rows={4}
-              value={form.ownerDescription}
-              onChange={(e) => set("ownerDescription", e.target.value)}
-              placeholder="Owner's personal note..."
-              style={
-                {
-                  ...inputStyle("note"),
-                  resize: "none",
-                  lineHeight: 1.6,
-                } as React.CSSProperties
-              }
-              {...fp("note")}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Image URL 1 *</label>
-            <input
-              value={form.image1}
-              onChange={(e) => set("image1", e.target.value)}
-              placeholder="https://..."
-              style={inputStyle("img1")}
-              {...fp("img1")}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Image URL 2</label>
-            <input
-              value={form.image2}
-              onChange={(e) => set("image2", e.target.value)}
-              placeholder="https://..."
-              style={inputStyle("img2")}
-              {...fp("img2")}
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Image URL 3</label>
-            <input
-              value={form.image3}
-              onChange={(e) => set("image3", e.target.value)}
-              placeholder="https://..."
-              style={inputStyle("img3")}
-              {...fp("img3")}
-            />
-          </div>
+          <AdminTextarea
+            label="Vehicle Description"
+            required
+            rows={5}
+            value={form.description}
+            onChange={(e) => set("description", e.target.value)}
+            placeholder="Describe the vehicle..."
+          />
+          <AdminTextarea
+            label="Seller's Note"
+            rows={4}
+            value={form.ownerDescription}
+            onChange={(e) => set("ownerDescription", e.target.value)}
+            placeholder="Owner's personal note..."
+          />
+          <AdminInput
+            label="Image URL 1"
+            required
+            type="text"
+            value={form.image1}
+            onChange={(e) => set("image1", e.target.value)}
+            placeholder="https://..."
+          />
+          <AdminInput
+            label="Image URL 2"
+            type="text"
+            value={form.image2}
+            onChange={(e) => set("image2", e.target.value)}
+            placeholder="https://..."
+          />
+          <AdminInput
+            label="Image URL 3"
+            type="text"
+            value={form.image3}
+            onChange={(e) => set("image3", e.target.value)}
+            placeholder="https://..."
+          />
         </div>
 
         {/* Toggles */}
@@ -652,40 +502,25 @@ export default function AdminAddCar() {
 
         {/* Buttons */}
         <div style={{ display: "flex", gap: "1rem" }}>
-          <button
+          <AdminButton
             type="button"
+            variant="secondary"
+            size="lg"
             onClick={() => navigate("/admin/cars")}
-            style={{
-              flex: 1,
-              height: "48px",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "rgba(255,255,255,0.5)",
-              backgroundColor: "transparent",
-              borderRadius: "0.75rem",
-              fontFamily: "Outfit",
-              fontSize: "0.9rem",
-              cursor: "pointer",
-            }}>
+            style={{ flex: 1 }}
+          >
             Cancel
-          </button>
-          <button
+          </AdminButton>
+          <AdminButton
             type="submit"
+            variant="primary"
+            size="lg"
             disabled={saving}
-            style={{
-              flex: 2,
-              height: "48px",
-              background: "#1A1A1A",
-              color: "#FFFFFF",
-              fontWeight: 700,
-              fontFamily: "Outfit",
-              fontSize: "0.9rem",
-              borderRadius: "0.75rem",
-              border: "none",
-              cursor: saving ? "default" : "pointer",
-              opacity: saving ? 0.7 : 1,
-            }}>
+            isLoading={saving}
+            style={{ flex: 2 }}
+          >
             {saving ? "Saving…" : "Save Vehicle"}
-          </button>
+          </AdminButton>
         </div>
       </form>
 

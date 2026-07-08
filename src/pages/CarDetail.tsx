@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -7,8 +7,8 @@ import {
 } from "lucide-react"
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "../lib/firebase"
-import { cars } from "../data/cars"
-import type { OfferForm } from "../types"
+import { getCarById } from "../lib/carsService"
+import type { Car, OfferForm } from "../types"
 
 // Formats a numeric price into NZD currency display format
 function formatPrice(price: number): string {
@@ -46,15 +46,14 @@ const sectionHeader = (title: string) => (
 export default function CarDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const car = cars.find((c) => c.id === id)
+  const [car, setCar] = useState<Car | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const [selectedImage, setSelectedImage] = useState(0)
   const [hoveredThumb, setHoveredThumb] = useState<number | null>(null)
   const [backHovered, setBackHovered] = useState(false)
   const [heartHovered, setHeartHovered] = useState(false)
-  const [isFavourite, setIsFavourite] = useState(() => {
-    try { return (JSON.parse(localStorage.getItem('automarket_favourites') || '[]') as string[]).includes(car?.id ?? '') } catch { return false }
-  })
+  const [isFavourite, setIsFavourite] = useState(false)
   const [offerBtnHovered, setOfferBtnHovered] = useState(false)
   const [financeBtnHovered, setFinanceBtnHovered] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
@@ -62,6 +61,40 @@ export default function CarDetail() {
   const [offerForm, setOfferForm] = useState<OfferForm>({
     offerPrice: "", firstName: "", lastName: "", email: "", phone: "", message: "",
   })
+
+  // Fetch car data from Firestore on mount
+  useEffect(() => {
+    if (!id) return
+    const fetchCar = async () => {
+      try {
+        const carData = await getCarById(id)
+        setCar(carData)
+        // Update favourite state after car is loaded
+        if (carData) {
+          try {
+            const favs = JSON.parse(localStorage.getItem('automarket_favourites') || '[]') as string[]
+            setIsFavourite(favs.includes(carData.id))
+          } catch { /* silent */ }
+        }
+      } catch (err) {
+        console.error('Failed to load car:', err)
+        setCar(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCar()
+  }, [id])
+
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", backgroundColor: "#F2F2F0", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ textAlign: "center" }}>
+          <div style={{ fontSize: "1.5rem", color: "#767676", marginBottom: "1rem" }}>Loading...</div>
+        </div>
+      </div>
+    )
+  }
 
   if (!car) {
     return (
@@ -240,7 +273,7 @@ export default function CarDetail() {
             <div>
               {car.isOnSale && (
                 <span style={{
-                  background: "linear-gradient(135deg, #dc2626, #b91c1c)", color: "#0D1B2A",
+                  background: "#D64545", color: "#FFFFFF",
                   fontFamily: "Outfit", fontSize: "0.65rem", fontWeight: 700,
                   padding: "5px 14px", borderRadius: "2rem", letterSpacing: "0.1em",
                   display: "inline-block", marginBottom: "0.75rem", textTransform: "uppercase",
@@ -248,7 +281,7 @@ export default function CarDetail() {
                   SPECIAL OFFER
                 </span>
               )}
-              <h1 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: "0.03em", lineHeight: 1, marginBottom: 0 }}>
+              <h1 className="font-bebas" style={{color: "#1A1A1A", letterSpacing: "0.03em", lineHeight: 1, marginBottom: 0 }}>
                 {car.title}
               </h1>
             </div>
@@ -282,12 +315,12 @@ export default function CarDetail() {
                   borderRadius: "0.875rem", padding: "0.875rem 1rem",
                   display: "flex", alignItems: "center", gap: "0.875rem",
                 }}>
-                  <div style={iconWrap}><Icon size={16} color="#C4FF00" /></div>
+                  <div style={iconWrap}><Icon size={16} color="#4A4A4A" /></div>
                   <div>
                     <p style={{ fontFamily: "Outfit", fontSize: "0.65rem", color: "#767676", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                       {label}
                     </p>
-                    <p style={{color: "#0D1B2A" }}>
+                    <p style={{color: "#1A1A1A" }}>
                       {value}
                     </p>
                   </div>
@@ -301,13 +334,13 @@ export default function CarDetail() {
               padding: "0.875rem 1rem", backgroundColor: "#FFFFFF",
               borderRadius: "0.875rem", border: "1px solid rgba(255,255,255,0.06)",
             }}>
-              <div style={iconWrap}><Palette size={16} color="#C4FF00" /></div>
-              <p style={{ fontFamily: "Outfit", fontSize: "0.65rem", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.08em", flex: 1 }}>
+              <div style={iconWrap}><Palette size={16} color="#4A4A4A" /></div>
+              <p style={{ fontFamily: "Outfit", fontSize: "0.65rem", color: "#767676", textTransform: "uppercase", letterSpacing: "0.08em", flex: 1 }}>
                 Colour
               </p>
               <div style={{
                 width: 24, height: 24, borderRadius: "50%",
-                border: "2px solid rgba(255,255,255,0.2)",
+                border: "1px solid #E0E0DC",
                 boxShadow: "0 0 8px rgba(0,0,0,0.5)",
                 backgroundColor: car.color, flexShrink: 0,
               }} />
@@ -326,16 +359,16 @@ export default function CarDetail() {
 
             {/* Seller's Note */}
             <div style={{
-              backgroundColor: "#FFFFFF", border: "1px solid rgba(29,78,216,0.15)",
+              backgroundColor: "#FFFFFF", border: "1px solid #E0E0DC",
               borderRadius: "1rem", padding: "1.5rem", position: "relative", overflow: "hidden",
             }}>
               {/* Gold top-left accent */}
               <div style={{
                 position: "absolute", top: 0, left: 0, width: 60, height: 3,
-                background: "linear-gradient(90deg, #C4FF00, transparent)",
+                background: "#C4FF00",
               }} />
               {sectionHeader("Seller's Note")}
-              <p style={{ fontFamily: "Outfit", fontSize: "0.875rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.8, fontStyle: "italic" }}>
+              <p style={{ fontFamily: "Outfit", fontSize: "0.875rem", color: "#4A4A4A", lineHeight: 1.8, fontStyle: "italic" }}>
                 "{car.ownerDescription}"
               </p>
               {/* Decorative quote mark */}
@@ -356,9 +389,9 @@ export default function CarDetail() {
                 onMouseLeave={() => setOfferBtnHovered(false)}
                 style={{
                   height: "52px", width: "100%",
-                  backgroundColor: offerBtnHovered ? "rgba(29,78,216,0.08)" : "transparent",
-                  border: `2px solid ${offerBtnHovered ? "#C4FF00" : "rgba(29,78,216,0.5)"}`,
-                  color: "#C4FF00", borderRadius: "0.875rem",
+                  backgroundColor: offerBtnHovered ? "rgba(26,26,26,0.05)" : "transparent",
+                  border: `2px solid #1A1A1A`,
+                  color: "#1A1A1A", borderRadius: "0.875rem",
                   fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.9rem", letterSpacing: "0.05em",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: "0.625rem",
                   boxShadow: offerBtnHovered ? "0 0 20px rgba(29,78,216,0.15)" : "none",
@@ -374,12 +407,10 @@ export default function CarDetail() {
                 onMouseEnter={() => setFinanceBtnHovered(true)}
                 onMouseLeave={() => setFinanceBtnHovered(false)}
                 style={{
-                  height: "52px", width: "100%",
-                  background: "linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)",
-                  color: "#000", borderRadius: "0.875rem", border: "none",
+                  height: "52px", width: "100%", background: "#1A1A1A", color: "#FFFFFF", borderRadius: "0.875rem", border: "none",
                   fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: "0.9rem", letterSpacing: "0.05em",
                   display: "flex", alignItems: "center", justifyContent: "center", gap: "0.625rem",
-                  boxShadow: financeBtnHovered ? "0 0 30px rgba(29,78,216,0.4)" : "none",
+                  boxShadow: financeBtnHovered ? "0 0 30px rgba(26,26,26,0.4)" : "none",
                   opacity: financeBtnHovered ? 0.95 : 1,
                   textDecoration: "none", transition: "all 0.3s",
                 }}
@@ -414,15 +445,15 @@ export default function CarDetail() {
             >
               {/* Header */}
               <div style={{
-                background: "linear-gradient(to right, #C4FF00, #1F5680)",
+                background: "#1A1A1A",
                 padding: "1.75rem 2rem", display: "flex",
                 alignItems: "flex-start", justifyContent: "space-between", gap: "1rem",
               }}>
                 <div>
-                  <h2 className="font-bebas text-3xl tracking-wide" style={{ color: "#000", lineHeight: 1 }}>
+                  <h2 className="font-bebas text-3xl tracking-wide" style={{ color: "#FFFFFF", lineHeight: 1 }}>
                     Make an Offer
                   </h2>
-                  <p className="font-inter text-sm mt-1" style={{ color: "rgba(0,0,0,0.65)" }}>
+                  <p className="font-inter text-sm mt-1" style={{ color: "rgba(255,255,255,0.65)" }}>
                     {car.title} · {formatPrice(car.price)}
                   </p>
                 </div>
@@ -474,7 +505,7 @@ export default function CarDetail() {
 
                   {/* Phone */}
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>Phone *</label>
+                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Phone *</label>
                     <input type="tel" required value={offerForm.phone}
                       onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
                       placeholder="+64 21 123 4567"
@@ -485,9 +516,9 @@ export default function CarDetail() {
 
                   {/* Offer price */}
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>Your Offer (NZD) *</label>
+                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Your Offer (NZD) *</label>
                     <div style={{ position: "relative" }}>
-                      <span style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", color: "#C4FF00", fontFamily: "Outfit", fontSize: "0.875rem", fontWeight: 600, pointerEvents: "none" }}>$</span>
+                      <span style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", color: "#4A4A4A", fontFamily: "Outfit", fontSize: "0.875rem", fontWeight: 600, pointerEvents: "none" }}>$</span>
                       <input type="number" required value={offerForm.offerPrice}
                         onChange={(e) => setOfferForm({ ...offerForm, offerPrice: e.target.value })}
                         placeholder="32000"
@@ -499,7 +530,7 @@ export default function CarDetail() {
 
                   {/* Email */}
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>Email *</label>
+                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Email *</label>
                     <input type="email" required value={offerForm.email}
                       onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
                       placeholder="john@example.com"
@@ -510,7 +541,7 @@ export default function CarDetail() {
 
                   {/* Message */}
                   <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "rgba(255,255,255,0.45)" }}>Message (optional)</label>
+                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Message (optional)</label>
                     <textarea value={offerForm.message}
                       onChange={(e) => setOfferForm({ ...offerForm, message: e.target.value })}
                       placeholder="Any questions or comments about this vehicle?"
@@ -529,7 +560,7 @@ export default function CarDetail() {
                   </button>
                   <button type="submit"
                     className="font-inter transition-opacity hover:opacity-90"
-                    style={{ flex: 2, padding: "0.75rem", background: "linear-gradient(to right, #C4FF00, #1F5680)", color: "#000", fontWeight: 700, fontSize: "0.875rem", borderRadius: "0.5rem", border: "none", cursor: "pointer" }}>
+                    style={{ flex: 2, padding: "0.75rem", background: "#1A1A1A", color: "#FFFFFF", fontWeight: 700, fontSize: "0.875rem", borderRadius: "0.5rem", border: "none", cursor: "pointer" }}>
                     Send My Offer →
                   </button>
                 </div>

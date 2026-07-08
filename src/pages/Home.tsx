@@ -106,7 +106,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-inter text-#C4FF00 uppercase tracking-[0.25em] text-xs mb-5"
+            className="font-inter text-[#FFFFFF] uppercase tracking-[0.25em] text-xs mb-5"
           >
             New Zealand's Premier Car Marketplace
           </motion.p>
@@ -142,8 +142,7 @@ export default function Home() {
               to="/cars"
               className="font-inter font-bold text-sm inline-flex items-center gap-2"
               style={{
-                background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
-                color: '#000', padding: '0.875rem 2rem',
+                background: '#1A1A1A', color: '#FFFFFF', padding: '0.875rem 2rem',
                 borderRadius: '0.5rem', letterSpacing: '0.04em',
               }}
             >
@@ -151,10 +150,10 @@ export default function Home() {
             </Link>
             <Link
               to="/financing"
-              className="font-inter font-medium text-sm text-[#0D1B2A]/80 hover:text-[#0D1B2A] transition-colors"
+              className="font-inter font-medium text-sm text-[#FFFFFF] hover:text-[#F2F2F0] transition-colors"
               style={{
                 padding: '0.875rem 2rem', borderRadius: '0.5rem',
-                letterSpacing: '0.04em', border: '1px solid rgba(255,255,255,0.2)',
+                letterSpacing: '0.04em', border: '1px solid #FFFFFF',
               }}
             >
               Financing Calculator
@@ -181,9 +180,9 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
           >
-            <p className="font-inter text-#C4FF00 uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
-            <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              Featured <span className="text-#C4FF00">Vehicles</span>
+            <p className="font-inter text-[#C4FF00] uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
+            <h2 className="font-bebas text-[#1A1A1A] tracking-wide leading-none">
+              Featured <span className="text-[#C4FF00]">Vehicles</span>
             </h2>
             <p className="font-inter text-[#767676] text-sm mt-2">Hand-picked by our team</p>
           </motion.div>
@@ -339,8 +338,7 @@ export default function Home() {
             to="/cars"
             className="font-inter font-bold text-base inline-flex items-center gap-2.5"
             style={{
-              background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
-              color: '#000', padding: '1rem 2.5rem',
+              background: '#1A1A1A', color: '#FFFFFF', padding: '1rem 2.5rem',
               borderRadius: '0.625rem', letterSpacing: '0.04em',
             }}
           >

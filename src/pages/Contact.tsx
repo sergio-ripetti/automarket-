@@ -26,7 +26,7 @@ const infoItems = [
 const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)',
+  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: '#767676',
   letterSpacing: '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '6px',
 }
 
@@ -44,11 +44,12 @@ export default function Contact() {
 
   const inputStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#F2F2F0',
-    border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
-    borderRadius: '0.625rem', padding: '0.75rem 1rem',
-    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: "#0D1B2A", outline: 'none',
-    transition: 'border-color 0.2s',
+    backgroundColor: 'transparent',
+    border: 'none',
+    borderBottom: `${hasErr ? '2px solid rgba(239,68,68,0.85)' : focused === name ? '2px solid #1A1A1A' : '1px solid #E0E0DC'}`,
+    borderRadius: 0, padding: '0.75rem 0 0.5rem 0',
+    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: "#1A1A1A", outline: 'none',
+    transition: 'border-bottom-color 0.2s',
   })
 
   const selectStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
@@ -107,16 +108,16 @@ export default function Contact() {
         {/* ── Page Header ── */}
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
-            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#C4FF00' }}>
+            <div style={{ width: 40, height: 1, backgroundColor: '#E0E0DC' }} />
+            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#767676' }}>
               GET IN TOUCH
             </span>
-            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: '#E0E0DC' }} />
           </div>
-          <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+          <h1 className="font-bebas" style={{color: "#1A1A1A", lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
             Contact Us
           </h1>
-          <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)', fontSize: '1rem' }}>
+          <p style={{ fontFamily: 'Outfit', color: '#4A4A4A', fontSize: '1rem' }}>
             We'd love to hear from you
           </p>
         </div>
@@ -126,7 +127,7 @@ export default function Contact() {
 
           {/* ════ LEFT — Contact Form ════ */}
           <div>
-            <h2 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
+            <h2 className="font-bebas" style={{color: "#1A1A1A", letterSpacing: '0.05em', marginBottom: '1.5rem', fontWeight: 600 }}>
               Send Us a Message
             </h2>
 
@@ -206,11 +207,11 @@ export default function Contact() {
                     onFocus={() => setFocused('reason')} onBlur={() => setFocused(null)}
                     style={selectStyle('reason', !!errors.reason)}
                   >
-                    <option value="" style={{ backgroundColor: '#111' }}>Select a reason</option>
-                    <option value="purchase" style={{ backgroundColor: '#111' }}>Car purchase</option>
-                    <option value="sale" style={{ backgroundColor: '#111' }}>Car sale</option>
-                    <option value="financing" style={{ backgroundColor: '#111' }}>Financing enquiry</option>
-                    <option value="other" style={{ backgroundColor: '#111' }}>Other</option>
+                    <option value="" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Select a reason</option>
+                    <option value="purchase" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Car purchase</option>
+                    <option value="sale" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Car sale</option>
+                    <option value="financing" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Financing enquiry</option>
+                    <option value="other" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Other</option>
                   </select>
                   {errors.reason && <p style={errorStyle}>{errors.reason}</p>}
                 </div>
@@ -235,11 +236,10 @@ export default function Contact() {
                   onMouseLeave={() => setSubmitHovered(false)}
                   style={{
                     width: '100%', height: '52px',
-                    background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
-                    color: '#000', fontFamily: 'Outfit', fontWeight: 700,
+                    background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Outfit', fontWeight: 700,
                     fontSize: '0.95rem', letterSpacing: '0.04em',
                     border: 'none', borderRadius: '0.75rem', cursor: 'pointer',
-                    boxShadow: submitHovered ? '0 0 25px rgba(29,78,216,0.35)' : 'none',
+                    boxShadow: submitHovered ? '0 0 25px rgba(26,26,26,0.35)' : 'none',
                     transition: 'box-shadow 0.3s ease',
                   }}
                 >
@@ -254,7 +254,7 @@ export default function Contact() {
 
             {/* Info cards */}
             <div>
-              <h2 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em', marginBottom: '1.5rem' }}>
+              <h2 className="font-bebas" style={{color: "#1A1A1A", letterSpacing: '0.05em', marginBottom: '1.5rem', fontWeight: 600 }}>
                 Our Details
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
@@ -265,16 +265,16 @@ export default function Contact() {
                   }}>
                     <div style={{
                       width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-                      backgroundColor: 'rgba(29,78,216,0.1)', border: '1px solid rgba(29,78,216,0.2)',
+                      backgroundColor: '#2A2A2A', border: 'none',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                       <Icon size={16} color="#C4FF00" />
                     </div>
                     <div>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.32)', letterSpacing: '0.1em', marginBottom: '0.15rem' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', letterSpacing: '0.1em', marginBottom: '0.15rem' }}>
                         {label.toUpperCase()}
                       </p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.82)', fontWeight: 500 }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#1A1A1A', fontWeight: 500 }}>
                         {value}
                       </p>
                     </div>

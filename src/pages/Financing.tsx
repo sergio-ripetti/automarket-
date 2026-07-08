@@ -1,12 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { CheckCircle2, Upload, X } from 'lucide-react'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../lib/firebase'
-import { cars } from '../data/cars'
+import { getCarById } from '../lib/carsService'
 import { uploadDocument } from '../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../lib/sanitize'
-import type { FinancingForm, FinancingDocument } from '../types'
+import type { Car, FinancingForm, FinancingDocument } from '../types'
 
 // Formats a numeric price into NZD currency display format
 function formatPrice(price: number): string {
@@ -27,7 +27,7 @@ const emptyForm: FinancingForm = {
 type FormErrors = Partial<Record<keyof FinancingForm, string>>
 
 const labelStyle: React.CSSProperties = {
-  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: '#8FA3B3',
+  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: '#767676',
   letterSpacing: '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '6px',
 }
 
@@ -40,7 +40,7 @@ const errorStyle: React.CSSProperties = {
 export default function Financing() {
   const [searchParams] = useSearchParams()
   const carId = searchParams.get('carId')
-  const car = carId ? cars.find((c) => c.id === carId) : undefined
+  const [car, setCar] = useState<Car | undefined>(undefined)
 
   const [step, setStep] = useState<1 | 2>(1)
   const [form, setForm] = useState<FinancingForm>(emptyForm)
@@ -51,6 +51,24 @@ export default function Financing() {
   const [applyHovered, setApplyHovered] = useState(false)
   const [submitHovered, setSubmitHovered] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<Map<string, { file: File; progress: number; uploaded: boolean }>>(new Map())
+
+  // Fetch car data from Firestore if carId is provided
+  useEffect(() => {
+    if (!carId) {
+      setCar(undefined)
+      return
+    }
+    const fetchCar = async () => {
+      try {
+        const carData = await getCarById(carId)
+        setCar(carData ?? undefined)
+      } catch (err) {
+        console.error('Failed to load car:', err)
+        setCar(undefined)
+      }
+    }
+    fetchCar()
+  }, [carId])
 
   const basePrice = car ? car.price : Number(manualPrice) || 25000
   const downPaymentAmt = Math.round((form.downPayment / 100) * basePrice)
@@ -207,14 +225,14 @@ export default function Financing() {
           <h1 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
             Application Submitted!
           </h1>
-          <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem', marginBottom: '2.5rem', lineHeight: 1.65 }}>
+          <p style={{ fontFamily: 'Outfit', color: '#4A4A4A', fontSize: '0.9rem', marginBottom: '2.5rem', lineHeight: 1.65 }}>
             We'll be in touch within 24 to 48 business hours to continue the process.
           </p>
           <button
             onClick={() => { setSubmitted(false); setStep(1); setForm(emptyForm) }}
             style={{
               fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', letterSpacing: '0.04em',
-              padding: '0.75rem 2rem', border: '1px solid #C4FF00', color: '#C4FF00',
+              padding: '0.75rem 2rem', border: '1px solid #1A1A1A', color: '#1A1A1A',
               borderRadius: '0.625rem', backgroundColor: 'transparent', cursor: 'pointer',
             }}
           >
@@ -233,16 +251,16 @@ export default function Financing() {
         {/* ── Page Header ── */}
         <div style={{ marginBottom: '3rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
-            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#C4FF00' }}>
+            <div style={{ width: 40, height: 1, backgroundColor: '#E0E0DC' }} />
+            <span className="font-bebas" style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#767676' }}>
               FINANCE YOUR VEHICLE
             </span>
-            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: '#E0E0DC' }} />
           </div>
-          <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
+          <h1 className="font-bebas" style={{color: "#1A1A1A", lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}>
             Smart Financing
           </h1>
-          <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.5)', fontSize: '1rem' }}>
+          <p style={{ fontFamily: 'Outfit', color: '#4A4A4A', fontSize: '1rem' }}>
             Calculate your monthly payments and apply for financing in minutes.
           </p>
         </div>
@@ -262,23 +280,23 @@ export default function Financing() {
           {/* Connector */}
           <div style={{
             width: 80, height: 1,
-            backgroundColor: step >= 2 ? '#C4FF00' : 'rgba(255,255,255,0.1)',
+            backgroundColor: step >= 2 ? '#C4FF00' : '#E0E0DC',
             margin: '0 1.25rem', transition: 'background-color 0.3s ease',
           }} />
           {/* Step 2 */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
             <div style={{
               width: '2rem', height: '2rem', borderRadius: '50%',
-              backgroundColor: step >= 2 ? '#C4FF00' : 'rgba(255,255,255,0.08)',
+              backgroundColor: step >= 2 ? '#C4FF00' : '#767676',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 700,
-              color: step >= 2 ? '#000' : 'rgba(255,255,255,0.3)',
+              color: step >= 2 ? '#000' : '#FFFFFF',
               transition: 'all 0.3s ease',
             }}>2</div>
             <span style={{
               fontFamily: 'Outfit', fontSize: '0.875rem',
-              color: step >= 2 ? 'white' : 'rgba(255,255,255,0.3)',
-              fontWeight: step >= 2 ? 600 : 400, transition: 'all 0.3s ease',
+              color: step >= 2 ? '#FFFFFF' : '#767676',
+              fontWeight: 600, transition: 'all 0.3s ease',
             }}>Application</span>
           </div>
         </div>
@@ -309,7 +327,7 @@ export default function Financing() {
                 <div>
                   <label style={labelStyle}>CAR PRICE (NZD)</label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#C4FF00', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
+                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#4A4A4A', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
                     <input
                       type="number" value={manualPrice}
                       onChange={(e) => setManualPrice(e.target.value)}
@@ -325,14 +343,14 @@ export default function Financing() {
               <div style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.875rem', padding: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>DOWN PAYMENT</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>{formatPrice(downPaymentAmt)}</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>DOWN PAYMENT</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#1A1A1A' }}>{formatPrice(downPaymentAmt)}</p>
                   </div>
                   <div style={{
-                    backgroundColor: 'rgba(29,78,216,0.12)', border: '1px solid rgba(29,78,216,0.25)',
+                    backgroundColor: '#F2F2F0', border: '1px solid #1A1A1A',
                     borderRadius: '0.5rem', padding: '0.2rem 0.75rem',
                   }}>
-                    <span className="font-bebas" style={{ fontSize: '1.75rem', color: '#C4FF00', lineHeight: 1 }}>{form.downPayment}%</span>
+                    <span className="font-bebas" style={{ fontSize: '1.75rem', color: '#1A1A1A', lineHeight: 1 }}>{form.downPayment}%</span>
                   </div>
                 </div>
                 <input
@@ -347,8 +365,8 @@ export default function Financing() {
                   } as React.CSSProperties}
                 />
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem' }}>
-                  <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.25)' }}>10%</span>
-                  <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.25)' }}>50%</span>
+                  <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676' }}>10%</span>
+                  <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676' }}>50%</span>
                 </div>
               </div>
 
@@ -362,14 +380,14 @@ export default function Financing() {
                       onClick={() => setForm({ ...form, months: m })}
                       style={form.months === m ? {
                         padding: '0.5rem 1.125rem', borderRadius: '0.5rem',
-                        background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
-                        color: '#000', fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 700,
+                        background: '#1A1A1A',
+                        color: '#FFFFFF', fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 700,
                         border: 'none', cursor: 'pointer',
                       } : {
                         padding: '0.5rem 1.125rem', borderRadius: '0.5rem',
-                        backgroundColor: '#E4EAF0', color: 'rgba(255,255,255,0.5)',
+                        backgroundColor: '#F2F2F0', color: '#4A4A4A',
                         fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 400,
-                        border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer',
+                        border: '1px solid #E0E0DC', cursor: 'pointer',
                       }}
                     >
                       {m} mo
@@ -382,26 +400,26 @@ export default function Financing() {
             {/* Right — Results card */}
             <div style={{ position: 'sticky', top: '7rem' }}>
               <div style={{
-                background: 'linear-gradient(135deg, #E4EAF0 0%, #FFFFFF 100%)',
-                border: '1px solid rgba(29,78,216,0.2)',
+                background: '#FFFFFF',
+                border: '1px solid #E0E0DC',
                 borderRadius: '1.25rem', padding: '2rem',
               }}>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.68rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.68rem', color: '#767676', letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
                   ESTIMATED MONTHLY PAYMENT
                 </p>
-                <p className="font-bebas" style={{ fontSize: '3.5rem', color: '#C4FF00', lineHeight: 1, marginBottom: '1.75rem' }}>
+                <p className="font-bebas" style={{ fontSize: '3.5rem', color: '#1A1A1A', lineHeight: 1, marginBottom: '1.75rem' }}>
                   {formatPrice(Math.round(monthly))}
                 </p>
 
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.875rem', marginBottom: '2rem' }}>
+                <div style={{ borderTop: '1px solid #E0E0DC', paddingTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.875rem', marginBottom: '2rem' }}>
                   {[
                     { label: 'Amount Financed', value: formatPrice(financed) },
                     { label: 'Total Repayment', value: formatPrice(Math.round(totalRepay)) },
                     { label: 'Total Interest', value: formatPrice(Math.round(totalInterest)), red: true },
                   ].map(({ label, value }) => (
                     <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.38)' }}>{label}</span>
-                      <span style={{color: "#0D1B2A" }}>{value}</span>
+                      <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676' }}>{label}</span>
+                      <span style={{color: "#1A1A1A" }}>{value}</span>
                     </div>
                   ))}
                 </div>
@@ -496,7 +514,7 @@ export default function Financing() {
                 <div>
                   <label style={labelStyle}>MONTHLY INCOME (NZD) *</label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#C4FF00', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
+                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#4A4A4A', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
                     <input required type="number" value={form.income} placeholder="5,000"
                       onChange={(e) => setForm({ ...form, income: e.target.value })}
                       onFocus={() => setFocused('income')} onBlur={() => setFocused(null)}
@@ -507,7 +525,7 @@ export default function Financing() {
 
                 {/* Employment Section — full width */}
                 <div style={{ gridColumn: '1 / -1', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <h3 style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#C4FF00', marginBottom: '1.25rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  <h3 style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#1A1A1A', marginBottom: '1.25rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>
                     Employment Details
                   </h3>
                 </div>
@@ -560,7 +578,7 @@ export default function Financing() {
                 <div>
                   <label style={labelStyle}>MONTHLY EXPENSES (NZD) *</label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#C4FF00', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
+                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#4A4A4A', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
                     <input required type="number" min="0" value={form.monthlyExpenses} placeholder="2,000"
                       onChange={(e) => setForm({ ...form, monthlyExpenses: e.target.value })}
                       onFocus={() => setFocused('monthlyExpenses')} onBlur={() => setFocused(null)}
@@ -574,10 +592,10 @@ export default function Financing() {
 
                 {/* Documents Section — full width */}
                 <div style={{ gridColumn: '1 / -1', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <h3 style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#C4FF00', marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  <h3 style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#1A1A1A', marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>
                     Supporting Documents
                   </h3>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.38)', marginBottom: '1.25rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#4A4A4A', marginBottom: '1.25rem' }}>
                     Please upload the following documents to support your application
                   </p>
 
@@ -764,8 +782,8 @@ export default function Financing() {
                 <button
                   type="button" onClick={() => setStep(1)}
                   style={{
-                    flex: 1, height: '52px', backgroundColor: 'transparent',
-                    border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.5)',
+                    flex: 1, height: '52px', backgroundColor: '#F2F2F0',
+                    border: '1px solid #E0E0DC', color: '#1A1A1A',
                     fontFamily: 'Outfit', fontSize: '0.875rem', borderRadius: '0.75rem', cursor: 'pointer',
                   }}
                 >
@@ -776,12 +794,10 @@ export default function Financing() {
                   onMouseEnter={() => setSubmitHovered(true)}
                   onMouseLeave={() => setSubmitHovered(false)}
                   style={{
-                    flex: 2, height: '52px',
-                    background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
-                    color: '#000', fontFamily: 'Outfit', fontWeight: 700,
+                    flex: 2, height: '52px', background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Outfit', fontWeight: 700,
                     fontSize: '0.9rem', letterSpacing: '0.04em',
                     border: 'none', borderRadius: '0.75rem', cursor: 'pointer',
-                    boxShadow: submitHovered ? '0 0 25px rgba(29,78,216,0.35)' : 'none',
+                    boxShadow: submitHovered ? '0 0 25px rgba(26,26,26,0.35)' : 'none',
                     transition: 'box-shadow 0.3s ease',
                   }}
                 >

@@ -146,33 +146,33 @@ export default function CarCard({ car }: CarCardProps) {
         {/* Specs row */}
         <div className="flex flex-wrap gap-3" style={{ marginBottom: '0.75rem' }}>
           <div className="flex items-center gap-1">
-            <Calendar size={13} className="text-[#C4FF00]" aria-hidden="true" />
-            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{car.year}</span>
+            <Calendar size={13} className="text-[#4A4A4A]" aria-hidden="true" />
+            <span className="font-inter text-[#4A4A4A]" style={{ fontSize: '0.75rem' }}>{car.year}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Gauge size={13} className="text-[#C4FF00]" aria-hidden="true" />
-            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{formatKm(car.km)}</span>
+            <Gauge size={13} className="text-[#4A4A4A]" aria-hidden="true" />
+            <span className="font-inter text-[#4A4A4A]" style={{ fontSize: '0.75rem' }}>{formatKm(car.km)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Settings size={13} className="text-[#C4FF00]" aria-hidden="true" />
-            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{transmissionLabel[car.transmission]}</span>
+            <Settings size={13} className="text-[#4A4A4A]" aria-hidden="true" />
+            <span className="font-inter text-[#4A4A4A]" style={{ fontSize: '0.75rem' }}>{transmissionLabel[car.transmission]}</span>
           </div>
           <div className="flex items-center gap-1">
-            <span className="text-[#C4FF00] inline-flex">{fuelIcon[car.fuel]}</span>
-            <span className="font-inter text-[#767676]" style={{ fontSize: '0.75rem' }}>{fuelLabel[car.fuel]}</span>
+            <span className="text-[#4A4A4A] inline-flex">{fuelIcon[car.fuel]}</span>
+            <span className="font-inter text-[#4A4A4A]" style={{ fontSize: '0.75rem' }}>{fuelLabel[car.fuel]}</span>
           </div>
         </div>
 
         {/* Specs tags */}
         <div className="inline-flex flex-wrap gap-1.5" style={{ marginBottom: '0.75rem' }}>
           <span
-            className="inline-flex bg-[#F2F2F0] border border-[#E0E0DC] text-[#767676] font-inter rounded"
+            className="inline-flex bg-[#F2F2F0] border border-[#E0E0DC] text-[#4A4A4A] font-inter rounded"
             style={{ ...tagStyle, fontSize: '0.7rem' }}
           >
             {transmissionLabel[car.transmission]}
           </span>
           <span
-            className="inline-flex bg-[#F2F2F0] border border-[#E0E0DC] text-[#767676] font-inter rounded"
+            className="inline-flex bg-[#F2F2F0] border border-[#E0E0DC] text-[#4A4A4A] font-inter rounded"
             style={{ ...tagStyle, fontSize: '0.7rem' }}
           >
             {fuelLabel[car.fuel]}
@@ -192,7 +192,7 @@ export default function CarCard({ car }: CarCardProps) {
         >
           {car.isOnSale && car.originalPrice ? (
             <>
-              <span className="text-[#767676] line-through font-inter" style={{ fontSize: '0.875rem', lineHeight: 1 }}>
+              <span className="text-[#4A4A4A] line-through font-inter" style={{ fontSize: '0.875rem', lineHeight: 1 }}>
                 {formatPrice(car.originalPrice)}
               </span>
               <span

@@ -110,8 +110,7 @@ export default function Favourites() {
               to="/cars"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                background: 'linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)',
-                color: '#000', fontFamily: 'Outfit', fontWeight: 700, fontSize: '0.875rem',
+                background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Outfit', fontWeight: 700, fontSize: '0.875rem',
                 padding: '0.875rem 2rem', borderRadius: '0.625rem',
                 textDecoration: 'none', letterSpacing: '0.04em',
               }}
