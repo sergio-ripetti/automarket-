@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react'
 
 interface AdminButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger'
+  variant?: 'primary' | 'secondary' | 'danger' | 'dark'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
 }
@@ -60,6 +60,13 @@ export default function AdminButton({
       '&:active': { backgroundColor: '#AD3030' },
       '&:disabled': { backgroundColor: '#E0E0DC', color: '#999999' },
     },
+    dark: {
+      backgroundColor: '#1A1A1A',
+      color: '#FFFFFF',
+      '&:hover': { backgroundColor: '#0D0D0D', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' },
+      '&:active': { backgroundColor: '#000000' },
+      '&:disabled': { backgroundColor: '#E0E0DC', color: '#999999' },
+    },
   }[variant]
 
   const buttonStyles = {
@@ -93,6 +100,9 @@ export default function AdminButton({
           } else if (variant === 'danger') {
             target.style.backgroundColor = '#C13939'
             target.style.boxShadow = '0 4px 12px rgba(214,69,69,0.3)'
+          } else if (variant === 'dark') {
+            target.style.backgroundColor = '#0D0D0D'
+            target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)'
           } else if (variant === 'secondary') {
             target.style.backgroundColor = '#F5F5F0'
             target.style.borderColor = '#C4FF00'
@@ -106,6 +116,9 @@ export default function AdminButton({
           target.style.boxShadow = 'none'
         } else if (variant === 'danger') {
           target.style.backgroundColor = '#D64545'
+          target.style.boxShadow = 'none'
+        } else if (variant === 'dark') {
+          target.style.backgroundColor = '#1A1A1A'
           target.style.boxShadow = 'none'
         } else if (variant === 'secondary') {
           target.style.backgroundColor = 'transparent'

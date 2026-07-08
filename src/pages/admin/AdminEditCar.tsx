@@ -574,42 +574,40 @@ const set = (field: keyof FormState, val: string | boolean) => {
           />
         </div>
 
-        {/* Save / Cancel buttons */}
-        <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
+        {/* Action buttons: Save Changes, Cancel, Delete Vehicle */}
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "flex-start" }}>
+          <AdminButton
+            type="submit"
+            variant="dark"
+            size="md"
+            disabled={saving}
+            isLoading={saving}
+            style={{ flex: "1 1 calc(33.333% - 0.67rem)", minWidth: "120px" }}
+          >
+            {saving ? "Saving…" : "Save Changes"}
+          </AdminButton>
           <AdminButton
             type="button"
             variant="secondary"
             size="md"
             onClick={() => navigate("/admin/cars")}
-            style={{ flex: "1 1 auto", minWidth: "100px" }}
+            style={{ flex: "1 1 calc(33.333% - 0.67rem)", minWidth: "100px" }}
           >
             Cancel
           </AdminButton>
           <AdminButton
-            type="submit"
-            variant="primary"
+            type="button"
+            variant="danger"
             size="md"
-            disabled={saving}
-            isLoading={saving}
-            style={{ flex: "1.5 1 auto", minWidth: "140px" }}
+            onClick={handleDelete}
+            disabled={deleting}
+            isLoading={deleting}
+            style={{ flex: "1 1 calc(33.333% - 0.67rem)", minWidth: "120px", justifyContent: "center", gap: "0.5rem" }}
           >
-            {saving ? "Saving…" : "Save Changes"}
+            <Trash2 size={14} />
+            {deleting ? "Deleting…" : "Delete Vehicle"}
           </AdminButton>
         </div>
-
-        {/* Delete button */}
-        <AdminButton
-          type="button"
-          variant="danger"
-          size="md"
-          onClick={handleDelete}
-          disabled={deleting}
-          isLoading={deleting}
-          style={{ width: "100%", justifyContent: "center", gap: "0.5rem" }}
-        >
-          <Trash2 size={14} />
-          {deleting ? "Deleting…" : "Delete Vehicle"}
-        </AdminButton>
       </form>
 
       {toast && (

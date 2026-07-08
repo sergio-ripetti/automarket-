@@ -503,6 +503,16 @@ export default function AdminAddCar() {
         {/* Buttons */}
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <AdminButton
+            type="submit"
+            variant="dark"
+            size="md"
+            disabled={saving}
+            isLoading={saving}
+            style={{ flex: "1 1 auto", minWidth: "140px" }}
+          >
+            {saving ? "Saving…" : "Save Vehicle"}
+          </AdminButton>
+          <AdminButton
             type="button"
             variant="secondary"
             size="md"
@@ -510,16 +520,6 @@ export default function AdminAddCar() {
             style={{ flex: "1 1 auto", minWidth: "120px" }}
           >
             Cancel
-          </AdminButton>
-          <AdminButton
-            type="submit"
-            variant="primary"
-            size="md"
-            disabled={saving}
-            isLoading={saving}
-            style={{ flex: "2 1 auto", minWidth: "150px" }}
-          >
-            {saving ? "Saving…" : "Save Vehicle"}
           </AdminButton>
         </div>
       </form>
