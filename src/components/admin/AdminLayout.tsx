@@ -3,6 +3,8 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu, X,
 } from 'lucide-react'
+import { collection, query, where, onSnapshot } from 'firebase/firestore'
+import { db } from '../../lib/firebase'
 import { logoutAdmin } from '../../lib/authService'
 
 interface AdminLayoutProps { children: React.ReactNode }
@@ -26,6 +28,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       ? window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop'
       : 'desktop'
   )
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0)
+  const [pendingFinancingCount, setPendingFinancingCount] = useState(0)
 
   // Detect screen size
   useEffect(() => {
@@ -58,6 +62,27 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return () => { document.body.style.overflow = 'unset' }
   }, [sidebarOpen, screenSize])
 
+  // Real-time listeners for unread messages and pending financing
+  useEffect(() => {
+    // Listen for unread messages
+    const messagesQuery = query(collection(db, 'messages'), where('read', '==', false))
+    const unsubscribeMessages = onSnapshot(messagesQuery, (snap) => {
+      setUnreadMessageCount(snap.size)
+    })
+
+    // Listen for pending financing requests
+    const financingQuery = query(collection(db, 'financing'), where('status', '==', 'pending'))
+    const unsubscribeFinancing = onSnapshot(financingQuery, (snap) => {
+      setPendingFinancingCount(snap.size)
+    })
+
+    // Cleanup listeners on unmount
+    return () => {
+      unsubscribeMessages()
+      unsubscribeFinancing()
+    }
+  }, [])
+
   // Signs the admin out via Firebase auth and redirects to the login page
   const handleLogout = async () => {
     await logoutAdmin()
@@ -66,6 +91,13 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen)
   const closeSidebar = () => setSidebarOpen(false)
+
+  // Helper to get badge count for nav items
+  const getBadgeCount = (label: string): number => {
+    if (label === 'Messages') return unreadMessageCount
+    if (label === 'Financing') return pendingFinancingCount
+    return 0
+  }
 
   // Calculate sidebar widths (FIXED - never changes main content margin)
   const getCollapsedWidth = () => {
@@ -151,8 +183,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {/* LOGO (only visible when expanded) */}
         {isExpanded && (
           <div style={{ marginBottom: '2.5rem', marginTop: screenSize !== 'desktop' ? '1rem' : '1.5rem', paddingLeft: '0.5rem' }}>
-            <span className="font-bebas" style={{ fontSize: '1.5rem', color: '#FFFFFF', display: 'block' }}>
-              AutoMarket
+            <span className="font-bebas" style={{ fontSize: '1.5rem', display: 'block', letterSpacing: '0.05em' }}>
+              <span style={{ color: '#C4FF00' }}>Auto</span><span style={{ color: '#FFFFFF' }}>Market</span>
             </span>
             <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Admin Panel
@@ -162,40 +194,64 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* NAV LINKS */}
         <nav id="admin-sidebar-nav" className="admin-sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          {navItems.map(({ icon: Icon, label, to, end }) => (
-            <NavLink
-              key={to}
-              id={`admin-sidebar-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
-              className={`admin-sidebar-link admin-sidebar-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
-              to={to}
-              end={end}
-              onClick={closeSidebar}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: screenSize === 'desktop' ? '0.75rem 1rem' : '1rem',
-                borderRadius: screenSize === 'desktop' ? '0.625rem' : '0',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: isExpanded ? '0.875rem' : '0.75rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                textDecoration: 'none',
-                border: 'none',
-                background: 'none',
-                width: '100%',
-                textAlign: 'left' as const,
-                color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.65)',
-                backgroundColor: isActive ? 'rgba(196,255,0,0.15)' : 'transparent',
-                borderLeft: isActive ? '3px solid #C4FF00' : 'none',
-                paddingLeft: isActive ? 'calc(1rem - 3px)' : '1rem',
-                justifyContent: isExpanded ? 'flex-start' : 'center',
-              })}
-            >
-              <Icon size={18} style={{ flexShrink: 0 }} />
-              {isExpanded && <span>{label}</span>}
-            </NavLink>
-          ))}
+          {navItems.map(({ icon: Icon, label, to, end }) => {
+            const badgeCount = getBadgeCount(label)
+            return (
+              <NavLink
+                key={to}
+                id={`admin-sidebar-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
+                className={`admin-sidebar-link admin-sidebar-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
+                to={to}
+                end={end}
+                onClick={closeSidebar}
+                style={({ isActive }) => ({
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  padding: screenSize === 'desktop' ? '0.75rem 1rem' : '1rem',
+                  borderRadius: screenSize === 'desktop' ? '0.625rem' : '0',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: isExpanded ? '0.875rem' : '0.75rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  textDecoration: 'none',
+                  border: 'none',
+                  background: 'none',
+                  width: '100%',
+                  textAlign: 'left' as const,
+                  color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.65)',
+                  backgroundColor: isActive ? 'rgba(196,255,0,0.15)' : 'transparent',
+                  borderLeft: isActive ? '3px solid #C4FF00' : 'none',
+                  paddingLeft: isActive ? 'calc(1rem - 3px)' : '1rem',
+                  justifyContent: isExpanded && badgeCount > 0 ? 'space-between' : (isExpanded ? 'flex-start' : 'center'),
+                })}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Icon size={18} style={{ flexShrink: 0 }} />
+                  {isExpanded && <span>{label}</span>}
+                </div>
+                {isExpanded && badgeCount > 0 && (
+                  <span style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: '24px',
+                    height: '24px',
+                    paddingLeft: '0.5rem',
+                    paddingRight: '0.5rem',
+                    backgroundColor: '#C4FF00',
+                    color: '#1A1A1A',
+                    borderRadius: '12px',
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    flexShrink: 0,
+                  }}>
+                    {badgeCount}
+                  </span>
+                )}
+              </NavLink>
+            )
+          })}
         </nav>
 
         <div style={{ marginTop: 'auto' }} />
@@ -255,6 +311,43 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               <LogOut size={18} />
               Sign Out
             </button>
+
+            {/* SYSTEM STATUS SECTION */}
+            <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {/* Connected Status */}
+              <div style={{
+                backgroundColor: 'rgba(46, 125, 91, 0.1)',
+                border: '1px solid rgba(46, 125, 91, 0.3)',
+                borderRadius: '0.625rem',
+                padding: '0.75rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}>
+                <div style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: '#2E7D5B',
+                  flexShrink: 0,
+                }} />
+                <div>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', margin: '0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sistema</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#FFFFFF', margin: '0', fontWeight: 500 }}>Conectado</p>
+                </div>
+              </div>
+
+              {/* User Info */}
+              <div style={{
+                backgroundColor: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                borderRadius: '0.625rem',
+                padding: '0.75rem 1rem',
+              }}>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', margin: '0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Usuario</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#FFFFFF', margin: '0.25rem 0 0 0', fontWeight: 500 }}>Admin</p>
+              </div>
+            </div>
           </div>
         )}
       </aside>
