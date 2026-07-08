@@ -44,22 +44,22 @@ function fmtDate(dateStr: string | { toDate: () => Date }) {
   return '—'
 }
 
-// Generates Spanish subject line for messages based on type and content
+// Generates descriptive subject line for messages based on type and content
 function getMessageSubject(msg: Message): string {
   if (msg.type === 'financing') {
-    return 'Interesado en financiamiento'
+    return 'Interested in financing'
   }
   if (msg.type === 'offer') {
     if (msg.carTitle) {
-      return `Oferta por ${msg.carTitle}`
+      return `Offer for ${msg.carTitle}`
     }
-    return 'Oferta por vehículo'
+    return 'Vehicle offer'
   }
   // Default 'contact' or inquiry type
   if (msg.carTitle) {
-    return `Consulta sobre ${msg.carTitle}`
+    return `Inquiry about ${msg.carTitle}`
   }
-  return 'Consulta general'
+  return 'General inquiry'
 }
 
 const paymentTypeLabel: Record<string, string> = {
