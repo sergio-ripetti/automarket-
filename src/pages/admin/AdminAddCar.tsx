@@ -502,13 +502,24 @@ export default function AdminAddCar() {
 
         {/* Buttons */}
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          <style>{`
+            @media (max-width: 768px) {
+              .button-save-vehicle { flex: 1 1 100% !important; }
+              .button-cancel-add { flex: 1 1 100% !important; }
+            }
+            @media (min-width: 769px) {
+              .button-save-vehicle { flex: 1 1 auto !important; }
+              .button-cancel-add { flex: 1 1 auto !important; }
+            }
+          `}</style>
           <AdminButton
             type="submit"
             variant="dark"
             size="md"
             disabled={saving}
             isLoading={saving}
-            style={{ flex: "1 1 auto", minWidth: "140px" }}
+            className="button-save-vehicle"
+            style={{ minWidth: "140px" }}
           >
             {saving ? "Saving…" : "Save Vehicle"}
           </AdminButton>
@@ -517,7 +528,8 @@ export default function AdminAddCar() {
             variant="secondary"
             size="md"
             onClick={() => navigate("/admin/cars")}
-            style={{ flex: "1 1 auto", minWidth: "120px" }}
+            className="button-cancel-add"
+            style={{ minWidth: "120px" }}
           >
             Cancel
           </AdminButton>

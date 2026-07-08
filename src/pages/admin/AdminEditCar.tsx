@@ -576,13 +576,26 @@ const set = (field: keyof FormState, val: string | boolean) => {
 
         {/* Action buttons: Save Changes, Cancel, Delete Vehicle */}
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "flex-start" }}>
+          <style>{`
+            @media (max-width: 768px) {
+              .button-save-changes { flex: 1 1 100% !important; }
+              .button-cancel { flex: 1 1 100% !important; }
+              .button-delete { flex: 1 1 100% !important; }
+            }
+            @media (min-width: 769px) {
+              .button-save-changes { flex: 1 1 calc(33.333% - 0.67rem) !important; }
+              .button-cancel { flex: 1 1 calc(33.333% - 0.67rem) !important; }
+              .button-delete { flex: 1 1 calc(33.333% - 0.67rem) !important; }
+            }
+          `}</style>
           <AdminButton
             type="submit"
             variant="dark"
             size="md"
             disabled={saving}
             isLoading={saving}
-            style={{ flex: "1 1 calc(33.333% - 0.67rem)", minWidth: "120px" }}
+            className="button-save-changes"
+            style={{ minWidth: "120px" }}
           >
             {saving ? "Saving…" : "Save Changes"}
           </AdminButton>
@@ -591,7 +604,8 @@ const set = (field: keyof FormState, val: string | boolean) => {
             variant="secondary"
             size="md"
             onClick={() => navigate("/admin/cars")}
-            style={{ flex: "1 1 calc(33.333% - 0.67rem)", minWidth: "100px" }}
+            className="button-cancel"
+            style={{ minWidth: "100px" }}
           >
             Cancel
           </AdminButton>
@@ -602,7 +616,8 @@ const set = (field: keyof FormState, val: string | boolean) => {
             onClick={handleDelete}
             disabled={deleting}
             isLoading={deleting}
-            style={{ flex: "1 1 calc(33.333% - 0.67rem)", minWidth: "120px", justifyContent: "center", gap: "0.5rem" }}
+            className="button-delete"
+            style={{ minWidth: "120px", justifyContent: "center", gap: "0.5rem" }}
           >
             <Trash2 size={14} />
             {deleting ? "Deleting…" : "Delete Vehicle"}
