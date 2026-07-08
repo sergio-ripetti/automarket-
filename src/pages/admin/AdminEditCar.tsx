@@ -36,60 +36,6 @@ interface FormState {
 }
 
 
-// Reusable on/off switch control used for the Featured/On Sale toggles
-function Toggle({
-  value,
-  onChange,
-  label,
-}: {
-  value: boolean;
-  onChange: () => void;
-  label: string;
-}) {
-  return (
-    <label
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0.75rem",
-        cursor: "pointer",
-      }}>
-      <div
-        onClick={onChange}
-        style={{
-          width: 44,
-          height: 24,
-          borderRadius: 12,
-          cursor: "pointer",
-          backgroundColor: value ? "#C4FF00" : "rgba(255,255,255,0.12)",
-          position: "relative",
-          transition: "background-color 0.2s",
-          flexShrink: 0,
-        }}>
-        <div
-          style={{
-            position: "absolute",
-            top: 3,
-            left: value ? 23 : 3,
-            width: 18,
-            height: 18,
-            borderRadius: "50%",
-            backgroundColor: "white",
-            transition: "left 0.2s",
-          }}
-        />
-      </div>
-      <span
-        style={{
-          fontFamily: "Outfit",
-          fontSize: "0.875rem",
-          color: "rgba(255,255,255,0.7)",
-        }}>
-        {label}
-      </span>
-    </label>
-  );
-}
 
 // Admin page for editing an existing vehicle listing - loads the car from Firestore by id, allows manual edits or API-based spec refresh, and supports save/delete
 export default function AdminEditCar() {
@@ -480,6 +426,17 @@ const set = (field: keyof FormState, val: string | boolean) => {
                   cursor: "pointer",
                   border: "1px solid #E0E0DC",
                   borderRadius: "0.625rem",
+                  backgroundColor: "#FFFFFF",
+                  outline: "none",
+                  transition: "all 0.2s ease",
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#C4FF00"
+                  e.currentTarget.style.boxShadow = "0 0 0 3px rgba(196,255,0,0.1)"
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "#E0E0DC"
+                  e.currentTarget.style.boxShadow = "none"
                 }}
               />
             </div>
@@ -603,14 +560,14 @@ const set = (field: keyof FormState, val: string | boolean) => {
         </div>
 
         {/* Toggles */}
-        <div style={{ display: "flex", gap: "2rem", marginBottom: "2rem" }}>
-          <Toggle
-            value={form.featured}
+        <div style={{ display: "flex", gap: "2rem", marginBottom: "2rem", flexWrap: "wrap" }}>
+          <AdminCheckbox
+            checked={form.featured}
             onChange={() => set("featured", !form.featured)}
             label="Featured Vehicle"
           />
-          <Toggle
-            value={form.isOnSale}
+          <AdminCheckbox
+            checked={form.isOnSale}
             onChange={() => set("isOnSale", !form.isOnSale)}
             label="On Sale"
           />
