@@ -44,6 +44,24 @@ function fmtDate(dateStr: string | { toDate: () => Date }) {
   return '—'
 }
 
+// Generates Spanish subject line for messages based on type and content
+function getMessageSubject(msg: Message): string {
+  if (msg.type === 'financing') {
+    return 'Interesado en financiamiento'
+  }
+  if (msg.type === 'offer') {
+    if (msg.carTitle) {
+      return `Oferta por ${msg.carTitle}`
+    }
+    return 'Oferta por vehículo'
+  }
+  // Default 'contact' or inquiry type
+  if (msg.carTitle) {
+    return `Consulta sobre ${msg.carTitle}`
+  }
+  return 'Consulta general'
+}
+
 const paymentTypeLabel: Record<string, string> = {
   cash: 'Cash', financing: 'Financing', mixed: 'Mixed',
 }
@@ -444,53 +462,49 @@ export default function AdminDashboard() {
       {/* ── Recent Messages ── */}
       <style>{`
         .messages-grid {
-          display: grid;
-          gap: 0.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0;
         }
         .message-item {
           display: flex;
           gap: 0.75rem;
-          padding: 1rem;
-          background-color: #FFFFFF;
-          border: 1px solid #E0E0DC;
-          border-radius: 0.75rem;
-          box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+          padding: 1rem 0;
+          background-color: transparent;
+          border: none;
+          border-bottom: 1px solid #E0E0DC;
+          border-radius: 0;
+          box-shadow: none;
         }
-        .message-item.unread {
-          border-color: #E0E0DC;
-          background-color: #F7F7F5;
+        .message-item:last-child {
+          border-bottom: none;
         }
         .message-content {
           flex: 1;
-          minWidth: 0;
+          min-width: 0;
         }
         .message-header {
           display: flex;
           justify-content: space-between;
           align-items: baseline;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.25rem;
           gap: 0.75rem;
         }
-        .message-tag {
-          display: inline-block;
-          font-family: Outfit;
-          font-size: 0.65rem;
-          font-weight: 600;
-          padding: 0.25rem 0.5rem;
-          border-radius: 0.375rem;
-          background-color: rgba(46, 125, 91, 0.1);
-          color: #2E7D5B;
-          margin-bottom: 0.5rem;
-        }
-        .message-text {
+        .message-subject {
           font-family: Outfit;
           font-size: 0.8rem;
-          color: #4A4A4A;
+          font-weight: 500;
           line-height: 1.4;
-          margin-bottom: 0.5rem;
+          margin: 0;
+        }
+        .message-subject-inquiry {
+          color: #2E7D5B;
+        }
+        .message-subject-financing {
+          color: #B7791F;
         }
         .message-date {
-          font-size: 0.65rem;
+          font-size: 0.75rem;
           color: #767676;
           flex-shrink: 0;
         }
@@ -504,31 +518,34 @@ export default function AdminDashboard() {
       <div className="messages-grid">
         {recentMessages.length === 0 ? (
           <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '0.9rem', padding: '1rem', textAlign: 'center' }}>No messages</p>
-        ) : recentMessages.map((msg, idx) => (
-          <div key={msg.id} id={`admin-dashboard-recent-messages-item-${idx}`} className={`message-item ${!msg.read ? 'unread' : ''}`} style={{
-            borderColor: !msg.read ? 'rgba(29,78,216,0.2)' : '#E0E0DC',
-            backgroundColor: !msg.read ? 'rgba(29,78,216,0.02)' : '#FFFFFF',
-          }}>
-            <div style={{
-              width: 6,
-              height: 6,
-              borderRadius: '50%',
-              backgroundColor: msg.read ? '#767676' : '#C4FF00',
-              flexShrink: 0,
-              marginTop: '0.5rem',
-            }} />
-            <div className="message-content">
-              <div className="message-header">
-                <p style={{ fontFamily: 'Outfit', color: '#1A1A1A', fontSize: '0.85rem', margin: 0, fontWeight: 600 }}>{msg.senderName}</p>
-                <p className="message-date">{fmtDate(msg.createdAt as unknown as { toDate: () => Date })}</p>
+        ) : recentMessages.map((msg, idx) => {
+          const isFinancing = msg.type === 'financing'
+          const subjectColor = isFinancing ? '#B7791F' : '#2E7D5B'
+          const dotColor = isFinancing ? '#B7791F' : '#2E7D5B'
+          const subject = getMessageSubject(msg)
+
+          return (
+            <div key={msg.id} id={`admin-dashboard-recent-messages-item-${idx}`} className="message-item">
+              <div style={{
+                width: 6,
+                height: 6,
+                borderRadius: '50%',
+                backgroundColor: dotColor,
+                flexShrink: 0,
+                marginTop: '0.35rem',
+              }} />
+              <div className="message-content">
+                <div className="message-header">
+                  <p style={{ fontFamily: 'Outfit', color: '#1A1A1A', fontSize: '0.85rem', margin: 0, fontWeight: 600 }}>{msg.senderName}</p>
+                  <p className="message-date">{fmtDate(msg.createdAt as unknown as { toDate: () => Date })}</p>
+                </div>
+                <p className={`message-subject ${isFinancing ? 'message-subject-financing' : 'message-subject-inquiry'}`}>
+                  {subject}
+                </p>
               </div>
-              <span className="message-tag">{msg.reason}</span>
-              <p className="message-text" style={{ margin: 0 }}>
-                {msg.message.length > 120 ? `${msg.message.substring(0, 120)}...` : msg.message}
-              </p>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
