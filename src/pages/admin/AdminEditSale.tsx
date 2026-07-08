@@ -5,6 +5,10 @@ import { getSaleById, updateSale, type Sale, type Documents } from '../../lib/sa
 import { uploadImage, uploadDocument } from '../../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../../lib/sanitize'
 import { showToast } from '../../lib/toast'
+import AdminInput from '../../components/admin/AdminInput'
+import AdminTextarea from '../../components/admin/AdminTextarea'
+import AdminButton from '../../components/admin/AdminButton'
+import AdminLabel from '../../components/admin/AdminLabel'
 
 // Formats a numeric price as NZD currency
 function fmt(price: number) {
@@ -194,12 +198,6 @@ export default function AdminEditSale() {
     )
   }
 
-  const inputStyle = (hasErr = false): React.CSSProperties => ({
-    width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-    backgroundColor: '#FFFFFF', border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : '#E0E0DC'}`,
-    color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-  })
-
   return (
     <div>
       <style>{`
@@ -255,32 +253,44 @@ export default function AdminEditSale() {
               Buyer Information
             </h3>
             <div className="admin-edit-sale-grid-2col">
-              {[
-                { label: 'Full Name', key: 'buyerName' },
-                { label: 'ID Number', key: 'buyerIdNumber' },
-                { label: 'Email', key: 'buyerEmail' },
-                { label: 'Phone', key: 'buyerPhone' },
-                { label: 'License Number', key: 'buyerLicense' },
-                { label: 'Address', key: 'buyerAddress', span: true },
-              ].map(({ label, key, span }) => (
-                <div key={key} style={{ gridColumn: span ? '1 / -1' : 'auto' }}>
-                  <label style={{
-                    display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                    color: '#767676', letterSpacing: '0.1em',
-                    textTransform: 'uppercase', marginBottom: '0.5rem',
-                  }}>
-                    {label}
-                  </label>
-                  <input
-                    type="text"
-                    value={form[key as keyof typeof form] as string}
-                    onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
-                    style={inputStyle()}
-                    onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                    onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
-                  />
-                </div>
-              ))}
+              <AdminInput
+                label="Full Name"
+                type="text"
+                value={form.buyerName}
+                onChange={(e) => setForm((f) => ({ ...f, buyerName: e.target.value }))}
+              />
+              <AdminInput
+                label="ID Number"
+                type="text"
+                value={form.buyerIdNumber}
+                onChange={(e) => setForm((f) => ({ ...f, buyerIdNumber: e.target.value }))}
+              />
+              <AdminInput
+                label="Email"
+                type="text"
+                value={form.buyerEmail}
+                onChange={(e) => setForm((f) => ({ ...f, buyerEmail: e.target.value }))}
+              />
+              <AdminInput
+                label="Phone"
+                type="text"
+                value={form.buyerPhone}
+                onChange={(e) => setForm((f) => ({ ...f, buyerPhone: e.target.value }))}
+              />
+              <AdminInput
+                label="License Number"
+                type="text"
+                value={form.buyerLicense}
+                onChange={(e) => setForm((f) => ({ ...f, buyerLicense: e.target.value }))}
+              />
+              <div style={{ gridColumn: '1 / -1' }}>
+                <AdminInput
+                  label="Address"
+                  type="text"
+                  value={form.buyerAddress}
+                  onChange={(e) => setForm((f) => ({ ...f, buyerAddress: e.target.value }))}
+                />
+              </div>
             </div>
           </div>
 
@@ -293,93 +303,40 @@ export default function AdminEditSale() {
               Payment Information
             </h3>
             <div className="admin-edit-sale-grid-2col">
-              <div>
-                <label style={{
-                  display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: '#767676', letterSpacing: '0.1em',
-                  textTransform: 'uppercase', marginBottom: '0.5rem',
-                }}>
-                  Sale Date
-                </label>
-                <input
-                  type="date"
-                  value={form.saleDate}
-                  onChange={(e) => setForm((f) => ({ ...f, saleDate: e.target.value }))}
-                  style={inputStyle()}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
-                />
-              </div>
-              <div>
-                <label style={{
-                  display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: '#767676', letterSpacing: '0.1em',
-                  textTransform: 'uppercase', marginBottom: '0.5rem',
-                }}>
-                  Sale Price (NZD)
-                </label>
-                <input
-                  type="number"
-                  value={form.salePrice}
-                  onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
-                  style={inputStyle()}
-                  onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
-                />
-              </div>
+              <AdminInput
+                label="Sale Date"
+                type="date"
+                value={form.saleDate}
+                onChange={(e) => setForm((f) => ({ ...f, saleDate: e.target.value }))}
+              />
+              <AdminInput
+                label="Sale Price (NZD)"
+                type="number"
+                value={form.salePrice.toString()}
+                onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
+              />
               {sale.paymentPlan.type !== 'cash' && (
                 <>
-                  <div>
-                    <label style={{
-                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: '#767676', letterSpacing: '0.1em',
-                      textTransform: 'uppercase', marginBottom: '0.5rem',
-                    }}>
-                      Down Payment (NZD)
-                    </label>
-                    <input
-                      type="number"
-                      value={form.downPayment}
-                      onChange={(e) => setForm((f) => ({ ...f, downPayment: Number(e.target.value) }))}
-                      style={inputStyle()}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{
-                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: '#767676', letterSpacing: '0.1em',
-                      textTransform: 'uppercase', marginBottom: '0.5rem',
-                    }}>
-                      Loan Term (months)
-                    </label>
-                    <input
-                      type="number"
-                      value={form.loanTerm}
-                      onChange={(e) => setForm((f) => ({ ...f, loanTerm: Number(e.target.value) }))}
-                      style={inputStyle()}
-                      onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
-                    />
-                  </div>
+                  <AdminInput
+                    label="Down Payment (NZD)"
+                    type="number"
+                    value={form.downPayment.toString()}
+                    onChange={(e) => setForm((f) => ({ ...f, downPayment: Number(e.target.value) }))}
+                  />
+                  <AdminInput
+                    label="Loan Term (months)"
+                    type="number"
+                    value={form.loanTerm.toString()}
+                    onChange={(e) => setForm((f) => ({ ...f, loanTerm: Number(e.target.value) }))}
+                  />
                 </>
               )}
             </div>
             <div style={{ marginTop: '1rem' }}>
-              <label style={{
-                display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                color: '#767676', letterSpacing: '0.1em',
-                textTransform: 'uppercase', marginBottom: '0.5rem',
-              }}>
-                Notes
-              </label>
-              <textarea
+              <AdminTextarea
+                label="Notes"
                 value={form.notes}
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
-                style={{ ...inputStyle(), minHeight: '100px', resize: 'vertical' } as React.CSSProperties}
-                onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
               />
             </div>
 
@@ -610,29 +567,24 @@ export default function AdminEditSale() {
             </div>
 
             <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <button
+              <AdminButton
                 onClick={() => navigate(`/admin/sales/${id}`)}
-                style={{
-                  flex: 1, padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-                  backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-                  color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
-                }}
+                variant="secondary"
+                size="md"
+                style={{ flex: 1 }}
               >
                 Cancel
-              </button>
-              <button
+              </AdminButton>
+              <AdminButton
                 onClick={handleSave}
                 disabled={saving}
-                style={{
-                  flex: 1, padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-                  background: '#1A1A1A',
-                  color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
-                  cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.5 : 1,
-                  border: 'none',
-                }}
+                variant="primary"
+                size="md"
+                isLoading={saving}
+                style={{ flex: 1 }}
               >
                 {saving ? 'Saving...' : 'Save Changes'}
-              </button>
+              </AdminButton>
             </div>
           </div>
         </div>
