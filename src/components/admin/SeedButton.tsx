@@ -6,8 +6,12 @@ import { sanitizeForFirestore } from '../../lib/sanitize'
 import carsCatalog from '../../data/cars-catalog.json'
 import type { Car } from '../../types'
 
+interface SeedButtonProps {
+  position?: 'fixed' | 'inline'
+}
+
 // Admin utility button that bulk-imports the static car catalog into Firestore, showing progress and status messages
-export default function SeedButton() {
+export default function SeedButton({ position = 'fixed' }: SeedButtonProps) {
   const [importing, setImporting] = useState(false)
   const [progress, setProgress] = useState(0)
   const [message, setMessage] = useState('')
@@ -49,9 +53,9 @@ export default function SeedButton() {
   return (
     <div
       style={{
-        position: 'fixed',
-        bottom: '2rem',
-        right: '2rem',
+        position: position === 'inline' ? 'relative' : 'fixed',
+        bottom: position === 'inline' ? 'auto' : '2rem',
+        right: position === 'inline' ? 'auto' : '2rem',
         zIndex: 50,
         display: 'flex',
         flexDirection: 'column',
@@ -86,27 +90,25 @@ export default function SeedButton() {
           alignItems: 'center',
           gap: '0.5rem',
           padding: '0.75rem 1.25rem',
-          backgroundColor: importing ? 'rgba(29,78,216,0.3)' : 'rgba(29,78,216,0.2)',
-          border: '1px solid rgba(29,78,216,0.4)',
+          backgroundColor: importing ? '#2A2A2A' : '#1A1A1A',
+          border: '1px solid #1A1A1A',
           borderRadius: '0.625rem',
-          color: '#C4FF00',
+          color: '#FFFFFF',
           fontFamily: 'Outfit',
           fontSize: '0.875rem',
           fontWeight: 600,
           cursor: importing ? 'not-allowed' : 'pointer',
-          opacity: importing ? 0.7 : 1,
+          opacity: importing ? 0.65 : 1,
           transition: 'all 0.2s',
         }}
         onMouseEnter={(e) => {
           if (!importing) {
-            e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.3)'
-            e.currentTarget.style.borderColor = 'rgba(29,78,216,0.6)'
+            e.currentTarget.style.backgroundColor = '#2A2A2A'
           }
         }}
         onMouseLeave={(e) => {
           if (!importing) {
-            e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.2)'
-            e.currentTarget.style.borderColor = 'rgba(29,78,216,0.4)'
+            e.currentTarget.style.backgroundColor = '#1A1A1A'
           }
         }}
       >
