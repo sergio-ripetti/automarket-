@@ -171,9 +171,9 @@ export default function AdminCars() {
             <span style={{
               fontFamily: 'Inter, sans-serif',
               fontSize: '0.875rem',
-              color: checked ? '#C4FF00' : '#4A4A4A',
-              fontWeight: checked ? 500 : 400,
-              transition: 'color 0.2s ease',
+              color: '#4A4A4A',
+              fontWeight: 400,
+              transition: 'all 0.2s ease',
             }}>
               {label}
             </span>
@@ -305,8 +305,9 @@ export default function AdminCars() {
                   <span style={{
                     fontFamily: 'Inter, sans-serif',
                     fontSize: '0.8rem',
-                    color: car.featured ? '#C4FF00' : '#4A4A4A',
-                    transition: 'color 0.2s ease',
+                    color: '#1A1A1A',
+                    textDecoration: 'underline',
+                    transition: 'all 0.2s ease',
                   }}>
                     Mark as Featured
                   </span>
