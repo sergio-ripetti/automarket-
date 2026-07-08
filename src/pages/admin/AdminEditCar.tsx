@@ -10,6 +10,7 @@ import AdminInput from "../../components/admin/AdminInput";
 import AdminSelect from "../../components/admin/AdminSelect";
 import AdminTextarea from "../../components/admin/AdminTextarea";
 import AdminButton from "../../components/admin/AdminButton";
+import AdminCheckbox from "../../components/admin/AdminCheckbox";
 import AdminLabel from "../../components/admin/AdminLabel";
 import type { Car } from "../../types";
 
