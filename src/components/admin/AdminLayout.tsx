@@ -332,8 +332,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   flexShrink: 0,
                 }} />
                 <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', margin: '0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sistema</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#FFFFFF', margin: '0', fontWeight: 500 }}>Conectado</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', margin: '0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>System</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#FFFFFF', margin: '0', fontWeight: 500 }}>Connected</p>
                 </div>
               </div>
 
@@ -344,7 +344,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 borderRadius: '0.625rem',
                 padding: '0.75rem 1rem',
               }}>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', margin: '0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Usuario</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', margin: '0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>User</p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#FFFFFF', margin: '0.25rem 0 0 0', fontWeight: 500 }}>Admin</p>
               </div>
             </div>
