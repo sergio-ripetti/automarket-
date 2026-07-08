@@ -575,23 +575,23 @@ const set = (field: keyof FormState, val: string | boolean) => {
         </div>
 
         {/* Save / Cancel buttons */}
-        <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
+        <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
           <AdminButton
             type="button"
             variant="secondary"
-            size="lg"
+            size="md"
             onClick={() => navigate("/admin/cars")}
-            style={{ flex: 1 }}
+            style={{ flex: "1 1 auto", minWidth: "100px" }}
           >
             Cancel
           </AdminButton>
           <AdminButton
             type="submit"
             variant="primary"
-            size="lg"
+            size="md"
             disabled={saving}
             isLoading={saving}
-            style={{ flex: 2 }}
+            style={{ flex: "1.5 1 auto", minWidth: "140px" }}
           >
             {saving ? "Saving…" : "Save Changes"}
           </AdminButton>

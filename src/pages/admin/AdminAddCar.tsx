@@ -501,23 +501,23 @@ export default function AdminAddCar() {
         </div>
 
         {/* Buttons */}
-        <div style={{ display: "flex", gap: "1rem" }}>
+        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
           <AdminButton
             type="button"
             variant="secondary"
-            size="lg"
+            size="md"
             onClick={() => navigate("/admin/cars")}
-            style={{ flex: 1 }}
+            style={{ flex: "1 1 auto", minWidth: "120px" }}
           >
             Cancel
           </AdminButton>
           <AdminButton
             type="submit"
             variant="primary"
-            size="lg"
+            size="md"
             disabled={saving}
             isLoading={saving}
-            style={{ flex: 2 }}
+            style={{ flex: "2 1 auto", minWidth: "150px" }}
           >
             {saving ? "Saving…" : "Save Vehicle"}
           </AdminButton>

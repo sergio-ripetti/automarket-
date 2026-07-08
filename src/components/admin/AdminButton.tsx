@@ -71,10 +71,18 @@ export default function AdminButton({
     opacity: disabled || isLoading ? 0.6 : 1,
   }
 
+  // Merge user-provided styles without letting them override button styles
+  const mergedStyles = {
+    ...buttonStyles,
+    ...(props.style || {}),
+  } as React.CSSProperties
+
+  const { style, ...restProps } = props
+
   return (
     <button
       className={className}
-      style={buttonStyles as React.CSSProperties}
+      style={mergedStyles}
       disabled={disabled || isLoading}
       onMouseEnter={(e) => {
         if (!disabled && !isLoading) {
@@ -104,7 +112,7 @@ export default function AdminButton({
           target.style.borderColor = '#E0E0DC'
         }
       }}
-      {...props}
+      {...restProps}
     >
       {isLoading && <span>⏳</span>}
       {children}
