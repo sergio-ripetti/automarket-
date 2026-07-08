@@ -135,15 +135,14 @@ export default function AdminSales() {
         }
         .admin-sales-stat-label {
           font-size: clamp(0.75rem, 2vw, 0.875rem);
-          color: #e5e7eb;
+          color: #767676;
           margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
           font-family: 'Outfit', sans-serif;
           text-transform: capitalize;
-          opacity: 0.7;
         }
         .admin-sales-stat-value {
           font-size: clamp(1.5rem, 5vw, 2.25rem);
-          color: #C4FF00;
+          color: #1A1A1A;
           font-family: 'Bebas Neue', sans-serif;
           letter-spacing: 0.05em;
           line-height: 1;
@@ -153,9 +152,9 @@ export default function AdminSales() {
           align-items: center;
           gap: clamp(0.5rem, 1.5vw, 0.75rem);
           padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem);
-          border: 1px solid #C4FF00;
-          background: linear-gradient(135deg, rgba(29,78,216,0.2) 0%, rgba(29,78,216,0.1) 100%);
-          color: #C4FF00;
+          border: 1px solid #1A1A1A;
+          background: #1A1A1A;
+          color: #FFFFFF;
           font-size: clamp(0.875rem, 2vw, 1rem);
           font-weight: 600;
           font-family: 'Outfit', sans-serif;
@@ -167,9 +166,8 @@ export default function AdminSales() {
           text-decoration: none;
         }
         .admin-sales-new-btn:hover {
-          background: linear-gradient(135deg, rgba(29,78,216,0.3) 0%, rgba(29,78,216,0.2) 100%);
-          color: #A8C5D8;
-          box-shadow: 0 0 20px rgba(29,78,216,0.3);
+          background: #2A2A2A;
+          box-shadow: 0 0 20px rgba(0,0,0,0.3);
           transform: translateY(-2px);
         }
         .admin-sales-new-btn:active {
@@ -178,9 +176,9 @@ export default function AdminSales() {
         }
         .admin-sales-filter-btn {
           padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2.5vw, 1.5rem);
-          border: 1px solid rgba(255,255,255,0.2);
-          background: rgba(255,255,255,0.05);
-          color: #e5e7eb;
+          border: 1px solid #E0E0DC;
+          background: #F2F2F0;
+          color: #4A4A4A;
           border-radius: 0.375rem;
           font-size: clamp(0.8rem, 1.5vw, 0.9rem);
           font-weight: 500;
@@ -203,9 +201,9 @@ export default function AdminSales() {
         .admin-sales-search-input {
           width: 100%;
           padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2vw, 1.25rem);
-          border: 1px solid rgba(255,255,255,0.1);
-          background: rgba(255,255,255,0.05);
-          color: #ffffff;
+          border: 1px solid #E0E0DC;
+          background: #FFFFFF;
+          color: #1A1A1A;
           border-radius: 0.375rem;
           font-size: clamp(0.875rem, 2vw, 1rem);
           font-family: 'Outfit', sans-serif;
@@ -214,7 +212,7 @@ export default function AdminSales() {
           box-sizing: border-box;
         }
         .admin-sales-search-input::placeholder {
-          color: rgba(229,231,235,0.5);
+          color: #767676;
         }
         .admin-sales-search-input:focus {
           border-color: rgba(29,78,216,0.5);
@@ -363,7 +361,7 @@ export default function AdminSales() {
                     <p style={{ fontSize: '0.7rem', color: '#767676' }}>{sale.buyer.email}</p>
                   </td>
                   {/* Price */}
-                  <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#C4FF00', fontSize: 'clamp(0.85rem, 2vw, 1rem)' }}>{fmt(sale.paymentPlan.salePrice)}</td>
+                  <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#1A1A1A', fontSize: 'clamp(0.85rem, 2vw, 1rem)', fontWeight: 'bold' }}>{fmt(sale.paymentPlan.salePrice)}</td>
                   {/* Type */}
                   <td>
                     <Badge

@@ -187,7 +187,7 @@ export default function AdminEditSale() {
         <p style={{ fontFamily: 'Outfit', color: '#767676', marginBottom: '1rem' }}>Sale not found</p>
         <button onClick={() => navigate('/admin/sales')} style={{
           padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-          background: 'linear-gradient(135deg, #C4FF00, #1F5680)', color: "#0D1B2A",
+          background: '#1A1A1A', color: "#0D1B2A",
           fontFamily: 'Outfit', cursor: 'pointer', border: 'none',
         }}>Back to Sales</button>
       </div>
@@ -196,7 +196,7 @@ export default function AdminEditSale() {
 
   const inputStyle = (hasErr = false): React.CSSProperties => ({
     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-    backgroundColor: '#F2F2F0', border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#FFFFFF', border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : '#E0E0DC'}`,
     color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
   })
 
@@ -277,7 +277,7 @@ export default function AdminEditSale() {
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                     style={inputStyle()}
                     onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                    onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                    onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                   />
                 </div>
               ))}
@@ -307,7 +307,7 @@ export default function AdminEditSale() {
                   onChange={(e) => setForm((f) => ({ ...f, saleDate: e.target.value }))}
                   style={inputStyle()}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                 />
               </div>
               <div>
@@ -324,7 +324,7 @@ export default function AdminEditSale() {
                   onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
                   style={inputStyle()}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                 />
               </div>
               {sale.paymentPlan.type !== 'cash' && (
@@ -343,7 +343,7 @@ export default function AdminEditSale() {
                       onChange={(e) => setForm((f) => ({ ...f, downPayment: Number(e.target.value) }))}
                       style={inputStyle()}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                     />
                   </div>
                   <div>
@@ -360,7 +360,7 @@ export default function AdminEditSale() {
                       onChange={(e) => setForm((f) => ({ ...f, loanTerm: Number(e.target.value) }))}
                       style={inputStyle()}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                     />
                   </div>
                 </>
@@ -379,7 +379,7 @@ export default function AdminEditSale() {
                 onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                 style={{ ...inputStyle(), minHeight: '100px', resize: 'vertical' } as React.CSSProperties}
                 onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
               />
             </div>
 
@@ -465,7 +465,7 @@ export default function AdminEditSale() {
                     }}>
                       <div style={{
                         height: '80px',
-                        backgroundColor: '#F2F2F0',
+                        backgroundColor: '#FFFFFF',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -519,7 +519,7 @@ export default function AdminEditSale() {
                         ) : (
                           <div style={{
                             height: '100px',
-                            backgroundColor: '#F2F2F0',
+                            backgroundColor: '#FFFFFF',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -625,7 +625,7 @@ export default function AdminEditSale() {
                 disabled={saving}
                 style={{
                   flex: 1, padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-                  background: 'linear-gradient(135deg, #C4FF00, #1F5680)',
+                  background: '#1A1A1A',
                   color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
                   cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.5 : 1,
                   border: 'none',

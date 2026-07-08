@@ -13,8 +13,8 @@ export default function AdminLogin() {
 
   const inputStyle = (name: string): React.CSSProperties => ({
     width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#F2F2F0',
-    border: `1px solid ${focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
+    backgroundColor: '#FFFFFF',
+    border: `1px solid ${focused === name ? '#C4FF00' : '#E0E0DC'}`,
     borderRadius: '0.625rem', padding: '0.875rem 1rem',
     color: "#1A1A1A", fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
     outline: 'none', transition: 'border-color 0.2s',
@@ -41,7 +41,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F2F2F0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <div style={{
         width: '100%', maxWidth: '420px',
         backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',

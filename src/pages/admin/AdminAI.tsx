@@ -295,7 +295,7 @@ export default function AdminAI() {
   return (
     <div id="admin-ai-main-container" className="admin-ai-main-container" style={{
       display: 'flex', flexDirection: 'column', height: 'calc(100vh - 0px)',
-      backgroundColor: '#F2F2F0', width: '100%', maxWidth: '100%',
+      backgroundColor: '#FFFFFF', width: '100%', maxWidth: '100%',
       boxSizing: 'border-box', overflow: 'hidden',
     }}>
       <style>{`
@@ -343,7 +343,7 @@ export default function AdminAI() {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'
-                e.currentTarget.style.color = 'rgba(255,255,255,0.7)'
+                e.currentTarget.style.color = '#4A4A4A'
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'
@@ -410,7 +410,7 @@ export default function AdminAI() {
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(29,78,216,0.2)'
-                      e.currentTarget.style.color = 'rgba(255,255,255,0.7)'
+                      e.currentTarget.style.color = '#4A4A4A'
                     }}
                   >
                     {question}
@@ -430,10 +430,10 @@ export default function AdminAI() {
                 <div style={{
                   maxWidth: msg.role === 'user' ? '70%' : '80%',
                   backgroundColor: msg.role === 'user'
-                    ? '#C4FF00'
+                    ? '#1A1A1A'
                     : '#E4EAF0',
                   border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                  color: msg.role === 'user' ? 'white' : 'white',
+                  color: msg.role === 'user' ? 'white' : '#1A1A1A',
                   borderRadius: msg.role === 'user' ? '1rem 1rem 0.25rem 1rem' : '1rem 1rem 1rem 0.25rem',
                   padding: '0.875rem 1.25rem',
                   fontFamily: 'Outfit',
@@ -446,7 +446,7 @@ export default function AdminAI() {
                   {msg.timestamp && (
                     <p style={{
                       fontSize: '0.65rem',
-                      color: msg.role === 'user' ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.4)',
+                      color: msg.role === 'user' ? '#4A4A4A' : '#4A4A4A',
                       marginTop: '0.5rem',
                       marginBottom: 0,
                     }}>
@@ -496,7 +496,7 @@ export default function AdminAI() {
       {/* Input Area */}
       <div id="admin-ai-input-wrapper" className="admin-ai-input-wrapper" style={{
         padding: 'clamp(0.75rem, 3vw, 1.5rem)', borderTop: '1px solid rgba(255,255,255,0.06)',
-        backgroundColor: '#F2F2F0', width: '100%', boxSizing: 'border-box',
+        backgroundColor: '#FFFFFF', width: '100%', boxSizing: 'border-box',
       }}>
         <div style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 0.75rem)', width: '100%', boxSizing: 'border-box' }}>
           <input
@@ -509,7 +509,7 @@ export default function AdminAI() {
             placeholder="Ask me anything..."
             disabled={loading}
             style={{
-              flex: 1, minWidth: 0, backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.08)',
+              flex: 1, minWidth: 0, backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
               borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem)',
               color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
               outline: 'none', transition: 'all 0.2s', width: '100%', boxSizing: 'border-box',
@@ -522,7 +522,7 @@ export default function AdminAI() {
               }
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+              e.currentTarget.style.borderColor = '#E0E0DC'
             }}
           />
           <button
@@ -534,9 +534,9 @@ export default function AdminAI() {
               padding: 'clamp(0.75rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem)',
               borderRadius: '0.75rem', minWidth: '44px', flexShrink: 0,
               background: loading || !inputValue.trim()
-                ? 'rgba(29,78,216,0.3)'
-                : 'linear-gradient(135deg, #C4FF00, #1F5680)',
-              color: loading || !inputValue.trim() ? 'rgba(0,0,0,0.3)' : 'black',
+                ? '#E0E0DC'
+                : '#1A1A1A',
+              color: loading || !inputValue.trim() ? '#767676' : '#FFFFFF',
               fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
               border: 'none', cursor: loading || !inputValue.trim() ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', gap: '0.5rem',

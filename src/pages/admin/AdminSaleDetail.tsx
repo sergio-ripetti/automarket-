@@ -61,7 +61,7 @@ export default function AdminSaleDetail() {
         <p style={{ fontFamily: 'Outfit', color: '#767676', marginBottom: '1rem' }}>Sale not found</p>
         <button onClick={() => navigate('/admin/sales')} style={{
           padding: '0.75rem 1.5rem', borderRadius: '0.625rem',
-          background: 'linear-gradient(135deg, #C4FF00, #1F5680)', color: "#0D1B2A",
+          background: '#1A1A1A', color: "#0D1B2A",
           fontFamily: 'Outfit', cursor: 'pointer', border: 'none',
         }}>
           Back to Sales
@@ -606,7 +606,7 @@ export default function AdminSaleDetail() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
                 {((sale.documents as any).uploadedDocuments as string[]).map((url, i) => (
                   <div key={i} style={{
-                    backgroundColor: '#F2F2F0',
+                    backgroundColor: '#FFFFFF',
                     borderRadius: '0.75rem',
                     overflow: 'hidden',
                     border: '1px solid rgba(29,78,216,0.2)',
@@ -619,7 +619,7 @@ export default function AdminSaleDetail() {
                     ) : (
                       <div style={{
                         height: '100px',
-                        backgroundColor: '#F2F2F0',
+                        backgroundColor: '#FFFFFF',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -968,9 +968,9 @@ export default function AdminSaleDetail() {
                       style={{
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         width: '32px', height: '32px',
-                        backgroundColor: '#E4EAF0', border: 'rgba(255,255,255,0.08)',
+                        backgroundColor: '#E4EAF0', border: '#E0E0DC',
                         borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
-                        color: paymentPage === 0 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)',
+                        color: paymentPage === 0 ? 'rgba(255,255,255,0.3)' : '#4A4A4A',
                         cursor: paymentPage === 0 ? 'not-allowed' : 'pointer',
                         transition: 'all 0.2s',
                       }}
@@ -997,7 +997,7 @@ export default function AdminSaleDetail() {
                             backgroundColor: paymentPage === p ? '#C4FF00' : '#E4EAF0',
                             border: '1px solid rgba(255,255,255,0.08)',
                             borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
-                            color: paymentPage === p ? 'black' : 'rgba(255,255,255,0.6)',
+                            color: paymentPage === p ? 'black' : '#4A4A4A',
                             fontWeight: paymentPage === p ? 700 : 400,
                             fontFamily: 'Outfit', fontSize: '0.875rem',
                             cursor: 'pointer', transition: 'all 0.2s',
@@ -1016,7 +1016,7 @@ export default function AdminSaleDetail() {
                         width: '32px', height: '32px',
                         backgroundColor: '#E4EAF0', border: '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
-                        color: paymentPage === totalPages - 1 ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.6)',
+                        color: paymentPage === totalPages - 1 ? 'rgba(255,255,255,0.3)' : '#4A4A4A',
                         cursor: paymentPage === totalPages - 1 ? 'not-allowed' : 'pointer',
                         transition: 'all 0.2s',
                       }}

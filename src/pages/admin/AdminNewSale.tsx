@@ -347,14 +347,14 @@ export default function AdminNewSale() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
               <div style={{
                 width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundColor: s < step ? '#22c55e' : s === step ? '#C4FF00' : 'rgba(255,255,255,0.1)',
-                color: s < step ? 'white' : s === step ? 'white' : 'rgba(255,255,255,0.3)',
+                backgroundColor: s < step ? '#22c55e' : s === step ? '#C4FF00' : '#E0E0DC',
+                color: s < step ? 'white' : s === step ? '#1A1A1A' : '#767676',
                 fontWeight: 700, fontSize: '1rem',
               }}>
                 {s < step ? <CheckCircle size={20} /> : s}
               </div>
               <span className="font-bebas" style={{
-                fontSize: '0.9rem', color: s === step ? '#C4FF00' : 'rgba(255,255,255,0.5)',
+                fontSize: '0.9rem', color: s === step ? '#C4FF00' : '#767676',
               }}>
                 {s === 1 ? 'Vehicle' : s === 2 ? 'Buyer' : 'Payment'}
               </span>
@@ -376,11 +376,11 @@ export default function AdminNewSale() {
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
                 width: '100%', paddingLeft: '2.5rem', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)', color: "#0D1B2A",
+                backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC', color: "#0D1B2A",
                 fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
               onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00'; setCarsOpen(true) }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; setTimeout(() => setCarsOpen(false), 200) }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC'; setTimeout(() => setCarsOpen(false), 200) }}
             />
             {carsOpen && (
               <div style={{
@@ -477,11 +477,11 @@ export default function AdminNewSale() {
                       placeholder="e.g. JTHBP5C1XA5034760"
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                        backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                        backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                     />
                   </div>
                   <div>
@@ -499,11 +499,11 @@ export default function AdminNewSale() {
                       placeholder="e.g. ABC123"
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                        backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                        backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                     />
                   </div>
                 </div>
@@ -554,11 +554,11 @@ export default function AdminNewSale() {
                       placeholder="e.g. Japan, Australia, USA"
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                        backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                        backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                     />
                   </div>
                 )}
@@ -579,11 +579,11 @@ export default function AdminNewSale() {
                       min="0"
                       style={{
                         width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                        backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                        backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
                       onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                      onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                     />
                   </div>
                   <div>
@@ -599,9 +599,9 @@ export default function AdminNewSale() {
                         onClick={() => setForm((f) => ({ ...f, hasMaintenanceHistory: true }))}
                         style={{
                           flex: 1, padding: '0.75rem', borderRadius: '0.625rem',
-                          backgroundColor: form.hasMaintenanceHistory ? '#C4FF00' : 'rgba(255,255,255,0.1)',
-                          color: form.hasMaintenanceHistory ? 'white' : 'rgba(255,255,255,0.5)',
-                          fontFamily: 'Outfit', fontSize: '0.875rem', border: 'none', cursor: 'pointer',
+                          backgroundColor: form.hasMaintenanceHistory ? '#1A1A1A' : '#F2F2F0',
+                          color: form.hasMaintenanceHistory ? '#FFFFFF' : '#4A4A4A',
+                          fontFamily: 'Outfit', fontSize: '0.875rem', border: '1px solid #E0E0DC', cursor: 'pointer',
                         }}
                       >
                         Yes
@@ -610,9 +610,9 @@ export default function AdminNewSale() {
                         onClick={() => setForm((f) => ({ ...f, hasMaintenanceHistory: false }))}
                         style={{
                           flex: 1, padding: '0.75rem', borderRadius: '0.625rem',
-                          backgroundColor: !form.hasMaintenanceHistory ? '#C4FF00' : 'rgba(255,255,255,0.1)',
-                          color: !form.hasMaintenanceHistory ? 'white' : 'rgba(255,255,255,0.5)',
-                          fontFamily: 'Outfit', fontSize: '0.875rem', border: 'none', cursor: 'pointer',
+                          backgroundColor: !form.hasMaintenanceHistory ? '#1A1A1A' : '#F2F2F0',
+                          color: !form.hasMaintenanceHistory ? '#FFFFFF' : '#4A4A4A',
+                          fontFamily: 'Outfit', fontSize: '0.875rem', border: '1px solid #E0E0DC', cursor: 'pointer',
                         }}
                       >
                         No
@@ -640,8 +640,8 @@ export default function AdminNewSale() {
               disabled={!canNext()}
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
-                background: 'linear-gradient(135deg, #C4FF00, #1F5680)',
-                color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
+                background: '#1A1A1A',
+                color: "#FFFFFF", fontFamily: 'Outfit', fontWeight: 600,
                 cursor: canNext() ? 'pointer' : 'not-allowed', opacity: canNext() ? 1 : 0.5,
                 border: 'none',
               }}
@@ -682,11 +682,11 @@ export default function AdminNewSale() {
                   placeholder={placeholder}
                   style={{
                     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                    backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                     color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                 />
               </div>
             ))}
@@ -708,8 +708,8 @@ export default function AdminNewSale() {
               disabled={!canNext()}
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
-                background: 'linear-gradient(135deg, #C4FF00, #1F5680)',
-                color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
+                background: '#1A1A1A',
+                color: "#FFFFFF", fontFamily: 'Outfit', fontWeight: 600,
                 cursor: canNext() ? 'pointer' : 'not-allowed', opacity: canNext() ? 1 : 0.5,
                 border: 'none',
               }}
@@ -739,11 +739,11 @@ export default function AdminNewSale() {
               onChange={(e) => setForm((f) => ({ ...f, saleDate: e.target.value }))}
               style={{
                 width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                 color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
               onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
-              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
+              onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
             />
           </div>
 
@@ -802,11 +802,11 @@ export default function AdminNewSale() {
                   onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
                   style={{
                     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                    backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                     color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                 />
               </div>
 
@@ -825,11 +825,11 @@ export default function AdminNewSale() {
                     onChange={(e) => setForm((f) => ({ ...f, downPayment: Number(e.target.value) }))}
                     style={{
                       width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                      backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                      backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                       color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                     }}
                     onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
-                    onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                    onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
                   />
                 </div>
               )}
@@ -875,11 +875,11 @@ export default function AdminNewSale() {
                   onChange={(e) => setForm((f) => ({ ...f, firstPaymentDate: e.target.value }))}
                   style={{
                     width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                    backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                    backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                     color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
                   onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                  onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                  onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                 />
               </div>
 
@@ -909,11 +909,11 @@ export default function AdminNewSale() {
                 onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
                 style={{
                   width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                  backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                  backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                   color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                 }}
                 onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
               />
             </div>
           )}
@@ -933,12 +933,12 @@ export default function AdminNewSale() {
               placeholder="Add any notes about this sale..."
               style={{
                 width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                 color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                 minHeight: '100px', resize: 'vertical',
               }}
               onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
-              onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)' }}
+              onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
             />
           </div>
 
@@ -1001,11 +1001,11 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, orcWof: Number(e.target.value) || 0 }))}
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                     </div>
 
@@ -1023,7 +1023,7 @@ export default function AdminNewSale() {
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistrationMonths: Number(e.target.value) as 6 | 12 }))}
                           style={{
                             padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
                           }}
                         >
@@ -1036,11 +1036,11 @@ export default function AdminNewSale() {
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistration: Number(e.target.value) || 0 }))}
                           style={{
                             padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                          onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                          onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                         />
                       </div>
                     </div>
@@ -1059,11 +1059,11 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, orcGrooming: Number(e.target.value) || 0 }))}
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                     </div>
 
@@ -1081,11 +1081,11 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, orcOwnershipTransfer: Number(e.target.value) || 0 }))}
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                     </div>
 
@@ -1103,11 +1103,11 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, orcMechanicalInspection: Number(e.target.value) || 0 }))}
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                     </div>
 
@@ -1126,11 +1126,11 @@ export default function AdminNewSale() {
                         placeholder="e.g., Inspection"
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                     </div>
 
@@ -1148,11 +1148,11 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, orcOtherAmount: Number(e.target.value) || 0 }))}
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                     </div>
                   </div>
@@ -1203,11 +1203,11 @@ export default function AdminNewSale() {
                           placeholder="e.g., Roof Rack"
                           style={{
                             width: '100%', padding: '0.75rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                          onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                          onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                         />
                       </div>
                       <div>
@@ -1222,11 +1222,11 @@ export default function AdminNewSale() {
                           placeholder="0"
                           style={{
                             width: '100%', padding: '0.75rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                          onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                          onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                         />
                       </div>
                       <button
@@ -1305,11 +1305,11 @@ export default function AdminNewSale() {
                         placeholder="380"
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
                         Typically NZ$150–500
@@ -1331,11 +1331,11 @@ export default function AdminNewSale() {
                         placeholder="10"
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
                         Personal Property Securities Register ~$10
@@ -1357,11 +1357,11 @@ export default function AdminNewSale() {
                         placeholder="5"
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
                         Monthly admin fee
@@ -1383,11 +1383,11 @@ export default function AdminNewSale() {
                         placeholder="350"
                         style={{
                           width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
-                          backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                          backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
                         onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                        onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                        onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
                         Typically NZ$350–500
@@ -1448,7 +1448,7 @@ export default function AdminNewSale() {
                           onChange={(e) => setForm((f) => ({ ...f, warrantyMonths: Number(e.target.value) as any }))}
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
                           }}
                         >
@@ -1473,11 +1473,11 @@ export default function AdminNewSale() {
                           placeholder="e.g., AutoCare"
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                          onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                          onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                         />
                       </div>
                     </div>
@@ -1509,7 +1509,7 @@ export default function AdminNewSale() {
                           onChange={(e) => setForm((f) => ({ ...f, mechInsuranceMonths: Number(e.target.value) as any }))}
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
                           }}
                         >
@@ -1534,11 +1534,11 @@ export default function AdminNewSale() {
                           placeholder="e.g., InsureMe"
                           style={{
                             width: '100%', padding: '0.75rem 1rem', borderRadius: '0.625rem',
-                            backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
                           onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00' }}
-                          onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)' }}
+                          onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                         />
                       </div>
                     </div>
@@ -1714,7 +1714,7 @@ export default function AdminNewSale() {
                   }}>
                     <div style={{
                       height: '80px',
-                      backgroundColor: '#F2F2F0',
+                      backgroundColor: '#FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -1768,7 +1768,7 @@ export default function AdminNewSale() {
                       ) : (
                         <div style={{
                           height: '100px',
-                          backgroundColor: '#F2F2F0',
+                          backgroundColor: '#FFFFFF',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -1834,8 +1834,8 @@ export default function AdminNewSale() {
               disabled={loading}
               style={{
                 padding: '0.75rem 2rem', borderRadius: '0.625rem',
-                background: 'linear-gradient(135deg, #C4FF00, #1F5680)',
-                color: "#0D1B2A", fontFamily: 'Outfit', fontWeight: 600,
+                background: '#1A1A1A',
+                color: "#FFFFFF", fontFamily: 'Outfit', fontWeight: 600,
                 cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.5 : 1,
                 border: 'none', width: '100%', height: '52px',
               }}

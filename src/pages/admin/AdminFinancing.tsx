@@ -141,8 +141,8 @@ export default function AdminFinancing() {
             <div
               key={req.id}
               id={`admin-financing-card-${idx}`}
-              className={`admin-financing-card admin-financing-card-${idx} bg-dark border border-white/5 rounded-lg hover:border-#C4FF00/20 transition-colors`}
-              style={{ marginBottom: '1.5rem', padding: '10px' }}>
+              className={`admin-financing-card admin-financing-card-${idx} border rounded-lg transition-colors`}
+              style={{ marginBottom: '1.5rem', padding: '1.5rem', backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
               {/* Header */}
               <div
                 style={{
@@ -167,7 +167,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.8rem",
-                      color: "rgba(255,255,255,0.5)",
+                      color: "#767676",
                     }}>
                     {req.email} · {req.phone}
                   </p>
@@ -202,7 +202,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.7rem",
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#767676",
                       textTransform: "uppercase",
                       letterSpacing: "0.1em",
                       marginBottom: "0.25rem",
@@ -223,7 +223,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.7rem",
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#767676",
                       textTransform: "uppercase",
                       letterSpacing: "0.1em",
                       marginBottom: "0.25rem",
@@ -234,7 +234,7 @@ export default function AdminFinancing() {
                     className="font-bebas"
                     style={{
                       fontSize: "1.25rem",
-                      color: "#C4FF00",
+                      color: "#1A1A1A",
                       lineHeight: 1,
                     }}>
                     {fmt(req.totalAmount)}
@@ -245,7 +245,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.7rem",
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#767676",
                       textTransform: "uppercase",
                       letterSpacing: "0.1em",
                       marginBottom: "0.25rem",
@@ -254,7 +254,7 @@ export default function AdminFinancing() {
                   </p>
                   <p
                     className="font-bebas"
-                    style={{ fontSize: "1rem", color: "#C4FF00" }}>
+                    style={{ fontSize: "1rem", color: "#1A1A1A" }}>
                     {fmt(req.monthlyPayment)}
                   </p>
                 </div>
@@ -263,7 +263,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.7rem",
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#767676",
                       textTransform: "uppercase",
                       letterSpacing: "0.1em",
                       marginBottom: "0.25rem",
@@ -285,7 +285,7 @@ export default function AdminFinancing() {
                 style={{
                   fontFamily: "Outfit",
                   fontSize: "0.75rem",
-                  color: "rgba(255,255,255,0.35)",
+                  color: "#767676",
                   marginBottom: "1rem",
                 }}>
                 Submitted{" "}
@@ -419,9 +419,9 @@ export default function AdminFinancing() {
                   className="admin-financing-reply-btn"
                   onClick={() => handleReply(req.email, req.carTitle)}
                   style={{
-                    border: "1px solid rgba(29,78,216,0.45)",
-                    color: "#C4FF00",
-                    background: "rgba(29,78,216,0.08)",
+                    border: "1px solid #1A1A1A",
+                    color: "#1A1A1A",
+                    background: "#F2F2F0",
                     transition: "all 0.2s ease",
                     fontWeight: 500,
                   }}>
@@ -816,7 +816,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.7rem",
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#767676",
                       textTransform: "uppercase",
                       letterSpacing: "0.1em",
                       marginBottom: "0.25rem",
@@ -837,7 +837,7 @@ export default function AdminFinancing() {
                     style={{
                       fontFamily: "Outfit",
                       fontSize: "0.7rem",
-                      color: "rgba(255,255,255,0.4)",
+                      color: "#767676",
                       textTransform: "uppercase",
                       letterSpacing: "0.1em",
                       marginBottom: "0.25rem",

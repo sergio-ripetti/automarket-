@@ -169,16 +169,16 @@ export default function AdminMessages() {
                       <div style={{ marginBottom: '0.75rem' }}>
                         <div style={{
                           display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
-                          backgroundColor: 'rgba(29,78,216,0.15)', color: '#C4FF00',
+                          backgroundColor: '#C4FF00', color: '#1A1A1A',
                           fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit', marginBottom: '0.5rem',
                         }}>
                           OFFER
                         </div>
                       </div>
-                      <p className="font-bebas" style={{ fontSize: '1rem', color: '#C4FF00', marginBottom: '0.25rem' }}>
+                      <p className="font-bebas" style={{ fontSize: '1rem', color: '#1A1A1A', marginBottom: '0.25rem' }}>
                         {(msg as any).carTitle || 'Vehicle'}
                       </p>
-                      <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#C4FF00', marginBottom: '0.25rem' }}>
+                      <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#1A1A1A', marginBottom: '0.25rem' }}>
                         {fmt((msg as any).offerPrice || 0)}
                       </p>
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>
@@ -250,13 +250,13 @@ export default function AdminMessages() {
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
-                      e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'
+                      e.currentTarget.style.backgroundColor = '#E0E0DC'
                       e.currentTarget.style.color = 'white'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
                       e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'
-                      e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+                      e.currentTarget.style.color = '#4A4A4A'
                     }}
                   >
                     <Eye size={14} /> <span className="hidden sm:inline">Details</span>
@@ -271,16 +271,16 @@ export default function AdminMessages() {
                       window.location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${body}`
                     }}
                     style={{
-                      border: '1px solid rgba(29,78,216,0.5)', color: '#C4FF00', backgroundColor: 'rgba(29,78,216,0.08)',
+                      border: '1px solid #1A1A1A', color: '#1A1A1A', backgroundColor: '#FFFFFF',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#C4FF00'
-                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.15)'
-                      e.currentTarget.style.boxShadow = '0 0 10px rgba(29,78,216,0.2)'
+                      e.currentTarget.style.borderColor = '#1A1A1A'
+                      e.currentTarget.style.backgroundColor = '#E0E0DC'
+                      e.currentTarget.style.boxShadow = '0 0 10px rgba(0,0,0,0.1)'
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.5)'
-                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.08)'
+                      e.currentTarget.style.borderColor = '#1A1A1A'
+                      e.currentTarget.style.backgroundColor = '#F2F2F0'
                       e.currentTarget.style.boxShadow = 'none'
                     }}
                   >
@@ -295,13 +295,13 @@ export default function AdminMessages() {
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
-                      e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'
+                      e.currentTarget.style.backgroundColor = '#E0E0DC'
                       e.currentTarget.style.color = 'white'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
                       e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'
-                      e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+                      e.currentTarget.style.color = '#4A4A4A'
                     }}
                   >
                     {msg.read ? 'Unread' : 'Read'}
@@ -367,7 +367,7 @@ export default function AdminMessages() {
         .message-modal-header {
           position: sticky;
           top: 0;
-          background: linear-gradient(135deg, #C4FF00, #1F5680);
+          background: #1A1A1A;
           padding: clamp(1rem, 2vw, 1.5rem);
           display: flex;
           justify-content: space-between;
@@ -607,7 +607,7 @@ export default function AdminMessages() {
                   }}
                   style={{
                     width: '100%', padding: '0.75rem 1rem',
-                    background: 'linear-gradient(135deg, #C4FF00, #1F5680)',
+                    background: '#1A1A1A',
                     color: 'black', fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
                     border: 'none', borderRadius: '0.5rem', cursor: 'pointer',
                     minHeight: '44px',

@@ -343,7 +343,7 @@ export default function AdminAddCar() {
           left: '50%',
           top: '-8px',
           transform: 'translateX(-50%)',
-          backgroundColor: '#F2F2F0',
+          backgroundColor: '#FFFFFF',
           padding: '0 0.75rem',
           fontFamily: 'Outfit',
           fontSize: '0.7rem',
