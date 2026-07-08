@@ -164,15 +164,15 @@ const set = (field: keyof FormState, val: string | boolean) => {
   const inputStyle: React.CSSProperties = {
     width: "100%",
     boxSizing: "border-box",
-    backgroundColor: "#F2F2F0",
-    border: "1px solid rgba(255,255,255,0.08)",
+    backgroundColor: "#FFFFFF",
+    border: "1px solid #E0E0DC",
     borderRadius: "0.625rem",
     padding: "0.875rem 1rem",
-    color: "#0D1B2A",
+    color: "#1A1A1A",
     fontFamily: "Inter, sans-serif",
     fontSize: "0.875rem",
     outline: "none",
-    transition: "border-color 0.2s",
+    transition: "all 0.2s",
   };
 
   const selectStyle: React.CSSProperties = {
@@ -188,11 +188,12 @@ const set = (field: keyof FormState, val: string | boolean) => {
   const labelStyle: React.CSSProperties = {
     fontFamily: "Outfit",
     fontSize: "0.7rem",
-    color: "rgba(255,255,255,0.4)",
+    color: "#4A4A4A",
     textTransform: "uppercase",
     letterSpacing: "0.1em",
     display: "block",
     marginBottom: "6px",
+    fontWeight: 500,
   };
 
   // Searches the external vehicle API by make/model/year to refresh technical specs
@@ -417,7 +418,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                 width: '100%',
                 height: '44px',
                 padding: '0 1.5rem',
-                background: searching ? 'rgba(29,78,216,0.3)' : 'linear-gradient(135deg, #C4FF00, #1F5680)',
+                background: searching ? 'rgba(29,78,216,0.3)' : '#1A1A1A',
                 color: "#0D1B2A",
                 fontFamily: 'Outfit',
                 fontSize: '0.875rem',
@@ -783,8 +784,8 @@ const set = (field: keyof FormState, val: string | boolean) => {
             style={{
               flex: 2,
               height: "48px",
-              background: "linear-gradient(135deg, #C4FF00 0%, #1F5680 100%)",
-              color: "#000",
+              background: "#1A1A1A",
+              color: "#FFFFFF",
               fontWeight: 700,
               fontFamily: "Outfit",
               fontSize: "0.9rem",
