@@ -827,27 +827,13 @@ export default function AdminNewSale() {
                 </div>
               </div>
 
-              <div style={{ marginBottom: '1.5rem' }}>
-                <label style={{
-                  display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                  color: '#767676', letterSpacing: '0.1em',
-                  textTransform: 'uppercase', marginBottom: '0.5rem',
-                }}>
-                  First Payment Date *
-                </label>
-                <input
-                  type="date"
-                  value={form.firstPaymentDate}
-                  onChange={(e) => setForm((f) => ({ ...f, firstPaymentDate: e.target.value }))}
-                  style={{
-                    width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                    backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                    color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                  }}
-                  onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                  onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                />
-              </div>
+              <AdminInput
+                type="date"
+                label="FIRST PAYMENT DATE"
+                value={form.firstPaymentDate}
+                onChange={(e) => setForm((f) => ({ ...f, firstPaymentDate: e.target.value }))}
+                required
+              />
 
               <div style={{
                 backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.05)',
@@ -861,27 +847,13 @@ export default function AdminNewSale() {
 
           {/* Sale Price for cash */}
           {form.paymentType === 'cash' && (
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{
-                display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                color: '#767676', letterSpacing: '0.1em',
-                textTransform: 'uppercase', marginBottom: '0.5rem',
-              }}>
-                Sale Price (NZD) *
-              </label>
-              <input
-                type="number"
-                value={form.salePrice}
-                onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
-                style={{
-                  width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                  backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                  color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                }}
-                onFocus={(e) => { e.target.style.borderColor = '#1A1A1A' }}
-                onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
-              />
-            </div>
+            <AdminInput
+              type="number"
+              label="SALE PRICE (NZD)"
+              value={form.salePrice}
+              onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
+              required
+            />
           )}
 
           {/* Notes */}
