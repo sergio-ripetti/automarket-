@@ -142,7 +142,7 @@ export default function AdminFinancing() {
               key={req.id}
               id={`admin-financing-card-${idx}`}
               className={`admin-financing-card admin-financing-card-${idx} border rounded-lg transition-colors`}
-              style={{ marginBottom: '1.5rem', padding: '1.5rem', backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+              style={{ marginBottom: '1.5rem', padding: '1.5rem', backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
               {/* Header */}
               <div
                 style={{
@@ -1223,4 +1223,5 @@ export default function AdminFinancing() {
     </div>
   );
 }
+
 

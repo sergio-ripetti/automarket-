@@ -122,7 +122,7 @@ export default function AdminMessages() {
       <div id="admin-messages-list-wrapper" className="admin-messages-list-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {loading ? (
           [...Array(5)].map((_, i) => (
-            <div key={i} className="animate-pulse" style={{ backgroundColor: '#FFFFFF', height: 100, borderRadius: '0.75rem' }} />
+            <div key={i} className="animate-pulse" style={{ backgroundColor: 'transparent', height: 100, borderRadius: '0.75rem' }} />
           ))
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '4rem 0', color: '#C8D8E4', fontFamily: 'Outfit' }}>
@@ -138,7 +138,7 @@ export default function AdminMessages() {
               className={`admin-messages-list-item admin-messages-list-item-${idx}`}
               onClick={() => setExpandedId(expandedId === msg.id ? null : msg.id)}
               style={{
-                backgroundColor: '#FFFFFF',
+                backgroundColor: 'transparent',
                 border: `1px solid ${msg.read ? 'rgba(255,255,255,0.05)' : 'rgba(29,78,216,0.15)'}`,
                 borderLeft: isOffer ? '3px solid #C4FF00' : undefined,
                 borderRadius: '0.75rem', padding: '1.25rem',
@@ -271,7 +271,7 @@ export default function AdminMessages() {
                       window.location.href = `mailto:${msg.email}?subject=${encodeURIComponent(subject)}&body=${body}`
                     }}
                     style={{
-                      border: '1px solid #1A1A1A', color: '#1A1A1A', backgroundColor: '#FFFFFF',
+                      border: '1px solid #1A1A1A', color: '#1A1A1A', backgroundColor: 'transparent',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = '#1A1A1A'
@@ -654,4 +654,5 @@ export default function AdminMessages() {
     </div>
   )
 }
+
 
