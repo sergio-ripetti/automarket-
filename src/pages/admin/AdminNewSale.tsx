@@ -1122,107 +1122,47 @@ export default function AdminNewSale() {
                 <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                     <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Establishment Fee (NZD)
-                      </label>
-                      <input
-                        type="number"
+                      <AdminInput
+                        type=”number”
+                        label=”ESTABLISHMENT FEE (NZD)”
                         value={form.ffEstablishment}
                         onChange={(e) => setForm((f) => ({ ...f, ffEstablishment: Number(e.target.value) || 0 }))}
-                        placeholder="380"
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                        placeholder=”380”
+                        helperText=”Typically NZ$150–500”
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Typically NZ$150"“500
-                      </p>
                     </div>
 
                     <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        PPSR Fee (NZD)
-                      </label>
-                      <input
+                      <AdminInput
                         type="number"
+                        label="PPSR FEE (NZD)"
                         value={form.ffPpsr}
                         onChange={(e) => setForm((f) => ({ ...f, ffPpsr: Number(e.target.value) || 0 }))}
                         placeholder="10"
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                        helperText="Personal Property Securities Register ~$10"
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Personal Property Securities Register ~$10
-                      </p>
                     </div>
 
                     <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Monthly Account Fee (NZD)
-                      </label>
-                      <input
+                      <AdminInput
                         type="number"
+                        label="MONTHLY ACCOUNT FEE (NZD)"
                         value={form.ffMonthlyAccount}
                         onChange={(e) => setForm((f) => ({ ...f, ffMonthlyAccount: Number(e.target.value) || 0 }))}
                         placeholder="5"
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                        helperText="Monthly admin fee"
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Monthly admin fee
-                      </p>
                     </div>
 
                     <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Dealer Origination Fee (NZD)
-                      </label>
-                      <input
-                        type="number"
+                      <AdminInput
+                        type=”number”
+                        label=”DEALER ORIGINATION FEE (NZD)”
                         value={form.ffDealerOrigination}
                         onChange={(e) => setForm((f) => ({ ...f, ffDealerOrigination: Number(e.target.value) || 0 }))}
-                        placeholder="350"
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                        placeholder=”350”
+                        helperText=”Typically NZ$350–500”
                       />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Typically NZ$350"“500
-                      </p>
                     </div>
                   </div>
 
