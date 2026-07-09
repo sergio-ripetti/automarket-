@@ -41,6 +41,7 @@ export default function Financing() {
   const [applyHovered, setApplyHovered] = useState(false)
   const [submitHovered, setSubmitHovered] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<Map<string, { file: File; progress: number; uploaded: boolean }>>(new Map())
+  const [stepOneHovered, setStepOneHovered] = useState(false)
 
   // Fetch car data from Firestore if carId is provided
   useEffect(() => {
@@ -69,15 +70,6 @@ export default function Financing() {
   const totalRepay = monthly * n + downPaymentAmt
   const totalInterest = totalRepay - basePrice
   const sliderPct = ((form.downPayment - 10) / 40) * 100
-
-  const inputStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
-    width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#F2F2F0',
-    border: `1px solid ${hasErr ? 'rgba(239,68,68,0.55)' : focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
-    borderRadius: '0.625rem', padding: '0.75rem 1rem',
-    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: "#0D1B2A", outline: 'none',
-    transition: 'border-color 0.2s',
-  })
 
   // Validates all required application fields (personal info, employment, consent checkbox) and sets error messages for any invalid fields
   const validate = (): boolean => {
@@ -452,65 +444,87 @@ export default function Financing() {
 
                 {/* First Name */}
                 <div>
-                  <label style={labelStyle}>FIRST NAME *</label>
-                  <input required value={form.firstName} placeholder="John"
+                  <FormLabel required>First Name</FormLabel>
+                  <FormInput
+                    required
+                    value={form.firstName}
+                    placeholder="John"
                     onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                    onFocus={() => setFocused('firstName')} onBlur={() => setFocused(null)}
-                    style={inputStyle('firstName', !!errors.firstName)} />
-                  {errors.firstName && <p style={errorStyle}>{errors.firstName}</p>}
+                    error={!!errors.firstName}
+                  />
+                  <FormError message={errors.firstName} />
                 </div>
 
                 {/* Last Name */}
                 <div>
-                  <label style={labelStyle}>LAST NAME *</label>
-                  <input required value={form.lastName} placeholder="Smith"
+                  <FormLabel required>Last Name</FormLabel>
+                  <FormInput
+                    required
+                    value={form.lastName}
+                    placeholder="Smith"
                     onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                    onFocus={() => setFocused('lastName')} onBlur={() => setFocused(null)}
-                    style={inputStyle('lastName', !!errors.lastName)} />
-                  {errors.lastName && <p style={errorStyle}>{errors.lastName}</p>}
+                    error={!!errors.lastName}
+                  />
+                  <FormError message={errors.lastName} />
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label style={labelStyle}>EMAIL *</label>
-                  <input required type="email" value={form.email} placeholder="john@example.com"
+                  <FormLabel required>Email</FormLabel>
+                  <FormInput
+                    required
+                    type="email"
+                    value={form.email}
+                    placeholder="john@example.com"
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
-                    style={inputStyle('email', !!errors.email)} />
-                  {errors.email && <p style={errorStyle}>{errors.email}</p>}
+                    error={!!errors.email}
+                  />
+                  <FormError message={errors.email} />
                 </div>
 
                 {/* Phone */}
                 <div>
-                  <label style={labelStyle}>PHONE *</label>
-                  <input required type="tel" value={form.phone} placeholder="+64 21 123 4567"
+                  <FormLabel required>Phone</FormLabel>
+                  <FormInput
+                    required
+                    type="tel"
+                    value={form.phone}
+                    placeholder="+64 21 123 4567"
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    onFocus={() => setFocused('phone')} onBlur={() => setFocused(null)}
-                    style={inputStyle('phone', !!errors.phone)} />
-                  {errors.phone && <p style={errorStyle}>{errors.phone}</p>}
+                    error={!!errors.phone}
+                  />
+                  <FormError message={errors.phone} />
                 </div>
 
                 {/* Driver's Licence */}
                 <div>
-                  <label style={labelStyle}>DRIVER'S LICENCE NO. *</label>
-                  <input required value={form.licenseNumber} placeholder="A12345678"
+                  <FormLabel required>Driver's Licence No.</FormLabel>
+                  <FormInput
+                    required
+                    value={form.licenseNumber}
+                    placeholder="A12345678"
                     onChange={(e) => setForm({ ...form, licenseNumber: e.target.value })}
-                    onFocus={() => setFocused('licenseNumber')} onBlur={() => setFocused(null)}
-                    style={inputStyle('licenseNumber', !!errors.licenseNumber)} />
-                  {errors.licenseNumber && <p style={errorStyle}>{errors.licenseNumber}</p>}
+                    error={!!errors.licenseNumber}
+                  />
+                  <FormError message={errors.licenseNumber} />
                 </div>
 
                 {/* Monthly Income */}
                 <div>
-                  <label style={labelStyle}>MONTHLY INCOME (NZD) *</label>
+                  <FormLabel required>Monthly Income (NZD)</FormLabel>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#4A4A4A', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
-                    <input required type="number" value={form.income} placeholder="5,000"
+                    <span style={{ position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', color: '#767676', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
+                    <FormInput
+                      required
+                      type="number"
+                      value={form.income}
+                      placeholder="5,000"
                       onChange={(e) => setForm({ ...form, income: e.target.value })}
-                      onFocus={() => setFocused('income')} onBlur={() => setFocused(null)}
-                      style={{ ...inputStyle('income', !!errors.income), paddingLeft: '2rem' }} />
+                      error={!!errors.income}
+                      style={{ paddingLeft: '1.5rem' }}
+                    />
                   </div>
-                  {errors.income && <p style={errorStyle}>{errors.income}</p>}
+                  <FormError message={errors.income} />
                 </div>
 
                 {/* Employment Section — full width */}
@@ -522,62 +536,82 @@ export default function Financing() {
 
                 {/* Employer */}
                 <div>
-                  <label style={labelStyle}>EMPLOYER *</label>
-                  <input required value={form.employer} placeholder="e.g., ABC Corp"
+                  <FormLabel required>Employer</FormLabel>
+                  <FormInput
+                    required
+                    value={form.employer}
+                    placeholder="e.g., ABC Corp"
                     onChange={(e) => setForm({ ...form, employer: e.target.value })}
-                    onFocus={() => setFocused('employer')} onBlur={() => setFocused(null)}
-                    style={inputStyle('employer', !!errors.employer)} />
-                  {errors.employer && <p style={errorStyle}>{errors.employer}</p>}
+                    error={!!errors.employer}
+                  />
+                  <FormError message={errors.employer} />
                 </div>
 
                 {/* Job Title */}
                 <div>
-                  <label style={labelStyle}>JOB TITLE *</label>
-                  <input required value={form.jobTitle} placeholder="e.g., Manager"
+                  <FormLabel required>Job Title</FormLabel>
+                  <FormInput
+                    required
+                    value={form.jobTitle}
+                    placeholder="e.g., Manager"
                     onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
-                    onFocus={() => setFocused('jobTitle')} onBlur={() => setFocused(null)}
-                    style={inputStyle('jobTitle', !!errors.jobTitle)} />
-                  {errors.jobTitle && <p style={errorStyle}>{errors.jobTitle}</p>}
+                    error={!!errors.jobTitle}
+                  />
+                  <FormError message={errors.jobTitle} />
                 </div>
 
                 {/* Employment Type */}
                 <div>
-                  <label style={labelStyle}>EMPLOYMENT TYPE *</label>
-                  <select required value={form.employmentType}
+                  <FormLabel required>Employment Type</FormLabel>
+                  <FormSelect
+                    required
+                    value={form.employmentType}
                     onChange={(e) => setForm({ ...form, employmentType: e.target.value as any })}
-                    style={inputStyle('employmentType', !!errors.employmentType)}>
+                    error={!!errors.employmentType}
+                  >
                     <option value="fulltime">Full-time</option>
                     <option value="parttime">Part-time</option>
                     <option value="selfemployed">Self-employed</option>
                     <option value="other">Other</option>
-                  </select>
-                  {errors.employmentType && <p style={errorStyle}>{errors.employmentType}</p>}
+                  </FormSelect>
+                  <FormError message={errors.employmentType} />
                 </div>
 
                 {/* Years Employed */}
                 <div>
-                  <label style={labelStyle}>YEARS WITH CURRENT EMPLOYER *</label>
-                  <input required type="number" min="0" value={form.yearsEmployed} placeholder="e.g., 3"
+                  <FormLabel required>Years with Current Employer</FormLabel>
+                  <FormInput
+                    required
+                    type="number"
+                    min="0"
+                    value={form.yearsEmployed}
+                    placeholder="e.g., 3"
                     onChange={(e) => setForm({ ...form, yearsEmployed: Number(e.target.value) || 0 })}
-                    onFocus={() => setFocused('yearsEmployed')} onBlur={() => setFocused(null)}
-                    style={inputStyle('yearsEmployed', !!errors.yearsEmployed)} />
-                  {errors.yearsEmployed && <p style={errorStyle}>{errors.yearsEmployed}</p>}
+                    error={!!errors.yearsEmployed}
+                  />
+                  <FormError message={errors.yearsEmployed} />
                 </div>
 
                 {/* Monthly Expenses */}
                 <div>
-                  <label style={labelStyle}>MONTHLY EXPENSES (NZD) *</label>
+                  <FormLabel required>Monthly Expenses (NZD)</FormLabel>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#4A4A4A', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
-                    <input required type="number" min="0" value={form.monthlyExpenses} placeholder="2,000"
+                    <span style={{ position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', color: '#767676', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
+                    <FormInput
+                      required
+                      type="number"
+                      min="0"
+                      value={form.monthlyExpenses}
+                      placeholder="2,000"
                       onChange={(e) => setForm({ ...form, monthlyExpenses: e.target.value })}
-                      onFocus={() => setFocused('monthlyExpenses')} onBlur={() => setFocused(null)}
-                      style={{ ...inputStyle('monthlyExpenses', !!errors.monthlyExpenses), paddingLeft: '2rem' }} />
+                      error={!!errors.monthlyExpenses}
+                      style={{ paddingLeft: '1.5rem' }}
+                    />
                   </div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)', marginTop: '0.25rem' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
                     Rent, food, other loans, etc.
                   </p>
-                  {errors.monthlyExpenses && <p style={errorStyle}>{errors.monthlyExpenses}</p>}
+                  <FormError message={errors.monthlyExpenses} />
                 </div>
 
                 {/* Documents Section — full width */}
