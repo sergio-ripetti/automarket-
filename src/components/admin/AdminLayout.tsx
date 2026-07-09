@@ -184,7 +184,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         {isExpanded && (
           <div style={{ marginBottom: '2.5rem', marginTop: screenSize !== 'desktop' ? '1rem' : '1.5rem', paddingLeft: '0.5rem' }}>
             <span className="font-bebas" style={{ fontSize: '1.5rem', display: 'block', letterSpacing: '0.05em' }}>
-              <span style={{ color: '#C4FF00' }}>Auto</span><span style={{ color: '#FFFFFF' }}>Market</span>
+              <span style={{ color: '#FFFFFF' }}>Auto</span><span style={{ color: '#FFFFFF' }}>Market</span>
             </span>
             <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Admin Panel
@@ -221,7 +221,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   textAlign: 'left' as const,
                   color: isActive ? '#FFFFFF' : 'rgba(255,255,255,0.65)',
                   backgroundColor: isActive ? 'rgba(196,255,0,0.15)' : 'transparent',
-                  borderLeft: isActive ? '3px solid #C4FF00' : 'none',
+                  borderLeft: isActive ? '3px solid #FFFFFF' : 'none',
                   paddingLeft: isActive ? 'calc(1rem - 3px)' : '1rem',
                   justifyContent: isExpanded && badgeCount > 0 ? 'space-between' : (isExpanded ? 'flex-start' : 'center'),
                 })}
@@ -239,7 +239,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                     height: '24px',
                     paddingLeft: '0.5rem',
                     paddingRight: '0.5rem',
-                    backgroundColor: '#C4FF00',
+                    backgroundColor: '#FFFFFF',
                     color: '#1A1A1A',
                     borderRadius: '12px',
                     fontWeight: 600,
