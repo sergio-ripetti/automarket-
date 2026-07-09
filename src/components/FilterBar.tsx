@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Search, X } from 'lucide-react'
+import { FormInput, FormSelect, FormLabel } from './shared'
 import type { FilterState, Car } from '../types'
 
 interface FilterBarProps {
@@ -9,21 +10,9 @@ interface FilterBarProps {
   onClear: () => void
 }
 
-const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Inter, sans-serif',
-  fontSize: '0.7rem',
-  color: 'rgba(255,255,255,0.4)',
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
-  marginBottom: '6px',
-  display: 'block',
-}
 
 // Renders search/filter controls (brand, model, year range, fuel) for the car listing and reports changes to the parent via onFilterChange
 export default function FilterBar({ cars, filters, onFilterChange, onClear }: FilterBarProps) {
-  const [focused, setFocused] = useState<string | null>(null)
   const [clearHovered, setClearHovered] = useState(false)
 
   // Derives the unique, sorted list of brands from the current car dataset
@@ -52,33 +41,6 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== '')
 
-  // Builds inline styles for a text/number input, highlighting the border when the field is focused
-  const inputBase = (name: string): React.CSSProperties => ({
-    backgroundColor: '#F2F2F0',
-    border: `1px solid ${focused === name ? '#C4FF00' : 'rgba(255,255,255,0.08)'}`,
-    borderRadius: '0.625rem',
-    padding: '0.75rem 1rem',
-    color: "#0D1B2A",
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '0.875rem',
-    outline: 'none',
-    width: '100%',
-    boxSizing: 'border-box',
-    transition: 'border-color 0.2s',
-  })
-
-  // Builds inline styles for a select dropdown, extending inputBase with a chevron icon and disabled state
-  const selectBase = (name: string, disabled = false): React.CSSProperties => ({
-    ...inputBase(name),
-    appearance: 'none',
-    backgroundImage: CHEVRON,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right 1rem center',
-    paddingRight: '2.5rem',
-    opacity: disabled ? 0.4 : 1,
-    cursor: disabled ? 'not-allowed' : 'pointer',
-  })
-
   return (
     <div
       style={{
@@ -98,113 +60,96 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
       >
         {/* Search — full width */}
         <div style={{ gridColumn: '1 / -1' }}>
-          <label style={labelStyle}>Search</label>
+          <FormLabel>Search</FormLabel>
           <div style={{ position: 'relative' }}>
             <Search
               size={15}
               style={{
-                position: 'absolute', left: '0.875rem', top: '50%',
+                position: 'absolute', left: '0', top: '50%',
                 transform: 'translateY(-50%)',
-                color: 'rgba(255,255,255,0.3)', pointerEvents: 'none',
+                color: '#767676', pointerEvents: 'none',
               }}
             />
-            <input
+            <FormInput
               type="text"
               placeholder="Search by brand, model or title..."
               value={filters.search}
               onChange={(e) => handleChange('search', e.target.value)}
-              onFocus={() => setFocused('search')}
-              onBlur={() => setFocused(null)}
-              style={{ ...inputBase('search'), paddingLeft: '2.75rem' }}
+              style={{ paddingLeft: '1.75rem' }}
             />
           </div>
         </div>
 
         {/* Brand */}
         <div>
-          <label style={labelStyle}>Brand</label>
-          <select
+          <FormLabel>Brand</FormLabel>
+          <FormSelect
             value={filters.brand}
             onChange={(e) => handleChange('brand', e.target.value)}
-            onFocus={() => setFocused('brand')}
-            onBlur={() => setFocused(null)}
-            style={selectBase('brand')}
           >
-            <option value="" style={{ backgroundColor: '#111' }}>
-              All brands
-            </option>
+            <option value="">All brands</option>
             {brands.map((brand) => (
-              <option key={brand} value={brand} style={{ backgroundColor: '#111' }}>{brand}</option>
+              <option key={brand} value={brand}>{brand}</option>
             ))}
-          </select>
+          </FormSelect>
         </div>
 
         {/* Model */}
         <div>
-          <label style={labelStyle}>Model</label>
-          <select
+          <FormLabel>Model</FormLabel>
+          <FormSelect
             value={filters.model ?? ''}
             onChange={(e) => handleChange('model', e.target.value)}
             disabled={!filters.brand}
-            onFocus={() => setFocused('model')}
-            onBlur={() => setFocused(null)}
-            style={selectBase('model', !filters.brand)}
           >
-            <option value="" style={{ backgroundColor: '#111' }}>
+            <option value="">
               {filters.brand ? 'All models' : 'Select brand first'}
             </option>
             {models.map((model) => (
-              <option key={model} value={model} style={{ backgroundColor: '#111' }}>{model}</option>
+              <option key={model} value={model}>{model}</option>
             ))}
-          </select>
+          </FormSelect>
         </div>
 
         {/* Year from */}
         <div>
-          <label style={labelStyle}>Year From</label>
-          <input
+          <FormLabel>Year From</FormLabel>
+          <FormInput
             type="number"
             placeholder="2000"
             value={filters.yearMin}
             onChange={(e) => handleChange('yearMin', e.target.value)}
-            onFocus={() => setFocused('yearMin')}
-            onBlur={() => setFocused(null)}
-            style={inputBase('yearMin')}
-            min="2000" max="2030"
+            min="2000"
+            max="2030"
           />
         </div>
 
         {/* Year to */}
         <div>
-          <label style={labelStyle}>Year To</label>
-          <input
+          <FormLabel>Year To</FormLabel>
+          <FormInput
             type="number"
             placeholder="2025"
             value={filters.yearMax}
             onChange={(e) => handleChange('yearMax', e.target.value)}
-            onFocus={() => setFocused('yearMax')}
-            onBlur={() => setFocused(null)}
-            style={inputBase('yearMax')}
-            min="2000" max="2030"
+            min="2000"
+            max="2030"
           />
         </div>
 
         {/* Fuel */}
         <div>
-          <label style={labelStyle}>Fuel Type</label>
-          <select
+          <FormLabel>Fuel Type</FormLabel>
+          <FormSelect
             value={filters.fuel}
             onChange={(e) => handleChange('fuel', e.target.value)}
-            onFocus={() => setFocused('fuel')}
-            onBlur={() => setFocused(null)}
-            style={selectBase('fuel')}
           >
-            <option value="" style={{ backgroundColor: '#111' }}>All types</option>
-            <option value="gasolina" style={{ backgroundColor: '#111' }}>Petrol</option>
-            <option value="diesel" style={{ backgroundColor: '#111' }}>Diesel</option>
-            <option value="electrico" style={{ backgroundColor: '#111' }}>Electric</option>
-            <option value="hibrido" style={{ backgroundColor: '#111' }}>Hybrid</option>
-          </select>
+            <option value="">All types</option>
+            <option value="gasolina">Petrol</option>
+            <option value="diesel">Diesel</option>
+            <option value="electrico">Electric</option>
+            <option value="hibrido">Hybrid</option>
+          </FormSelect>
         </div>
       </div>
 
