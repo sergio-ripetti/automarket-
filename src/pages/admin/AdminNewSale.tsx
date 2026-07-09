@@ -1206,51 +1206,24 @@ export default function AdminNewSale() {
                   </label>
                   {form.warrantyIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
-                      <div>
-                        <label style={{
-                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: '#767676', letterSpacing: '0.1em',
-                          textTransform: 'uppercase', marginBottom: '0.5rem',
-                        }}>
-                          Months
-                        </label>
-                        <select
-                          value={form.warrantyMonths}
-                          onChange={(e) => setForm((f) => ({ ...f, warrantyMonths: Number(e.target.value) as any }))}
-                          style={{
-                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
-                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
-                          }}
-                        >
-                          <option value="3">3 months</option>
-                          <option value="6">6 months</option>
-                          <option value="12">12 months</option>
-                          <option value="24">24 months</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label style={{
-                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: '#767676', letterSpacing: '0.1em',
-                          textTransform: 'uppercase', marginBottom: '0.5rem',
-                        }}>
-                          Provider
-                        </label>
-                        <input
-                          type="text"
-                          value={form.warrantyProvider}
-                          onChange={(e) => setForm((f) => ({ ...f, warrantyProvider: e.target.value }))}
-                          placeholder="e.g., AutoCare"
-                          style={{
-                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
-                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                          }}
-                          onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                          onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                        />
-                      </div>
+                      <AdminSelect
+                        label="MONTHS"
+                        value={form.warrantyMonths.toString()}
+                        onChange={(e) => setForm((f) => ({ ...f, warrantyMonths: Number(e.target.value) as any }))}
+                        options={[
+                          { value: '3', label: '3 months' },
+                          { value: '6', label: '6 months' },
+                          { value: '12', label: '12 months' },
+                          { value: '24', label: '24 months' },
+                        ]}
+                      />
+                      <AdminInput
+                        type="text"
+                        label="PROVIDER"
+                        value={form.warrantyProvider}
+                        onChange={(e) => setForm((f) => ({ ...f, warrantyProvider: e.target.value }))}
+                        placeholder="e.g., AutoCare"
+                      />
                     </div>
                   )}
                 </div>
@@ -1267,51 +1240,24 @@ export default function AdminNewSale() {
                   </label>
                   {form.mechInsuranceIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
-                      <div>
-                        <label style={{
-                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: '#767676', letterSpacing: '0.1em',
-                          textTransform: 'uppercase', marginBottom: '0.5rem',
-                        }}>
-                          Months
-                        </label>
-                        <select
-                          value={form.mechInsuranceMonths}
-                          onChange={(e) => setForm((f) => ({ ...f, mechInsuranceMonths: Number(e.target.value) as any }))}
-                          style={{
-                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
-                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
-                          }}
-                        >
-                          <option value="3">3 months</option>
-                          <option value="6">6 months</option>
-                          <option value="12">12 months</option>
-                          <option value="24">24 months</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label style={{
-                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                          color: '#767676', letterSpacing: '0.1em',
-                          textTransform: 'uppercase', marginBottom: '0.5rem',
-                        }}>
-                          Provider
-                        </label>
-                        <input
-                          type="text"
-                          value={form.mechInsuranceProvider}
-                          onChange={(e) => setForm((f) => ({ ...f, mechInsuranceProvider: e.target.value }))}
-                          placeholder="e.g., InsureMe"
-                          style={{
-                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
-                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                          }}
-                          onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                          onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                        />
-                      </div>
+                      <AdminSelect
+                        label="MONTHS"
+                        value={form.mechInsuranceMonths.toString()}
+                        onChange={(e) => setForm((f) => ({ ...f, mechInsuranceMonths: Number(e.target.value) as any }))}
+                        options={[
+                          { value: '3', label: '3 months' },
+                          { value: '6', label: '6 months' },
+                          { value: '12', label: '12 months' },
+                          { value: '24', label: '24 months' },
+                        ]}
+                      />
+                      <AdminInput
+                        type="text"
+                        label="PROVIDER"
+                        value={form.mechInsuranceProvider}
+                        onChange={(e) => setForm((f) => ({ ...f, mechInsuranceProvider: e.target.value }))}
+                        placeholder="e.g., InsureMe"
+                      />
                     </div>
                   )}
                 </div>
