@@ -509,20 +509,22 @@ export default function AdminAI() {
             placeholder="Ask me anything..."
             disabled={loading}
             style={{
-              flex: 1, minWidth: 0, backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
-              borderRadius: '0.75rem', padding: 'clamp(0.75rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem)',
+              flex: 1, minWidth: 0, backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+              borderRadius: 0, padding: '0.75rem 0 0.5rem 0',
               color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
-              outline: 'none', transition: 'all 0.2s', width: '100%', boxSizing: 'border-box',
+              outline: 'none', transition: 'border-bottom-color 0.2s, border-width 0.2s', width: '100%', boxSizing: 'border-box',
               opacity: loading ? 0.6 : 1,
               cursor: loading ? 'not-allowed' : 'text',
             }}
             onFocus={(e) => {
               if (!loading) {
-                e.currentTarget.style.borderColor = '#1A1A1A'
+                e.currentTarget.style.borderBottomColor = '#1A1A1A'
+                e.currentTarget.style.borderBottomWidth = '2px'
               }
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = '#E0E0DC'
+              e.currentTarget.style.borderBottomColor = '#E0E0DC'
+              e.currentTarget.style.borderBottomWidth = '1px'
             }}
           />
           <button
