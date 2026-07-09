@@ -411,7 +411,7 @@ export default function AdminNewSale() {
                       <div style={{ flex: 1 }}>
                         <p className="font-bebas" style={{color: "#0D1B2A" }}>{c.title}</p>
                         <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>
-                          {c.year} â€¢ {c.km.toLocaleString()} km
+                          {c.year} • {c.km.toLocaleString()} km
                         </p>
                       </div>
                       <p className="font-bebas" style={{ fontSize: '0.9rem', color: '#1A1A1A' }}>{fmt(c.price)}</p>
@@ -432,12 +432,12 @@ export default function AdminNewSale() {
                 <h3 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year â€¢ KM</p>
-                    <p style={{color: "#0D1B2A" }}>{selectedCar.year} â€¢ {selectedCar.km.toLocaleString()} km</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year • KM</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Transmission â€¢ Fuel</p>
-                    <p style={{color: "#0D1B2A" }}>{selectedCar.transmission} â€¢ {selectedCar.fuel}</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Transmission • Fuel</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
                   </div>
                 </div>
                 <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#1A1A1A', marginBottom: '1rem' }}>{fmt(selectedCar.price)}</p>
@@ -612,7 +612,7 @@ export default function AdminNewSale() {
                 border: 'none',
               }}
             >
-              Next Step â†’
+              Next Step ←’
             </button>
           </div>
         </div>
@@ -667,7 +667,7 @@ export default function AdminNewSale() {
                 color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
-              â† Back
+              ← Back
             </button>
             <button
               onClick={() => setStep(3)}
@@ -680,7 +680,7 @@ export default function AdminNewSale() {
                 border: 'none',
               }}
             >
-              Next Step â†’
+              Next Step ←’
             </button>
           </div>
         </div>
@@ -923,7 +923,7 @@ export default function AdminNewSale() {
               <div>
                 ORC - On Road Costs (Optional)
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', fontWeight: 400, marginTop: '0.25rem' }}>
-                  Typical range: NZ$300â€“NZ$650
+                  Typical range: NZ$300"“NZ$650
                 </p>
               </div>
               <ChevronDown size={16} style={{ transform: orcExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }} />
@@ -1278,7 +1278,7 @@ export default function AdminNewSale() {
                         onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Typically NZ$150â€“500
+                        Typically NZ$150"“500
                       </p>
                     </div>
 
@@ -1356,7 +1356,7 @@ export default function AdminNewSale() {
                         onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Typically NZ$350â€“500
+                        Typically NZ$350"“500
                       </p>
                     </div>
                   </div>
@@ -1662,7 +1662,7 @@ export default function AdminNewSale() {
                   Drop files here or click to browse
                 </p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676' }}>
-                  Images, PDFs, documents â€” all types accepted
+                  Images, PDFs, documents "” all types accepted
                 </p>
               </label>
             </div>
@@ -1793,7 +1793,7 @@ export default function AdminNewSale() {
                 color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
-              â† Back
+              ← Back
             </button>
             <button
               onClick={handleSubmit}

@@ -10,7 +10,7 @@ type TypeFilter = 'all' | 'contact' | 'offer' | 'unread'
 
 // Converts a Firestore Timestamp into a readable NZ date string
 function fmtDate(ts: { toDate: () => Date } | undefined) {
-  if (!ts || typeof ts.toDate !== 'function') return 'â€”'
+  if (!ts || typeof ts.toDate !== 'function') return '"”'
   return ts.toDate().toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 

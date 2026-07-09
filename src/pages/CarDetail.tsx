@@ -8,6 +8,7 @@ import {
 import { collection, addDoc, serverTimestamp } from "firebase/firestore"
 import { db } from "../lib/firebase"
 import { getCarById } from "../lib/carsService"
+import { FormInput, FormLabel, FormTextarea } from "../components/shared"
 import type { Car, OfferForm } from "../types"
 
 // Formats a numeric price into NZD currency display format
@@ -492,64 +493,54 @@ export default function CarDetail() {
 
                   {/* First Name and Last Name */}
                   {(["firstName", "lastName"] as const).map((field, i) => (
-                    <div key={field}>
-                      <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>{i === 0 ? "First Name *" : "Last Name *"}</label>
-                      <input required value={offerForm[field]}
-                        onChange={(e) => setOfferForm({ ...offerForm, [field]: e.target.value })}
-                        placeholder={i === 0 ? "John" : "Smith"}
-                        className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#C4FF00]"
-                        style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#F2F2F0", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem" }}
-                      />
-                    </div>
+                    <FormInput
+                      key={field}
+                      required
+                      label={i === 0 ? "FIRST NAME" : "LAST NAME"}
+                      value={offerForm[field]}
+                      onChange={(e) => setOfferForm({ ...offerForm, [field]: e.target.value })}
+                      placeholder={i === 0 ? "John" : "Smith"}
+                    />
                   ))}
 
                   {/* Phone */}
-                  <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Phone *</label>
-                    <input type="tel" required value={offerForm.phone}
-                      onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
-                      placeholder="+64 21 123 4567"
-                      className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#C4FF00]"
-                      style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#F2F2F0", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem" }}
-                    />
-                  </div>
+                  <FormInput
+                    type="tel"
+                    required
+                    label="PHONE"
+                    value={offerForm.phone}
+                    onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
+                    placeholder="+64 21 123 4567"
+                  />
 
                   {/* Offer price */}
-                  <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Your Offer (NZD) *</label>
-                    <div style={{ position: "relative" }}>
-                      <span style={{ position: "absolute", left: "0.875rem", top: "50%", transform: "translateY(-50%)", color: "#4A4A4A", fontFamily: "Outfit", fontSize: "0.875rem", fontWeight: 600, pointerEvents: "none" }}>$</span>
-                      <input type="number" required value={offerForm.offerPrice}
-                        onChange={(e) => setOfferForm({ ...offerForm, offerPrice: e.target.value })}
-                        placeholder="32000"
-                        className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#C4FF00]"
-                        style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#F2F2F0", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem 0.625rem 2rem" }}
-                      />
-                    </div>
-                  </div>
+                  <FormInput
+                    type="number"
+                    required
+                    label="YOUR OFFER (NZD)"
+                    value={offerForm.offerPrice}
+                    onChange={(e) => setOfferForm({ ...offerForm, offerPrice: e.target.value })}
+                    placeholder="32000"
+                    icon={<span style={{ color: "#767676", fontWeight: 600 }}>$</span>}
+                  />
 
                   {/* Email */}
-                  <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Email *</label>
-                    <input type="email" required value={offerForm.email}
-                      onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
-                      placeholder="john@example.com"
-                      className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#C4FF00]"
-                      style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#F2F2F0", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem" }}
-                    />
-                  </div>
+                  <FormInput
+                    type="email"
+                    required
+                    label="EMAIL"
+                    value={offerForm.email}
+                    onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
+                    placeholder="john@example.com"
+                  />
 
                   {/* Message */}
-                  <div style={{ gridColumn: "1 / -1" }}>
-                    <label className="font-inter text-xs block mb-1.5" style={{ color: "#767676" }}>Message (optional)</label>
-                    <textarea value={offerForm.message}
-                      onChange={(e) => setOfferForm({ ...offerForm, message: e.target.value })}
-                      placeholder="Any questions or comments about this vehicle?"
-                      rows={3}
-                      className="font-inter text-sm text-[#0D1B2A] focus:outline-none focus:border-[#C4FF00] resize-none"
-                      style={{ width: "100%", boxSizing: "border-box", backgroundColor: "#F2F2F0", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "0.5rem", padding: "0.625rem 0.75rem" }}
-                    />
-                  </div>
+                  <FormTextarea
+                    label="MESSAGE"
+                    value={offerForm.message}
+                    onChange={(e) => setOfferForm({ ...offerForm, message: e.target.value })}
+                    placeholder="Any questions or comments about this vehicle?"
+                  />
                 </div>
 
                 <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.5rem" }}>

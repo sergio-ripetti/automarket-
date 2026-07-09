@@ -125,7 +125,13 @@
       "Bash(cd /d C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket)",
       "Bash(grep -n \"color: '\" C:\\\\\\\\Users\\\\\\\\ripetti\\\\\\\\Desktop\\\\\\\\testAppIA\\\\\\\\automarket\\\\\\\\src\\\\\\\\pages\\\\\\\\admin\\\\\\\\AdminDashboard.tsx)",
       "Bash(xargs basename -a)",
-      "Bash(grep -r \"--color-\" C:/Users/ripetti/Desktop/testAppIA/automarket/src --include=\"*.css\" --include=\"*.tsx\")"
+      "Bash(grep -r \"--color-\" C:/Users/ripetti/Desktop/testAppIA/automarket/src --include=\"*.css\" --include=\"*.tsx\")",
+      "Bash(git -C \"C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket\" status)",
+      "Bash(git -C \"C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket\" diff src/pages/admin/AdminEditCar.tsx)",
+      "Bash(xargs grep -l \"input\\\\|textarea\\\\|select\")",
+      "Bash(git restore *)",
+      "Bash(xargs grep -l \"AdminInput\\\\|AdminSelect\\\\|AdminTextarea\\\\|AdminCheckbox\")",
+      "Bash(grep -E \"\\\\.tsx$\")"
     ]
   }
 }

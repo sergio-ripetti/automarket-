@@ -310,7 +310,7 @@ export default function AdminSaleDetail() {
               {sale.buyer.name}
             </h1>
             <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#767676' }}>
-              {fmtDate(sale.saleDate)} â€¢{' '}
+              {fmtDate(sale.saleDate)} •{' '}
               <span style={{
                 display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
                 backgroundColor: sale.status === 'active' ? 'rgba(29,78,216,0.2)' : sale.status === 'completed' ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)',
@@ -374,9 +374,9 @@ export default function AdminSaleDetail() {
             </h2>
             <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
               <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year â€¢ KM</p>
+                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year • KM</p>
                 <p style={{color: "#0D1B2A" }}>
-                  {sale.carYear} â€¢ {0} km
+                  {sale.carYear} • {0} km
                 </p>
               </div>
               <div>
