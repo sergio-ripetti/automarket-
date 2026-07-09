@@ -925,60 +925,28 @@ export default function AdminNewSale() {
 
                 {!form.orcIncluded && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
-                    <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        WoF (NZD)
-                      </label>
-                      <input
-                        type="number"
-                        value={form.orcWof}
-                        onChange={(e) => setForm((f) => ({ ...f, orcWof: Number(e.target.value) || 0 }))}
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                      />
-                    </div>
+                    <AdminInput
+                      type="number"
+                      label="WOF (NZD)"
+                      value={form.orcWof}
+                      onChange={(e) => setForm((f) => ({ ...f, orcWof: Number(e.target.value) || 0 }))}
+                    />
 
                     <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Registration (NZD)
-                      </label>
+                      <AdminLabel>REGISTRATION (NZD)</AdminLabel>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '0.5rem' }}>
-                        <select
-                          value={form.orcRegistrationMonths}
+                        <AdminSelect
+                          value={form.orcRegistrationMonths.toString()}
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistrationMonths: Number(e.target.value) as 6 | 12 }))}
-                          style={{
-                            padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
-                          }}
-                        >
-                          <option value="6">6 months</option>
-                          <option value="12">12 months</option>
-                        </select>
-                        <input
+                          options={[
+                            { value: '6', label: '6 months' },
+                            { value: '12', label: '12 months' },
+                          ]}
+                        />
+                        <AdminInput
                           type="number"
                           value={form.orcRegistration}
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistration: Number(e.target.value) || 0 }))}
-                          style={{
-                            padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                          }}
-                          onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                          onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                         />
                       </div>
                     </div>
