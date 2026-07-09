@@ -133,7 +133,13 @@
       "Bash(xargs grep -l \"AdminInput\\\\|AdminSelect\\\\|AdminTextarea\\\\|AdminCheckbox\")",
       "Bash(grep -E \"\\\\.tsx$\")",
       "Bash(perl -i -pe 's/[\\\\x80-\\\\xFF]//g' src/pages/admin/AdminFinancing.tsx src/pages/admin/AdminNewSale.tsx)",
-      "Bash(git commit -m 'fix: Revert corrupted UTF-8 characters from special character cleanup *)"
+      "Bash(git commit -m 'fix: Revert corrupted UTF-8 characters from special character cleanup *)",
+      "PowerShell(Get-Content -Path \"C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket\\\\src\\\\pages\\\\admin\\\\AdminFinancing.tsx\" -Encoding UTF8 | Select-Object -Index 936 | ForEach-Object { $_.ToCharArray\\(\\) | ForEach-Object { [byte][char]$_ } | ForEach-Object { \"{0:X2}\" -f $_ } } | Join-String -Separator \" \")",
+      "Bash(git show *)",
+      "Read(//tmp/**)",
+      "Bash(cd \"C:\\\\Users\\\\ripetti\\\\Desktop\\\\testAppIA\\\\automarket\" && cp /tmp/AdminFinancing_clean.tsx src/pages/admin/AdminFinancing.tsx && echo \"Restored AdminFinancing.tsx\")",
+      "Bash(git commit -m 'fix: Restore AdminFinancing and AdminNewSale from clean commit to remove UTF-8 corruption *)",
+      "Bash(git commit -m 'fix: Resolve all TypeScript compilation errors *)"
     ]
   }
 }

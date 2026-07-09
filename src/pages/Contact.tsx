@@ -146,7 +146,7 @@ export default function Contact() {
                     value={form.name}
                     placeholder="John Smith"
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    error={!!errors.name}
+                    error={errors.name}
                   />
                   <FormError message={errors.name} />
                 </div>
@@ -160,7 +160,7 @@ export default function Contact() {
                       value={form.email}
                       placeholder="john@example.com"
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      error={!!errors.email}
+                      error={errors.email}
                     />
                     <FormError message={errors.email} />
                   </div>
@@ -171,7 +171,7 @@ export default function Contact() {
                       value={form.phone}
                       placeholder="+64 21 123 4567"
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      error={!!errors.phone}
+                      error={errors.phone}
                     />
                     <FormError message={errors.phone} />
                   </div>
@@ -183,7 +183,7 @@ export default function Contact() {
                   <FormSelect
                     value={form.reason}
                     onChange={(e) => setForm({ ...form, reason: e.target.value })}
-                    error={!!errors.reason}
+                    error={errors.reason}
                   >
                     <option value="">Select a reason</option>
                     <option value="purchase">Car purchase</option>
@@ -202,7 +202,7 @@ export default function Contact() {
                     placeholder="Tell us how we can help you..."
                     rows={5}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    error={!!errors.message}
+                    error={errors.message}
                   />
                   <FormError message={errors.message} />
                 </div>

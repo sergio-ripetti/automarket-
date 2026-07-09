@@ -6,7 +6,7 @@ import { db } from '../lib/firebase'
 import { getCarById } from '../lib/carsService'
 import { uploadDocument } from '../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../lib/sanitize'
-import { FormInput, FormSelect, FormTextarea, FormLabel, FormError } from '../components/shared'
+import { FormInput, FormSelect, FormLabel, FormError } from '../components/shared'
 import type { Car, FinancingForm, FinancingDocument } from '../types'
 
 // Formats a numeric price into NZD currency display format
@@ -41,7 +41,6 @@ export default function Financing() {
   const [applyHovered, setApplyHovered] = useState(false)
   const [submitHovered, setSubmitHovered] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<Map<string, { file: File; progress: number; uploaded: boolean }>>(new Map())
-  const [stepOneHovered, setStepOneHovered] = useState(false)
 
   // Fetch car data from Firestore if carId is provided
   useEffect(() => {
@@ -315,7 +314,6 @@ export default function Financing() {
                       value={manualPrice}
                       onChange={(e) => setManualPrice(e.target.value)}
                       placeholder="25,000"
-                      icon={null}
                     />
                   </div>
                 </div>
@@ -450,7 +448,7 @@ export default function Financing() {
                     value={form.firstName}
                     placeholder="John"
                     onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                    error={!!errors.firstName}
+                    error={errors.firstName}
                   />
                   <FormError message={errors.firstName} />
                 </div>
@@ -463,7 +461,7 @@ export default function Financing() {
                     value={form.lastName}
                     placeholder="Smith"
                     onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                    error={!!errors.lastName}
+                    error={errors.lastName}
                   />
                   <FormError message={errors.lastName} />
                 </div>
@@ -477,7 +475,7 @@ export default function Financing() {
                     value={form.email}
                     placeholder="john@example.com"
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    error={!!errors.email}
+                    error={errors.email}
                   />
                   <FormError message={errors.email} />
                 </div>
@@ -491,7 +489,7 @@ export default function Financing() {
                     value={form.phone}
                     placeholder="+64 21 123 4567"
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    error={!!errors.phone}
+                    error={errors.phone}
                   />
                   <FormError message={errors.phone} />
                 </div>
@@ -504,7 +502,7 @@ export default function Financing() {
                     value={form.licenseNumber}
                     placeholder="A12345678"
                     onChange={(e) => setForm({ ...form, licenseNumber: e.target.value })}
-                    error={!!errors.licenseNumber}
+                    error={errors.licenseNumber}
                   />
                   <FormError message={errors.licenseNumber} />
                 </div>
@@ -520,7 +518,7 @@ export default function Financing() {
                       value={form.income}
                       placeholder="5,000"
                       onChange={(e) => setForm({ ...form, income: e.target.value })}
-                      error={!!errors.income}
+                      error={errors.income}
                       style={{ paddingLeft: '1.5rem' }}
                     />
                   </div>
@@ -542,7 +540,7 @@ export default function Financing() {
                     value={form.employer}
                     placeholder="e.g., ABC Corp"
                     onChange={(e) => setForm({ ...form, employer: e.target.value })}
-                    error={!!errors.employer}
+                    error={errors.employer}
                   />
                   <FormError message={errors.employer} />
                 </div>
@@ -555,7 +553,7 @@ export default function Financing() {
                     value={form.jobTitle}
                     placeholder="e.g., Manager"
                     onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
-                    error={!!errors.jobTitle}
+                    error={errors.jobTitle}
                   />
                   <FormError message={errors.jobTitle} />
                 </div>
@@ -567,7 +565,7 @@ export default function Financing() {
                     required
                     value={form.employmentType}
                     onChange={(e) => setForm({ ...form, employmentType: e.target.value as any })}
-                    error={!!errors.employmentType}
+                    error={errors.employmentType}
                   >
                     <option value="fulltime">Full-time</option>
                     <option value="parttime">Part-time</option>
@@ -587,7 +585,7 @@ export default function Financing() {
                     value={form.yearsEmployed}
                     placeholder="e.g., 3"
                     onChange={(e) => setForm({ ...form, yearsEmployed: Number(e.target.value) || 0 })}
-                    error={!!errors.yearsEmployed}
+                    error={errors.yearsEmployed}
                   />
                   <FormError message={errors.yearsEmployed} />
                 </div>
@@ -604,7 +602,7 @@ export default function Financing() {
                       value={form.monthlyExpenses}
                       placeholder="2,000"
                       onChange={(e) => setForm({ ...form, monthlyExpenses: e.target.value })}
-                      error={!!errors.monthlyExpenses}
+                      error={errors.monthlyExpenses}
                       style={{ paddingLeft: '1.5rem' }}
                     />
                   </div>
@@ -741,15 +739,14 @@ export default function Financing() {
                             <FormSelect
                               value={doc.type}
                               onChange={(e) => handleDocumentTypeChange(doc.url, e.target.value as FinancingDocument['type'])}
-                              options={[
-                                { value: 'passport_license', label: 'Passport/License' },
-                                { value: 'visa_residency', label: 'Visa/Residency' },
-                                { value: 'proof_of_address', label: 'Proof of Address' },
-                                { value: 'payslip', label: 'Payslip' },
-                                { value: 'bank_statement', label: 'Bank Statement' },
-                                { value: 'other', label: 'Other' },
-                              ]}
-                            />
+                            >
+                              <option value="passport_license">Passport/License</option>
+                              <option value="visa_residency">Visa/Residency</option>
+                              <option value="proof_of_address">Proof of Address</option>
+                              <option value="payslip">Payslip</option>
+                              <option value="bank_statement">Bank Statement</option>
+                              <option value="other">Other</option>
+                            </FormSelect>
                             <button
                               onClick={() => handleRemoveDocument(doc.url)}
                               style={{

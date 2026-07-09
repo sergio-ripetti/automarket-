@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Car, ShoppingBag, DollarSign, CreditCard } from 'lucide-react'
 import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore'
-import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { db } from '../../lib/firebase'
 import { getSales, type Sale } from '../../lib/salesService'
 import type { Message } from '../../lib/messagesService'
@@ -80,7 +80,6 @@ export default function AdminDashboard() {
   const [recentMessages, setRecentMessages] = useState<Message[]>([])
   const [monthlySalesData, setMonthlySalesData] = useState<MonthlySalesData[]>([])
   const [salesByType, setSalesByType] = useState<SalesByTypeData[]>([])
-  const [unreadMessageCount, setUnreadMessageCount] = useState(0)
   const [loading, setLoading] = useState(true)
 
   // Fetches dashboard stats (cars, sales, pending financing, recent messages) from Firestore in parallel on mount
@@ -107,8 +106,8 @@ export default function AdminDashboard() {
         }
 
         allSales.forEach((sale) => {
-          const saleDate = sale.saleDate instanceof Object && 'toDate' in sale.saleDate
-            ? sale.saleDate.toDate()
+          const saleDate = typeof sale.saleDate === 'object' && sale.saleDate !== null && 'toDate' in sale.saleDate
+            ? (sale.saleDate as any).toDate()
             : new Date(sale.saleDate as string)
           if (saleDate.getFullYear() === currentYear) {
             const monthIdx = saleDate.getMonth()
@@ -151,7 +150,6 @@ export default function AdminDashboard() {
           }))
 
         const messages = messagesSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Message))
-        const unread = messages.filter((m) => !m.read).length
 
         setStats({
           totalCars: carsSnap.size,
@@ -164,7 +162,6 @@ export default function AdminDashboard() {
         setRecentMessages(messages.slice(0, 5))
         setMonthlySalesData(chartData)
         setSalesByType(chartTypeData)
-        setUnreadMessageCount(unread)
       } catch (err) {
         console.error('Dashboard error:', err)
       } finally {
@@ -427,9 +424,9 @@ export default function AdminDashboard() {
                 </td>
               </tr>
             ) : recentSales.map((sale, idx) => {
-              const statusLabel = sale.status === 'pending' ? 'Pendiente' : 'Completado'
-              const statusColor = sale.status === 'pending' ? '#B7791F' : '#2E7D5B'
-              const statusBgColor = sale.status === 'pending' ? 'rgba(183, 121, 31, 0.15)' : 'rgba(46, 125, 91, 0.15)'
+              const statusLabel = sale.status === 'active' ? 'Active' : sale.status === 'completed' ? 'Completed' : 'Cancelled'
+              const statusColor = sale.status === 'active' ? '#B7791F' : sale.status === 'completed' ? '#2E7D5B' : '#DC2626'
+              const statusBgColor = sale.status === 'active' ? 'rgba(183, 121, 31, 0.15)' : sale.status === 'completed' ? 'rgba(46, 125, 91, 0.15)' : 'rgba(220, 38, 38, 0.15)'
               return (
                 <tr key={sale.id} id={`admin-dashboard-recent-sales-row-${idx}`} className="admin-dashboard-recent-sales-row">
                   <td style={{ fontFamily: 'Outfit', color: '#1A1A1A' }}>{sale.carTitle}</td>
@@ -520,7 +517,6 @@ export default function AdminDashboard() {
           <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '0.9rem', padding: '1rem', textAlign: 'center' }}>No messages</p>
         ) : recentMessages.map((msg, idx) => {
           const isFinancing = msg.type === 'financing'
-          const subjectColor = isFinancing ? '#B7791F' : '#2E7D5B'
           const dotColor = isFinancing ? '#B7791F' : '#2E7D5B'
           const subject = getMessageSubject(msg)
 

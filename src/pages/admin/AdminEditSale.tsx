@@ -8,7 +8,6 @@ import { showToast } from '../../lib/toast'
 import AdminInput from '../../components/admin/AdminInput'
 import AdminTextarea from '../../components/admin/AdminTextarea'
 import AdminButton from '../../components/admin/AdminButton'
-import AdminLabel from '../../components/admin/AdminLabel'
 
 // Formats a numeric price as NZD currency
 function fmt(price: number) {

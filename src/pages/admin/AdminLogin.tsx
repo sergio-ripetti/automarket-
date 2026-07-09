@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginAdmin } from '../../lib/authService'
-import { FormInput, FormLabel, FormError } from '../../components/shared'
+import { FormInput, FormLabel } from '../../components/shared'
 
 // Admin login page - renders the sign-in form and delegates credential verification to Firebase Authentication
 export default function AdminLogin() {

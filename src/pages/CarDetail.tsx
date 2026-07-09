@@ -491,56 +491,68 @@ export default function CarDetail() {
               <form onSubmit={handleOfferSubmit} style={{ padding: "2rem" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
 
-                  {/* First Name and Last Name */}
-                  {(["firstName", "lastName"] as const).map((field, i) => (
+                  {/* First Name */}
+                  <div>
+                    <FormLabel required>First Name</FormLabel>
                     <FormInput
-                      key={field}
-                      required
-                      label={i === 0 ? "FIRST NAME" : "LAST NAME"}
-                      value={offerForm[field]}
-                      onChange={(e) => setOfferForm({ ...offerForm, [field]: e.target.value })}
-                      placeholder={i === 0 ? "John" : "Smith"}
+                      value={offerForm.firstName}
+                      onChange={(e) => setOfferForm({ ...offerForm, firstName: e.target.value })}
+                      placeholder="John"
                     />
-                  ))}
+                  </div>
+
+                  {/* Last Name */}
+                  <div>
+                    <FormLabel required>Last Name</FormLabel>
+                    <FormInput
+                      value={offerForm.lastName}
+                      onChange={(e) => setOfferForm({ ...offerForm, lastName: e.target.value })}
+                      placeholder="Smith"
+                    />
+                  </div>
 
                   {/* Phone */}
-                  <FormInput
-                    type="tel"
-                    required
-                    label="PHONE"
-                    value={offerForm.phone}
-                    onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
-                    placeholder="+64 21 123 4567"
-                  />
-
-                  {/* Offer price */}
-                  <FormInput
-                    type="number"
-                    required
-                    label="YOUR OFFER (NZD)"
-                    value={offerForm.offerPrice}
-                    onChange={(e) => setOfferForm({ ...offerForm, offerPrice: e.target.value })}
-                    placeholder="32000"
-                    icon={<span style={{ color: "#767676", fontWeight: 600 }}>$</span>}
-                  />
+                  <div>
+                    <FormLabel required>Phone</FormLabel>
+                    <FormInput
+                      type="tel"
+                      value={offerForm.phone}
+                      onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
+                      placeholder="+64 21 123 4567"
+                    />
+                  </div>
 
                   {/* Email */}
-                  <FormInput
-                    type="email"
-                    required
-                    label="EMAIL"
-                    value={offerForm.email}
-                    onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
-                    placeholder="john@example.com"
-                  />
+                  <div>
+                    <FormLabel required>Email</FormLabel>
+                    <FormInput
+                      type="email"
+                      value={offerForm.email}
+                      onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
+                      placeholder="john@example.com"
+                    />
+                  </div>
+
+                  {/* Offer Price */}
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <FormLabel required>Your Offer (NZD)</FormLabel>
+                    <FormInput
+                      type="number"
+                      value={offerForm.offerPrice}
+                      onChange={(e) => setOfferForm({ ...offerForm, offerPrice: e.target.value })}
+                      placeholder="32000"
+                    />
+                  </div>
 
                   {/* Message */}
-                  <FormTextarea
-                    label="MESSAGE"
-                    value={offerForm.message}
-                    onChange={(e) => setOfferForm({ ...offerForm, message: e.target.value })}
-                    placeholder="Any questions or comments about this vehicle?"
-                  />
+                  <div style={{ gridColumn: "1 / -1" }}>
+                    <FormLabel>Message</FormLabel>
+                    <FormTextarea
+                      value={offerForm.message}
+                      onChange={(e) => setOfferForm({ ...offerForm, message: e.target.value })}
+                      placeholder="Any questions or comments about this vehicle?"
+                    />
+                  </div>
                 </div>
 
                 <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.5rem" }}>
