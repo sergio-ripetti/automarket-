@@ -951,116 +951,41 @@ export default function AdminNewSale() {
                       </div>
                     </div>
 
-                    <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Grooming/Detailing (NZD)
-                      </label>
-                      <input
-                        type="number"
-                        value={form.orcGrooming}
-                        onChange={(e) => setForm((f) => ({ ...f, orcGrooming: Number(e.target.value) || 0 }))}
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                      />
-                    </div>
+                    <AdminInput
+                      type="number"
+                      label="GROOMING/DETAILING (NZD)"
+                      value={form.orcGrooming}
+                      onChange={(e) => setForm((f) => ({ ...f, orcGrooming: Number(e.target.value) || 0 }))}
+                    />
 
-                    <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Ownership Transfer (NZD)
-                      </label>
-                      <input
-                        type="number"
-                        value={form.orcOwnershipTransfer}
-                        onChange={(e) => setForm((f) => ({ ...f, orcOwnershipTransfer: Number(e.target.value) || 0 }))}
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                      />
-                    </div>
+                    <AdminInput
+                      type="number"
+                      label="OWNERSHIP TRANSFER (NZD)"
+                      value={form.orcOwnershipTransfer}
+                      onChange={(e) => setForm((f) => ({ ...f, orcOwnershipTransfer: Number(e.target.value) || 0 }))}
+                    />
 
-                    <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Mechanical Inspection (NZD)
-                      </label>
-                      <input
-                        type="number"
-                        value={form.orcMechanicalInspection}
-                        onChange={(e) => setForm((f) => ({ ...f, orcMechanicalInspection: Number(e.target.value) || 0 }))}
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                      />
-                    </div>
+                    <AdminInput
+                      type="number"
+                      label="MECHANICAL INSPECTION (NZD)"
+                      value={form.orcMechanicalInspection}
+                      onChange={(e) => setForm((f) => ({ ...f, orcMechanicalInspection: Number(e.target.value) || 0 }))}
+                    />
 
-                    <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Other Cost Label
-                      </label>
-                      <input
-                        type="text"
-                        value={form.orcOtherLabel}
-                        onChange={(e) => setForm((f) => ({ ...f, orcOtherLabel: e.target.value }))}
-                        placeholder="e.g., Inspection"
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                      />
-                    </div>
+                    <AdminInput
+                      type="text"
+                      label="OTHER COST LABEL"
+                      value={form.orcOtherLabel}
+                      onChange={(e) => setForm((f) => ({ ...f, orcOtherLabel: e.target.value }))}
+                      placeholder="e.g., Inspection"
+                    />
 
-                    <div>
-                      <label style={{
-                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                        color: '#767676', letterSpacing: '0.1em',
-                        textTransform: 'uppercase', marginBottom: '0.5rem',
-                      }}>
-                        Other Cost Amount (NZD)
-                      </label>
-                      <input
-                        type="number"
-                        value={form.orcOtherAmount}
-                        onChange={(e) => setForm((f) => ({ ...f, orcOtherAmount: Number(e.target.value) || 0 }))}
-                        style={{
-                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                        }}
-                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
-                      />
-                    </div>
+                    <AdminInput
+                      type="number"
+                      label="OTHER COST AMOUNT (NZD)"
+                      value={form.orcOtherAmount}
+                      onChange={(e) => setForm((f) => ({ ...f, orcOtherAmount: Number(e.target.value) || 0 }))}
+                    />
                   </div>
                 )}
 
