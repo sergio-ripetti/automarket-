@@ -14,9 +14,9 @@ export default function AdminLabel({
     <label
       className={className}
       style={{
-        fontFamily: 'Outfit',
+        fontFamily: 'Inter, sans-serif',
         fontSize: '0.7rem',
-        color: '#1A1A1A',
+        color: '#767676',
         fontWeight: 600,
         textTransform: 'uppercase',
         letterSpacing: '0.1em',
@@ -26,7 +26,7 @@ export default function AdminLabel({
       {...props}
     >
       {children}
-      {required && <span style={{ color: '#D64545', marginLeft: '0.25rem' }}>*</span>}
+      {required && <span style={{ color: '#B0B0B0', marginLeft: '0.25rem' }}>*</span>}
     </label>
   )
 }

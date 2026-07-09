@@ -43,9 +43,9 @@ export default function AdminCheckbox({
           inset: 0,
           width: '18px',
           height: '18px',
-          border: `1.5px solid ${props.checked ? '#C4FF00' : '#E0E0DC'}`,
+          border: `1.5px solid ${props.checked ? '#1A1A1A' : '#E0E0DC'}`,
           borderRadius: '0.375rem',
-          backgroundColor: props.checked ? '#C4FF00' : '#FFFFFF',
+          backgroundColor: props.checked ? '#1A1A1A' : '#FFFFFF',
           transition: 'all 0.2s ease',
           display: 'flex',
           alignItems: 'center',
@@ -53,7 +53,7 @@ export default function AdminCheckbox({
         }}>
           {props.checked && (
             <svg width="12" height="12" viewBox="0 0 10 10" fill="none">
-              <path d="M2 5L4 7L8 3" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           )}
         </div>

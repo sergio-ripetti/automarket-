@@ -1,4 +1,5 @@
-import type { SelectHTMLAttributes, ReactNode } from 'react'
+import type { SelectHTMLAttributes } from 'react'
+import { useState } from 'react'
 
 interface AdminSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string
@@ -7,7 +8,7 @@ interface AdminSelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   options: Array<{ value: string; label: string }>
 }
 
-const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23767676' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
+const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
 
 export default function AdminSelect({
   label,
@@ -17,13 +18,23 @@ export default function AdminSelect({
   className = '',
   ...props
 }: AdminSelectProps) {
+  const [isFocused, setIsFocused] = useState(false)
+
+  const borderColor = error
+    ? 'rgba(239,68,68,0.85)'
+    : isFocused
+    ? '#1A1A1A'
+    : '#E0E0DC'
+
+  const borderWidth = error || isFocused ? '2px' : '1px'
+
   return (
     <div>
       {label && (
         <label style={{
-          fontFamily: 'Outfit',
+          fontFamily: 'Inter, sans-serif',
           fontSize: '0.7rem',
-          color: '#1A1A1A',
+          color: '#767676',
           fontWeight: 600,
           textTransform: 'uppercase',
           letterSpacing: '0.1em',
@@ -31,7 +42,7 @@ export default function AdminSelect({
           marginBottom: '6px',
         }}>
           {label}
-          {props.required && <span style={{ color: '#D64545', marginLeft: '0.25rem' }}>*</span>}
+          {props.required && <span style={{ color: '#B0B0B0', marginLeft: '0.25rem' }}>*</span>}
         </label>
       )}
       <select
@@ -39,29 +50,29 @@ export default function AdminSelect({
         style={{
           width: '100%',
           boxSizing: 'border-box',
-          backgroundColor: '#FFFFFF',
-          border: `1px solid ${error ? '#D64545' : '#E0E0DC'}`,
-          borderRadius: '0.625rem',
-          padding: '0.875rem 1rem',
-          paddingRight: '2.5rem',
+          backgroundColor: 'transparent',
+          border: 'none',
+          borderBottom: `${borderWidth} solid ${borderColor}`,
+          borderRadius: 0,
+          padding: '0.75rem 2.5rem 0.5rem 0',
           color: '#1A1A1A',
           fontFamily: 'Inter, sans-serif',
           fontSize: '0.875rem',
           outline: 'none',
-          transition: 'all 0.2s ease',
+          transition: 'border-bottom-color 0.2s, border-width 0.2s',
           appearance: 'none',
           backgroundImage: CHEVRON,
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right 1rem center',
+          backgroundPosition: 'right 0 center',
           cursor: 'pointer',
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = error ? '#D64545' : '#C4FF00'
-          e.currentTarget.style.boxShadow = error ? 'none' : '0 0 0 3px rgba(196,255,0,0.1)'
+          setIsFocused(true)
+          props.onFocus?.(e)
         }}
         onBlur={(e) => {
-          e.currentTarget.style.borderColor = error ? '#D64545' : '#E0E0DC'
-          e.currentTarget.style.boxShadow = 'none'
+          setIsFocused(false)
+          props.onBlur?.(e)
         }}
         {...props}
       >
@@ -73,9 +84,9 @@ export default function AdminSelect({
       </select>
       {error && (
         <p style={{
-          marginTop: '0.5rem',
-          fontSize: '0.875rem',
-          color: '#D64545',
+          marginTop: '0.3rem',
+          fontSize: '0.7rem',
+          color: 'rgba(239,68,68,0.85)',
           fontFamily: 'Outfit',
         }}>
           {error}
@@ -83,8 +94,8 @@ export default function AdminSelect({
       )}
       {helperText && !error && (
         <p style={{
-          marginTop: '0.5rem',
-          fontSize: '0.875rem',
+          marginTop: '0.3rem',
+          fontSize: '0.7rem',
           color: '#767676',
           fontFamily: 'Outfit',
         }}>
