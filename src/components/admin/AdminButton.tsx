@@ -39,17 +39,17 @@ export default function AdminButton({
 
   const variantStyles = {
     primary: {
-      backgroundColor: '#C4FF00',
-      color: '#1A1A1A',
-      '&:hover': { backgroundColor: '#B8E600', boxShadow: '0 4px 12px rgba(196,255,0,0.3)' },
-      '&:active': { backgroundColor: '#A3CC00' },
+      backgroundColor: '#1A1A1A',
+      color: '#FFFFFF',
+      '&:hover': { backgroundColor: '#0D0D0D', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' },
+      '&:active': { backgroundColor: '#000000' },
       '&:disabled': { backgroundColor: '#E0E0DC', color: '#999999' },
     },
     secondary: {
       backgroundColor: 'transparent',
       border: '1px solid #E0E0DC',
       color: '#1A1A1A',
-      '&:hover': { backgroundColor: '#F5F5F0', borderColor: '#C4FF00' },
+      '&:hover': { backgroundColor: '#F5F5F0', borderColor: '#1A1A1A' },
       '&:active': { backgroundColor: '#EBEBEB' },
       '&:disabled': { borderColor: '#E0E0DC', color: '#999999' },
     },
@@ -95,8 +95,8 @@ export default function AdminButton({
         if (!disabled && !isLoading) {
           const target = e.currentTarget
           if (variant === 'primary') {
-            target.style.backgroundColor = '#B8E600'
-            target.style.boxShadow = '0 4px 12px rgba(196,255,0,0.3)'
+            target.style.backgroundColor = '#0D0D0D'
+            target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)'
           } else if (variant === 'danger') {
             target.style.backgroundColor = '#C13939'
             target.style.boxShadow = '0 4px 12px rgba(214,69,69,0.3)'
@@ -105,14 +105,14 @@ export default function AdminButton({
             target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)'
           } else if (variant === 'secondary') {
             target.style.backgroundColor = '#F5F5F0'
-            target.style.borderColor = '#C4FF00'
+            target.style.borderColor = '#1A1A1A'
           }
         }
       }}
       onMouseLeave={(e) => {
         const target = e.currentTarget
         if (variant === 'primary') {
-          target.style.backgroundColor = '#C4FF00'
+          target.style.backgroundColor = '#1A1A1A'
           target.style.boxShadow = 'none'
         } else if (variant === 'danger') {
           target.style.backgroundColor = '#D64545'
