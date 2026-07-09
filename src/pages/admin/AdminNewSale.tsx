@@ -6,6 +6,7 @@ import { addSale, generatePaymentSchedule, type Buyer, type PaymentPlan, type Pa
 import { uploadImage, uploadDocument } from '../../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../../lib/sanitize'
 import { showToast } from '../../lib/toast'
+import { AdminInput, AdminSelect, AdminTextarea, AdminLabel, AdminCheckbox, AdminButton } from '../../components/admin'
 import type { Car } from '../../types'
 
 // Formats a number as NZD currency for display
@@ -463,47 +464,23 @@ export default function AdminNewSale() {
                 <h3 className="font-bebas" style={{ fontSize: '1.25rem', color: '#1A1A1A', marginBottom: '1rem' }}>Vehicle Details *</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1.5rem' }}>
                   <div>
-                    <label style={{
-                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: '#767676', letterSpacing: '0.1em',
-                      textTransform: 'uppercase', marginBottom: '0.5rem',
-                    }}>
-                      VIN / Chassis Number *
-                    </label>
-                    <input
+                    <AdminInput
                       type="text"
+                      label="VIN / CHASSIS NUMBER"
                       value={form.vin}
                       onChange={(e) => setForm((f) => ({ ...f, vin: e.target.value }))}
                       placeholder="e.g. JTHBP5C1XA5034760"
-                      style={{
-                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                        backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                      }}
-                      onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                      onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      required
                     />
                   </div>
                   <div>
-                    <label style={{
-                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: '#767676', letterSpacing: '0.1em',
-                      textTransform: 'uppercase', marginBottom: '0.5rem',
-                    }}>
-                      License Plate *
-                    </label>
-                    <input
+                    <AdminInput
                       type="text"
+                      label="LICENSE PLATE"
                       value={form.plate}
                       onChange={(e) => setForm((f) => ({ ...f, plate: e.target.value }))}
                       placeholder="e.g. ABC123"
-                      style={{
-                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                        backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                      }}
-                      onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
-                      onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      required
                     />
                   </div>
                 </div>
@@ -540,23 +517,12 @@ export default function AdminNewSale() {
 
                 {!form.isNZNew && (
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{
-                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
-                      color: '#767676', letterSpacing: '0.1em',
-                      textTransform: 'uppercase', marginBottom: '0.5rem',
-                    }}>
-                      Country of Origin
-                    </label>
-                    <input
+                    <AdminInput
                       type="text"
+                      label="COUNTRY OF ORIGIN"
                       value={form.originCountry}
                       onChange={(e) => setForm((f) => ({ ...f, originCountry: e.target.value }))}
                       placeholder="e.g. Japan, Australia, USA"
-                      style={{
-                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
-                        backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
-                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
-                      }}
                       onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
                       onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                     />
