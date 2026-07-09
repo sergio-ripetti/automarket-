@@ -3,6 +3,7 @@ import { MapPin, Phone, Mail, Clock, Camera, Share2 } from 'lucide-react'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../lib/firebase'
 import { sanitizeForFirestore } from '../lib/sanitize'
+import { FormInput, FormSelect, FormTextarea, FormLabel, FormError } from '../components/shared'
 
 interface ContactFormData {
   name: string
@@ -23,44 +24,14 @@ const infoItems = [
   { icon: Clock, label: 'Hours', value: 'Monday to Friday: 9:00am – 6:00pm' },
 ]
 
-const CHEVRON = "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E\")"
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: '#767676',
-  letterSpacing: '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '6px',
-}
-
-const errorStyle: React.CSSProperties = {
-  fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem',
-}
 
 // Renders the public contact page with a message form and business info - validates form fields client-side and saves submissions to Firestore
 export default function Contact() {
   const [form, setForm] = useState<ContactFormData>(emptyForm)
   const [errors, setErrors] = useState<ContactErrors>({})
   const [submitted, setSubmitted] = useState(false)
-  const [focused, setFocused] = useState<string | null>(null)
   const [submitHovered, setSubmitHovered] = useState(false)
 
-  const inputStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
-    width: '100%', boxSizing: 'border-box',
-    backgroundColor: 'transparent',
-    border: 'none',
-    borderBottom: `${hasErr ? '2px solid rgba(239,68,68,0.85)' : focused === name ? '2px solid #1A1A1A' : '1px solid #E0E0DC'}`,
-    borderRadius: 0, padding: '0.75rem 0 0.5rem 0',
-    fontFamily: 'Inter, sans-serif', fontSize: '0.875rem', color: "#1A1A1A", outline: 'none',
-    transition: 'border-bottom-color 0.2s',
-  })
-
-  const selectStyle = (name: string, hasErr?: boolean): React.CSSProperties => ({
-    ...inputStyle(name, hasErr),
-    appearance: 'none',
-    backgroundImage: CHEVRON,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'right 1rem center',
-    paddingRight: '2.5rem',
-    cursor: 'pointer',
-  })
 
   // Validates required contact form fields (name, email format, phone, reason, message length) and sets error messages for any invalid fields
   const validate = (): boolean => {
@@ -170,63 +141,70 @@ export default function Contact() {
 
                 {/* Full Name */}
                 <div>
-                  <label style={labelStyle}>FULL NAME *</label>
-                  <input value={form.name} placeholder="John Smith"
+                  <FormLabel required>Full Name</FormLabel>
+                  <FormInput
+                    value={form.name}
+                    placeholder="John Smith"
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    onFocus={() => setFocused('name')} onBlur={() => setFocused(null)}
-                    style={inputStyle('name', !!errors.name)} />
-                  {errors.name && <p style={errorStyle}>{errors.name}</p>}
+                    error={!!errors.name}
+                  />
+                  <FormError message={errors.name} />
                 </div>
 
                 {/* Email + Phone */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div>
-                    <label style={labelStyle}>EMAIL *</label>
-                    <input type="email" value={form.email} placeholder="john@example.com"
+                    <FormLabel required>Email</FormLabel>
+                    <FormInput
+                      type="email"
+                      value={form.email}
+                      placeholder="john@example.com"
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
-                      style={inputStyle('email', !!errors.email)} />
-                    {errors.email && <p style={errorStyle}>{errors.email}</p>}
+                      error={!!errors.email}
+                    />
+                    <FormError message={errors.email} />
                   </div>
                   <div>
-                    <label style={labelStyle}>PHONE *</label>
-                    <input type="tel" value={form.phone} placeholder="+64 21 123 4567"
+                    <FormLabel required>Phone</FormLabel>
+                    <FormInput
+                      type="tel"
+                      value={form.phone}
+                      placeholder="+64 21 123 4567"
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      onFocus={() => setFocused('phone')} onBlur={() => setFocused(null)}
-                      style={inputStyle('phone', !!errors.phone)} />
-                    {errors.phone && <p style={errorStyle}>{errors.phone}</p>}
+                      error={!!errors.phone}
+                    />
+                    <FormError message={errors.phone} />
                   </div>
                 </div>
 
                 {/* Reason */}
                 <div>
-                  <label style={labelStyle}>REASON FOR CONTACT *</label>
-                  <select
+                  <FormLabel required>Reason for Contact</FormLabel>
+                  <FormSelect
                     value={form.reason}
                     onChange={(e) => setForm({ ...form, reason: e.target.value })}
-                    onFocus={() => setFocused('reason')} onBlur={() => setFocused(null)}
-                    style={selectStyle('reason', !!errors.reason)}
+                    error={!!errors.reason}
                   >
-                    <option value="" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Select a reason</option>
-                    <option value="purchase" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Car purchase</option>
-                    <option value="sale" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Car sale</option>
-                    <option value="financing" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Financing enquiry</option>
-                    <option value="other" style={{ backgroundColor: '#FFFFFF', color: '#1A1A1A' }}>Other</option>
-                  </select>
-                  {errors.reason && <p style={errorStyle}>{errors.reason}</p>}
+                    <option value="">Select a reason</option>
+                    <option value="purchase">Car purchase</option>
+                    <option value="sale">Car sale</option>
+                    <option value="financing">Financing enquiry</option>
+                    <option value="other">Other</option>
+                  </FormSelect>
+                  <FormError message={errors.reason} />
                 </div>
 
                 {/* Message */}
                 <div>
-                  <label style={labelStyle}>MESSAGE *</label>
-                  <textarea
-                    value={form.message} placeholder="Tell us how we can help you..."
+                  <FormLabel required>Message</FormLabel>
+                  <FormTextarea
+                    value={form.message}
+                    placeholder="Tell us how we can help you..."
                     rows={5}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    onFocus={() => setFocused('message')} onBlur={() => setFocused(null)}
-                    style={{ ...inputStyle('message', !!errors.message), resize: 'none', lineHeight: 1.55 } as React.CSSProperties}
+                    error={!!errors.message}
                   />
-                  {errors.message && <p style={errorStyle}>{errors.message}</p>}
+                  <FormError message={errors.message} />
                 </div>
 
                 {/* Submit */}

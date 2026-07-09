@@ -6,6 +6,7 @@ import { db } from '../lib/firebase'
 import { getCarById } from '../lib/carsService'
 import { uploadDocument } from '../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../lib/sanitize'
+import { FormInput, FormSelect, FormTextarea, FormLabel, FormError } from '../components/shared'
 import type { Car, FinancingForm, FinancingDocument } from '../types'
 
 // Formats a numeric price into NZD currency display format
@@ -26,16 +27,6 @@ const emptyForm: FinancingForm = {
 
 type FormErrors = Partial<Record<keyof FinancingForm, string>>
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: 'Inter, sans-serif', fontSize: '0.7rem', color: '#767676',
-  letterSpacing: '0.1em', textTransform: 'uppercase', display: 'block', marginBottom: '6px',
-}
-
-const errorStyle: React.CSSProperties = {
-  fontFamily: 'Outfit', fontSize: '0.7rem',
-  color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem',
-}
-
 // Two-step financing page: step 1 is a loan calculator (down payment, term, monthly payment), step 2 is a full application form - uploads supporting documents to Cloudinary and saves the completed application to Firestore
 export default function Financing() {
   const [searchParams] = useSearchParams()
@@ -47,7 +38,6 @@ export default function Financing() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [submitted, setSubmitted] = useState(false)
   const [manualPrice, setManualPrice] = useState('25000')
-  const [focused, setFocused] = useState<string | null>(null)
   const [applyHovered, setApplyHovered] = useState(false)
   const [submitHovered, setSubmitHovered] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<Map<string, { file: File; progress: number; uploaded: boolean }>>(new Map())
