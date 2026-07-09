@@ -14,12 +14,12 @@ function fmt(p: number) {
 
 // Converts a Firestore Timestamp into a readable NZ date string
 function fmtDate(ts: { toDate: () => Date } | undefined) {
-  if (!ts || typeof ts.toDate !== 'function') return '"”'
+  if (!ts || typeof ts.toDate !== 'function') return 'â€”'
   return ts.toDate().toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 const statusColor: Record<FinancingRequest['status'], string> = {
-  pending: '#1A1A1A', approved: '#10b981', rejected: '#ef4444',
+  pending: '#C4FF00', approved: '#10b981', rejected: '#ef4444',
   paying: '#3b82f6', completed: '#6b7280',
 }
 
@@ -112,7 +112,7 @@ export default function AdminFinancing() {
             onClick={() => setActiveTab(id)}
             className={`px-5 py-2 rounded-full text-sm font-inter font-medium transition-all ${
               activeTab === id
-                ? 'bg-#1A1A1A text-black'
+                ? 'bg-#C4FF00 text-black'
                 : 'bg-white/5 text-[#0D1B2A]/50 hover:bg-white/10'
             }`}
           >
@@ -536,7 +536,7 @@ export default function AdminFinancing() {
         .financing-modal-section-title {
           font-size: 0.7rem;
           margin-bottom: 0.75rem;
-          color: #1A1A1A;
+          color: #C4FF00;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.05em;
@@ -692,7 +692,7 @@ export default function AdminFinancing() {
       `}</style>
       {selectedRequest && (
         <div id="admin-financing-modal-overlay" className="admin-financing-modal-overlay fixed inset-0 z-[200] flex items-center justify-center p-3 md:p-4 lg:p-6 bg-[#F2F2F0]/90 overflow-y-auto">
-          <div id="admin-financing-modal-detail" className="admin-financing-modal-detail w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-#1A1A1A/20" style={{ padding: '1.25rem' }}>
+          <div id="admin-financing-modal-detail" className="admin-financing-modal-detail w-full max-w-2xl md:max-w-3xl lg:max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg bg-gray-900 border border-#C4FF00/20" style={{ padding: '1.25rem' }}>
             {/* Header */}
             <div
               id="admin-modal-header"
@@ -719,7 +719,7 @@ export default function AdminFinancing() {
                   style={{
                     fontFamily: "Outfit",
                     fontSize: "0.95rem",
-                    color: "#1A1A1A",
+                    color: "#C4FF00",
                     fontWeight: 500
                   }}>
                   {selectedRequest.firstName} {selectedRequest.lastName}
@@ -742,7 +742,7 @@ export default function AdminFinancing() {
             {/* SECTION 1: Personal Information */}
             <div className="pb-6 md:pb-8 border-b border-white/5 last:border-b-0 mb-6 md:mb-8">
               <h3
-                className="text-xs md:text-sm text-#1A1A1A font-semibold uppercase tracking-wider mb-3 md:mb-4"
+                className="text-xs md:text-sm text-#C4FF00 font-semibold uppercase tracking-wider mb-3 md:mb-4"
                 style={{
                   fontFamily: "Outfit",
                   textTransform: "uppercase",
@@ -858,7 +858,7 @@ export default function AdminFinancing() {
                 className="font-bebas"
                 style={{
                   fontSize: "1.5rem",
-                  color: "#1A1A1A",
+                  color: "#C4FF00",
                   marginBottom: "1.5rem",
                 }}>
                 {fmt(selectedRequest.totalAmount)}
@@ -935,7 +935,7 @@ export default function AdminFinancing() {
                       value:
                         selectedRequest.employmentType
                           ?.replace(/([A-Z])/g, " $1")
-                          .trim() || ""”",
+                          .trim() || "â€”",
                     },
                     {
                       label: "Years Employed",
@@ -1059,7 +1059,7 @@ export default function AdminFinancing() {
                             padding: "0.5rem 1rem",
                             backgroundColor: "rgba(29,78,216,0.1)",
                             border: "1px solid rgba(29,78,216,0.3)",
-                            color: "#1A1A1A",
+                            color: "#C4FF00",
                             borderRadius: "0.5rem",
                             fontFamily: "Outfit",
                             fontSize: "0.75rem",

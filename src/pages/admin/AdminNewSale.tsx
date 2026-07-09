@@ -6,7 +6,6 @@ import { addSale, generatePaymentSchedule, type Buyer, type PaymentPlan, type Pa
 import { uploadImage, uploadDocument } from '../../lib/cloudinaryService'
 import { sanitizeForFirestore } from '../../lib/sanitize'
 import { showToast } from '../../lib/toast'
-import { AdminInput, AdminSelect, AdminTextarea, AdminLabel, AdminCheckbox, AdminButton } from '../../components/admin'
 import type { Car } from '../../types'
 
 // Formats a number as NZD currency for display
@@ -348,14 +347,14 @@ export default function AdminNewSale() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
               <div style={{
                 width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundColor: s < step ? '#22c55e' : s === step ? '#1A1A1A' : '#E0E0DC',
+                backgroundColor: s < step ? '#22c55e' : s === step ? '#C4FF00' : '#E0E0DC',
                 color: s < step ? 'white' : s === step ? '#1A1A1A' : '#767676',
                 fontWeight: 700, fontSize: '1rem',
               }}>
                 {s < step ? <CheckCircle size={20} /> : s}
               </div>
               <span className="font-bebas" style={{
-                fontSize: '0.9rem', color: s === step ? '#1A1A1A' : '#767676',
+                fontSize: '0.9rem', color: s === step ? '#C4FF00' : '#767676',
               }}>
                 {s === 1 ? 'Vehicle' : s === 2 ? 'Buyer' : 'Payment'}
               </span>
@@ -376,11 +375,11 @@ export default function AdminNewSale() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
-                width: '100%', padding: '0.75rem 0 0.5rem 2.5rem', borderRadius: 0,
+                width: '100%', paddingLeft: '2.5rem', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
                 backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC', color: "#0D1B2A",
                 fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = '#1A1A1A'; setCarsOpen(true) }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = '#C4FF00'; setCarsOpen(true) }}
               onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC'; setTimeout(() => setCarsOpen(false), 200) }}
             />
             {carsOpen && (
@@ -411,10 +410,10 @@ export default function AdminNewSale() {
                       <div style={{ flex: 1 }}>
                         <p className="font-bebas" style={{color: "#0D1B2A" }}>{c.title}</p>
                         <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>
-                          {c.year} • {c.km.toLocaleString()} km
+                          {c.year} â€¢ {c.km.toLocaleString()} km
                         </p>
                       </div>
-                      <p className="font-bebas" style={{ fontSize: '0.9rem', color: '#1A1A1A' }}>{fmt(c.price)}</p>
+                      <p className="font-bebas" style={{ fontSize: '0.9rem', color: '#C4FF00' }}>{fmt(c.price)}</p>
                     </div>
                   </div>
                 ))}
@@ -432,15 +431,15 @@ export default function AdminNewSale() {
                 <h3 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year • KM</p>
-                    <p style={{color: "#0D1B2A" }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year â€¢ KM</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.year} â€¢ {selectedCar.km.toLocaleString()} km</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Transmission • Fuel</p>
-                    <p style={{color: "#0D1B2A" }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Transmission â€¢ Fuel</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.transmission} â€¢ {selectedCar.fuel}</p>
                   </div>
                 </div>
-                <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#1A1A1A', marginBottom: '1rem' }}>{fmt(selectedCar.price)}</p>
+                <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#C4FF00', marginBottom: '1rem' }}>{fmt(selectedCar.price)}</p>
                 <button
                   onClick={() => {
                     setSelectedCar(null)
@@ -449,7 +448,7 @@ export default function AdminNewSale() {
                   style={{
                     padding: '0.75rem 1.5rem', borderRadius: 0,
                     backgroundColor: 'transparent', border: '1px solid rgba(29,78,216,0.3)',
-                    color: '#1A1A1A', fontFamily: 'Outfit', fontSize: '0.875rem',
+                    color: '#C4FF00', fontFamily: 'Outfit', fontSize: '0.875rem',
                     cursor: 'pointer', transition: 'all 0.2s',
                   }}
                 >
@@ -461,26 +460,50 @@ export default function AdminNewSale() {
                 backgroundColor: 'transparent', border: '1px solid rgba(29,78,216,0.15)',
                 borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(1rem, 3vw, 2rem)',
               }}>
-                <h3 className="font-bebas" style={{ fontSize: '1.25rem', color: '#1A1A1A', marginBottom: '1rem' }}>Vehicle Details *</h3>
+                <h3 className="font-bebas" style={{ fontSize: '1.25rem', color: '#C4FF00', marginBottom: '1rem' }}>Vehicle Details *</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1.5rem' }}>
                   <div>
-                    <AdminInput
+                    <label style={{
+                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                      color: '#767676', letterSpacing: '0.1em',
+                      textTransform: 'uppercase', marginBottom: '0.5rem',
+                    }}>
+                      VIN / Chassis Number *
+                    </label>
+                    <input
                       type="text"
-                      label="VIN / CHASSIS NUMBER"
                       value={form.vin}
                       onChange={(e) => setForm((f) => ({ ...f, vin: e.target.value }))}
                       placeholder="e.g. JTHBP5C1XA5034760"
-                      required
+                      style={{
+                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                        backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                      }}
+                      onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                      onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                     />
                   </div>
                   <div>
-                    <AdminInput
+                    <label style={{
+                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                      color: '#767676', letterSpacing: '0.1em',
+                      textTransform: 'uppercase', marginBottom: '0.5rem',
+                    }}>
+                      License Plate *
+                    </label>
+                    <input
                       type="text"
-                      label="LICENSE PLATE"
                       value={form.plate}
                       onChange={(e) => setForm((f) => ({ ...f, plate: e.target.value }))}
                       placeholder="e.g. ABC123"
-                      required
+                      style={{
+                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                        backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                      }}
+                      onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                      onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                     />
                   </div>
                 </div>
@@ -517,12 +540,23 @@ export default function AdminNewSale() {
 
                 {!form.isNZNew && (
                   <div style={{ marginBottom: '1.5rem' }}>
-                    <AdminInput
+                    <label style={{
+                      display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                      color: '#767676', letterSpacing: '0.1em',
+                      textTransform: 'uppercase', marginBottom: '0.5rem',
+                    }}>
+                      Country of Origin
+                    </label>
+                    <input
                       type="text"
-                      label="COUNTRY OF ORIGIN"
                       value={form.originCountry}
                       onChange={(e) => setForm((f) => ({ ...f, originCountry: e.target.value }))}
                       placeholder="e.g. Japan, Australia, USA"
+                      style={{
+                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                        backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                        color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                      }}
                       onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
                       onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                     />
@@ -612,7 +646,7 @@ export default function AdminNewSale() {
                 border: 'none',
               }}
             >
-              Next Step ←’
+              Next Step â†’
             </button>
           </div>
         </div>
@@ -667,7 +701,7 @@ export default function AdminNewSale() {
                 color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
-              ← Back
+              â† Back
             </button>
             <button
               onClick={() => setStep(3)}
@@ -680,7 +714,7 @@ export default function AdminNewSale() {
                 border: 'none',
               }}
             >
-              Next Step ←’
+              Next Step â†’
             </button>
           </div>
         </div>
@@ -708,7 +742,7 @@ export default function AdminNewSale() {
                 backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
                 color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
-              onFocus={(e) => { e.target.style.borderColor = '#1A1A1A' }}
+              onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
               onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
             />
           </div>
@@ -732,7 +766,7 @@ export default function AdminNewSale() {
                   onClick={() => setForm((f) => ({ ...f, paymentType: type }))}
                   style={{
                     backgroundColor: form.paymentType === type ? 'rgba(29,78,216,0.05)' : '#FFFFFF',
-                    border: `2px solid ${form.paymentType === type ? '#1A1A1A' : 'transparent'}`,
+                    border: `2px solid ${form.paymentType === type ? '#C4FF00' : 'transparent'}`,
                     borderRadius: '1rem', padding: '1.5rem', cursor: 'pointer',
                     transition: 'all 0.2s',
                   }}
@@ -743,7 +777,7 @@ export default function AdminNewSale() {
                     if (form.paymentType !== type) e.currentTarget.style.borderColor = 'transparent'
                   }}
                 >
-                  <Icon size={24} color={form.paymentType === type ? '#1A1A1A' : 'rgba(255,255,255,0.3)'} style={{ marginBottom: '0.75rem' }} />
+                  <Icon size={24} color={form.paymentType === type ? '#C4FF00' : 'rgba(255,255,255,0.3)'} style={{ marginBottom: '0.75rem' }} />
                   <p className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.25rem' }}>{title}</p>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>{desc}</p>
                 </div>
@@ -794,7 +828,7 @@ export default function AdminNewSale() {
                       backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
                       color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = '#1A1A1A' }}
+                    onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
                     onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
                   />
                 </div>
@@ -815,7 +849,7 @@ export default function AdminNewSale() {
                       onClick={() => setForm((f) => ({ ...f, loanTerm: m }))}
                       style={{
                         padding: '0.5rem 1rem', borderRadius: 0, border: 'none',
-                        backgroundColor: form.loanTerm === m ? '#1A1A1A' : 'rgba(255,255,255,0.1)',
+                        backgroundColor: form.loanTerm === m ? '#C4FF00' : 'rgba(255,255,255,0.1)',
                         color: form.loanTerm === m ? 'white' : 'rgba(255,255,255,0.5)',
                         fontFamily: 'Outfit', fontSize: '0.875rem', fontWeight: 600,
                         cursor: 'pointer', transition: 'all 0.2s',
@@ -827,13 +861,27 @@ export default function AdminNewSale() {
                 </div>
               </div>
 
-              <AdminInput
-                type="date"
-                label="FIRST PAYMENT DATE"
-                value={form.firstPaymentDate}
-                onChange={(e) => setForm((f) => ({ ...f, firstPaymentDate: e.target.value }))}
-                required
-              />
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{
+                  display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                  color: '#767676', letterSpacing: '0.1em',
+                  textTransform: 'uppercase', marginBottom: '0.5rem',
+                }}>
+                  First Payment Date *
+                </label>
+                <input
+                  type="date"
+                  value={form.firstPaymentDate}
+                  onChange={(e) => setForm((f) => ({ ...f, firstPaymentDate: e.target.value }))}
+                  style={{
+                    width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                    backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                    color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                  }}
+                  onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                  onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                />
+              </div>
 
               <div style={{
                 backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.05)',
@@ -847,13 +895,27 @@ export default function AdminNewSale() {
 
           {/* Sale Price for cash */}
           {form.paymentType === 'cash' && (
-            <AdminInput
-              type="number"
-              label="SALE PRICE (NZD)"
-              value={form.salePrice}
-              onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
-              required
-            />
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{
+                display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                color: '#767676', letterSpacing: '0.1em',
+                textTransform: 'uppercase', marginBottom: '0.5rem',
+              }}>
+                Sale Price (NZD) *
+              </label>
+              <input
+                type="number"
+                value={form.salePrice}
+                onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
+                style={{
+                  width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                  backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                  color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                }}
+                onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
+                onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
+              />
+            </div>
           )}
 
           {/* Notes */}
@@ -875,7 +937,7 @@ export default function AdminNewSale() {
                 color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                 minHeight: '100px', resize: 'vertical',
               }}
-              onFocus={(e) => { e.target.style.borderColor = '#1A1A1A' }}
+              onFocus={(e) => { e.target.style.borderColor = '#C4FF00' }}
               onBlur={(e) => { e.target.style.borderColor = '#E0E0DC' }}
             />
           </div>
@@ -887,7 +949,7 @@ export default function AdminNewSale() {
               onClick={() => setOrcExpanded(!orcExpanded)}
               style={{
                 width: '100%', padding: '1rem', backgroundColor: 'transparent',
-                border: 'none', color: '#1A1A1A', fontFamily: 'Outfit', fontSize: '0.9rem',
+                border: 'none', color: '#C4FF00', fontFamily: 'Outfit', fontSize: '0.9rem',
                 fontWeight: 600, cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
                 alignItems: 'center',
               }}
@@ -895,7 +957,7 @@ export default function AdminNewSale() {
               <div>
                 ORC - On Road Costs (Optional)
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', fontWeight: 400, marginTop: '0.25rem' }}>
-                  Typical range: NZ$300"“NZ$650
+                  Typical range: NZ$300â€“NZ$650
                 </p>
               </div>
               <ChevronDown size={16} style={{ transform: orcExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }} />
@@ -925,73 +987,180 @@ export default function AdminNewSale() {
 
                 {!form.orcIncluded && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
-                    <AdminInput
-                      type="number"
-                      label="WOF (NZD)"
-                      value={form.orcWof}
-                      onChange={(e) => setForm((f) => ({ ...f, orcWof: Number(e.target.value) || 0 }))}
-                    />
+                    <div>
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        WoF (NZD)
+                      </label>
+                      <input
+                        type="number"
+                        value={form.orcWof}
+                        onChange={(e) => setForm((f) => ({ ...f, orcWof: Number(e.target.value) || 0 }))}
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      />
+                    </div>
 
                     <div>
-                      <AdminLabel>REGISTRATION (NZD)</AdminLabel>
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Registration (NZD)
+                      </label>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '0.5rem' }}>
-                        <AdminSelect
-                          value={form.orcRegistrationMonths.toString()}
+                        <select
+                          value={form.orcRegistrationMonths}
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistrationMonths: Number(e.target.value) as 6 | 12 }))}
-                          options={[
-                            { value: '6', label: '6 months' },
-                            { value: '12', label: '12 months' },
-                          ]}
-                        />
-                        <AdminInput
+                          style={{
+                            padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
+                          }}
+                        >
+                          <option value="6">6 months</option>
+                          <option value="12">12 months</option>
+                        </select>
+                        <input
                           type="number"
                           value={form.orcRegistration}
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistration: Number(e.target.value) || 0 }))}
+                          style={{
+                            padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          }}
+                          onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                          onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                         />
                       </div>
                     </div>
 
-                    <AdminInput
-                      type="number"
-                      label="GROOMING/DETAILING (NZD)"
-                      value={form.orcGrooming}
-                      onChange={(e) => setForm((f) => ({ ...f, orcGrooming: Number(e.target.value) || 0 }))}
-                    />
+                    <div>
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Grooming/Detailing (NZD)
+                      </label>
+                      <input
+                        type="number"
+                        value={form.orcGrooming}
+                        onChange={(e) => setForm((f) => ({ ...f, orcGrooming: Number(e.target.value) || 0 }))}
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      />
+                    </div>
 
-                    <AdminInput
-                      type="number"
-                      label="OWNERSHIP TRANSFER (NZD)"
-                      value={form.orcOwnershipTransfer}
-                      onChange={(e) => setForm((f) => ({ ...f, orcOwnershipTransfer: Number(e.target.value) || 0 }))}
-                    />
+                    <div>
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Ownership Transfer (NZD)
+                      </label>
+                      <input
+                        type="number"
+                        value={form.orcOwnershipTransfer}
+                        onChange={(e) => setForm((f) => ({ ...f, orcOwnershipTransfer: Number(e.target.value) || 0 }))}
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      />
+                    </div>
 
-                    <AdminInput
-                      type="number"
-                      label="MECHANICAL INSPECTION (NZD)"
-                      value={form.orcMechanicalInspection}
-                      onChange={(e) => setForm((f) => ({ ...f, orcMechanicalInspection: Number(e.target.value) || 0 }))}
-                    />
+                    <div>
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Mechanical Inspection (NZD)
+                      </label>
+                      <input
+                        type="number"
+                        value={form.orcMechanicalInspection}
+                        onChange={(e) => setForm((f) => ({ ...f, orcMechanicalInspection: Number(e.target.value) || 0 }))}
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      />
+                    </div>
 
-                    <AdminInput
-                      type="text"
-                      label="OTHER COST LABEL"
-                      value={form.orcOtherLabel}
-                      onChange={(e) => setForm((f) => ({ ...f, orcOtherLabel: e.target.value }))}
-                      placeholder="e.g., Inspection"
-                    />
+                    <div>
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Other Cost Label
+                      </label>
+                      <input
+                        type="text"
+                        value={form.orcOtherLabel}
+                        onChange={(e) => setForm((f) => ({ ...f, orcOtherLabel: e.target.value }))}
+                        placeholder="e.g., Inspection"
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      />
+                    </div>
 
-                    <AdminInput
-                      type="number"
-                      label="OTHER COST AMOUNT (NZD)"
-                      value={form.orcOtherAmount}
-                      onChange={(e) => setForm((f) => ({ ...f, orcOtherAmount: Number(e.target.value) || 0 }))}
-                    />
+                    <div>
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Other Cost Amount (NZD)
+                      </label>
+                      <input
+                        type="number"
+                        value={form.orcOtherAmount}
+                        onChange={(e) => setForm((f) => ({ ...f, orcOtherAmount: Number(e.target.value) || 0 }))}
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                      />
+                    </div>
                   </div>
                 )}
 
                 <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>ORC Total</p>
-                  <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#1A1A1A' }}>{fmt(orcTotal)}</p>
+                  <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#C4FF00' }}>{fmt(orcTotal)}</p>
                 </div>
               </div>
             )}
@@ -1004,7 +1173,7 @@ export default function AdminNewSale() {
               onClick={() => setAccessoriesExpanded(!accessoriesExpanded)}
               style={{
                 width: '100%', padding: '1rem', backgroundColor: 'transparent',
-                border: 'none', color: '#1A1A1A', fontFamily: 'Outfit', fontSize: '0.9rem',
+                border: 'none', color: '#C4FF00', fontFamily: 'Outfit', fontSize: '0.9rem',
                 fontWeight: 600, cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
                 alignItems: 'center',
               }}
@@ -1082,7 +1251,7 @@ export default function AdminNewSale() {
                   style={{
                     width: '100%', padding: '0.75rem', borderRadius: 0,
                     backgroundColor: 'rgba(29,78,216,0.1)', border: '1px solid rgba(29,78,216,0.3)',
-                    color: '#1A1A1A', fontFamily: 'Outfit', fontSize: '0.875rem',
+                    color: '#C4FF00', fontFamily: 'Outfit', fontSize: '0.875rem',
                     cursor: 'pointer', marginBottom: '1rem',
                   }}
                 >
@@ -1091,7 +1260,7 @@ export default function AdminNewSale() {
 
                 <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>Accessories Total</p>
-                  <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#1A1A1A' }}>{fmt(accessoriesTotal)}</p>
+                  <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#C4FF00' }}>{fmt(accessoriesTotal)}</p>
                 </div>
               </div>
             )}
@@ -1105,7 +1274,7 @@ export default function AdminNewSale() {
                 onClick={() => setFinancingFeesExpanded(!financingFeesExpanded)}
                 style={{
                   width: '100%', padding: '1rem', backgroundColor: 'transparent',
-                  border: 'none', color: '#1A1A1A', fontFamily: 'Outfit', fontSize: '0.9rem',
+                  border: 'none', color: '#C4FF00', fontFamily: 'Outfit', fontSize: '0.9rem',
                   fontWeight: 600, cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
                   alignItems: 'center',
                 }}
@@ -1122,53 +1291,113 @@ export default function AdminNewSale() {
                 <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                     <div>
-                      <AdminInput
-                        type=”number”
-                        label=”ESTABLISHMENT FEE (NZD)”
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Establishment Fee (NZD)
+                      </label>
+                      <input
+                        type="number"
                         value={form.ffEstablishment}
                         onChange={(e) => setForm((f) => ({ ...f, ffEstablishment: Number(e.target.value) || 0 }))}
-                        placeholder=”380”
-                        helperText=”Typically NZ$150–500”
+                        placeholder="380"
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                       />
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
+                        Typically NZ$150â€“500
+                      </p>
                     </div>
 
                     <div>
-                      <AdminInput
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        PPSR Fee (NZD)
+                      </label>
+                      <input
                         type="number"
-                        label="PPSR FEE (NZD)"
                         value={form.ffPpsr}
                         onChange={(e) => setForm((f) => ({ ...f, ffPpsr: Number(e.target.value) || 0 }))}
                         placeholder="10"
-                        helperText="Personal Property Securities Register ~$10"
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                       />
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
+                        Personal Property Securities Register ~$10
+                      </p>
                     </div>
 
                     <div>
-                      <AdminInput
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Monthly Account Fee (NZD)
+                      </label>
+                      <input
                         type="number"
-                        label="MONTHLY ACCOUNT FEE (NZD)"
                         value={form.ffMonthlyAccount}
                         onChange={(e) => setForm((f) => ({ ...f, ffMonthlyAccount: Number(e.target.value) || 0 }))}
                         placeholder="5"
-                        helperText="Monthly admin fee"
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                       />
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
+                        Monthly admin fee
+                      </p>
                     </div>
 
                     <div>
-                      <AdminInput
-                        type=”number”
-                        label=”DEALER ORIGINATION FEE (NZD)”
+                      <label style={{
+                        display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                        color: '#767676', letterSpacing: '0.1em',
+                        textTransform: 'uppercase', marginBottom: '0.5rem',
+                      }}>
+                        Dealer Origination Fee (NZD)
+                      </label>
+                      <input
+                        type="number"
                         value={form.ffDealerOrigination}
                         onChange={(e) => setForm((f) => ({ ...f, ffDealerOrigination: Number(e.target.value) || 0 }))}
-                        placeholder=”350”
-                        helperText=”Typically NZ$350–500”
+                        placeholder="350"
+                        style={{
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: 0,
+                          backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                          color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                        }}
+                        onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                        onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
                       />
+                      <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
+                        Typically NZ$350â€“500
+                      </p>
                     </div>
                   </div>
 
                   <div style={{ paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>Financing Fees Total</p>
-                    <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#1A1A1A' }}>{fmt(financingFeesTotal)}</p>
+                    <p className="font-bebas" style={{ fontSize: '1.5rem', color: '#C4FF00' }}>{fmt(financingFeesTotal)}</p>
                   </div>
                 </div>
               )}
@@ -1182,7 +1411,7 @@ export default function AdminNewSale() {
               onClick={() => setWarrantyExpanded(!warrantyExpanded)}
               style={{
                 width: '100%', padding: '1rem', backgroundColor: 'transparent',
-                border: 'none', color: '#1A1A1A', fontFamily: 'Outfit', fontSize: '0.9rem',
+                border: 'none', color: '#C4FF00', fontFamily: 'Outfit', fontSize: '0.9rem',
                 fontWeight: 600, cursor: 'pointer', display: 'flex', justifyContent: 'space-between',
                 alignItems: 'center',
               }}
@@ -1206,24 +1435,51 @@ export default function AdminNewSale() {
                   </label>
                   {form.warrantyIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
-                      <AdminSelect
-                        label="MONTHS"
-                        value={form.warrantyMonths.toString()}
-                        onChange={(e) => setForm((f) => ({ ...f, warrantyMonths: Number(e.target.value) as any }))}
-                        options={[
-                          { value: '3', label: '3 months' },
-                          { value: '6', label: '6 months' },
-                          { value: '12', label: '12 months' },
-                          { value: '24', label: '24 months' },
-                        ]}
-                      />
-                      <AdminInput
-                        type="text"
-                        label="PROVIDER"
-                        value={form.warrantyProvider}
-                        onChange={(e) => setForm((f) => ({ ...f, warrantyProvider: e.target.value }))}
-                        placeholder="e.g., AutoCare"
-                      />
+                      <div>
+                        <label style={{
+                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                          color: '#767676', letterSpacing: '0.1em',
+                          textTransform: 'uppercase', marginBottom: '0.5rem',
+                        }}>
+                          Months
+                        </label>
+                        <select
+                          value={form.warrantyMonths}
+                          onChange={(e) => setForm((f) => ({ ...f, warrantyMonths: Number(e.target.value) as any }))}
+                          style={{
+                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
+                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
+                          }}
+                        >
+                          <option value="3">3 months</option>
+                          <option value="6">6 months</option>
+                          <option value="12">12 months</option>
+                          <option value="24">24 months</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{
+                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                          color: '#767676', letterSpacing: '0.1em',
+                          textTransform: 'uppercase', marginBottom: '0.5rem',
+                        }}>
+                          Provider
+                        </label>
+                        <input
+                          type="text"
+                          value={form.warrantyProvider}
+                          onChange={(e) => setForm((f) => ({ ...f, warrantyProvider: e.target.value }))}
+                          placeholder="e.g., AutoCare"
+                          style={{
+                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
+                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          }}
+                          onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                          onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1240,24 +1496,51 @@ export default function AdminNewSale() {
                   </label>
                   {form.mechInsuranceIncluded && (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginLeft: '1.5rem' }}>
-                      <AdminSelect
-                        label="MONTHS"
-                        value={form.mechInsuranceMonths.toString()}
-                        onChange={(e) => setForm((f) => ({ ...f, mechInsuranceMonths: Number(e.target.value) as any }))}
-                        options={[
-                          { value: '3', label: '3 months' },
-                          { value: '6', label: '6 months' },
-                          { value: '12', label: '12 months' },
-                          { value: '24', label: '24 months' },
-                        ]}
-                      />
-                      <AdminInput
-                        type="text"
-                        label="PROVIDER"
-                        value={form.mechInsuranceProvider}
-                        onChange={(e) => setForm((f) => ({ ...f, mechInsuranceProvider: e.target.value }))}
-                        placeholder="e.g., InsureMe"
-                      />
+                      <div>
+                        <label style={{
+                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                          color: '#767676', letterSpacing: '0.1em',
+                          textTransform: 'uppercase', marginBottom: '0.5rem',
+                        }}>
+                          Months
+                        </label>
+                        <select
+                          value={form.mechInsuranceMonths}
+                          onChange={(e) => setForm((f) => ({ ...f, mechInsuranceMonths: Number(e.target.value) as any }))}
+                          style={{
+                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
+                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
+                          }}
+                        >
+                          <option value="3">3 months</option>
+                          <option value="6">6 months</option>
+                          <option value="12">12 months</option>
+                          <option value="24">24 months</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={{
+                          display: 'block', fontFamily: 'Outfit', fontSize: '0.7rem',
+                          color: '#767676', letterSpacing: '0.1em',
+                          textTransform: 'uppercase', marginBottom: '0.5rem',
+                        }}>
+                          Provider
+                        </label>
+                        <input
+                          type="text"
+                          value={form.mechInsuranceProvider}
+                          onChange={(e) => setForm((f) => ({ ...f, mechInsuranceProvider: e.target.value }))}
+                          placeholder="e.g., InsureMe"
+                          style={{
+                            width: '100%', padding: '0.75rem 1rem', borderRadius: 0,
+                            backgroundColor: 'transparent', border: 'none', borderBottom: '1px solid #E0E0DC',
+                            color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
+                          }}
+                          onFocus={(e) => { e.currentTarget.style.borderBottomColor = '#1A1A1A'; e.currentTarget.style.borderBottomWidth = '2px' }}
+                          onBlur={(e) => { e.currentTarget.style.borderBottomColor = '#E0E0DC'; e.currentTarget.style.borderBottomWidth = '1px' }}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1306,14 +1589,14 @@ export default function AdminNewSale() {
                 </div>
                 <div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>GST (15%)</p>
-                  <p style={{ fontFamily: 'Outfit', color: '#1A1A1A' }}>{fmt(gst)}</p>
+                  <p style={{ fontFamily: 'Outfit', color: '#C4FF00' }}>{fmt(gst)}</p>
                 </div>
               </div>
             </div>
 
             <div style={{ marginTop: '1rem' }}>
               <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.5rem' }}>TOTAL</p>
-              <p className="font-bebas" style={{ fontSize: '2rem', color: '#1A1A1A', lineHeight: 1 }}>{fmt(totalCostToBuyer)}</p>
+              <p className="font-bebas" style={{ fontSize: '2rem', color: '#C4FF00', lineHeight: 1 }}>{fmt(totalCostToBuyer)}</p>
             </div>
           </div>
 
@@ -1341,7 +1624,7 @@ export default function AdminNewSale() {
                 border: '1px solid rgba(29,78,216,0.1)',
               }}>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.5rem' }}>Monthly Payment</p>
-                <p className="font-bebas" style={{ fontSize: '2rem', color: '#1A1A1A', lineHeight: 1 }}>{fmt(calc.monthlyPayment)}</p>
+                <p className="font-bebas" style={{ fontSize: '2rem', color: '#C4FF00', lineHeight: 1 }}>{fmt(calc.monthlyPayment)}</p>
               </div>
               <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>Total Repayment</p>
@@ -1408,12 +1691,12 @@ export default function AdminNewSale() {
                 id="unified-upload"
               />
               <label htmlFor="unified-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
-                <Upload size={40} style={{ margin: '0 auto 1rem', color: '#1A1A1A' }} />
+                <Upload size={40} style={{ margin: '0 auto 1rem', color: '#C4FF00' }} />
                 <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                   Drop files here or click to browse
                 </p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676' }}>
-                  Images, PDFs, documents "” all types accepted
+                  Images, PDFs, documents â€” all types accepted
                 </p>
               </label>
             </div>
@@ -1446,7 +1729,7 @@ export default function AdminNewSale() {
                       }}>
                         <div style={{
                           height: '100%',
-                          backgroundColor: '#1A1A1A',
+                          backgroundColor: '#C4FF00',
                           width: `${progress}%`,
                           transition: 'width 0.3s',
                         }} />
@@ -1489,7 +1772,7 @@ export default function AdminNewSale() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: '#1A1A1A',
+                          color: '#C4FF00',
                           fontSize: '2rem',
                         }}>
                           ðŸ“„
@@ -1521,7 +1804,7 @@ export default function AdminNewSale() {
                         padding: '0.5rem',
                         fontFamily: 'Outfit',
                         fontSize: '0.65rem',
-                        color: '#1A1A1A',
+                        color: '#C4FF00',
                         textDecoration: 'none',
                         textAlign: 'center',
                         borderTop: '1px solid rgba(255,255,255,0.06)',
@@ -1544,7 +1827,7 @@ export default function AdminNewSale() {
                 color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
-              ← Back
+              â† Back
             </button>
             <button
               onClick={handleSubmit}
