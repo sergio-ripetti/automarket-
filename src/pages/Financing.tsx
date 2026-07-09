@@ -302,20 +302,20 @@ export default function Financing() {
                   <img src={car.images[0]} alt={car.title} style={{ width: 72, height: 50, objectFit: 'cover', borderRadius: '0.5rem', flexShrink: 0 }} />
                   <div>
                     <p className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em' }}>{car.title}</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#C4FF00', fontWeight: 600 }}>{formatPrice(car.price)}</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#1A1A1A', fontWeight: 600 }}>{formatPrice(car.price)}</p>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <label style={labelStyle}>CAR PRICE (NZD)</label>
+                  <FormLabel required>CAR PRICE (NZD)</FormLabel>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#4A4A4A', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
-                    <input
-                      type="number" value={manualPrice}
+                    <span style={{ position: 'absolute', left: '0.5rem', top: '50%', transform: 'translateY(-50%)', color: '#767676', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
+                    <FormInput
+                      type="number"
+                      value={manualPrice}
                       onChange={(e) => setManualPrice(e.target.value)}
                       placeholder="25,000"
-                      onFocus={() => setFocused('price')} onBlur={() => setFocused(null)}
-                      style={{ ...inputStyle('price'), paddingLeft: '2rem' }}
+                      icon={null}
                     />
                   </div>
                 </div>
@@ -340,8 +340,8 @@ export default function Financing() {
                   value={form.downPayment}
                   onChange={(e) => setForm({ ...form, downPayment: Number(e.target.value) })}
                   style={{
-                    width: '100%', cursor: 'pointer', accentColor: '#C4FF00',
-                    background: `linear-gradient(to right, #C4FF00 ${sliderPct}%, rgba(255,255,255,0.08) ${sliderPct}%)`,
+                    width: '100%', cursor: 'pointer', accentColor: '#1A1A1A',
+                    background: `linear-gradient(to right, #1A1A1A ${sliderPct}%, rgba(255,255,255,0.08) ${sliderPct}%)`,
                     height: '4px', borderRadius: '2px', outline: 'none', border: 'none',
                     WebkitAppearance: 'none',
                   } as React.CSSProperties}
@@ -354,7 +354,7 @@ export default function Financing() {
 
               {/* Loan Term pills */}
               <div>
-                <p style={{ ...labelStyle, marginBottom: '0.75rem' }}>LOAN TERM</p>
+                <FormLabel style={{ marginBottom: '0.75rem' }} required>LOAN TERM</FormLabel>
                 <div style={{ display: 'flex', gap: '0.625rem', flexWrap: 'wrap' }}>
                   {MONTH_OPTIONS.map((m) => (
                     <button
@@ -738,22 +738,18 @@ export default function Financing() {
                             <p style={{color: "#0D1B2A", whiteSpace: 'nowrap'}}>
                               {doc.filename}
                             </p>
-                            <select
+                            <FormSelect
                               value={doc.type}
                               onChange={(e) => handleDocumentTypeChange(doc.url, e.target.value as FinancingDocument['type'])}
-                              style={{
-                                padding: '0.5rem', borderRadius: '0.5rem',
-                                backgroundColor: '#F2F2F0', border: '1px solid rgba(255,255,255,0.08)',
-                                color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.75rem',
-                              }}
-                            >
-                              <option value="passport_license">Passport/License</option>
-                              <option value="visa_residency">Visa/Residency</option>
-                              <option value="proof_of_address">Proof of Address</option>
-                              <option value="payslip">Payslip</option>
-                              <option value="bank_statement">Bank Statement</option>
-                              <option value="other">Other</option>
-                            </select>
+                              options={[
+                                { value: 'passport_license', label: 'Passport/License' },
+                                { value: 'visa_residency', label: 'Visa/Residency' },
+                                { value: 'proof_of_address', label: 'Proof of Address' },
+                                { value: 'payslip', label: 'Payslip' },
+                                { value: 'bank_statement', label: 'Bank Statement' },
+                                { value: 'other', label: 'Other' },
+                              ]}
+                            />
                             <button
                               onClick={() => handleRemoveDocument(doc.url)}
                               style={{
@@ -797,7 +793,7 @@ export default function Financing() {
                       </p>
                     </div>
                   </label>
-                  {errors.creditHistoryConsent && <p style={errorStyle}>{errors.creditHistoryConsent}</p>}
+                  {errors.creditHistoryConsent && <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem' }}>{errors.creditHistoryConsent}</p>}
                 </div>
               </div>
 
