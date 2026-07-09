@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { Trash2, Eye, X } from 'lucide-react'
 import { getFinancingRequests, updateFinancingStatus, deleteFinancingRequest } from '../../lib/financingService'
 import AdminToast from '../../components/admin/AdminToast'
@@ -14,7 +14,7 @@ function fmt(p: number) {
 
 // Converts a Firestore Timestamp into a readable NZ date string
 function fmtDate(ts: { toDate: () => Date } | undefined) {
-  if (!ts || typeof ts.toDate !== 'function') return '—'
+  if (!ts || typeof ts.toDate !== 'function') return 'â€”'
   return ts.toDate().toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
@@ -169,7 +169,7 @@ export default function AdminFinancing() {
                       fontSize: "0.8rem",
                       color: "#767676",
                     }}>
-                    {req.email} · {req.phone}
+                    {req.email} Â· {req.phone}
                   </p>
                 </div>
                 <div
@@ -935,7 +935,7 @@ export default function AdminFinancing() {
                       value:
                         selectedRequest.employmentType
                           ?.replace(/([A-Z])/g, " $1")
-                          .trim() || "—",
+                          .trim() || "â€”",
                     },
                     {
                       label: "Years Employed",
@@ -1223,3 +1223,4 @@ export default function AdminFinancing() {
     </div>
   );
 }
+

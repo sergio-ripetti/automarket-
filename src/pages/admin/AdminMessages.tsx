@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Trash2, Mail, Eye, X } from 'lucide-react'
 import { getMessages, markAsRead, markAsUnread, deleteMessage } from '../../lib/messagesService'
@@ -10,7 +10,7 @@ type TypeFilter = 'all' | 'contact' | 'offer' | 'unread'
 
 // Converts a Firestore Timestamp into a readable NZ date string
 function fmtDate(ts: { toDate: () => Date } | undefined) {
-  if (!ts || typeof ts.toDate !== 'function') return '—'
+  if (!ts || typeof ts.toDate !== 'function') return 'â€”'
   return ts.toDate().toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
@@ -161,7 +161,7 @@ export default function AdminMessages() {
                     </p>
                   </div>
                   <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.5rem' }}>
-                    {msg.email} {msg.phone && `· ${msg.phone}`}
+                    {msg.email} {msg.phone && `Â· ${msg.phone}`}
                   </p>
 
                   {isOffer ? (
@@ -654,3 +654,4 @@ export default function AdminMessages() {
     </div>
   )
 }
+

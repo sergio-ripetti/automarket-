@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+﻿import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, CheckCircle, CreditCard, DollarSign, Split, Upload, ChevronDown, X } from 'lucide-react'
 import { getCars } from '../../lib/carsService'
@@ -375,7 +375,7 @@ export default function AdminNewSale() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               style={{
-                width: '100%', paddingLeft: '2.5rem', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                width: '100%', paddingLeft: '2.5rem', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                 backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC', color: "#0D1B2A",
                 fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
@@ -398,7 +398,7 @@ export default function AdminNewSale() {
                       setSearchInput('')
                     }}
                     style={{
-                      padding: '0.875rem 1rem', cursor: 'pointer',
+                      padding: '0.75rem 0 0.5rem 0', cursor: 'pointer',
                       borderBottom: '1px solid rgba(255,255,255,0.05)',
                       transition: 'background 0.2s',
                     }}
@@ -410,7 +410,7 @@ export default function AdminNewSale() {
                       <div style={{ flex: 1 }}>
                         <p className="font-bebas" style={{color: "#0D1B2A" }}>{c.title}</p>
                         <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>
-                          {c.year} • {c.km.toLocaleString()} km
+                          {c.year} â€¢ {c.km.toLocaleString()} km
                         </p>
                       </div>
                       <p className="font-bebas" style={{ fontSize: '0.9rem', color: '#C4FF00' }}>{fmt(c.price)}</p>
@@ -431,12 +431,12 @@ export default function AdminNewSale() {
                 <h3 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>{selectedCar.title}</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(0.75rem, 2vw, 1rem)', marginBottom: '1rem' }}>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year • KM</p>
-                    <p style={{color: "#0D1B2A" }}>{selectedCar.year} • {selectedCar.km.toLocaleString()} km</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year â€¢ KM</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.year} â€¢ {selectedCar.km.toLocaleString()} km</p>
                   </div>
                   <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Transmission • Fuel</p>
-                    <p style={{color: "#0D1B2A" }}>{selectedCar.transmission} • {selectedCar.fuel}</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Transmission â€¢ Fuel</p>
+                    <p style={{color: "#0D1B2A" }}>{selectedCar.transmission} â€¢ {selectedCar.fuel}</p>
                   </div>
                 </div>
                 <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#C4FF00', marginBottom: '1rem' }}>{fmt(selectedCar.price)}</p>
@@ -476,7 +476,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, vin: e.target.value }))}
                       placeholder="e.g. JTHBP5C1XA5034760"
                       style={{
-                        width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                         backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
@@ -498,7 +498,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, plate: e.target.value }))}
                       placeholder="e.g. ABC123"
                       style={{
-                        width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                         backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
@@ -553,7 +553,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, originCountry: e.target.value }))}
                       placeholder="e.g. Japan, Australia, USA"
                       style={{
-                        width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                         backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
@@ -578,7 +578,7 @@ export default function AdminNewSale() {
                       onChange={(e) => setForm((f) => ({ ...f, previousOwners: Math.max(0, Number(e.target.value) || 0) }))}
                       min="0"
                       style={{
-                        width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                        width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                         backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                         color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                       }}
@@ -646,7 +646,7 @@ export default function AdminNewSale() {
                 border: 'none',
               }}
             >
-              Next Step →
+              Next Step â†’
             </button>
           </div>
         </div>
@@ -681,7 +681,7 @@ export default function AdminNewSale() {
                   onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                   placeholder={placeholder}
                   style={{
-                    width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                    width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                     backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                     color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
@@ -701,7 +701,7 @@ export default function AdminNewSale() {
                 color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
-              ← Back
+              â† Back
             </button>
             <button
               onClick={() => setStep(3)}
@@ -714,7 +714,7 @@ export default function AdminNewSale() {
                 border: 'none',
               }}
             >
-              Next Step →
+              Next Step â†’
             </button>
           </div>
         </div>
@@ -738,7 +738,7 @@ export default function AdminNewSale() {
               value={form.saleDate}
               onChange={(e) => setForm((f) => ({ ...f, saleDate: e.target.value }))}
               style={{
-                width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                 backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                 color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
               }}
@@ -801,7 +801,7 @@ export default function AdminNewSale() {
                   value={form.salePrice}
                   onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
                   style={{
-                    width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                    width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                     backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                     color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
@@ -824,7 +824,7 @@ export default function AdminNewSale() {
                     value={form.downPayment}
                     onChange={(e) => setForm((f) => ({ ...f, downPayment: Number(e.target.value) }))}
                     style={{
-                      width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                      width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                       backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                       color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                     }}
@@ -874,7 +874,7 @@ export default function AdminNewSale() {
                   value={form.firstPaymentDate}
                   onChange={(e) => setForm((f) => ({ ...f, firstPaymentDate: e.target.value }))}
                   style={{
-                    width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                    width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                     backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                     color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                   }}
@@ -908,7 +908,7 @@ export default function AdminNewSale() {
                 value={form.salePrice}
                 onChange={(e) => setForm((f) => ({ ...f, salePrice: Number(e.target.value) }))}
                 style={{
-                  width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                  width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                   backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                   color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                 }}
@@ -932,7 +932,7 @@ export default function AdminNewSale() {
               onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
               placeholder="Add any notes about this sale..."
               style={{
-                width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                 backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                 color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                 minHeight: '100px', resize: 'vertical',
@@ -957,7 +957,7 @@ export default function AdminNewSale() {
               <div>
                 ORC - On Road Costs (Optional)
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', fontWeight: 400, marginTop: '0.25rem' }}>
-                  Typical range: NZ$300–NZ$650
+                  Typical range: NZ$300â€“NZ$650
                 </p>
               </div>
               <ChevronDown size={16} style={{ transform: orcExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }} />
@@ -1000,7 +1000,7 @@ export default function AdminNewSale() {
                         value={form.orcWof}
                         onChange={(e) => setForm((f) => ({ ...f, orcWof: Number(e.target.value) || 0 }))}
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1022,7 +1022,7 @@ export default function AdminNewSale() {
                           value={form.orcRegistrationMonths}
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistrationMonths: Number(e.target.value) as 6 | 12 }))}
                           style={{
-                            padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                            padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                             backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem',
                           }}
@@ -1035,7 +1035,7 @@ export default function AdminNewSale() {
                           value={form.orcRegistration}
                           onChange={(e) => setForm((f) => ({ ...f, orcRegistration: Number(e.target.value) || 0 }))}
                           style={{
-                            padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                            padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                             backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                             color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                           }}
@@ -1058,7 +1058,7 @@ export default function AdminNewSale() {
                         value={form.orcGrooming}
                         onChange={(e) => setForm((f) => ({ ...f, orcGrooming: Number(e.target.value) || 0 }))}
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1080,7 +1080,7 @@ export default function AdminNewSale() {
                         value={form.orcOwnershipTransfer}
                         onChange={(e) => setForm((f) => ({ ...f, orcOwnershipTransfer: Number(e.target.value) || 0 }))}
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1102,7 +1102,7 @@ export default function AdminNewSale() {
                         value={form.orcMechanicalInspection}
                         onChange={(e) => setForm((f) => ({ ...f, orcMechanicalInspection: Number(e.target.value) || 0 }))}
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1125,7 +1125,7 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, orcOtherLabel: e.target.value }))}
                         placeholder="e.g., Inspection"
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1147,7 +1147,7 @@ export default function AdminNewSale() {
                         value={form.orcOtherAmount}
                         onChange={(e) => setForm((f) => ({ ...f, orcOtherAmount: Number(e.target.value) || 0 }))}
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1304,7 +1304,7 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, ffEstablishment: Number(e.target.value) || 0 }))}
                         placeholder="380"
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1312,7 +1312,7 @@ export default function AdminNewSale() {
                         onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Typically NZ$150–500
+                        Typically NZ$150â€“500
                       </p>
                     </div>
 
@@ -1330,7 +1330,7 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, ffPpsr: Number(e.target.value) || 0 }))}
                         placeholder="10"
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1356,7 +1356,7 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, ffMonthlyAccount: Number(e.target.value) || 0 }))}
                         placeholder="5"
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1382,7 +1382,7 @@ export default function AdminNewSale() {
                         onChange={(e) => setForm((f) => ({ ...f, ffDealerOrigination: Number(e.target.value) || 0 }))}
                         placeholder="350"
                         style={{
-                          width: '100%', padding: '0.875rem 1rem', borderRadius: '0.625rem',
+                          width: '100%', padding: '0.75rem 0 0.5rem 0', borderRadius: '0.625rem',
                           backgroundColor: '#FFFFFF', border: '1px solid #E0E0DC',
                           color: "#0D1B2A", fontFamily: 'Outfit', fontSize: '0.875rem', outline: 'none',
                         }}
@@ -1390,7 +1390,7 @@ export default function AdminNewSale() {
                         onBlur={(e) => { e.currentTarget.style.borderColor = '#E0E0DC' }}
                       />
                       <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                        Typically NZ$350–500
+                        Typically NZ$350â€“500
                       </p>
                     </div>
                   </div>
@@ -1696,7 +1696,7 @@ export default function AdminNewSale() {
                   Drop files here or click to browse
                 </p>
                 <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676' }}>
-                  Images, PDFs, documents — all types accepted
+                  Images, PDFs, documents â€” all types accepted
                 </p>
               </label>
             </div>
@@ -1775,7 +1775,7 @@ export default function AdminNewSale() {
                           color: '#C4FF00',
                           fontSize: '2rem',
                         }}>
-                          📄
+                          ðŸ“„
                         </div>
                       )}
                       <button
@@ -1797,7 +1797,7 @@ export default function AdminNewSale() {
                           justifyContent: 'center',
                         }}
                       >
-                        ×
+                        Ã—
                       </button>
                       <a href={url} target="_blank" rel="noopener noreferrer" style={{
                         display: 'block',
@@ -1827,7 +1827,7 @@ export default function AdminNewSale() {
                 color: "#0D1B2A", fontFamily: 'Outfit', cursor: 'pointer',
               }}
             >
-              ← Back
+              â† Back
             </button>
             <button
               onClick={handleSubmit}
@@ -1848,3 +1848,4 @@ export default function AdminNewSale() {
     </div>
   )
 }
+
