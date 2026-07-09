@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PlusCircle, Pencil, Trash2, Calendar, Gauge } from 'lucide-react'
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
@@ -131,7 +131,7 @@ export default function AdminCars() {
               gap: '0.625rem',
               cursor: 'pointer',
               padding: '0.5rem 0.875rem',
-              border: `1px solid ${checked ? '#C4FF00' : '#E0E0DC'}`,
+              border: `1px solid ${checked ? '#1A1A1A' : '#E0E0DC'}`,
               background: checked ? 'rgba(196,255,0,0.1)' : '#FFFFFF',
               borderRadius: '0.375rem',
               transition: 'all 0.2s ease',
@@ -154,8 +154,8 @@ export default function AdminCars() {
               width: 16,
               height: 16,
               borderRadius: '0.25rem',
-              border: `1.5px solid ${checked ? '#C4FF00' : '#E0E0DC'}`,
-              background: checked ? '#C4FF00' : '#FFFFFF',
+              border: `1.5px solid ${checked ? '#1A1A1A' : '#E0E0DC'}`,
+              background: checked ? '#1A1A1A' : '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -248,11 +248,11 @@ export default function AdminCars() {
                 {/* Year & Mileage */}
                 <div className="flex gap-4 mb-4 text-xs lg:text-sm">
                   <div className="flex items-center gap-1.5 text-[#0D1B2A]/60">
-                    <Calendar size={14} className="text-#C4FF00" />
+                    <Calendar size={14} className="text-#1A1A1A" />
                     <span>{car.year}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-[#0D1B2A]/60">
-                    <Gauge size={14} className="text-#C4FF00" />
+                    <Gauge size={14} className="text-#1A1A1A" />
                     <span>{formatKm(car.km)}</span>
                   </div>
                 </div>
@@ -288,8 +288,8 @@ export default function AdminCars() {
                     width: 16,
                     height: 16,
                     borderRadius: '0.25rem',
-                    border: `1.5px solid ${car.featured ? '#C4FF00' : '#E0E0DC'}`,
-                    background: car.featured ? '#C4FF00' : '#FFFFFF',
+                    border: `1.5px solid ${car.featured ? '#1A1A1A' : '#E0E0DC'}`,
+                    background: car.featured ? '#1A1A1A' : '#FFFFFF',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

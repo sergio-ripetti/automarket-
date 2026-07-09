@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+﻿import { useEffect, useState, useRef } from 'react'
 import { Send, Bot, Trash2 } from 'lucide-react'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
@@ -375,7 +375,7 @@ export default function AdminAI() {
         ) : messages.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>
-              <Bot size={48} style={{ color: '#C4FF00', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
+              <Bot size={48} style={{ color: '#1A1A1A', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />
               <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                 Hello! I'm your AI Assistant
               </h2>
@@ -405,8 +405,8 @@ export default function AdminAI() {
                       cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#C4FF00'
-                      e.currentTarget.style.color = '#C4FF00'
+                      e.currentTarget.style.borderColor = '#1A1A1A'
+                      e.currentTarget.style.color = '#1A1A1A'
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.borderColor = 'rgba(29,78,216,0.2)'
@@ -518,7 +518,7 @@ export default function AdminAI() {
             }}
             onFocus={(e) => {
               if (!loading) {
-                e.currentTarget.style.borderColor = '#C4FF00'
+                e.currentTarget.style.borderColor = '#1A1A1A'
               }
             }}
             onBlur={(e) => {

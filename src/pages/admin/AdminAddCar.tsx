@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { collection, doc, setDoc } from 'firebase/firestore'
 import { Search } from 'lucide-react'
@@ -42,7 +42,7 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
         onClick={onChange}
         style={{
           width: 44, height: 24, borderRadius: 12, cursor: 'pointer',
-          backgroundColor: value ? '#C4FF00' : 'rgba(255,255,255,0.12)',
+          backgroundColor: value ? '#1A1A1A' : 'rgba(255,255,255,0.12)',
           position: 'relative', transition: 'background-color 0.2s', flexShrink: 0,
         }}
       >
@@ -197,7 +197,7 @@ export default function AdminAddCar() {
 
       {/* Search Section */}
       <div style={{ marginBottom: '1.5rem' }}>
-        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#C4FF00', marginBottom: '0.5rem' }}>
+        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '0.5rem' }}>
           Search Vehicle Database
         </h2>
         <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676', marginBottom: '1rem' }}>

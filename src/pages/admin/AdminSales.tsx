@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+﻿import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { PlusCircle, Eye, Trash2, ShoppingBag } from 'lucide-react'
 import { getSales, deleteSale, type Sale } from '../../lib/salesService'
@@ -190,12 +190,12 @@ export default function AdminSales() {
         .admin-sales-filter-btn:hover {
           border-color: rgba(29,78,216,0.5);
           background: rgba(29,78,216,0.1);
-          color: #C4FF00;
+          color: #1A1A1A;
         }
         .admin-sales-filter-btn.active {
-          border-color: #C4FF00;
+          border-color: #1A1A1A;
           background: rgba(29,78,216,0.2);
-          color: #C4FF00;
+          color: #1A1A1A;
           box-shadow: 0 0 10px rgba(29,78,216,0.2);
         }
         .admin-sales-search-input {
@@ -387,7 +387,7 @@ export default function AdminSales() {
                     <div className="flex gap-2">
                       <Link
                         to={`/admin/sales/${sale.id}`}
-                        className="inline-flex items-center justify-center rounded bg-#C4FF00/10 text-#C4FF00 hover:bg-#C4FF00/20 transition-colors"
+                        className="inline-flex items-center justify-center rounded bg-#1A1A1A/10 text-#1A1A1A hover:bg-#1A1A1A/20 transition-colors"
                         style={{ minWidth: '44px', minHeight: '44px', width: '44px', height: '44px' }}
                         title="View details"
                       >

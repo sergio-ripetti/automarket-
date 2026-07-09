@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Upload } from 'lucide-react'
 import { getSaleById, updateSale, type Sale, type Documents } from '../../lib/salesService'
@@ -249,7 +249,7 @@ export default function AdminEditSale() {
             backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
-            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#C4FF00', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
+            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               Buyer Information
             </h3>
             <div className="admin-edit-sale-grid-2col">
@@ -299,7 +299,7 @@ export default function AdminEditSale() {
             backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)',
           }}>
-            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#C4FF00', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
+            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)' }}>
               Payment Information
             </h3>
             <div className="admin-edit-sale-grid-2col">
@@ -399,7 +399,7 @@ export default function AdminEditSale() {
                   id="edit-unified-upload"
                 />
                 <label htmlFor="edit-unified-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
-                  <Upload size={40} style={{ margin: '0 auto 1rem', color: '#C4FF00' }} />
+                  <Upload size={40} style={{ margin: '0 auto 1rem', color: '#1A1A1A' }} />
                   <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
                     Drop files here or click to browse
                   </p>
@@ -437,7 +437,7 @@ export default function AdminEditSale() {
                         }}>
                           <div style={{
                             height: '100%',
-                            backgroundColor: '#C4FF00',
+                            backgroundColor: '#1A1A1A',
                             width: `${progress}%`,
                             transition: 'width 0.3s',
                           }} />
@@ -480,7 +480,7 @@ export default function AdminEditSale() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#C4FF00',
+                            color: '#1A1A1A',
                             fontSize: '2rem',
                           }}>
                             📄
@@ -512,7 +512,7 @@ export default function AdminEditSale() {
                           padding: '0.5rem',
                           fontFamily: 'Outfit',
                           fontSize: '0.65rem',
-                          color: '#C4FF00',
+                          color: '#1A1A1A',
                           textDecoration: 'none',
                           textAlign: 'center',
                           borderTop: '1px solid rgba(255,255,255,0.06)',
@@ -560,7 +560,7 @@ export default function AdminEditSale() {
                     border: '1px solid rgba(29,78,216,0.1)',
                   }}>
                     <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.5rem' }}>Monthly Payment</p>
-                    <p className="font-bebas" style={{ fontSize: '2rem', color: '#C4FF00' }}>{fmt(calc.monthlyPayment)}</p>
+                    <p className="font-bebas" style={{ fontSize: '2rem', color: '#1A1A1A' }}>{fmt(calc.monthlyPayment)}</p>
                   </div>
                 </>
               )}

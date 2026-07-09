@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { Trash2, RefreshCw, Search, ChevronDown } from "lucide-react";
@@ -97,7 +97,7 @@ export default function AdminEditCar() {
 
   if (loading)
     return (
-      <div style={{ padding: "2rem", color: "#C4FF00", fontFamily: "Outfit" }}>
+      <div style={{ padding: "2rem", color: "#1A1A1A", fontFamily: "Outfit" }}>
         Loading vehicle…
       </div>
     );
@@ -258,7 +258,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
           backgroundColor: 'rgba(29,78,216,0.1)',
           border: '1px solid rgba(29,78,216,0.2)',
           borderRadius: '0.625rem',
-          color: '#C4FF00',
+          color: '#1A1A1A',
           fontFamily: 'Outfit',
           fontSize: '0.875rem',
           fontWeight: 600,
@@ -432,7 +432,7 @@ const set = (field: keyof FormState, val: string | boolean) => {
                   transition: "all 0.2s ease",
                 }}
                 onFocus={(e) => {
-                  e.currentTarget.style.borderColor = "#C4FF00"
+                  e.currentTarget.style.borderColor = "#1A1A1A"
                   e.currentTarget.style.boxShadow = "0 0 0 3px rgba(196,255,0,0.1)"
                 }}
                 onBlur={(e) => {

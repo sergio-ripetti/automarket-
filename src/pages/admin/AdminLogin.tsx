@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginAdmin } from '../../lib/authService'
 import { FormInput, FormLabel, FormError } from '../../components/shared'
@@ -36,7 +36,7 @@ export default function AdminLogin() {
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <span className="font-bebas" style={{ fontSize: '2rem', color: '#C4FF00', display: 'block', lineHeight: 1 }}>
+          <span className="font-bebas" style={{ fontSize: '2rem', color: '#1A1A1A', display: 'block', lineHeight: 1 }}>
             AutoMarket
           </span>
           <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
