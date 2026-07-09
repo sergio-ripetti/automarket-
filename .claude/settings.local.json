@@ -131,7 +131,9 @@
       "Bash(xargs grep -l \"input\\\\|textarea\\\\|select\")",
       "Bash(git restore *)",
       "Bash(xargs grep -l \"AdminInput\\\\|AdminSelect\\\\|AdminTextarea\\\\|AdminCheckbox\")",
-      "Bash(grep -E \"\\\\.tsx$\")"
+      "Bash(grep -E \"\\\\.tsx$\")",
+      "Bash(perl -i -pe 's/[\\\\x80-\\\\xFF]//g' src/pages/admin/AdminFinancing.tsx src/pages/admin/AdminNewSale.tsx)",
+      "Bash(git commit -m 'fix: Revert corrupted UTF-8 characters from special character cleanup *)"
     ]
   }
 }
