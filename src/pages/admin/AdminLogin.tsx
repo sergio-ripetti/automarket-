@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginAdmin } from '../../lib/authService'
+import { FormInput, FormLabel, FormError } from '../../components/shared'
 
 // Admin login page - renders the sign-in form and delegates credential verification to Firebase Authentication
 export default function AdminLogin() {
@@ -9,21 +10,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [focused, setFocused] = useState<string | null>(null)
 
-  const inputStyle = (name: string): React.CSSProperties => ({
-    width: '100%', boxSizing: 'border-box',
-    backgroundColor: '#FFFFFF',
-    border: `1px solid ${focused === name ? '#C4FF00' : '#E0E0DC'}`,
-    borderRadius: '0.625rem', padding: '0.875rem 1rem',
-    color: "#1A1A1A", fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
-    outline: 'none', transition: 'border-color 0.2s',
-  })
-
-  const labelStyle: React.CSSProperties = {
-    fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676',
-    textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px',
-  }
 
   // Handles admin login form submission - takes email/password, authenticates via Firebase, and redirects to the admin dashboard on success
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,24 +63,24 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div>
-            <label style={labelStyle}>Email Address</label>
-            <input
-              type="email" required value={email}
+            <FormLabel>Email Address</FormLabel>
+            <FormInput
+              type="email"
+              required
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
-              onFocus={() => setFocused('email')} onBlur={() => setFocused(null)}
               placeholder="admin@automarket.co.nz"
-              style={inputStyle('email')}
             />
           </div>
 
           <div>
-            <label style={labelStyle}>Password</label>
-            <input
-              type="password" required value={password}
+            <FormLabel>Password</FormLabel>
+            <FormInput
+              type="password"
+              required
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onFocus={() => setFocused('pass')} onBlur={() => setFocused(null)}
               placeholder="••••••••••"
-              style={inputStyle('pass')}
             />
           </div>
 
