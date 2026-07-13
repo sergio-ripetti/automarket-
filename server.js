@@ -98,19 +98,40 @@ app.post('/api/aiAssistant', validateApiKey, async (req, res) => {
     messages.push({ role: 'user', content: message });
 
     // Call Anthropic API
-    const response = await client.messages.create({
-      model: 'claude-opus-4-8',
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages
-    });
+    console.log('📤 Calling Anthropic API with:');
+    console.log('   Model: claude-opus-4-8');
+    console.log('   Messages:', messages.length);
+    console.log('   Max tokens: 1024');
+
+    let response;
+    try {
+      response = await client.messages.create({
+        model: 'claude-opus-4-8',
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages
+      });
+      console.log('✅ Anthropic API responded');
+    } catch (apiError) {
+      console.error('❌ Anthropic API Error:', apiError.message);
+      throw apiError;
+    }
 
     // Extract reply from response
     let reply = '';
     if (response.content && response.content.length > 0 && response.content[0].type === 'text') {
       reply = response.content[0].text;
+      console.log('📝 Reply extracted:', reply.substring(0, 50) + '...');
+    } else {
+      console.warn('⚠️ No text content in response:', response.content);
     }
 
+    if (!reply) {
+      console.warn('⚠️ Empty reply, returning default message');
+      reply = 'I received your message but could not generate a response.';
+    }
+
+    console.log('📤 Sending response:', { reply: reply.substring(0, 30) + '...', success: true });
     res.json({ reply, success: true });
 
   } catch (error) {
