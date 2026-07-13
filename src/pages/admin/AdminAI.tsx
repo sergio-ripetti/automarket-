@@ -215,14 +215,32 @@ export default function AdminAI() {
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        if (import.meta.env.DEV) {
-          console.error('API error:', error)
+        console.error('❌ API returned error status:', response.status);
+        let errorMessage = `Server error: ${response.status}`;
+        try {
+          const error = await response.json();
+          errorMessage = error.error || errorMessage;
+          if (import.meta.env.DEV) {
+            console.error('API error:', error);
+          }
+        } catch (jsonError) {
+          console.error('❌ Could not parse error response as JSON');
+          const text = await response.text();
+          console.error('❌ Raw error response:', text.substring(0, 200));
+          errorMessage = `Server error (${response.status}): ${text.substring(0, 100)}`;
         }
-        throw new Error(error.error || 'Failed to get response from AI')
+        throw new Error(errorMessage);
       }
 
-      const data = await response.json()
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        console.error('❌ Failed to parse successful response as JSON');
+        const text = await response.text();
+        console.error('❌ Raw response:', text.substring(0, 200));
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: data.reply || 'Sorry, I could not process your request.',
@@ -321,13 +339,13 @@ export default function AdminAI() {
         }
       `}</style>
       {/* Header */}
-      <div id="admin-ai-header" className="admin-ai-header" style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div id="admin-ai-header" className="admin-ai-header" style={{ padding: '2rem 2rem 1.5rem', borderBottom: '1px solid #E0E0DC' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.25rem' }}>
+            <h1 className="font-bebas" style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.25rem', fontSize: 'clamp(1.5rem, 5vw, 2rem)' }}>
               AI Assistant
             </h1>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#767676' }}>
+            <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem', color: '#6B7280' }}>
               Ask anything about your business
             </p>
           </div>
@@ -336,18 +354,18 @@ export default function AdminAI() {
               onClick={handleClearConversation}
               style={{
                 display: 'flex', alignItems: 'center', gap: '0.5rem',
-                padding: '0.5rem 1rem', borderRadius: '0.5rem',
-                backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                color: '#767676', fontFamily: 'Outfit', fontSize: '0.75rem',
+                padding: '0.5rem 1rem', borderRadius: '0.75rem',
+                backgroundColor: '#F9FAFB', border: '1px solid #E0E0DC',
+                color: '#6B7280', fontFamily: 'Outfit', fontSize: '0.75rem',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'
-                e.currentTarget.style.color = '#4A4A4A'
+                e.currentTarget.style.backgroundColor = '#F3F4F6'
+                e.currentTarget.style.color = '#1A1A1A'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'
-                e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
+                e.currentTarget.style.backgroundColor = '#F9FAFB'
+                e.currentTarget.style.color = '#6B7280'
               }}
             >
               <Trash2 size={14} />
@@ -399,18 +417,21 @@ export default function AdminAI() {
                     className={`admin-ai-suggestion admin-ai-suggestion-${idx}`}
                     onClick={() => handleSuggestionClick(question)}
                     style={{
-                      backgroundColor: '#E4EAF0', border: '1px solid rgba(29,78,216,0.2)',
-                      borderRadius: '2rem', padding: '0.5rem 1.25rem',
-                      color: '#767676', fontFamily: 'Outfit', fontSize: '0.75rem',
+                      backgroundColor: '#F0F9FF', border: '1px solid #BFDBFE',
+                      borderRadius: '0.75rem', padding: '0.75rem 1rem',
+                      color: '#1E40AF', fontFamily: 'Outfit', fontSize: '0.8rem',
                       cursor: 'pointer', transition: 'all 0.2s', textAlign: 'left',
+                      fontWeight: 500,
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = '#1A1A1A'
-                      e.currentTarget.style.color = '#1A1A1A'
+                      e.currentTarget.style.backgroundColor = '#DBEAFE'
+                      e.currentTarget.style.borderColor = '#93C5FD'
+                      e.currentTarget.style.color = '#1E40AF'
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.2)'
-                      e.currentTarget.style.color = '#4A4A4A'
+                      e.currentTarget.style.backgroundColor = '#F0F9FF'
+                      e.currentTarget.style.borderColor = '#BFDBFE'
+                      e.currentTarget.style.color = '#1E40AF'
                     }}
                   >
                     {question}
@@ -430,10 +451,10 @@ export default function AdminAI() {
                 <div style={{
                   maxWidth: msg.role === 'user' ? '70%' : '80%',
                   backgroundColor: msg.role === 'user'
-                    ? '#1A1A1A'
-                    : '#E4EAF0',
-                  border: msg.role === 'user' ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                  color: msg.role === 'user' ? 'white' : '#1A1A1A',
+                    ? '#2563EB'
+                    : '#F9FAFB',
+                  border: msg.role === 'user' ? 'none' : '1px solid #E0E0DC',
+                  color: msg.role === 'user' ? '#FFFFFF' : '#0D1B2A',
                   borderRadius: msg.role === 'user' ? '1rem 1rem 0.25rem 1rem' : '1rem 1rem 1rem 0.25rem',
                   padding: '0.875rem 1.25rem',
                   fontFamily: 'Outfit',
@@ -441,6 +462,7 @@ export default function AdminAI() {
                   lineHeight: 1.5,
                   wordWrap: 'break-word',
                   whiteSpace: 'pre-wrap',
+                  boxShadow: msg.role === 'user' ? 'none' : '0 1px 2px rgba(0,0,0,0.05)',
                 }}>
                   {msg.content}
                   {msg.timestamp && (
@@ -459,28 +481,32 @@ export default function AdminAI() {
             {loading && (
               <div style={{ display: 'flex', justifyContent: 'flex-start', gap: '0.75rem' }}>
                 <div style={{
-                  backgroundColor: '#E4EAF0', border: '1px solid rgba(255,255,255,0.08)',
+                  backgroundColor: '#F9FAFB', border: '1px solid #E0E0DC',
                   borderRadius: '1rem 1rem 1rem 0.25rem', padding: '0.875rem 1.25rem',
                   display: 'flex', gap: '0.4rem',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                 }}>
                   <span style={{
                     width: '0.5rem', height: '0.5rem', borderRadius: '50%',
-                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    backgroundColor: '#2563EB',
                     animation: 'bounce 1.4s infinite',
+                    opacity: 0.7,
                   }} />
                   <span style={{
                     width: '0.5rem', height: '0.5rem', borderRadius: '50%',
-                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    backgroundColor: '#2563EB',
                     animation: 'bounce 1.4s infinite 0.2s',
+                    opacity: 0.7,
                   }} />
                   <span style={{
                     width: '0.5rem', height: '0.5rem', borderRadius: '50%',
-                    backgroundColor: 'rgba(255,255,255,0.5)',
+                    backgroundColor: '#2563EB',
                     animation: 'bounce 1.4s infinite 0.4s',
+                    opacity: 0.7,
                   }} />
                   <style>{`
                     @keyframes bounce {
-                      0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
+                      0%, 80%, 100% { transform: translateY(0); opacity: 0.7; }
                       40% { transform: translateY(-8px); opacity: 1; }
                     }
                   `}</style>
@@ -495,7 +521,7 @@ export default function AdminAI() {
 
       {/* Input Area */}
       <div id="admin-ai-input-wrapper" className="admin-ai-input-wrapper" style={{
-        padding: 'clamp(0.75rem, 3vw, 1.5rem)', borderTop: '1px solid rgba(255,255,255,0.06)',
+        padding: 'clamp(0.75rem, 3vw, 1.5rem)', borderTop: '1px solid #E0E0DC',
         backgroundColor: '#FFFFFF', width: '100%', boxSizing: 'border-box',
       }}>
         <div style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 0.75rem)', width: '100%', boxSizing: 'border-box' }}>
@@ -536,21 +562,24 @@ export default function AdminAI() {
               padding: 'clamp(0.75rem, 2vw, 0.875rem) clamp(0.875rem, 2vw, 1.25rem)',
               borderRadius: '0.75rem', minWidth: '44px', flexShrink: 0,
               background: loading || !inputValue.trim()
-                ? '#E0E0DC'
-                : '#1A1A1A',
-              color: loading || !inputValue.trim() ? '#767676' : '#FFFFFF',
-              fontWeight: 700, fontFamily: 'Outfit', fontSize: '0.875rem',
-              border: 'none', cursor: loading || !inputValue.trim() ? 'not-allowed' : 'pointer',
+                ? '#F3F4F6'
+                : '#2563EB',
+              color: loading || !inputValue.trim() ? '#9CA3AF' : '#FFFFFF',
+              fontWeight: 600, fontFamily: 'Outfit', fontSize: '0.875rem',
+              border: '1px solid ' + (loading || !inputValue.trim() ? '#E5E7EB' : '#2563EB'),
+              cursor: loading || !inputValue.trim() ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', gap: '0.5rem',
               transition: 'all 0.2s', boxSizing: 'border-box',
             }}
             onMouseEnter={(e) => {
               if (!loading && inputValue.trim()) {
                 e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.3)'
               }
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = 'none'
             }}
           >
             <Send size={16} />
