@@ -12,12 +12,18 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 
+// Diagnostics
+console.log('🔧 Environment Variables Check:');
+console.log('  - ANTHROPIC_API_KEY:', process.env.ANTHROPIC_API_KEY ? '✓ Loaded' : '❌ Missing');
+console.log('  - AI_ASSISTANT_API_KEY:', process.env.AI_ASSISTANT_API_KEY ? '✓ Loaded' : '⚠️ Using default');
+
 // Initialize Anthropic client
 const anthropicKey = process.env.ANTHROPIC_API_KEY || process.env.VITE_ANTHROPIC_API_KEY;
 const serverApiKey = process.env.AI_ASSISTANT_API_KEY || 'test-key-123';
 
 if (!anthropicKey) {
   console.error('❌ ANTHROPIC_API_KEY not configured');
+  console.error('   Please ensure .env file has ANTHROPIC_API_KEY set');
   process.exit(1);
 }
 
@@ -116,8 +122,30 @@ app.post('/api/aiAssistant', validateApiKey, async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
+// Start server with error handling
+const server = app.listen(PORT, () => {
   console.log(`✅ AI Assistant API running on http://localhost:${PORT}`);
   console.log(`🔐 API Key protection: ${serverApiKey === 'dev-key-change-in-production' ? '⚠️ DEVELOPMENT MODE' : '✅ PRODUCTION'}`);
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Port ${PORT} is already in use`);
+  } else {
+    console.error('❌ Server error:', err.message);
+  }
+  process.exit(1);
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err.message);
+  process.exit(1);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
 });
