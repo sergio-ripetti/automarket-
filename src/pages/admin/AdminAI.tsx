@@ -214,32 +214,29 @@ export default function AdminAI() {
         }),
       })
 
+      // Get response text first (can only read body once)
+      const responseText = await response.text();
+
       if (!response.ok) {
         console.error('❌ API returned error status:', response.status);
+        console.error('❌ Raw error response:', responseText.substring(0, 500));
         let errorMessage = `Server error: ${response.status}`;
         try {
-          const error = await response.json();
+          const error = JSON.parse(responseText);
           errorMessage = error.error || errorMessage;
-          if (import.meta.env.DEV) {
-            console.error('API error:', error);
-          }
         } catch (jsonError) {
-          console.error('❌ Could not parse error response as JSON');
-          const text = await response.text();
-          console.error('❌ Raw error response:', text.substring(0, 200));
-          errorMessage = `Server error (${response.status}): ${text.substring(0, 100)}`;
+          errorMessage = `Server error (${response.status}): ${responseText.substring(0, 100)}`;
         }
         throw new Error(errorMessage);
       }
 
       let data;
       try {
-        data = await response.json();
+        data = JSON.parse(responseText);
       } catch (jsonError) {
         console.error('❌ Failed to parse successful response as JSON');
-        const text = await response.text();
-        console.error('❌ Raw response:', text.substring(0, 200));
-        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+        console.error('❌ Raw response:', responseText.substring(0, 500));
+        throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}`);
       }
       const assistantMessage: ChatMessage = {
         role: 'assistant',
