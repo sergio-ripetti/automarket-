@@ -1,16 +1,25 @@
 ﻿import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, CheckCircle, Clock, AlertCircle, Download, Edit } from 'lucide-react'
-import { doc, updateDoc } from 'firebase/firestore'
-import { getSaleById, markPaymentPaid, markPaymentUnpaid, type Sale } from '../../lib/salesService'
+import { ArrowLeft, Download, Edit } from 'lucide-react'
+import { getSaleById, type Sale } from '../../lib/salesService'
+import { updatePaymentStatus } from '../../lib/adminSalesService'
 import { generateInvoice } from '../../lib/invoiceService'
 import { showToast } from '../../lib/toast'
-import { db } from '../../lib/firebase'
-
-// Formats a number as NZD currency for display
-function fmt(price: number) {
-  return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
-}
+import {
+  VehicleInfoCard,
+  VehicleDetailsCard,
+  BuyerInfoCard,
+  PaymentSummaryCard,
+  OrcDetailsCard,
+  AccessoriesCard,
+  FinancingFeesCard,
+  WarrantyDetailsCard,
+  SaleNotesSection,
+  SaleDocumentsCard,
+  PaymentProgressSummary,
+  PaymentScheduleTable,
+  PaymentPagination,
+} from '../../components/admin/sales/sale-detail'
 
 // Formats an ISO date string into a readable NZ date string
 function fmtDate(dateStr: string) {
@@ -70,24 +79,33 @@ export default function AdminSaleDetail() {
     )
   }
 
-  // Marks a payment installment as paid in Firestore, refetches the sale, and auto-completes the sale
-  // status once every installment has been paid
+  // Marks a payment installment as paid via backend endpoint
   const handleMarkPaid = async (paymentId: string) => {
-    if (!id) return
+    if (!id || !sale) return
     setMarkingPayment(paymentId)
     try {
-      await markPaymentPaid(id, paymentId)
-      const updated = await getSaleById(id)
-      if (updated) {
-        setSale(updated)
-        const allPaid = updated.payments.every((p) => p.status === 'paid')
-        if (allPaid && updated.status !== 'completed') {
-          await updateDoc(doc(db, 'sales', id), { status: 'completed' })
-          setSale({ ...updated, status: 'completed' })
-          showToast('All payments completed! Sale marked as completed.', 'success')
-        } else {
-          showToast('Payment marked as paid', 'success')
+      const result = await updatePaymentStatus(id, paymentId, 'paid')
+      if (!result.success) {
+        showToast(result.error || 'Failed to mark payment', 'error')
+        setMarkingPayment(null)
+        return
+      }
+
+      // Refetch sale to get updated data from backend
+      try {
+        const updatedSale = await getSaleById(id)
+        if (updatedSale) {
+          setSale(updatedSale)
+          const allPaymentsPaid = updatedSale.payments.every((p) => p.status === 'paid')
+          if (allPaymentsPaid && updatedSale.status === 'completed') {
+            showToast('All payments completed! Sale marked as completed.', 'success')
+          } else {
+            showToast('Payment marked as paid', 'success')
+          }
         }
+      } catch (refetchErr) {
+        console.error('Failed to refetch sale:', refetchErr)
+        // Payment was marked successfully, UI refresh is optional
       }
     } catch (err) {
       console.error('Failed to mark payment:', err)
@@ -97,15 +115,30 @@ export default function AdminSaleDetail() {
     }
   }
 
-  // Reverts a payment installment back to unpaid in Firestore and refetches the sale to sync local state
+  // Reverts a payment installment back to unpaid via backend endpoint
   const handleMarkUnpaid = async (paymentId: string) => {
-    if (!id) return
+    if (!id || !sale) return
     setUndoPaymentId(paymentId)
     try {
-      await markPaymentUnpaid(id, paymentId)
-      const updated = await getSaleById(id)
-      if (updated) setSale(updated)
-      showToast('Payment marked as unpaid', 'success')
+      const result = await updatePaymentStatus(id, paymentId, 'pending')
+      if (!result.success) {
+        showToast(result.error || 'Failed to mark payment unpaid', 'error')
+        setUndoPaymentId(null)
+        setUndoConfirmId(null)
+        return
+      }
+
+      // Refetch sale to get updated data from backend
+      try {
+        const updatedSale = await getSaleById(id)
+        if (updatedSale) {
+          setSale(updatedSale)
+          showToast('Payment marked as unpaid', 'success')
+        }
+      } catch (refetchErr) {
+        console.error('Failed to refetch sale:', refetchErr)
+        // Payment was marked successfully, UI refresh is optional
+      }
     } catch (err) {
       console.error('Failed to mark payment unpaid:', err)
       showToast('Failed to mark payment unpaid', 'error')
@@ -117,22 +150,27 @@ export default function AdminSaleDetail() {
 
   const paidCount = sale.payments.filter((p) => p.status === 'paid').length
   const totalPayments = sale.payments.length
+  const isCashSale = sale.paymentPlan.type === 'cash'
 
   return (
     <div
       id="admin-sales-detail-wrapper"
       className="admin-sales-detail-wrapper"
-      style={{ width: '100%', boxSizing: 'border-box', overflow: 'hidden', padding: '0' }}
-    >
+      style={{
+        width: "100%",
+        boxSizing: "border-box",
+        overflow: "hidden",
+        padding: "0",
+      }}>
       <style>{`
         .sale-detail-header {
-          margin-bottom: 2rem;
+          margin-bottom: clamp(1.5rem, 4vw, 2rem);
         }
         .sale-detail-title {
-          font-size: clamp(1.25rem, 5vw, 2rem);
-          color: '#0D1B2A';
+          font-size: clamp(1.5rem, 5vw, 2rem);
+          color: #0D1B2A;
           margin-bottom: 0.5rem;
-          font-weight: 600;
+          font-weight: 700;
         }
         .sale-detail-grid {
           display: grid;
@@ -140,7 +178,7 @@ export default function AdminSaleDetail() {
           max-width: 100%;
           box-sizing: border-box;
           overflow: hidden;
-          gap: clamp(1rem, 3vw, 1.5rem);
+          gap: clamp(1.5rem, 3vw, 2rem);
           padding: 0;
           grid-template-columns: 1fr;
         }
@@ -149,26 +187,54 @@ export default function AdminSaleDetail() {
             grid-template-columns: 1fr 1fr;
             padding: 0;
           }
+          /* Cash sales have no financing summary/payment schedule to justify a second
+             column - a forced 1fr 1fr grid left a near-empty right column with excess
+             blank space, so cash sales use one full-width column instead. */
+          .sale-detail-grid--single-col {
+            grid-template-columns: 1fr;
+          }
         }
         .admin-sales-detail-left-col {
           width: 100%;
           max-width: 100%;
           box-sizing: border-box;
           overflow: hidden;
-          padding: clamp(0.5rem, 2vw, 1rem);
+          padding: 0;
         }
         .admin-sales-detail-right-col {
           width: 100%;
           max-width: 100%;
           box-sizing: border-box;
           overflow: hidden;
-          padding: clamp(0.5rem, 2vw, 1rem);
+          padding: 0;
+        }
+        .detail-card {
+          background: #FFFFFF;
+          border: 1px solid #E0E0DC;
+          border-radius: 0.75rem;
+          padding: clamp(1rem, 2.5vw, 1.5rem);
+          margin-bottom: clamp(1.25rem, 3vw, 1.5rem);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+          transition: box-shadow 0.2s ease;
+          min-width: 0;
+          max-width: 100%;
+          box-sizing: border-box;
+          overflow-wrap: anywhere;
+        }
+        .detail-section-grid-2col > * {
+          min-width: 0;
+        }
+        .detail-card:hover {
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .admin-sales-payment-table-scroll {
           width: 100%;
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
-          border-radius: 0.5rem;
+          border-radius: 0.75rem;
+          background: #FFFFFF;
+          border: 1px solid #E0E0DC;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.08);
         }
         @media (min-width: 1024px) {
           .admin-sales-payment-table-scroll {
@@ -180,56 +246,68 @@ export default function AdminSaleDetail() {
           width: 100%;
           border-collapse: collapse;
         }
-        @media (max-width: 640px) {
-          .admin-sales-payment-table-scroll {
-            background: linear-gradient(to right, transparent 85%, rgba(0,0,0,0.3) 100%);
-          }
+        .admin-sales-payment-table-scroll thead {
+          background-color: #F7F7F5;
+        }
+        .admin-sales-payment-table-scroll th {
+          padding: clamp(0.75rem, 2vw, 1rem);
+          text-align: left;
+          font-family: 'Outfit', sans-serif;
+          font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+          color: #1A1A1A;
+          letter-spacing: 0.05em;
+          font-weight: 600;
+          text-transform: uppercase;
+          border-bottom: 1px solid #E0E0DC;
+        }
+        .admin-sales-payment-table-scroll td {
+          padding: clamp(0.75rem, 2vw, 1rem);
+          border-bottom: 1px solid #E0E0DC;
+          color: #1A1A1A;
+          background-color: #FFFFFF;
+        }
+        .admin-sales-payment-table-scroll tbody tr:nth-child(odd) td {
+          background-color: #F7F7F5;
         }
         .detail-header-actions {
           display: flex;
-          gap: clamp(0.5rem, 2vw, 1rem);
+          justify-content: flex-end;
+          gap: 0.75rem;
           flex-wrap: wrap;
           width: 100%;
           margin-top: clamp(1.5rem, 4vw, 2rem);
           padding-top: clamp(1rem, 3vw, 1.5rem);
-          border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        @media (min-width: 1024px) {
-          .admin-sales-detail-btn {
-            flex: 0 0 auto;
-          }
+          border-top: 1px solid #E0E0DC;
         }
         .admin-sales-detail-btn {
-          flex: 1 1 calc(50% - 0.5rem);
-          min-height: 44px;
+          flex: 0 1 auto;
+          min-height: 38px;
           min-width: 0;
-          padding: clamp(0.75rem, 2vw, 1rem) clamp(0.5rem, 2vw, 1.25rem);
-          border: 1px solid rgba(255,255,255,0.2);
-          background: rgba(255,255,255,0.05);
-          color: #e5e7eb;
-          border-radius: 0.375rem;
-          font-size: clamp(0.75rem, 2vw, 1rem);
+          padding: 0.5rem 0.875rem;
+          border: 1px solid #E0E0DC;
+          background: #FFFFFF;
+          color: #1A1A1A;
+          border-radius: 0.5rem;
+          font-size: 0.8rem;
           font-weight: 500;
           font-family: 'Outfit', sans-serif;
           cursor: pointer;
-          transition: all 0.3s ease;
-          display: flex;
+          transition: all 0.2s ease;
+          display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
+          gap: 0.4rem;
           text-align: center;
           overflow: hidden;
-        }
-        @media (min-width: 1024px) {
-          .admin-sales-detail-btn {
-            white-space: nowrap;
-          }
+          white-space: nowrap;
         }
         .admin-sales-detail-btn:hover {
-          border-color: rgba(29,78,216,0.5);
-          background: rgba(29,78,216,0.1);
-          color: #1A1A1A;
-          box-shadow: 0 0 10px rgba(29,78,216,0.2);
+          border-color: #C4FF00;
+          background: #FAFAF8;
+        }
+        .admin-sales-detail-btn:focus-visible {
+          outline: 2px solid #1A1A1A;
+          outline-offset: 2px;
         }
         .detail-section-grid-2col {
           display: grid;
@@ -254,9 +332,10 @@ export default function AdminSaleDetail() {
           }
         }
         .sale-detail-section {
-          margin-bottom: 1.25rem;
-          padding-bottom: 1.25rem;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
+          margin-bottom: clamp(1rem, 2.5vw, 1.25rem);
+          padding-bottom: clamp(1rem, 2.5vw, 1.25rem);
+          border-bottom: 1px solid #E0E0DC;
+          min-width: 0;
         }
         .sale-detail-section:last-child {
           border-bottom: none;
@@ -265,16 +344,20 @@ export default function AdminSaleDetail() {
         }
         .sale-detail-label {
           font-size: 0.7rem;
-          color: rgba(255,255,255,0.4);
+          color: #6B7280;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.08em;
           margin-bottom: 0.4rem;
           display: block;
+          font-weight: 600;
         }
         .sale-detail-value {
           font-size: 0.9rem;
-          color: '#0D1B2A';
+          color: #0D1B2A;
           font-weight: 500;
+          font-family: 'Outfit', sans-serif;
+          word-break: break-word;
+          overflow-wrap: anywhere;
         }
       `}</style>
       {/* Header */}
@@ -282,62 +365,102 @@ export default function AdminSaleDetail() {
         id="admin-sales-detail-header"
         className="admin-sales-detail-header sale-detail-header"
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'clamp(1rem, 3vw, 1.5rem)',
-          marginBottom: 'clamp(1rem, 3vw, 1.5rem)',
-          padding: 'clamp(0.75rem, 3vw, 1.5rem)',
-          width: '100%',
-          boxSizing: 'border-box',
-        }}
-      >
+          display: "flex",
+          flexDirection: "column",
+          gap: "clamp(1rem, 3vw, 1.5rem)",
+          marginBottom: "clamp(1rem, 3vw, 1.5rem)",
+          padding: "clamp(0.75rem, 3vw, 1.5rem)",
+          width: "100%",
+          boxSizing: "border-box",
+        }}>
         <button
-          onClick={() => navigate('/admin/sales')}
+          onClick={() => navigate("/admin/sales")}
           style={{
-            display: 'flex', alignItems: 'center', gap: '0.5rem',
-            padding: '0.5rem 1rem', borderRadius: 0,
-            backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.2)',
-            color: '#767676', fontFamily: 'Outfit', fontSize: '0.875rem',
-            cursor: 'pointer', marginBottom: '1.5rem',
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.4rem",
+            width: "fit-content",
+            padding: "0.4rem 0.75rem",
+            borderRadius: "0.5rem",
+            backgroundColor: "#FFFFFF",
+            border: "1px solid #E0E0DC",
+            color: "#6B7280",
+            fontFamily: "Outfit",
+            fontSize: "0.8rem",
+            cursor: "pointer",
+            marginBottom: "1.25rem",
+            transition: "all 0.2s ease",
           }}
-        >
-          <ArrowLeft size={16} />
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "#C4FF00";
+            e.currentTarget.style.color = "#1A1A1A";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "#E0E0DC";
+            e.currentTarget.style.color = "#6B7280";
+          }}>
+          <ArrowLeft size={14} />
           Back to Sales
         </button>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'clamp(0.75rem, 2vw, 1rem)', width: '100%', boxSizing: 'border-box' }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+            flexWrap: "wrap",
+            gap: "clamp(0.75rem, 2vw, 1rem)",
+            width: "100%",
+            boxSizing: "border-box",
+          }}>
           <div>
-            <h1 className="font-bebas sale-detail-title">
-              {sale.buyer.name}
-            </h1>
-            <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#767676' }}>
-              {fmtDate(sale.saleDate)} •{' '}
-              <span style={{
-                display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
-                backgroundColor: sale.status === 'active' ? 'rgba(29,78,216,0.2)' : sale.status === 'completed' ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)',
-                color: sale.status === 'active' ? '#1A1A1A' : sale.status === 'completed' ? '#22c55e' : '#ef4444',
-                fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit', textTransform: 'capitalize',
+            <h1 className="font-bebas sale-detail-title">{sale.buyer.name}</h1>
+            <p
+              style={{
+                fontFamily: "Outfit",
+                fontSize: "0.875rem",
+                color: "#767676",
               }}>
+              {fmtDate(sale.saleDate)} •{" "}
+              <span
+                style={{
+                  display: "inline-block",
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "0.375rem",
+                  backgroundColor:
+                    sale.status === "active"
+                      ? "rgba(29,78,216,0.2)"
+                      : sale.status === "completed"
+                        ? "rgba(34,197,94,0.2)"
+                        : "rgba(239,68,68,0.2)",
+                  color:
+                    sale.status === "active"
+                      ? "#1A1A1A"
+                      : sale.status === "completed"
+                        ? "#22c55e"
+                        : "#ef4444",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  fontFamily: "Outfit",
+                  textTransform: "capitalize",
+                }}>
                 {sale.status}
               </span>
             </p>
           </div>
           <div
             id="admin-sales-detail-header-actions"
-            className="admin-sales-detail-header-actions detail-header-actions"
-          >
+            className="admin-sales-detail-header-actions detail-header-actions">
             <button
               id="admin-sales-detail-btn-invoice"
               className="admin-sales-detail-btn-invoice admin-sales-detail-btn"
-              onClick={() => generateInvoice(sale)}
-            >
+              onClick={() => generateInvoice(sale)}>
               <Download size={16} />
               Download Invoice
             </button>
             <button
               id="admin-sales-detail-btn-edit"
               className="admin-sales-detail-btn-edit admin-sales-detail-btn"
-              onClick={() => navigate(`/admin/sales/edit/${id}`)}
-            >
+              onClick={() => navigate(`/admin/sales/edit/${id}`)}>
               <Edit size={16} />
               Edit
             </button>
@@ -345,693 +468,123 @@ export default function AdminSaleDetail() {
         </div>
       </div>
 
-      {/* Two Column Layout */}
+      {/* Layout: cash sales use one full-width column (no financing summary/schedule
+          to justify a second column); financing/mixed keep the two-column layout. */}
       <div
         id="admin-sales-detail-grid"
-        className="admin-sales-detail-grid sale-detail-grid"
-      >
-        {/* Left Column */}
+        className={`admin-sales-detail-grid sale-detail-grid ${isCashSale ? 'sale-detail-grid--single-col' : ''}`}>
+        {/* Left Column (full-width content column for cash) */}
         <div
           id="admin-sales-detail-left-col"
           className="admin-sales-detail-left-col"
-          style={{  }}
-        >
-          {/* Vehicle Card */}
-          <div
-            id="admin-sales-detail-vehicle"
-            className="admin-sales-detail-vehicle"
-            style={{
-            width: '100%', boxSizing: 'border-box', overflow: 'hidden',
-            backgroundColor: 'transparent', border: '1px solid rgba(29,78,216,0.1)',
-            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: '1.5rem',
-          }}>
-            <img src={sale.carImages[0]} alt="" style={{
-              width: '100%', maxWidth: '100%', height: 'auto', display: 'block',
-              borderRadius: '0.75rem', marginBottom: '1rem',
-            }} />
-            <h2 className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
-              {sale.carTitle}
-            </h2>
-            <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
-              <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Year • KM</p>
-                <p style={{color: "#0D1B2A" }}>
-                  {sale.carYear} • {0} km
-                </p>
-              </div>
-              <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>Color</p>
-                <p style={{color: "#0D1B2A" }}>{sale.carColor}</p>
-              </div>
-            </div>
-            <p className="font-bebas" style={{ fontSize: '1.25rem', color: '#1A1A1A' }}>
-              {fmt(sale.paymentPlan.salePrice)}
-            </p>
-          </div>
+          style={{}}>
+          <VehicleInfoCard sale={sale} />
 
-          {/* Vehicle Extended Details */}
-          {sale.vehicleInfo && (
-            <div
-              id="admin-sales-detail-vehicle-details"
-              className="admin-sales-detail-vehicle-details"
-              style={{
-              backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
-            }}>
-              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '1rem' }}>
-                Vehicle Details
-              </h3>
-              <div className="detail-section-grid-2col" style={{ marginBottom: '1rem' }}>
-                <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', marginBottom: '0.25rem', textTransform: 'uppercase' }}>VIN</p>
-                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.vin}</p>
-                </div>
-                <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', marginBottom: '0.25rem', textTransform: 'uppercase' }}>License Plate</p>
-                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.plate}</p>
-                </div>
-                <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Origin</p>
-                  <span style={{
-                    display: 'inline-block', padding: '0.25rem 0.75rem', borderRadius: '0.375rem',
-                    backgroundColor: sale.vehicleInfo?.isNZNew ? 'rgba(34,197,94,0.2)' : 'rgba(29,78,216,0.2)',
-                    color: sale.vehicleInfo?.isNZNew ? '#22c55e' : '#1A1A1A',
-                    fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit',
-                  }}>
-                    {sale.vehicleInfo?.isNZNew ? 'NZ New' : 'Used Import'}
-                  </span>
-                </div>
-                {!sale.vehicleInfo?.isNZNew && (
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Country</p>
-                    <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.originCountry}</p>
-                  </div>
-                )}
-                <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Previous Owners</p>
-                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.previousOwners}</p>
-                </div>
-                <div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', marginBottom: '0.25rem', textTransform: 'uppercase' }}>Maintenance History</p>
-                  <p style={{color: "#0D1B2A" }}>{sale.vehicleInfo?.hasMaintenanceHistory ? 'Yes' : 'No'}</p>
-                </div>
-              </div>
-            </div>
-          )}
+          <VehicleDetailsCard sale={sale} />
 
-          {/* Buyer Info Card */}
-          <div
-            id="admin-sales-detail-buyer"
-            className="admin-sales-detail-buyer"
-            style={{
-            backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
-          }}>
-            <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '1rem' }}>
-              Buyer Information
-            </h3>
-            <div className="detail-section-grid-2col">
-              {[
-                { label: 'Full Name', value: sale.buyer.name },
-                { label: 'ID Number', value: sale.buyer.idNumber },
-                { label: 'License', value: sale.buyer.licenseNumber },
-                { label: 'Email', value: sale.buyer.email },
-                { label: 'Phone', value: sale.buyer.phone },
-                { label: 'Address', value: sale.buyer.address },
-              ].map(({ label, value }) => (
-                <div key={label}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
-                    {label}
-                  </p>
-                  <p style={{color: "#0D1B2A" }}>{value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <BuyerInfoCard sale={sale} />
 
-          {/* ORC Section */}
-          {sale.orc && (sale.orc?.orcTotal > 0 || sale.orc?.orcIncluded) && (
-            <div
-              id="admin-sales-detail-orc"
-              className="admin-sales-detail-orc"
-              style={{
-              backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
-            }}>
-              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '1rem' }}>
-                On Road Costs (ORC)
-              </h3>
-              {sale.orc?.orcIncluded ? (
-                <span style={{
-                  display: 'inline-block', padding: '0.5rem 1rem', borderRadius: '0.5rem',
-                  backgroundColor: 'rgba(34,197,94,0.2)', color: '#22c55e',
-                  fontSize: '0.875rem', fontWeight: 600, fontFamily: 'Outfit',
-                }}>
-                  ORC Included in Price
-                </span>
-              ) : (
-                <div style={{ fontSize: '0.875rem' }}>
-                  {sale.orc?.wof > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>WoF: {fmt(sale.orc?.wof)}</p>}
-                  {sale.orc?.registration > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Registration: {fmt(sale.orc?.registration)}</p>}
-                  {sale.orc?.grooming > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Grooming: {fmt(sale.orc?.grooming)}</p>}
-                  {sale.orc?.ownershipTransfer > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Ownership Transfer: {fmt(sale.orc?.ownershipTransfer)}</p>}
-                  {sale.orc?.mechanicalInspection > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Mechanical Inspection: {fmt(sale.orc?.mechanicalInspection)}</p>}
-                  {sale.orc?.otherAmount > 0 && <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>{sale.orc?.otherLabel}: {fmt(sale.orc?.otherAmount)}</p>}
-                  <p style={{ color: '#1A1A1A', fontWeight: 600, marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                    Total: {fmt(sale.orc?.orcTotal)}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
+          <OrcDetailsCard sale={sale} />
 
-          {/* Accessories Section */}
-          {sale.extraAccessories && sale.extraAccessories?.items?.length > 0 && (
-            <div
-              id="admin-sales-detail-accessories"
-              className="admin-sales-detail-accessories"
-              style={{
-              backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
-            }}>
-              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '1rem' }}>
-                Extra Accessories
-              </h3>
-              <div style={{ fontSize: '0.875rem' }}>
-                {sale.extraAccessories?.items?.map((item, idx) => (
-                  <p key={idx} style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
-                    {item.description}: {fmt(item.price)}
-                  </p>
-                ))}
-                <p style={{ color: '#1A1A1A', fontWeight: 600, marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                  Total: {fmt(sale.extraAccessories?.total)}
-                </p>
-              </div>
-            </div>
-          )}
+          <AccessoriesCard sale={sale} />
 
-          {/* Financing Fees Section */}
-          {sale.financingFees && (
-            <div
-              id="admin-sales-detail-financing-fees"
-              className="admin-sales-detail-financing-fees"
-              style={{
-              backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
-            }}>
-              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '1rem' }}>
-                Financing Fees
-              </h3>
-              <div style={{ fontSize: '0.875rem' }}>
-                <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Establishment: {fmt(sale.financingFees?.establishmentFee)}</p>
-                <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>PPSR: {fmt(sale.financingFees?.ppsr)}</p>
-                <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>Monthly Account Fee: {fmt(sale.financingFees?.monthlyAccountFee)}</p>
-                <p style={{color: "#0D1B2A", marginBottom: '0.75rem' }}>Dealer Origination: {fmt(sale.financingFees?.dealerOriginationFee)}</p>
-                <p style={{ color: '#1A1A1A', fontWeight: 600, paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                  Total: {fmt(sale.financingFees?.total)}
-                </p>
-              </div>
-            </div>
-          )}
+          <FinancingFeesCard sale={sale} />
 
-          {/* Warranty & Insurance Section */}
-          {(sale.warranty || sale.mechanicalInsurance) && (
-            <div
-              id="admin-sales-detail-warranty"
-              className="admin-sales-detail-warranty"
-              style={{
-              backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
-            }}>
-              <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '1rem' }}>
-                Warranty & Insurance
-              </h3>
-              <div style={{ fontSize: '0.875rem' }}>
-                {sale.warranty && (
-                  <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
-                    Warranty: {sale.warranty?.months} months - {sale.warranty?.provider}
-                  </p>
-                )}
-                {sale.mechanicalInsurance && (
-                  <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
-                    Insurance: {sale.mechanicalInsurance?.months} months - {sale.mechanicalInsurance?.provider}
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
+          <WarrantyDetailsCard sale={sale} />
 
-          {/* Notes */}
-          {sale.notes && (
-            <div style={{
-              backgroundColor: 'transparent', borderRadius: '0.875rem', padding: '1.25rem', marginBottom: '1.5rem',
-            }}>
-              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#767676', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>
-                Notes
-              </h4>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#767676' }}>
-                {sale.notes}
-              </p>
-            </div>
-          )}
+          <SaleNotesSection sale={sale} />
 
           {/* Documents */}
-          {sale.documents && (sale.documents as any).uploadedDocuments && ((sale.documents as any).uploadedDocuments.length > 0) && (
-            <div style={{
-              backgroundColor: 'transparent', borderRadius: '0.875rem', padding: '1.25rem', marginBottom: '1.5rem',
-            }}>
-              <h4 style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: '#767676', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '1rem' }}>
-                Documents & Photos ({(sale.documents as any).uploadedDocuments.length})
-              </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
-                {((sale.documents as any).uploadedDocuments as string[]).map((url, i) => (
-                  <div key={i} style={{
-                    backgroundColor: 'transparent',
-                    borderRadius: '0.75rem',
-                    overflow: 'hidden',
-                    border: '1px solid rgba(29,78,216,0.2)',
-                    position: 'relative',
-                  }}>
-                    {url.includes('image') && !url.includes('.pdf') ? (
-                      <img src={url} alt={`Doc ${i + 1}`} style={{
-                        width: '100%', height: '100px', objectFit: 'cover', cursor: 'pointer',
-                      }} />
-                    ) : (
-                      <div style={{
-                        height: '100px',
-                        backgroundColor: 'transparent',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#1A1A1A',
-                        fontSize: '2rem',
-                      }}>
-                        ðŸ“„
-                      </div>
-                    )}
-                    <a href={url} target="_blank" rel="noopener noreferrer" style={{
-                      display: 'block',
-                      padding: '0.5rem',
-                      fontFamily: 'Outfit',
-                      fontSize: '0.65rem',
-                      color: '#1A1A1A',
-                      textDecoration: 'none',
-                      textAlign: 'center',
-                      borderTop: '1px solid rgba(29,78,216,0.2)',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.05)' }}
-                    onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
-                    >
-                      View
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          <SaleDocumentsCard sale={sale} />
+
+          {/* Cash sales: the payment summary sits full-width with the rest of the
+              content instead of in an otherwise-empty second column. */}
+          {isCashSale && <PaymentSummaryCard sale={sale} />}
         </div>
 
-        {/* Right Column */}
+        {/* Right Column (financing/mixed only) */}
+        {!isCashSale && (
         <div
           id="admin-sales-detail-right-col"
           className="admin-sales-detail-right-col"
-          style={{ width: '100%', boxSizing: 'border-box' }}
-        >
-          {/* Payment Summary Card */}
-          <div
-            id="admin-sales-detail-payment"
-            className="admin-sales-detail-payment"
-            style={{
-            background: 'linear-gradient(135deg, #E4EAF0, #FFFFFF)', border: '1px solid rgba(29,78,216,0.15)',
-            borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)', marginBottom: 'clamp(0.75rem, 2vw, 1.5rem)',
-          }}>
-            <span style={{
-              display: 'inline-block', padding: '0.375rem 0.75rem', borderRadius: '0.375rem',
-              backgroundColor: sale.paymentPlan.type === 'cash'
-                ? 'rgba(34, 197, 94, 0.2)' : sale.paymentPlan.type === 'financing'
-                  ? 'rgba(59, 130, 246, 0.2)' : 'rgba(147, 51, 234, 0.2)',
-              color: sale.paymentPlan.type === 'cash'
-                ? '#22c55e' : sale.paymentPlan.type === 'financing'
-                  ? '#3b82f6' : '#9333ea',
-              fontSize: '0.75rem', fontWeight: 600, fontFamily: 'Outfit', marginBottom: '1rem',
-            }}>
-              {sale.paymentPlan.type === 'cash' ? 'Cash Payment' : sale.paymentPlan.type === 'financing' ? 'Full Financing' : 'Down Payment + Financing'}
-            </span>
-
-            {sale.paymentPlan.type === 'cash' ? (
-              <div>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.5rem' }}>
-                  Sale Price
-                </p>
-                <p className="font-bebas" style={{ fontSize: '2.5rem', color: '#1A1A1A', lineHeight: 1 }}>
-                  {fmt(sale.paymentPlan.salePrice)}
-                </p>
-              </div>
-            ) : (
-              <div>
-                <div style={{ marginBottom: '1rem' }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>Sale Price</p>
-                  <p style={{color: "#0D1B2A" }}>{fmt(sale.paymentPlan.salePrice)}</p>
-                </div>
-                {sale.paymentPlan.downPayment > 0 && (
-                  <div style={{ marginBottom: '1rem' }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>Down Payment</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#22c55e' }}>{fmt(sale.paymentPlan.downPayment)}</p>
-                  </div>
-                )}
-                <div style={{ marginBottom: '1rem' }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>Amount Financed</p>
-                  <p style={{color: "#0D1B2A" }}>{fmt(sale.paymentPlan.financedAmount)}</p>
-                </div>
-                <div style={{
-                  backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '0.75rem', padding: '1rem',
-                  border: '1px solid rgba(29,78,216,0.1)', marginBottom: '1rem',
-                }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.5rem' }}>
-                    Monthly Payment
-                  </p>
-                  <p className="font-bebas" style={{ fontSize: '2rem', color: '#1A1A1A', lineHeight: 1 }}>
-                    {fmt(sale.paymentPlan.monthlyPayment)}
-                  </p>
-                </div>
-                <div className="payment-summary-grid" style={{
-                  paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)',
-                }}>
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>
-                      Total Interest
-                    </p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.95rem', color: '#ef4444' }}>{fmt(sale.paymentPlan.totalInterest)}</p>
-                  </div>
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginBottom: '0.25rem' }}>
-                      Total Repayment
-                    </p>
-                    <p style={{color: "#0D1B2A" }}>{fmt(sale.paymentPlan.totalPayment)}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          style={{ width: "100%", boxSizing: "border-box" }}>
+          <PaymentSummaryCard sale={sale} />
 
           {/* Payment Schedule */}
-          {sale.paymentPlan.type !== 'cash' && sale.payments.length > 0 && (() => {
-            const paymentsPerPage = 12
-            const totalPages = Math.ceil(sale.payments.length / paymentsPerPage)
-            const visiblePayments = sale.payments.slice(
-              paymentPage * paymentsPerPage,
-              (paymentPage + 1) * paymentsPerPage
-            )
-            const pendingCount = sale.payments.filter(p => p.status === 'pending').length
-            const remaining = sale.payments
-              .filter(p => p.status !== 'paid')
-              .reduce((sum, p) => sum + p.amount, 0)
+          {sale.paymentPlan.type !== "cash" &&
+            sale.payments.length > 0 &&
+            (() => {
+              const paymentsPerPage = 12;
+              const totalPages = Math.ceil(
+                sale.payments.length / paymentsPerPage,
+              );
+              const visiblePayments = sale.payments.slice(
+                paymentPage * paymentsPerPage,
+                (paymentPage + 1) * paymentsPerPage,
+              );
+              const pendingCount = sale.payments.filter(
+                (p) => p.status === "pending",
+              ).length;
+              const remaining = sale.payments
+                .filter((p) => p.status !== "paid")
+                .reduce((sum, p) => sum + p.amount, 0);
 
-            return (
-              <div
-                id="admin-sales-detail-payment-schedule"
-                className="admin-sales-detail-payment-schedule"
-                style={{
-                width: '100%', boxSizing: 'border-box', overflow: 'hidden',
-                backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: '1rem', padding: 'clamp(0.75rem, 2vw, 1.5rem)',
-              }}>
-                <div style={{ marginBottom: '1rem' }}>
-                  <h3 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '0.75rem' }}>
-                    Payment Schedule
-                  </h3>
-                  <div
-                    id="admin-sales-payment-progress"
-                    style={{
-                    width: '100%', height: 'clamp(6px, 1.5vw, 10px)',
-                    backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '999px',
-                    overflow: 'hidden', marginBottom: 'clamp(0.75rem, 2vw, 1rem)',
-                  }}>
-                    <div style={{
-                      height: '100%', backgroundColor: '#22c55e',
-                      width: `${(paidCount / totalPayments) * 100}%`, transition: 'width 0.3s',
-                    }} />
-                  </div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676', marginTop: '0.5rem' }}>
-                    {paidCount} of {totalPayments} payments completed
-                  </p>
-                </div>
-
-                {/* Summary Row */}
-                <div style={{
-                  backgroundColor: 'rgba(29,78,216,0.05)', border: '1px solid rgba(29,78,216,0.1)',
-                  borderRadius: 0, padding: '0.75rem 1rem', marginBottom: '1rem',
-                  fontFamily: 'Outfit', fontSize: '0.85rem', color: '#0D1B2A',
-                }}>
-                  {paidCount} payments completed Â· {pendingCount} pending Â· {fmt(remaining)} remaining
-                </div>
-
-                <style>{`
-                  .payment-table-wrapper {
-                    overflow-x: auto;
-                    -webkit-overflow-scrolling: touch;
-                    margin-bottom: 1rem;
-                    border-radius: 0.625rem;
-                  }
-                  .payment-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    min-width: 600px;
-                  }
-                  .payment-table thead tr {
-                    border-bottom: 1px solid rgba(255,255,255,0.05);
-                  }
-                  .payment-table th {
-                    padding: 0.75rem;
-                    text-align: left;
-                    font-family: 'Outfit', sans-serif;
-                    font-size: 0.75rem;
-                    color: rgba(255,255,255,0.4);
-                    font-weight: 400;
-                    text-transform: uppercase;
-                    letter-spacing: 0.05em;
-                  }
-                  .payment-table td {
-                    padding: 0.75rem;
-                    border-bottom: 1px solid rgba(255,255,255,0.05);
-                  }
-                  @media (max-width: 767px) {
-                    .payment-table {
-                      min-width: 500px;
-                      font-size: 0.7rem;
-                    }
-                    .payment-table th,
-                    .payment-table td {
-                      padding: 0.5rem;
-                      font-size: 0.65rem;
-                    }
-                  }
-                `}</style>
+              return (
                 <div
-                  id="admin-sales-payment-table-scroll"
-                  className="admin-sales-payment-table-scroll payment-table-wrapper"
-                >
-                  <table className="payment-table">
-                    <thead>
-                      <tr>
-                        {['Month', 'Due Date', 'Amount', 'Status', 'Action'].map((h) => (
-                          <th key={h}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {visiblePayments.map((p, i) => (
-                        <tr key={p.id} style={{ opacity: p.status === 'paid' ? 0.6 : 1 }}>
-                          <td style={{ fontFamily: 'Outfit', color: '#767676' }}>
-                            {paymentPage * paymentsPerPage + i + 1}
-                          </td>
-                          <td style={{color: "#0D1B2A" }}>
-                            {fmtDate(p.dueDate)}
-                          </td>
-                          <td style={{ fontFamily: 'Bebas', color: '#1A1A1A' }}>
-                            {fmt(p.amount)}
-                          </td>
-                          <td>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', minWidth: 0 }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                {p.status === 'paid' ? (
-                                  <>
-                                    <CheckCircle size={14} color="#22c55e" />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#22c55e' }}>Paid</span>
-                                  </>
-                                ) : p.status === 'overdue' ? (
-                                  <>
-                                    <AlertCircle size={14} color="#ef4444" />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#ef4444' }}>Overdue</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Clock size={14} color='#1A1A1A' />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#1A1A1A' }}>Pending</span>
-                                  </>
-                                )}
-                              </div>
-                              {p.status === 'paid' && p.paidDate && (
-                                <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676' }}>
-                                  {fmtDate(p.paidDate)}
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td>
-                            {p.status === 'pending' && (
-                              <button
-                                onClick={() => handleMarkPaid(p.id)}
-                                disabled={markingPayment === p.id}
-                                style={{
-                                  padding: '0.375rem 0.5rem', borderRadius: '0.375rem',
-                                  border: '1px solid #1A1A1A', backgroundColor: 'transparent',
-                                  color: '#1A1A1A', fontFamily: 'Outfit', fontSize: '0.65rem',
-                                  fontWeight: 600, cursor: markingPayment === p.id ? 'not-allowed' : 'pointer',
-                                  opacity: markingPayment === p.id ? 0.5 : 1,
-                                  whiteSpace: 'nowrap',
-                                }}
-                              >
-                                {markingPayment === p.id ? '...' : 'Mark Paid'}
-                              </button>
-                            )}
-                            {p.status === 'paid' && (
-                              undoConfirmId === p.id ? (
-                                <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                  <button
-                                    onClick={() => handleMarkUnpaid(p.id)}
-                                    disabled={undoPaymentId === p.id}
-                                    style={{
-                                      padding: '0.25rem 0.375rem', borderRadius: '0.375rem',
-                                      border: '1px solid #22c55e', backgroundColor: 'transparent',
-                                      color: '#22c55e', fontFamily: 'Outfit', fontSize: '0.6rem',
-                                      fontWeight: 600, cursor: 'pointer',
-                                      opacity: undoPaymentId === p.id ? 0.5 : 1,
-                                    }}
-                                  >
-                                    OK
-                                  </button>
-                                  <button
-                                    onClick={() => setUndoConfirmId(null)}
-                                    disabled={undoPaymentId === p.id}
-                                    style={{
-                                      padding: '0.25rem 0.375rem', borderRadius: '0.375rem',
-                                      border: '1px solid rgba(255,255,255,0.2)', backgroundColor: 'transparent',
-                                      color: '#767676', fontFamily: 'Outfit', fontSize: '0.6rem',
-                                      fontWeight: 600, cursor: 'pointer',
-                                    }}
-                                  >
-                                    X
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
-                                  onClick={() => setUndoConfirmId(p.id)}
-                                  style={{
-                                    padding: '0.25rem 0.5rem', borderRadius: '0.375rem',
-                                    border: '1px solid rgba(220,38,38,0.3)', backgroundColor: 'transparent',
-                                    color: 'rgba(220,38,38,0.6)', fontFamily: 'Outfit', fontSize: '0.65rem',
-                                    fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
-                                    whiteSpace: 'nowrap',
-                                  }}
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.borderColor = '#ef4444'
-                                    e.currentTarget.style.color = '#ef4444'
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.borderColor = 'rgba(220,38,38,0.3)'
-                                    e.currentTarget.style.color = 'rgba(220,38,38,0.6)'
-                                  }}
-                                >
-                                  Undo
-                                </button>
-                              )
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Pagination Controls */}
-                {totalPages > 1 && (
-                  <div style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-                    paddingTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.05)',
+                  id="admin-sales-detail-payment-schedule"
+                  className="admin-sales-detail-payment-schedule"
+                  style={{
+                    width: "100%",
+                    boxSizing: "border-box",
+                    overflow: "hidden",
+                    backgroundColor: "transparent",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    borderRadius: "1rem",
+                    padding: "clamp(0.75rem, 2vw, 1.5rem)",
                   }}>
-                    <button
-                      onClick={() => setPaymentPage(Math.max(0, paymentPage - 1))}
-                      disabled={paymentPage === 0}
+                  <div style={{ marginBottom: "1rem" }}>
+                    <h3
+                      className="font-bebas"
                       style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        width: '32px', height: '32px',
-                        backgroundColor: '#E4EAF0', border: '#E0E0DC',
-                        borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
-                        color: paymentPage === 0 ? 'rgba(255,255,255,0.3)' : '#4A4A4A',
-                        cursor: paymentPage === 0 ? 'not-allowed' : 'pointer',
-                        transition: 'all 0.2s',
-                      }}
-                    >
-                      <ArrowLeft size={16} />
-                    </button>
-
-                    {(() => {
-                      const pages = []
-                      const maxButtons = 5
-                      let start = Math.max(0, paymentPage - Math.floor(maxButtons / 2))
-                      const end = Math.min(totalPages, start + maxButtons)
-                      if (end - start < maxButtons) start = Math.max(0, end - maxButtons)
-
-                      for (let i = start; i < end; i++) {
-                        pages.push(i)
-                      }
-                      return pages.map(p => (
-                        <button
-                          key={p}
-                          onClick={() => setPaymentPage(p)}
-                          style={{
-                            width: '32px', height: '32px',
-                            backgroundColor: paymentPage === p ? '#1A1A1A' : '#E4EAF0',
-                            border: '1px solid rgba(255,255,255,0.08)',
-                            borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
-                            color: paymentPage === p ? 'black' : '#4A4A4A',
-                            fontWeight: paymentPage === p ? 700 : 400,
-                            fontFamily: 'Outfit', fontSize: '0.875rem',
-                            cursor: 'pointer', transition: 'all 0.2s',
-                          }}
-                        >
-                          {p + 1}
-                        </button>
-                      ))
-                    })()}
-
-                    <button
-                      onClick={() => setPaymentPage(Math.min(totalPages - 1, paymentPage + 1))}
-                      disabled={paymentPage === totalPages - 1}
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        width: '32px', height: '32px',
-                        backgroundColor: '#E4EAF0', border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: '0.5rem', padding: '0.5rem 0.875rem',
-                        color: paymentPage === totalPages - 1 ? 'rgba(255,255,255,0.3)' : '#4A4A4A',
-                        cursor: paymentPage === totalPages - 1 ? 'not-allowed' : 'pointer',
-                        transition: 'all 0.2s',
-                      }}
-                    >
-                      <ArrowRight size={16} />
-                    </button>
+                        fontSize: "1.1rem",
+                        color: "#1A1A1A",
+                        marginBottom: "0.75rem",
+                      }}>
+                      Payment Schedule
+                    </h3>
+                    <PaymentProgressSummary
+                      paidCount={paidCount}
+                      totalPayments={totalPayments}
+                      pendingCount={pendingCount}
+                      remaining={remaining}
+                    />
                   </div>
-                )}
-              </div>
-            )
-          })()}
+
+                  <PaymentScheduleTable
+                    visiblePayments={visiblePayments}
+                    pageNumber={paymentPage}
+                    itemsPerPage={paymentsPerPage}
+                    markingPaymentId={markingPayment}
+                    undoPaymentId={undoPaymentId}
+                    undoConfirmId={undoConfirmId}
+                    onMarkPaid={handleMarkPaid}
+                    onRequestUndo={(id) => setUndoConfirmId(id)}
+                    onConfirmUndo={handleMarkUnpaid}
+                    onCancelUndo={() => setUndoConfirmId(null)}
+                  />
+                  <PaymentPagination
+                    currentPage={paymentPage}
+                    totalPages={totalPages}
+                    onPageChange={setPaymentPage}
+                  />
+                </div>
+              );
+            })()}
         </div>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
 

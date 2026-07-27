@@ -7,6 +7,7 @@ interface FormLabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
 export default function FormLabel({
   required = false,
   children,
+  style,
   ...props
 }: FormLabelProps) {
   return (
@@ -14,16 +15,18 @@ export default function FormLabel({
       style={{
         fontFamily: 'Inter, sans-serif',
         fontSize: '0.7rem',
-        color: '#767676',
+        color: '#1A1A1A',
         letterSpacing: '0.1em',
         textTransform: 'uppercase',
         display: 'block',
         marginBottom: '6px',
+        fontWeight: 600,
+        ...style,
       }}
       {...props}
     >
       {children}
-      {required && <span style={{ color: '#B0B0B0', marginLeft: '0.25rem' }}>*</span>}
+      {required && <span style={{ color: '#1A1A1A', marginLeft: '0.25rem' }}>*</span>}
     </label>
   )
 }

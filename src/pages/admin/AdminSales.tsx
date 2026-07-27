@@ -1,9 +1,9 @@
 ﻿import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { PlusCircle, Eye, Trash2, ShoppingBag } from 'lucide-react'
-import { getSales, deleteSale, type Sale } from '../../lib/salesService'
+import { getSales, type Sale } from '../../lib/salesService'
+import { deleteSale } from '../../lib/adminSalesService'
 import { showToast } from '../../lib/toast'
-import Badge from '../../components/ui/Badge'
 
 // Formats a number as NZD currency for display
 function fmt(price: number) {
@@ -68,11 +68,15 @@ export default function AdminSales() {
     activeFinancing: sales.filter((s) => s.status === 'active' && s.paymentPlan.type !== 'cash').length,
   }
 
-  // Deletes a sale from Firestore after user confirmation, then removes it from local state
+  // Deletes a sale via backend endpoint after user confirmation
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this sale?')) return
     try {
-      await deleteSale(id)
+      const result = await deleteSale(id)
+      if (!result.success) {
+        showToast(result.error || 'Failed to delete sale', 'error')
+        return
+      }
       setSales(sales.filter((s) => s.id !== id))
       showToast('Sale deleted', 'success')
     } catch (err) {
@@ -87,92 +91,112 @@ export default function AdminSales() {
         .sales-table-wrapper {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
-          background-color: #F2F2F0;
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 1rem;
           margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+          background-color: #FFFFFF;
+          border: 1px solid #E0E0DC;
+          border-radius: 0.75rem;
         }
         .sales-table {
           width: 100%;
           border-collapse: collapse;
           min-width: 700px;
-          font-size: clamp(0.7rem, 1.5vw, 0.875rem);
+          font-size: clamp(0.75rem, 1.5vw, 0.875rem);
         }
         .sales-table thead tr {
-          background-color: #E4EAF0;
+          background-color: #F7F7F5;
         }
         .sales-table th {
           padding: clamp(0.75rem, 2vw, 1.25rem);
           text-align: left;
-          font-family: 'Bebas Neue', sans-serif;
-          font-size: clamp(0.65rem, 1.5vw, 0.8rem);
-          color: '#767676';
+          font-family: 'Outfit', sans-serif;
+          font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+          color: #1A1A1A;
           letter-spacing: 0.05em;
-          font-weight: 400;
+          font-weight: 600;
           text-transform: uppercase;
+          border-bottom: 1px solid #E0E0DC;
         }
         .sales-table td {
           padding: clamp(0.75rem, 2vw, 1.25rem);
-          border-bottom: 1px solid rgba(255,255,255,0.05);
+          border-bottom: 1px solid #E0E0DC;
+          color: #1A1A1A;
+          background-color: #FFFFFF;
+        }
+        .sales-table tbody tr:nth-child(odd) td {
+          background-color: #F7F7F5;
         }
         .admin-sales-stats-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(clamp(150px, 40vw, 200px), 1fr));
-          gap: clamp(1rem, 3vw, 1.5rem);
+          gap: clamp(0.75rem, 2vw, 1rem);
           margin-bottom: clamp(1.5rem, 4vw, 2rem);
         }
+        @media (min-width: 1024px) {
+          .admin-sales-stats-grid {
+            grid-template-columns: repeat(4, 1fr);
+          }
+        }
+        @media (min-width: 768px) and (max-width: 1023px) {
+          .admin-sales-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (max-width: 767px) {
+          .admin-sales-stats-grid {
+            grid-template-columns: 1fr;
+          }
+        }
         .admin-sales-stat-card {
-          border: 1px solid rgba(255,255,255,0.1);
-          background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-          border-radius: 0.5rem;
-          padding: clamp(0.75rem, 3vw, 1.5rem);
-          transition: all 0.3s ease;
+          background-color: #FFFFFF;
+          border: 1px solid #E0E0DC;
+          border-radius: 0.75rem;
+          padding: 1.25rem;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+          transition: box-shadow 0.2s ease;
         }
         .admin-sales-stat-card:hover {
-          border-color: rgba(29,78,216,0.3);
-          background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
-          box-shadow: 0 4px 12px rgba(29,78,216,0.1);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         .admin-sales-stat-label {
-          font-size: clamp(0.75rem, 2vw, 0.875rem);
+          font-size: 0.7rem;
           color: #767676;
-          margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
+          margin-bottom: 0.25rem;
           font-family: 'Outfit', sans-serif;
-          text-transform: capitalize;
         }
         .admin-sales-stat-value {
-          font-size: clamp(1.5rem, 5vw, 2.25rem);
+          font-size: 1.5rem;
           color: #1A1A1A;
           font-family: 'Bebas Neue', sans-serif;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.03em;
           line-height: 1;
         }
         .admin-sales-new-btn {
           display: inline-flex;
           align-items: center;
-          gap: clamp(0.5rem, 1.5vw, 0.75rem);
-          padding: clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem);
-          border: 1px solid #1A1A1A;
+          gap: 0.5rem;
+          padding: 0.625rem 1.125rem;
+          border: 1px solid rgba(196,255,0,0.3);
           background: #1A1A1A;
           color: #FFFFFF;
-          font-size: clamp(0.875rem, 2vw, 1rem);
+          font-size: 0.875rem;
           font-weight: 600;
           font-family: 'Outfit', sans-serif;
-          border-radius: 0.375rem;
+          border-radius: 0.5rem;
           cursor: pointer;
-          transition: all 0.3s ease;
+          transition: all 0.2s ease;
           white-space: nowrap;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.02em;
           text-decoration: none;
         }
         .admin-sales-new-btn:hover {
           background: #2A2A2A;
-          box-shadow: 0 0 20px rgba(0,0,0,0.3);
-          transform: translateY(-2px);
+          border-color: #C4FF00;
+        }
+        .admin-sales-new-btn:focus-visible {
+          outline: 2px solid #C4FF00;
+          outline-offset: 2px;
         }
         .admin-sales-new-btn:active {
           transform: translateY(0);
-          box-shadow: 0 0 10px rgba(29,78,216,0.2);
         }
         .admin-sales-filter-btn {
           padding: clamp(0.5rem, 1.5vw, 0.75rem) clamp(1rem, 2.5vw, 1.5rem);
@@ -228,12 +252,10 @@ export default function AdminSales() {
         style={{
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: 'flex-start',
           flexWrap: 'wrap',
           gap: 'clamp(1rem, 3vw, 1.5rem)',
-          marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
-          paddingBottom: 'clamp(1rem, 3vw, 1.5rem)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
         }}
       >
         <div>
@@ -241,17 +263,15 @@ export default function AdminSales() {
             id="admin-sales-title"
             className="admin-sales-title font-bebas"
             style={{
-              fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-              fontWeight: 700,
-              color: "#0D1B2A",
-              letterSpacing: '0.05em',
+              color: "#1A1A1A",
               lineHeight: 1,
-              marginBottom: '0.35rem',
+              marginBottom: '0.25rem',
+              fontWeight: 600,
             }}
           >
             Sales Records
           </h1>
-          <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.75rem, 1.5vw, 0.875rem)', color: '#767676' }}>
+          <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', color: '#767676', margin: 0 }}>
             {sales.length} sales recorded
           </p>
         </div>
@@ -280,27 +300,70 @@ export default function AdminSales() {
         ))}
       </div>
 
-      {/* Filters */}
-      <div
-        id="admin-sales-filters"
-        className="admin-sales-filters"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'clamp(1rem, 3vw, 1.5rem)',
-          marginBottom: 'clamp(1.5rem, 4vw, 2rem)',
-        }}
-      >
-        <div
-          id="admin-sales-filter-buttons"
-          className="admin-sales-filter-buttons"
-          style={{ display: 'flex', gap: 'clamp(0.5rem, 2vw, 1rem)', flexWrap: 'wrap' }}
-        >
+      {/* Filter Navigation Tabs */}
+      <div id="admin-sales-filter-nav" className="admin-sales-filter-nav" style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
+        <style>{`
+          .sales-filter-tabs-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0 0 8px 0;
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+          .sales-filter-tabs-container::-webkit-scrollbar {
+            display: none;
+          }
+          .sales-filter-tab {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 18px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 8px 8px 0 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: #6B7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+          }
+          .sales-filter-tab:hover {
+            background-color: #F3F4F6;
+            color: #111827;
+          }
+          .sales-filter-tab.active {
+            background-color: #EEF2FF;
+            color: #2563EB;
+            border-bottom-color: #2563EB;
+            font-weight: 600;
+          }
+          .sales-filter-tab.active:hover {
+            background-color: #E0E7FF;
+          }
+          @media (max-width: 768px) {
+            .sales-filter-tabs-container {
+              gap: 16px;
+            }
+            .sales-filter-tab {
+              padding: 10px 16px;
+              font-size: 14px;
+            }
+          }
+        `}</style>
+
+        {/* Filter Tabs */}
+        <div className="sales-filter-tabs-container">
           {(['all', 'cash', 'financing', 'mixed', 'completed'] as FilterType[]).map((type) => (
             <button
               key={type}
               id={`admin-sales-filter-btn-${type}`}
-              className={`admin-sales-filter-btn${filter === type ? ' active' : ''}`}
+              className={`sales-filter-tab ${filter === type ? 'active' : ''}`}
               onClick={() => setFilter(type)}
             >
               {type === 'all' ? 'All' : type.charAt(0).toUpperCase() + type.slice(1)}
@@ -308,6 +371,7 @@ export default function AdminSales() {
           ))}
         </div>
 
+        {/* Search Input */}
         <input
           id="admin-sales-search-bar"
           className="admin-sales-search-input"
@@ -364,23 +428,78 @@ export default function AdminSales() {
                   <td style={{ fontFamily: 'Bebas Neue, sans-serif', color: '#1A1A1A', fontSize: 'clamp(0.85rem, 2vw, 1rem)', fontWeight: 'bold' }}>{fmt(sale.paymentPlan.salePrice)}</td>
                   {/* Type */}
                   <td>
-                    <Badge
-                      variant={sale.paymentPlan.type === 'cash' ? 'success' : sale.paymentPlan.type === 'financing' ? 'info' : 'default'}
-                      className="text-xs"
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        fontWeight: 500,
+                        fontFamily: 'Outfit',
+                        ...(sale.paymentPlan.type === 'cash' ? {
+                          backgroundColor: '#DCFCE7',
+                          color: '#166534',
+                        } : sale.paymentPlan.type === 'financing' ? {
+                          backgroundColor: '#DBEAFE',
+                          color: '#1E40AF',
+                        } : {
+                          backgroundColor: '#FED7AA',
+                          color: '#92400E',
+                        }),
+                      }}
                     >
+                      <span
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: 'currentColor',
+                          opacity: 0.6,
+                        }}
+                      />
                       {sale.paymentPlan.type === 'cash' ? 'Cash' : sale.paymentPlan.type === 'financing' ? 'Finance' : 'Mixed'}
-                    </Badge>
+                    </span>
                   </td>
                   {/* Date */}
                   <td style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '0.8rem' }}>{fmtDate(sale.saleDate)}</td>
                   {/* Status */}
                   <td>
-                    <Badge
-                      variant={sale.status === 'active' ? 'warning' : sale.status === 'completed' ? 'success' : 'danger'}
-                      className="text-xs capitalize"
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        fontSize: '0.8rem',
+                        fontWeight: 500,
+                        fontFamily: 'Outfit',
+                        textTransform: 'capitalize',
+                        ...(sale.status === 'active' ? {
+                          backgroundColor: '#DCFCE7',
+                          color: '#166534',
+                        } : sale.status === 'completed' ? {
+                          backgroundColor: '#F3F4F6',
+                          color: '#374151',
+                        } : {
+                          backgroundColor: '#FEE2E2',
+                          color: '#7F1D1D',
+                        }),
+                      }}
                     >
+                      <span
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          borderRadius: '50%',
+                          backgroundColor: 'currentColor',
+                          opacity: 0.6,
+                        }}
+                      />
                       {sale.status}
-                    </Badge>
+                    </span>
                   </td>
                   {/* Actions */}
                   <td>

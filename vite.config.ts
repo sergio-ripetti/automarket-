@@ -10,17 +10,6 @@ export default defineConfig({
         target: 'http://localhost:3001',
         changeOrigin: true,
       },
-      '/ninjas-api': {
-        target: 'https://api.api-ninjas.com',
-        changeOrigin: true,
-        secure: true,
-        rewrite: (path) => path.replace(/^\/ninjas-api/, ''),
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('X-Api-Key', 'XRnc3LmPTMSXT2vAYfK5bybf6BwQuxKapulX8ica')
-          })
-        },
-      },
     },
   },
 })

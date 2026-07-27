@@ -1,23 +1,13 @@
 ﻿import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PlusCircle, Pencil, Trash2, Calendar, Gauge } from 'lucide-react'
-import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
-import { db } from '../../lib/firebase'
+import { PlusCircle, Pencil, Trash2, Calendar, Gauge } from "lucide-react";
 import { useCars } from '../../hooks/useCars'
+import { updateCar, deleteCar } from "../../lib/adminCarsService";
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
 import Badge from '../../components/ui/Badge'
+import { formatNZD, formatKilometers } from "../../lib/formatting";
 import type { Car } from '../../types'
-
-// Formats a numeric price as NZD currency
-function fmt(p: number) {
-  return p.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
-}
-
-// Formats mileage with thousands separators and a "km" suffix
-function formatKm(km: number): string {
-  return km.toLocaleString('en-NZ') + ' km'
-}
 
 const fuelLabel: Record<string, string> = {
   gasolina: 'Petrol', diesel: 'Diesel', electrico: 'Electric', hibrido: 'Hybrid',
@@ -29,47 +19,62 @@ const transmissionLabel: Record<string, string> = {
 
 // Admin vehicle inventory page - lists cars from Firestore (via useCars hook) with filters, and lets the admin toggle featured status, edit, or delete vehicles
 export default function AdminCars() {
-  const navigate = useNavigate()
-  const { cars: firestoreCars, loading } = useCars()
-  const [localCars, setLocalCars] = useState<Car[]>([])
-  const [initialized, setInitialized] = useState(false)
-  const [featuredOnly, setFeaturedOnly] = useState(false)
-  const [saleOnly, setSaleOnly] = useState(false)
-  const { toast, showToast, dismissToast } = useToast()
+  const navigate = useNavigate();
+  const { cars: firestoreCars, loading } = useCars();
+  const [localCars, setLocalCars] = useState<Car[]>([]);
+  const [initialized, setInitialized] = useState(false);
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+  const [saleOnly, setSaleOnly] = useState(false);
+  const { toast, showToast, dismissToast } = useToast();
 
   if (!initialized && !loading && firestoreCars.length > 0) {
-    setLocalCars(firestoreCars)
-    setInitialized(true)
+    setLocalCars(firestoreCars);
+    setInitialized(true);
   }
 
   const displayed = localCars
     .filter((c) => !featuredOnly || c.featured)
-    .filter((c) => !saleOnly || c.isOnSale)
+    .filter((c) => !saleOnly || c.isOnSale);
 
-  // Toggles a vehicle's "featured" flag in Firestore and updates local state
+  // Toggles a vehicle's "featured" flag via backend API and updates local state
   const toggleFeatured = async (car: Car) => {
     try {
-      await updateDoc(doc(db, 'cars', car.id), { featured: !car.featured })
-      setLocalCars((prev) => prev.map((c) => c.id === car.id ? { ...c, featured: !c.featured } : c))
+      const result = await updateCar(car.id, { featured: !car.featured });
+      if (!result.success) {
+        showToast(result.error || "Failed to update featured status.", "error");
+        return;
+      }
+      setLocalCars((prev) =>
+        prev.map((c) =>
+          c.id === car.id ? { ...c, featured: !c.featured } : c,
+        ),
+      );
     } catch {
-      showToast('Failed to update featured status.', 'error')
+      showToast("Failed to update featured status.", "error");
     }
-  }
+  };
 
-  // Deletes a vehicle from Firestore after user confirmation
+  // Deletes a vehicle via backend API after user confirmation
   const handleDelete = async (car: Car) => {
-    if (!window.confirm(`Delete "${car.title}"? This cannot be undone.`)) return
+    if (!window.confirm(`Delete "${car.title}"? This cannot be undone.`))
+      return;
     try {
-      await deleteDoc(doc(db, 'cars', car.id))
-      setLocalCars((prev) => prev.filter((c) => c.id !== car.id))
-      showToast('Vehicle deleted successfully.', 'success')
+      const result = await deleteCar(car.id);
+      if (!result.success) {
+        showToast(result.error || "Failed to delete vehicle.", "error");
+        return;
+      }
+      setLocalCars((prev) => prev.filter((c) => c.id !== car.id));
+      showToast("Vehicle deleted successfully.", "success");
     } catch {
-      showToast('Failed to delete vehicle.', 'error')
+      showToast("Failed to delete vehicle.", "error");
     }
-  }
+  };
 
   return (
-    <div id="admin-inventory-main-container" className="admin-inventory-main-container">
+    <div
+      id="admin-inventory-main-container"
+      className="admin-inventory-main-container">
       <style>{`
         .cars-page-title {
           font-size: clamp(1.25rem, 5vw, 2rem);
@@ -77,118 +82,145 @@ export default function AdminCars() {
         }
       `}</style>
       {/* Header */}
-      <div id="admin-inventory-header" className="admin-inventory-header flex justify-between items-center flex-wrap gap-4" style={{ marginBottom: 'clamp(1.5rem, 4vw, 2rem)' }}>
-        <h1 className="font-bebas text-[#0D1B2A] cars-page-title">Vehicle Inventory</h1>
+      <div
+        id="admin-inventory-header"
+        className="admin-inventory-header flex justify-between items-center flex-wrap gap-4"
+        style={{ marginBottom: "clamp(1.5rem, 4vw, 2rem)" }}>
+        <h1 className="font-bebas text-[#0D1B2A] cars-page-title">
+          Vehicle Inventory
+        </h1>
         <button
           id="admin-inventory-add-button"
           className="admin-inventory-add-button"
-          onClick={() => navigate('/admin/cars/add')}
+          onClick={() => navigate("/admin/cars/add")}
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 'clamp(0.5rem, 1.5vw, 0.75rem)',
-            padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem)',
-            border: '1px solid #1A1A1A',
-            background: '#1A1A1A',
-            color: '#FFFFFF',
-            fontSize: 'clamp(0.875rem, 2vw, 1rem)',
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "clamp(0.5rem, 1.5vw, 0.75rem)",
+            padding: "clamp(0.75rem, 2vw, 1rem) clamp(1.25rem, 3vw, 1.75rem)",
+            border: "1px solid #1A1A1A",
+            background: "#1A1A1A",
+            color: "#FFFFFF",
+            fontSize: "clamp(0.875rem, 2vw, 1rem)",
             fontWeight: 600,
-            fontFamily: 'Inter, sans-serif',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            whiteSpace: 'nowrap',
-            letterSpacing: '0.05em',
+            fontFamily: "Inter, sans-serif",
+            borderRadius: "0.375rem",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            whiteSpace: "nowrap",
+            letterSpacing: "0.05em",
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#2A2A2A'
-            e.currentTarget.style.boxShadow = '0 0 20px rgba(0,0,0,0.3)'
-            e.currentTarget.style.transform = 'translateY(-2px)'
+            e.currentTarget.style.background = "#2A2A2A";
+            e.currentTarget.style.boxShadow = "0 0 20px rgba(0,0,0,0.3)";
+            e.currentTarget.style.transform = "translateY(-2px)";
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#1A1A1A'
-            e.currentTarget.style.boxShadow = 'none'
-            e.currentTarget.style.transform = 'translateY(0)'
-          }}
-        >
+            e.currentTarget.style.background = "#1A1A1A";
+            e.currentTarget.style.boxShadow = "none";
+            e.currentTarget.style.transform = "translateY(0)";
+          }}>
           <PlusCircle size={16} />
           Add New Vehicle
         </button>
       </div>
 
       {/* Filters */}
-      <div id="admin-inventory-filters" className="admin-inventory-filters flex gap-6 flex-wrap items-center" style={{ marginBottom: 'clamp(1.25rem, 3vw, 1.5rem)' }}>
+      <div
+        id="admin-inventory-filters"
+        className="admin-inventory-filters flex gap-6 flex-wrap items-center"
+        style={{ marginBottom: "clamp(1.25rem, 3vw, 1.5rem)" }}>
         {[
-          { checked: featuredOnly, onChange: () => setFeaturedOnly(!featuredOnly), label: 'Featured Only' },
-          { checked: saleOnly, onChange: () => setSaleOnly(!saleOnly), label: 'On Sale Only' },
+          {
+            checked: featuredOnly,
+            onChange: () => setFeaturedOnly(!featuredOnly),
+            label: "Featured Only",
+          },
+          {
+            checked: saleOnly,
+            onChange: () => setSaleOnly(!saleOnly),
+            label: "On Sale Only",
+          },
         ].map(({ checked, onChange, label }) => (
           <label
             key={label}
             onClick={onChange}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.625rem',
-              cursor: 'pointer',
-              padding: '0.5rem 0.875rem',
-              border: `1px solid ${checked ? '#1A1A1A' : '#E0E0DC'}`,
-              background: checked ? 'rgba(196,255,0,0.1)' : '#FFFFFF',
-              borderRadius: '0.375rem',
-              transition: 'all 0.2s ease',
-              userSelect: 'none',
+              display: "flex",
+              alignItems: "center",
+              gap: "0.625rem",
+              cursor: "pointer",
+              padding: "0.5rem 0.875rem",
+              border: `1px solid ${checked ? "#1A1A1A" : "#E0E0DC"}`,
+              background: checked ? "rgba(196,255,0,0.1)" : "#FFFFFF",
+              borderRadius: "0.375rem",
+              transition: "all 0.2s ease",
+              userSelect: "none",
             }}
             onMouseEnter={(e) => {
               if (!checked) {
-                e.currentTarget.style.borderColor = '#D0D0CC'
-                e.currentTarget.style.background = '#F9F9F8'
+                e.currentTarget.style.borderColor = "#D0D0CC";
+                e.currentTarget.style.background = "#F9F9F8";
               }
             }}
             onMouseLeave={(e) => {
               if (!checked) {
-                e.currentTarget.style.borderColor = '#E0E0DC'
-                e.currentTarget.style.background = '#FFFFFF'
+                e.currentTarget.style.borderColor = "#E0E0DC";
+                e.currentTarget.style.background = "#FFFFFF";
               }
-            }}
-          >
-            <div style={{
-              width: 16,
-              height: 16,
-              borderRadius: '0.25rem',
-              border: `1.5px solid ${checked ? '#1A1A1A' : '#E0E0DC'}`,
-              background: checked ? '#1A1A1A' : '#FFFFFF',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s ease',
-              flexShrink: 0,
             }}>
+            <div
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: "0.25rem",
+                border: `1.5px solid ${checked ? "#1A1A1A" : "#E0E0DC"}`,
+                background: "#FFFFFF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s ease",
+                flexShrink: 0,
+              }}>
               {checked && (
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                  <path d="M2 5L4 7L8 3" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path
+                    d="M2 5L4 7L8 3"
+                    stroke="#1A1A1A"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               )}
             </div>
-            <span style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '0.875rem',
-              color: '#4A4A4A',
-              fontWeight: 400,
-              transition: 'all 0.2s ease',
-            }}>
+            <span
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "0.875rem",
+                color: "#4A4A4A",
+                fontWeight: 400,
+                transition: "all 0.2s ease",
+              }}>
               {label}
             </span>
           </label>
         ))}
         <p className="text-xs text-[#0D1B2A]/35 ml-auto">
-          {displayed.length} vehicle{displayed.length !== 1 ? 's' : ''}
+          {displayed.length} vehicle{displayed.length !== 1 ? "s" : ""}
         </p>
       </div>
 
       {/* Grid of Cards */}
       {loading ? (
-        <div id="admin-inventory-cards-grid" className="admin-inventory-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
+        <div
+          id="admin-inventory-cards-grid"
+          className="admin-inventory-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          style={{ gap: "clamp(1rem, 3vw, 1.5rem)" }}>
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="bg-carbon border border-white/5 rounded-xl overflow-hidden animate-pulse">
+            <div
+              key={i}
+              className="bg-carbon border border-white/5 rounded-xl overflow-hidden animate-pulse">
               <div className="h-60 bg-slate-800" />
               <div className="p-5 space-y-3">
                 <div className="h-4 bg-white/10 rounded w-3/4" />
@@ -203,25 +235,27 @@ export default function AdminCars() {
           <p className="text-lg font-inter">No vehicles found</p>
         </div>
       ) : (
-        <div id="admin-inventory-cards-grid" className="admin-inventory-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
+        <div
+          id="admin-inventory-cards-grid"
+          className="admin-inventory-cards-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          style={{ gap: "clamp(1rem, 3vw, 1.5rem)" }}>
           {displayed.map((car, idx) => (
             <div
               key={car.id}
               id={`admin-inventory-card-${idx}`}
               className={`admin-inventory-card admin-inventory-card-${idx} group relative bg-white rounded-xl overflow-hidden transition-all duration-200`}
               style={{
-                border: '1px solid #E0E0DC',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                border: "1px solid #E0E0DC",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.06)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.12)'
-                e.currentTarget.style.borderColor = '#D0D0CC'
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.12)";
+                e.currentTarget.style.borderColor = "#D0D0CC";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.06)'
-                e.currentTarget.style.borderColor = '#E0E0DC'
-              }}
-            >
+                e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.06)";
+                e.currentTarget.style.borderColor = "#E0E0DC";
+              }}>
               {/* Image */}
               <div className="relative h-60 overflow-hidden bg-slate-900">
                 <img
@@ -239,7 +273,7 @@ export default function AdminCars() {
               </div>
 
               {/* Content */}
-              <div style={{ padding: 'clamp(1rem, 3vw, 1.5rem)' }}>
+              <div style={{ padding: "clamp(1rem, 3vw, 1.5rem)" }}>
                 {/* Title */}
                 <h3 className="font-bebas text-[#0D1B2A] tracking-wider mb-3 line-clamp-1">
                   {car.title}
@@ -253,7 +287,7 @@ export default function AdminCars() {
                   </div>
                   <div className="flex items-center gap-1.5 text-[#0D1B2A]/60">
                     <Gauge size={14} className="text-#1A1A1A" />
-                    <span>{formatKm(car.km)}</span>
+                    <span>{formatKilometers(car.km)}</span>
                   </div>
                 </div>
 
@@ -269,81 +303,93 @@ export default function AdminCars() {
 
                 {/* Price */}
                 <div className="mb-6">
-                  <span className="font-bebas text-2xl text-[#1A1A1A] tracking-wider">{fmt(car.price)}</span>
+                  <span className="font-bebas text-2xl text-[#1A1A1A] tracking-wider">
+                    {formatNZD(car.price)}
+                  </span>
                 </div>
 
                 {/* Featured Toggle */}
                 <label
                   onClick={() => toggleFeatured(car)}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    cursor: 'pointer',
-                    marginBottom: '1rem',
-                    userSelect: 'none',
-                  }}
-                >
-                  <div style={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: '0.25rem',
-                    border: `1.5px solid ${car.featured ? '#1A1A1A' : '#E0E0DC'}`,
-                    background: car.featured ? '#1A1A1A' : '#FFFFFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.2s ease',
-                    flexShrink: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    cursor: "pointer",
+                    marginBottom: "1rem",
+                    userSelect: "none",
                   }}>
+                  <div
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: "0.25rem",
+                      border: `1.5px solid ${car.featured ? "#1A1A1A" : "#E0E0DC"}`,
+                      background: "#FFFFFF",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "all 0.2s ease",
+                      flexShrink: 0,
+                    }}>
                     {car.featured && (
-                      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                        <path d="M2 5L4 7L8 3" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 10 10"
+                        fill="none">
+                        <path
+                          d="M2 5L4 7L8 3"
+                          stroke="#1A1A1A"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     )}
                   </div>
-                  <span style={{
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '0.8rem',
-                    color: '#1A1A1A',
-                    textDecoration: 'underline',
-                    transition: 'all 0.2s ease',
-                  }}>
+                  <span
+                    style={{
+                      fontFamily: "Inter, sans-serif",
+                      fontSize: "0.8rem",
+                      color: "#1A1A1A",
+                      textDecoration: "underline",
+                      transition: "all 0.2s ease",
+                    }}>
                     Mark as Featured
                   </span>
                 </label>
 
                 {/* Action Buttons */}
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
                   <button
                     onClick={() => navigate(`/admin/cars/edit/${car.id}`)}
                     style={{
                       flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.375rem',
-                      padding: '0.5rem 0.75rem',
-                      border: '1px solid #1A1A1A',
-                      background: '#F2F2F0',
-                      color: '#1A1A1A',
-                      borderRadius: '0.375rem',
-                      fontSize: '0.8rem',
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.375rem",
+                      padding: "0.5rem 0.75rem",
+                      border: "1px solid #1A1A1A",
+                      background: "#F2F2F0",
+                      color: "#1A1A1A",
+                      borderRadius: "0.375rem",
+                      fontSize: "0.8rem",
                       fontWeight: 500,
-                      fontFamily: 'Inter, sans-serif',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      minHeight: '36px',
+                      fontFamily: "Inter, sans-serif",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      minHeight: "36px",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#E0E0DC'
-                      e.currentTarget.style.color = '#1A1A1A'
+                      e.currentTarget.style.background = "#E0E0DC";
+                      e.currentTarget.style.color = "#1A1A1A";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.background = '#F2F2F0'
-                      e.currentTarget.style.color = '#1A1A1A'
-                    }}
-                  >
+                      e.currentTarget.style.background = "#F2F2F0";
+                      e.currentTarget.style.color = "#1A1A1A";
+                    }}>
                     <Pencil size={13} />
                     Edit
                   </button>
@@ -351,33 +397,33 @@ export default function AdminCars() {
                     onClick={() => handleDelete(car)}
                     style={{
                       flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.375rem',
-                      padding: '0.5rem 0.75rem',
-                      border: '1px solid rgba(239,68,68,0.25)',
-                      background: 'rgba(239,68,68,0.05)',
-                      color: 'rgba(239,68,68,0.7)',
-                      borderRadius: '0.375rem',
-                      fontSize: '0.8rem',
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "0.375rem",
+                      padding: "0.5rem 0.75rem",
+                      border: "1px solid rgba(239,68,68,0.25)",
+                      background: "rgba(239,68,68,0.05)",
+                      color: "rgba(239,68,68,0.7)",
+                      borderRadius: "0.375rem",
+                      fontSize: "0.8rem",
                       fontWeight: 500,
-                      fontFamily: 'Inter, sans-serif',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      minHeight: '36px',
+                      fontFamily: "Inter, sans-serif",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      minHeight: "36px",
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(239,68,68,0.6)'
-                      e.currentTarget.style.background = 'rgba(239,68,68,0.1)'
-                      e.currentTarget.style.color = '#ef4444'
+                      e.currentTarget.style.borderColor = "rgba(239,68,68,0.6)";
+                      e.currentTarget.style.background = "rgba(239,68,68,0.1)";
+                      e.currentTarget.style.color = "#ef4444";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(239,68,68,0.25)'
-                      e.currentTarget.style.background = 'rgba(239,68,68,0.05)'
-                      e.currentTarget.style.color = 'rgba(239,68,68,0.7)'
-                    }}
-                  >
+                      e.currentTarget.style.borderColor =
+                        "rgba(239,68,68,0.25)";
+                      e.currentTarget.style.background = "rgba(239,68,68,0.05)";
+                      e.currentTarget.style.color = "rgba(239,68,68,0.7)";
+                    }}>
                     <Trash2 size={13} />
                     Delete
                   </button>
@@ -388,7 +434,13 @@ export default function AdminCars() {
         </div>
       )}
 
-      {toast && <AdminToast message={toast.message} type={toast.type} onDismiss={dismissToast} />}
+      {toast && (
+        <AdminToast
+          message={toast.message}
+          type={toast.type}
+          onDismiss={dismissToast}
+        />
+      )}
     </div>
-  )
+  );
 }

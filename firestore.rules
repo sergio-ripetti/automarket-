@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ============================================================================
+    // Admin role management
+    // ============================================================================
+    // The users/{uid} collection stores admin roles
+    // Ordinary users CANNOT create, modify, or delete these documents
+    // Only backend (Express server via Firebase Admin SDK) manages roles
+
+    match /users/{userId} {
+      // Deny all public access - backend uses Admin SDK
+      allow read, write: if false;
+    }
+
+    // ============================================================================
+    // Business data collections (managed by admin via Express backend)
+    // ============================================================================
+
+    match /cars/{document=**} {
+      // Public read for vehicle catalog
+      allow read: if true;
+      // Write restricted to authenticated requests via backend
+      allow write: if false; // Backend uses Admin SDK
+    }
+
+    match /sales/{document=**} {
+      // Public read
+      allow read: if true;
+      // Write restricted to backend
+      allow write: if false;
+    }
+
+    match /financing/{document=**} {
+      // All reads and writes denied from client
+      // Backend uses Firebase Admin SDK which bypasses these rules
+      allow read: if false;
+      allow write: if false;
+    }
+
+    match /messages/{document=**} {
+      // Public read
+      allow read: if true;
+      // Write restricted to backend
+      allow write: if false;
+    }
+  }
+}

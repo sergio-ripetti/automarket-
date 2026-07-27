@@ -7,6 +7,7 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export default function FormInput({
   error,
+  style,
   ...props
 }: FormInputProps) {
   const [isFocused, setIsFocused] = useState(false)
@@ -26,15 +27,15 @@ export default function FormInput({
         boxSizing: 'border-box',
         backgroundColor: 'transparent',
         border: 'none',
-        borderBottom: `${borderWidth} solid ${borderColor}`,
         borderRadius: 0,
         padding: '0.75rem 0 0.5rem 0',
         fontFamily: 'Inter, sans-serif',
         fontSize: '0.875rem',
-        color: '#1A1A1A',
-        outline: 'none',
-        transition: 'border-bottom-color 0.2s, border-width 0.2s',
-      }}
+        outline: 'none !important',
+        borderBottom: `${borderWidth} solid ${borderColor}`,
+        transition: 'all 0.2s ease',
+        ...style,
+      } as React.CSSProperties}
       onFocus={(e) => {
         setIsFocused(true)
         props.onFocus?.(e)

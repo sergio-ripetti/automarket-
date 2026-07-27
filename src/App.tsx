@@ -9,7 +9,6 @@ import Favourites from './pages/Favourites'
 import Financing from './pages/Financing'
 import Contact from './pages/Contact'
 import CarDetail from './pages/CarDetail'
-import SeedButton from './components/SeedButton'
 import { AuthProvider } from './context/AuthContext'
 import AdminLayout from './components/admin/AdminLayout'
 import ProtectedRoute from './components/admin/ProtectedRoute'
@@ -90,7 +89,7 @@ export default function App() {
   )
 }
 
-// Decides layout based on the current route - admin paths render routes alone (AdminLayout handles its own chrome), public paths get Navbar, Footer, and the SeedButton
+// Decides layout based on the current route - admin paths render routes alone (AdminLayout handles its own chrome), public paths get Navbar and Footer
 function RouteChecker() {
   const location = useLocation()
   const isAdminRoute = location.pathname.startsWith('/admin')
@@ -106,7 +105,6 @@ function RouteChecker() {
         <AnimatedRoutes />
       </div>
       <Footer />
-      <SeedButton />
     </>
   )
 }

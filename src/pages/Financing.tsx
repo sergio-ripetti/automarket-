@@ -1,21 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { CheckCircle2, Upload, X } from 'lucide-react'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { db } from '../lib/firebase'
+import { CheckCircle2 } from 'lucide-react'
 import { getCarById } from '../lib/carsService'
 import { uploadDocument } from '../lib/cloudinaryService'
-import { sanitizeForFirestore } from '../lib/sanitize'
-import { FormInput, FormSelect, FormLabel, FormError } from '../components/shared'
+import { calculateFinancingSummary } from '../lib/financingCalculations'
+import { validateFinancingForm, isFinancingFormValid } from '../lib/financingValidation'
+import { submitFinancingApplication } from '../lib/financingService'
+import FinancingCalculator from '../components/financing/FinancingCalculator'
+import FinancingApplicationForm from '../components/financing/FinancingApplicationForm'
 import type { Car, FinancingForm, FinancingDocument } from '../types'
-
-// Formats a numeric price into NZD currency display format
-function formatPrice(price: number): string {
-  return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
-}
-
-const MONTHLY_RATE = 0.008
-const MONTH_OPTIONS = [12, 24, 36, 48, 60]
 
 const emptyForm: FinancingForm = {
   firstName: '', lastName: '', email: '', phone: '',
@@ -38,14 +31,11 @@ export default function Financing() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [submitted, setSubmitted] = useState(false)
   const [manualPrice, setManualPrice] = useState('25000')
-  const [applyHovered, setApplyHovered] = useState(false)
-  const [submitHovered, setSubmitHovered] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState<Map<string, { file: File; progress: number; uploaded: boolean }>>(new Map())
 
   // Fetch car data from Firestore if carId is provided
   useEffect(() => {
     if (!carId) {
-      setCar(undefined)
       return
     }
     const fetchCar = async () => {
@@ -60,49 +50,47 @@ export default function Financing() {
     fetchCar()
   }, [carId])
 
-  const basePrice = car ? car.price : Number(manualPrice) || 25000
-  const downPaymentAmt = Math.round((form.downPayment / 100) * basePrice)
-  const financed = basePrice - downPaymentAmt
-  const r = MONTHLY_RATE
-  const n = form.months
-  const monthly = financed > 0 ? financed * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1) : 0
-  const totalRepay = monthly * n + downPaymentAmt
-  const totalInterest = totalRepay - basePrice
-  const sliderPct = ((form.downPayment - 10) / 40) * 100
+  const financing = calculateFinancingSummary(
+    car?.price,
+    manualPrice,
+    form.downPayment,
+    form.months,
+  )
 
-  // Validates all required application fields (personal info, employment, consent checkbox) and sets error messages for any invalid fields
+  // Validates all required application fields using the validation module
   const validate = (): boolean => {
-    const e: FormErrors = {}
-    if (!form.firstName.trim()) e.firstName = 'Required'
-    if (!form.lastName.trim()) e.lastName = 'Required'
-    if (!form.email.trim()) e.email = 'Required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Invalid email'
-    if (!form.phone.trim()) e.phone = 'Required'
-    if (!form.licenseNumber.trim()) e.licenseNumber = 'Required'
-    if (!form.income.trim()) e.income = 'Required'
-    if (!form.employer.trim()) e.employer = 'Required'
-    if (!form.jobTitle.trim()) e.jobTitle = 'Required'
-    if (form.yearsEmployed === 0) e.yearsEmployed = 'Required'
-    if (!form.monthlyExpenses.trim()) e.monthlyExpenses = 'Required'
-    if (!form.creditHistoryConsent) e.creditHistoryConsent = 'You must consent to a credit check'
-    setErrors(e)
-    return Object.keys(e).length === 0
+    const formErrors = validateFinancingForm(form)
+    setErrors(formErrors)
+    return isFinancingFormValid(formErrors)
+  }
+
+  // Updates a single form field using functional state update
+  const handleFieldChange = <K extends keyof FinancingForm>(
+    field: K,
+    value: FinancingForm[K],
+  ) => {
+    setForm((current) => ({
+      ...current,
+      [field]: value,
+    }))
   }
 
   // Handles supporting document selection/drop - uploads each selected file to Cloudinary, tracks per-file upload progress in state, and appends the resulting URLs to the financing form's documents list
   const handleFilesSelected = async (files: FileList) => {
-    const newFiles = Array.from(files)
+    const newFiles = Array.from(files).filter((file): file is File => file instanceof File)
     const newUploading = new Map(uploadingFiles)
 
-    for (const file of newFiles) {
-      const fileId = `${file.name}-${Date.now()}`
+    // Generate each file's id once and reuse it across both loops below - computing
+    // Date.now() separately per loop produced mismatched keys and orphaned Map entries.
+    const fileEntries = newFiles.map((file) => ({ file, fileId: `${file.name}-${Date.now()}-${Math.random().toString(36).slice(2)}` }))
+
+    for (const { file, fileId } of fileEntries) {
       newUploading.set(fileId, { file, progress: 0, uploaded: false })
     }
 
     setUploadingFiles(newUploading)
 
-    for (const file of newFiles) {
-      const fileId = `${file.name}-${Date.now()}`
+    for (const { file, fileId } of fileEntries) {
       try {
         const url = await uploadDocument(file, 'financing-docs')
 
@@ -151,40 +139,40 @@ export default function Financing() {
     }))
   }
 
-  // Handles the financing application form submission - validates input, computes final loan figures, sanitizes the data, and saves it as a new "pending" financing document in Firestore
+  // Handles the financing application form submission - validates input, constructs payload, and submits via backend API
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validate()) return
 
     try {
       const selectedCar = car || { id: 'manual', title: `Manual Entry - $${manualPrice}`, price: Number(manualPrice) || 25000 }
-      const financingData = {
+      const payload = {
         carId: selectedCar.id,
         carTitle: selectedCar.title,
+        carPrice: selectedCar.price,
+        manualPrice,
         firstName: form.firstName,
         lastName: form.lastName,
         email: form.email,
         phone: form.phone,
         licenseNumber: form.licenseNumber,
-        monthlyIncome: Number(form.income),
-        downPayment: downPaymentAmt,
-        loanTerm: form.months,
-        monthlyPayment: Math.round(monthly),
-        totalAmount: Math.round(financed),
-        totalInterest: Math.round(totalInterest),
+        income: form.income,
+        monthlyExpenses: form.monthlyExpenses,
+        downPayment: form.downPayment,
+        months: form.months,
         employer: form.employer,
         jobTitle: form.jobTitle,
         employmentType: form.employmentType,
-        yearsEmployed: Number(form.yearsEmployed),
-        monthlyExpenses: Number(form.monthlyExpenses),
+        yearsEmployed: form.yearsEmployed,
         documents: form.documents,
         creditHistoryConsent: form.creditHistoryConsent,
-        status: 'pending',
-        createdAt: serverTimestamp(),
       }
-      const safeFinancingData = sanitizeForFirestore(financingData) as Record<string, unknown>
-      await addDoc(collection(db, 'financing'), safeFinancingData)
-      setSubmitted(true)
+      const result = await submitFinancingApplication(payload)
+      if (result.success) {
+        setSubmitted(true)
+      } else {
+        alert(result.error || 'Failed to submit application. Please try again.')
+      }
     } catch (err) {
       console.error('Failed to submit financing application:', err)
       alert('Failed to submit application. Please try again.')
@@ -276,7 +264,7 @@ export default function Financing() {
             }}>2</div>
             <span style={{
               fontFamily: 'Outfit', fontSize: '0.875rem',
-              color: step >= 2 ? '#FFFFFF' : '#767676',
+              color: step >= 2 ? '#0D1B2A' : '#767676',
               fontWeight: 600, transition: 'all 0.3s ease',
             }}>Application</span>
           </div>
@@ -286,543 +274,34 @@ export default function Financing() {
             STEP 1 — CALCULATOR
         ════════════════════════════════════════ */}
         {step === 1 && (
-          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '2.5rem', alignItems: 'start' }}>
-
-            {/* Left — Inputs */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-
-              {/* Car card or price input */}
-              {car ? (
-                <div style={{
-                  backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)',
-                  borderRadius: '0.875rem', padding: '1rem 1.25rem',
-                  display: 'flex', alignItems: 'center', gap: '1rem',
-                }}>
-                  <img src={car.images[0]} alt={car.title} style={{ width: 72, height: 50, objectFit: 'cover', borderRadius: '0.5rem', flexShrink: 0 }} />
-                  <div>
-                    <p className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em' }}>{car.title}</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#1A1A1A', fontWeight: 600 }}>{formatPrice(car.price)}</p>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <FormLabel required>CAR PRICE (NZD)</FormLabel>
-                  <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '0.5rem', top: '50%', transform: 'translateY(-50%)', color: '#767676', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
-                    <FormInput
-                      type="number"
-                      value={manualPrice}
-                      onChange={(e) => setManualPrice(e.target.value)}
-                      placeholder="25,000"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Down Payment slider */}
-              <div style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '0.875rem', padding: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>DOWN PAYMENT</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#1A1A1A' }}>{formatPrice(downPaymentAmt)}</p>
-                  </div>
-                  <div style={{
-                    backgroundColor: '#F2F2F0', border: '1px solid #1A1A1A',
-                    borderRadius: '0.5rem', padding: '0.2rem 0.75rem',
-                  }}>
-                    <span className="font-bebas" style={{ fontSize: '1.75rem', color: '#1A1A1A', lineHeight: 1 }}>{form.downPayment}%</span>
-                  </div>
-                </div>
-                <input
-                  type="range" min={10} max={50} step={5}
-                  value={form.downPayment}
-                  onChange={(e) => setForm({ ...form, downPayment: Number(e.target.value) })}
-                  style={{
-                    width: '100%', cursor: 'pointer', accentColor: '#1A1A1A',
-                    background: `linear-gradient(to right, #1A1A1A ${sliderPct}%, rgba(255,255,255,0.08) ${sliderPct}%)`,
-                    height: '4px', borderRadius: '2px', outline: 'none', border: 'none',
-                    WebkitAppearance: 'none',
-                  } as React.CSSProperties}
-                />
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.5rem' }}>
-                  <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676' }}>10%</span>
-                  <span style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: '#767676' }}>50%</span>
-                </div>
-              </div>
-
-              {/* Loan Term pills */}
-              <div>
-                <FormLabel style={{ marginBottom: '0.75rem' }} required>LOAN TERM</FormLabel>
-                <div style={{ display: 'flex', gap: '0.625rem', flexWrap: 'wrap' }}>
-                  {MONTH_OPTIONS.map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => setForm({ ...form, months: m })}
-                      style={form.months === m ? {
-                        padding: '0.5rem 1.125rem', borderRadius: '0.5rem',
-                        background: '#1A1A1A',
-                        color: '#FFFFFF', fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 700,
-                        border: 'none', cursor: 'pointer',
-                      } : {
-                        padding: '0.5rem 1.125rem', borderRadius: '0.5rem',
-                        backgroundColor: '#F2F2F0', color: '#4A4A4A',
-                        fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 400,
-                        border: '1px solid #E0E0DC', cursor: 'pointer',
-                      }}
-                    >
-                      {m} mo
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Right — Results card */}
-            <div style={{ position: 'sticky', top: '7rem' }}>
-              <div style={{
-                background: '#FFFFFF',
-                border: '1px solid #E0E0DC',
-                borderRadius: '1.25rem', padding: '2rem',
-              }}>
-                <p style={{ fontFamily: 'Outfit', fontSize: '0.68rem', color: '#767676', letterSpacing: '0.14em', marginBottom: '0.5rem' }}>
-                  ESTIMATED MONTHLY PAYMENT
-                </p>
-                <p className="font-bebas" style={{ fontSize: '3.5rem', color: '#1A1A1A', lineHeight: 1, marginBottom: '1.75rem' }}>
-                  {formatPrice(Math.round(monthly))}
-                </p>
-
-                <div style={{ borderTop: '1px solid #E0E0DC', paddingTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.875rem', marginBottom: '2rem' }}>
-                  {[
-                    { label: 'Amount Financed', value: formatPrice(financed) },
-                    { label: 'Total Repayment', value: formatPrice(Math.round(totalRepay)) },
-                    { label: 'Total Interest', value: formatPrice(Math.round(totalInterest)), red: true },
-                  ].map(({ label, value }) => (
-                    <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676' }}>{label}</span>
-                      <span style={{color: "#1A1A1A" }}>{value}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setStep(2)}
-                  onMouseEnter={() => setApplyHovered(true)}
-                  onMouseLeave={() => setApplyHovered(false)}
-                  style={{
-                    width: '100%', height: '52px',
-                    background: applyHovered ? '#1A2838' : '#0D1B2A',
-                    color: '#FFFFFF', fontFamily: 'Outfit', fontWeight: 700,
-                    fontSize: '0.9rem', letterSpacing: '0.04em',
-                    border: 'none', borderRadius: '0.75rem', cursor: 'pointer',
-                    boxShadow: applyHovered ? '0 0 25px rgba(13,27,42,0.4)' : 'none',
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  Apply for Financing →
-                </button>
-              </div>
-            </div>
-          </div>
+          <FinancingCalculator
+            car={car}
+            manualPrice={manualPrice}
+            downPaymentPercent={form.downPayment}
+            loanTermMonths={form.months}
+            calculation={financing}
+            onManualPriceChange={setManualPrice}
+            onDownPaymentChange={(value) => setForm((current) => ({ ...current, downPayment: value }))}
+            onLoanTermChange={(months) => setForm((current) => ({ ...current, months }))}
+            onContinue={() => setStep(2)}
+          />
         )}
 
         {/* ════════════════════════════════════════
             STEP 2 — APPLICATION FORM
         ════════════════════════════════════════ */}
         {step === 2 && (
-          <form onSubmit={handleSubmit}>
-            <div style={{ backgroundColor: '#FFFFFF', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '1.25rem', padding: '2.5rem' }}>
-              <h2 className="font-bebas" style={{color: "#0D1B2A", letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
-                Complete Your Application
-              </h2>
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.38)', marginBottom: '2rem' }}>
-                All starred fields are required to process your application.
-              </p>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
-
-                {/* First Name */}
-                <div>
-                  <FormLabel required>First Name</FormLabel>
-                  <FormInput
-                    required
-                    value={form.firstName}
-                    placeholder="John"
-                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                    error={errors.firstName}
-                  />
-                  <FormError message={errors.firstName} />
-                </div>
-
-                {/* Last Name */}
-                <div>
-                  <FormLabel required>Last Name</FormLabel>
-                  <FormInput
-                    required
-                    value={form.lastName}
-                    placeholder="Smith"
-                    onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                    error={errors.lastName}
-                  />
-                  <FormError message={errors.lastName} />
-                </div>
-
-                {/* Email */}
-                <div>
-                  <FormLabel required>Email</FormLabel>
-                  <FormInput
-                    required
-                    type="email"
-                    value={form.email}
-                    placeholder="john@example.com"
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    error={errors.email}
-                  />
-                  <FormError message={errors.email} />
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <FormLabel required>Phone</FormLabel>
-                  <FormInput
-                    required
-                    type="tel"
-                    value={form.phone}
-                    placeholder="+64 21 123 4567"
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    error={errors.phone}
-                  />
-                  <FormError message={errors.phone} />
-                </div>
-
-                {/* Driver's Licence */}
-                <div>
-                  <FormLabel required>Driver's Licence No.</FormLabel>
-                  <FormInput
-                    required
-                    value={form.licenseNumber}
-                    placeholder="A12345678"
-                    onChange={(e) => setForm({ ...form, licenseNumber: e.target.value })}
-                    error={errors.licenseNumber}
-                  />
-                  <FormError message={errors.licenseNumber} />
-                </div>
-
-                {/* Monthly Income */}
-                <div>
-                  <FormLabel required>Monthly Income (NZD)</FormLabel>
-                  <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', color: '#767676', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
-                    <FormInput
-                      required
-                      type="number"
-                      value={form.income}
-                      placeholder="5,000"
-                      onChange={(e) => setForm({ ...form, income: e.target.value })}
-                      error={errors.income}
-                      style={{ paddingLeft: '1.5rem' }}
-                    />
-                  </div>
-                  <FormError message={errors.income} />
-                </div>
-
-                {/* Employment Section — full width */}
-                <div style={{ gridColumn: '1 / -1', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <h3 style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#1A1A1A', marginBottom: '1.25rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>
-                    Employment Details
-                  </h3>
-                </div>
-
-                {/* Employer */}
-                <div>
-                  <FormLabel required>Employer</FormLabel>
-                  <FormInput
-                    required
-                    value={form.employer}
-                    placeholder="e.g., ABC Corp"
-                    onChange={(e) => setForm({ ...form, employer: e.target.value })}
-                    error={errors.employer}
-                  />
-                  <FormError message={errors.employer} />
-                </div>
-
-                {/* Job Title */}
-                <div>
-                  <FormLabel required>Job Title</FormLabel>
-                  <FormInput
-                    required
-                    value={form.jobTitle}
-                    placeholder="e.g., Manager"
-                    onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
-                    error={errors.jobTitle}
-                  />
-                  <FormError message={errors.jobTitle} />
-                </div>
-
-                {/* Employment Type */}
-                <div>
-                  <FormLabel required>Employment Type</FormLabel>
-                  <FormSelect
-                    required
-                    value={form.employmentType}
-                    onChange={(e) => setForm({ ...form, employmentType: e.target.value as any })}
-                    error={errors.employmentType}
-                  >
-                    <option value="fulltime">Full-time</option>
-                    <option value="parttime">Part-time</option>
-                    <option value="selfemployed">Self-employed</option>
-                    <option value="other">Other</option>
-                  </FormSelect>
-                  <FormError message={errors.employmentType} />
-                </div>
-
-                {/* Years Employed */}
-                <div>
-                  <FormLabel required>Years with Current Employer</FormLabel>
-                  <FormInput
-                    required
-                    type="number"
-                    min="0"
-                    value={form.yearsEmployed}
-                    placeholder="e.g., 3"
-                    onChange={(e) => setForm({ ...form, yearsEmployed: Number(e.target.value) || 0 })}
-                    error={errors.yearsEmployed}
-                  />
-                  <FormError message={errors.yearsEmployed} />
-                </div>
-
-                {/* Monthly Expenses */}
-                <div>
-                  <FormLabel required>Monthly Expenses (NZD)</FormLabel>
-                  <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', color: '#767676', fontFamily: 'Outfit', fontWeight: 600, fontSize: '0.875rem', pointerEvents: 'none' }}>$</span>
-                    <FormInput
-                      required
-                      type="number"
-                      min="0"
-                      value={form.monthlyExpenses}
-                      placeholder="2,000"
-                      onChange={(e) => setForm({ ...form, monthlyExpenses: e.target.value })}
-                      error={errors.monthlyExpenses}
-                      style={{ paddingLeft: '1.5rem' }}
-                    />
-                  </div>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: '#767676', marginTop: '0.25rem' }}>
-                    Rent, food, other loans, etc.
-                  </p>
-                  <FormError message={errors.monthlyExpenses} />
-                </div>
-
-                {/* Documents Section — full width */}
-                <div style={{ gridColumn: '1 / -1', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <h3 style={{ fontFamily: 'Outfit', fontSize: '0.875rem', color: '#1A1A1A', marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 600 }}>
-                    Supporting Documents
-                  </h3>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#4A4A4A', marginBottom: '1.25rem' }}>
-                    Please upload the following documents to support your application
-                  </p>
-
-                  {/* Upload Area */}
-                  <div
-                    onDrop={(e) => {
-                      e.preventDefault()
-                      if (e.dataTransfer.files) handleFilesSelected(e.dataTransfer.files)
-                    }}
-                    onDragOver={(e) => {
-                      e.preventDefault()
-                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.6)'
-                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.06)'
-                    }}
-                    onDragLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.3)'
-                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.03)'
-                    }}
-                    style={{
-                      border: '2px dashed rgba(29,78,216,0.3)',
-                      borderRadius: '1rem',
-                      padding: '3rem 2rem',
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      backgroundColor: 'rgba(29,78,216,0.03)',
-                      transition: 'all 0.2s',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minHeight: '180px',
-                      marginBottom: '1.5rem',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.6)'
-                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.06)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'rgba(29,78,216,0.3)'
-                      e.currentTarget.style.backgroundColor = 'rgba(29,78,216,0.03)'
-                    }}
-                  >
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*, application/pdf"
-                      onChange={(e) => e.target.files && handleFilesSelected(e.target.files)}
-                      style={{ display: 'none' }}
-                      id="doc-upload"
-                    />
-                    <label htmlFor="doc-upload" style={{ cursor: 'pointer', display: 'block', width: '100%' }}>
-                      <Upload size={40} style={{ margin: '0 auto 1rem', color: '#C4FF00' }} />
-                      <p style={{color: "#0D1B2A", marginBottom: '0.5rem' }}>
-                        Drop files here or click to browse
-                      </p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)' }}>
-                        Images and PDFs accepted
-                      </p>
-                    </label>
-                  </div>
-
-                  {/* Uploading Files */}
-                  {uploadingFiles.size > 0 && (
-                    <div style={{ marginBottom: '1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
-                      {Array.from(uploadingFiles.entries()).map(([fileId, { file, progress }]) => (
-                        <div key={fileId} style={{
-                          backgroundColor: '#E4EAF0',
-                          borderRadius: '0.75rem',
-                          overflow: 'hidden',
-                          border: '1px solid rgba(255,255,255,0.06)',
-                          position: 'relative',
-                        }}>
-                          <div style={{
-                            height: '80px',
-                            backgroundColor: '#F2F2F0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}>
-                            <div style={{
-                              position: 'absolute',
-                              bottom: '0',
-                              left: '0',
-                              right: '0',
-                              height: '3px',
-                              backgroundColor: '#333333',
-                            }}>
-                              <div style={{
-                                height: '100%',
-                                backgroundColor: '#C4FF00',
-                                width: `${progress}%`,
-                                transition: 'width 0.3s',
-                              }} />
-                            </div>
-                            <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
-                              {Math.round(progress)}%
-                            </span>
-                          </div>
-                          <p style={{color: "#0D1B2A", whiteSpace: 'nowrap'}}>
-                            {file.name}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Uploaded Documents */}
-                  {form.documents.length > 0 && (
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.85rem', color: 'rgba(255,255,255,0.5)', marginBottom: '1rem' }}>
-                        {form.documents.length} document(s) uploaded
-                      </p>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        {form.documents.map((doc) => (
-                          <div key={doc.url} style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '1rem', alignItems: 'center', padding: '0.75rem 1rem', backgroundColor: '#E4EAF0', borderRadius: '0.75rem', border: '1px solid rgba(255,255,255,0.06)' }}>
-                            <p style={{color: "#0D1B2A", whiteSpace: 'nowrap'}}>
-                              {doc.filename}
-                            </p>
-                            <FormSelect
-                              value={doc.type}
-                              onChange={(e) => handleDocumentTypeChange(doc.url, e.target.value as FinancingDocument['type'])}
-                            >
-                              <option value="passport_license">Passport/License</option>
-                              <option value="visa_residency">Visa/Residency</option>
-                              <option value="proof_of_address">Proof of Address</option>
-                              <option value="payslip">Payslip</option>
-                              <option value="bank_statement">Bank Statement</option>
-                              <option value="other">Other</option>
-                            </FormSelect>
-                            <button
-                              onClick={() => handleRemoveDocument(doc.url)}
-                              style={{
-                                width: '32px',
-                                height: '32px',
-                                borderRadius: '0.5rem',
-                                backgroundColor: 'rgba(239,68,68,0.2)',
-                                border: 'none',
-                                cursor: 'pointer',
-                                color: '#ef4444',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Credit Consent — full width */}
-                <div style={{ gridColumn: '1 / -1', paddingTop: '1.5rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                  <label style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer' }}>
-                    <input
-                      required
-                      type="checkbox"
-                      checked={form.creditHistoryConsent}
-                      onChange={(e) => setForm({ ...form, creditHistoryConsent: e.target.checked })}
-                      style={{ marginTop: '0.35rem', cursor: 'pointer', width: '18px', height: '18px' }}
-                    />
-                    <div style={{ flex: 1 }}>
-                      <p style={{color: "#0D1B2A", marginBottom: '0.3rem' }}>
-                        I consent to a credit history check being performed *
-                      </p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)' }}>
-                        By checking this box you agree to allow AutoMarket to perform a credit check as part of your financing application
-                      </p>
-                    </div>
-                  </label>
-                  {errors.creditHistoryConsent && <p style={{ fontFamily: 'Outfit', fontSize: '0.7rem', color: 'rgba(239,68,68,0.85)', marginTop: '0.3rem' }}>{errors.creditHistoryConsent}</p>}
-                </div>
-              </div>
-
-              {/* Action buttons */}
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '2rem' }}>
-                <button
-                  type="button" onClick={() => setStep(1)}
-                  style={{
-                    flex: 1, height: '52px', backgroundColor: '#F2F2F0',
-                    border: '1px solid #E0E0DC', color: '#1A1A1A',
-                    fontFamily: 'Outfit', fontSize: '0.875rem', borderRadius: '0.75rem', cursor: 'pointer',
-                  }}
-                >
-                  ← Back
-                </button>
-                <button
-                  type="submit"
-                  onMouseEnter={() => setSubmitHovered(true)}
-                  onMouseLeave={() => setSubmitHovered(false)}
-                  style={{
-                    flex: 2, height: '52px', background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Outfit', fontWeight: 700,
-                    fontSize: '0.9rem', letterSpacing: '0.04em',
-                    border: 'none', borderRadius: '0.75rem', cursor: 'pointer',
-                    boxShadow: submitHovered ? '0 0 25px rgba(26,26,26,0.35)' : 'none',
-                    transition: 'box-shadow 0.3s ease',
-                  }}
-                >
-                  Submit Application →
-                </button>
-              </div>
-            </div>
-          </form>
+          <FinancingApplicationForm
+            form={form}
+            errors={errors}
+            uploadingFiles={uploadingFiles}
+            onFieldChange={handleFieldChange}
+            onFilesSelected={handleFilesSelected}
+            onDocumentTypeChange={handleDocumentTypeChange}
+            onRemoveDocument={handleRemoveDocument}
+            onBack={() => setStep(1)}
+            onSubmit={handleSubmit}
+          />
         )}
       </div>
     </main>

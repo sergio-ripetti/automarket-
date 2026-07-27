@@ -94,97 +94,260 @@ export default function Home() {
       <section
         className="relative min-h-screen flex items-center justify-center overflow-hidden"
         style={{
-          backgroundImage: 'url(https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-dark/80 via-dark/60 to-dark" />
+          backgroundImage: "url(/images/hero-bg.webp)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundAttachment: "fixed",
+        }}>
+        {/* Premium cinematic overlay - sophisticated color grading */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(135deg,
+                rgba(0, 0, 0, 0.05) 0%,
+                rgba(10, 10, 10, 0.03) 50%,
+                rgba(0, 0, 0, 0.08) 100%
+              )
+            `,
+          }}
+        />
 
-        <div className="relative z-10 text-center px-4" style={{ maxWidth: '60rem' }}>
+        {/* Subtle metallic shimmer overlay (optional premium touch) */}
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: `
+              radial-gradient(ellipse at 50% 50%,
+                rgba(196, 196, 196, 0.1) 0%,
+                rgba(196, 196, 196, 0) 70%
+              )
+            `,
+          }}
+        />
+
+        {/* Premium content container */}
+        <div
+          className="relative z-10 text-center px-4 sm:px-6 w-full"
+          style={{
+            maxWidth: "720px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}>
+          {/* Eyebrow text - minimal and refined */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="font-inter text-[#FFFFFF] uppercase tracking-[0.25em] text-xs mb-5"
-          >
-            New Zealand's Premier Car Marketplace
-          </motion.p>
-
-          <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            className="font-bebas text-white leading-none mb-6 tracking-wide"
-            style={{ textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}
-          >
-            FIND YOUR{' '}
-            <span className="text-[#C4FF00]">PERFECT</span>
-            {' '}CAR
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="font-inter text-lg text-white/90 mb-10 max-w-lg mx-auto"
-          >
-            Buy, sell, and finance with complete confidence. Quality vehicles, transparent pricing, expert support.
+            transition={{
+              duration: 0.8,
+              delay: 0.2,
+              ease: "easeOut",
+            }}
+            className="uppercase tracking-widest"
+            style={{
+              fontSize: "11px",
+              fontWeight: 600,
+              fontFamily: "Poppins",
+              color: "rgba(255, 255, 255, 0.65)",
+              letterSpacing: "0.15em",
+              marginBottom: "28px",
+              textTransform: "uppercase",
+            }}>
+            Luxury Automotive Marketplace
           </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
+          {/* Main headline - premium automotive style */}
+          <motion.h1
+            initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.35 }}
-            className="flex flex-wrap gap-4 justify-center"
-          >
+            transition={{
+              duration: 0.9,
+              delay: 0.4,
+              ease: "easeOut",
+            }}
+            style={{
+              fontSize: "clamp(42px, 9vw, 68px)",
+              fontWeight: 700,
+              fontFamily: "Poppins",
+              lineHeight: 1.15,
+              letterSpacing: "-0.02em",
+              marginBottom: "32px",
+              color: "#FFFFFF",
+              textShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+              maxWidth: "720px",
+            }}>
+            FIND YOUR IDEAL VEHICLE
+          </motion.h1>
+
+          {/* Premium description with better breathing room */}
+          <motion.p
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.6,
+              ease: "easeOut",
+            }}
+            style={{
+              maxWidth: "620px",
+              fontSize: "clamp(22px, 2.2vw, 23px)",
+              fontFamily: "Poppins",
+              fontWeight: 600,
+              color: "rgba(255, 255, 255, 1)",
+              lineHeight: 1.8,
+              marginBottom: "48px",
+              letterSpacing: "0.5px",
+            }}>
+            Buy, sell, or finance with confidence. Browse premium vehicles with
+            transparent pricing and expert support.
+          </motion.p>
+
+          {/* Premium CTA buttons with refined styling */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.8,
+              ease: "easeOut",
+            }}
+            className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full"
+            style={{ maxWidth: "520px" }}>
+            {/* Primary CTA - Graphite with lime accent */}
             <Link
               to="/cars"
-              className="font-inter font-bold text-sm inline-flex items-center gap-2"
+              className="group inline-flex items-center justify-center gap-2 transition-all duration-300"
               style={{
-                background: '#1A1A1A', color: '#FFFFFF', padding: '0.875rem 2rem',
-                borderRadius: '0.5rem', letterSpacing: '0.04em',
+                background: "rgba(26, 26, 26, 0.9)",
+                color: "#FFFFFF",
+                padding: "16px 40px",
+                height: "56px",
+                borderRadius: "8px",
+                fontSize: "15px",
+                fontFamily: "Poppins",
+                fontWeight: 600,
+                letterSpacing: "0.05em",
+                textDecoration: "none",
+                border: "2px solid rgba(196, 255, 0, 0.3)",
+                backdropFilter: "blur(8px)",
+                flex: "1",
+                minWidth: "200px",
               }}
-            >
-              Browse All Cars <ArrowRight size={16} />
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background =
+                  "rgba(26, 26, 26, 1)";
+                (e.currentTarget as HTMLElement).style.borderColor = "#C4FF00";
+                (e.currentTarget as HTMLElement).style.boxShadow =
+                  "0 16px 48px rgba(196, 255, 0, 0.25)";
+                (e.currentTarget as HTMLElement).style.transform =
+                  "translateY(-4px)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background =
+                  "rgba(26, 26, 26, 0.9)";
+                (e.currentTarget as HTMLElement).style.borderColor =
+                  "rgba(196, 255, 0, 0.3)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                (e.currentTarget as HTMLElement).style.transform =
+                  "translateY(0)";
+              }}>
+              EXPLORE CARS <ArrowRight size={16} strokeWidth={2.5} />
             </Link>
-            <Link
-              to="/financing"
-              className="font-inter font-medium text-sm text-[#FFFFFF] hover:text-[#F2F2F0] transition-colors"
+
+            {/* Secondary CTA - Glass effect */}
+            <button
+              onClick={() => (window.location.href = "/financing")}
+              className="group inline-flex items-center justify-center transition-all duration-300"
               style={{
-                padding: '0.875rem 2rem', borderRadius: '0.5rem',
-                letterSpacing: '0.04em', border: '1px solid #FFFFFF',
+                background: "rgba(255, 255, 255, 0.05)",
+                color: "#FFFFFF",
+                border: "1.5px solid rgba(255, 255, 255, 0.3)",
+                padding: "16px 40px",
+                height: "56px",
+                borderRadius: "8px",
+                fontSize: "15px",
+                fontFamily: "Poppins",
+                fontWeight: 600,
+                letterSpacing: "0.05em",
+                cursor: "pointer",
+                backdropFilter: "blur(8px)",
+                flex: "1",
+                minWidth: "200px",
               }}
-            >
-              Financing Calculator
-            </Link>
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background =
+                  "rgba(255, 255, 255, 0.12)";
+                (e.currentTarget as HTMLElement).style.borderColor =
+                  "rgba(196, 255, 0, 0.5)";
+                (e.currentTarget as HTMLElement).style.boxShadow =
+                  "0 16px 48px rgba(0, 0, 0, 0.2)";
+                (e.currentTarget as HTMLElement).style.transform =
+                  "translateY(-4px)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background =
+                  "rgba(255, 255, 255, 0.05)";
+                (e.currentTarget as HTMLElement).style.borderColor =
+                  "rgba(255, 255, 255, 0.3)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "none";
+                (e.currentTarget as HTMLElement).style.transform =
+                  "translateY(0)";
+              }}>
+              FINANCING OPTIONS
+            </button>
           </motion.div>
         </div>
 
+        {/* Elegant scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.3, duration: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <ChevronDown size={26} className="text-[#0D1B2A]/30 animate-bounce" />
+          transition={{ delay: 1.4, duration: 0.8 }}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "8px",
+          }}>
+          <p
+            style={{
+              fontSize: "11px",
+              fontFamily: "Poppins",
+              color: "rgba(255, 255, 255, 0.4)",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}>
+            Scroll
+          </p>
+          <ChevronDown size={20} className="text-white/40 animate-bounce" />
         </motion.div>
       </section>
 
       {/* ─── FEATURED VEHICLES ─── */}
-      <div className="w-full flex justify-center py-20" style={{ backgroundColor: '#F2F2F0' }}>
-        <div className="mx-auto flex flex-col gap-10" style={{ width: '80%' }}>
+      <div
+        className="w-full flex justify-center"
+        style={{
+          backgroundColor: "#F2F2F0",
+          paddingTop: "60px",
+          paddingBottom: "80px",
+        }}>
+        <div className="mx-auto flex flex-col gap-10" style={{ width: "80%" }}>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.55 }}
-          >
-            <p className="font-inter text-[#C4FF00] uppercase tracking-[0.2em] text-xs mb-2">Selection</p>
-            <h2 className="font-bebas text-[#1A1A1A] tracking-wide leading-none">
-              Featured <span className="text-[#C4FF00]">Vehicles</span>
+            transition={{ duration: 0.55 }}>
+            {/* <p className="font-inter text-[#C4FF00] uppercase tracking-[0.2em] text-xs mb-2">
+              Selection
+            </p> */}
+            <h2 className="font-bebas text-[#1A1A1A] tracking-wide leading-none ">
+              Featured Vehicles
             </h2>
-            <p className="font-inter text-[#767676] text-sm mt-2">Hand-picked by our team</p>
+            <p className="font-inter text-[#767676] text-sm mt-4">
+              Hand-picked by our team
+            </p>
           </motion.div>
 
           {carsLoading ? (
@@ -193,12 +356,21 @@ export default function Home() {
                 <div
                   key={i}
                   className="animate-pulse"
-                  style={{ backgroundColor: '#FFFFFF', borderRadius: '1rem', height: '380px' }}
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: "1rem",
+                    height: "380px",
+                  }}
                 />
               ))}
             </div>
           ) : carsError ? (
-            <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '0.9rem' }}>
+            <p
+              style={{
+                fontFamily: "Outfit",
+                color: "#767676",
+                fontSize: "0.9rem",
+              }}>
               {carsError} Please try again later.
             </p>
           ) : (
@@ -210,8 +382,7 @@ export default function Home() {
                   initial={{ opacity: 0, y: 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                >
+                  transition={{ delay: i * 0.1, duration: 0.5 }}>
                   <CarCard car={car} />
                 </motion.div>
               ))}
@@ -225,13 +396,12 @@ export default function Home() {
         ref={statsRef}
         className="w-full"
         style={{
-          backgroundColor: '#F2F2F0',
-          borderTop: '1px solid rgba(255,255,255,0.05)',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-          marginTop: '4rem',
-        }}
-      >
-        <div className="mx-auto py-16" style={{ width: '80%' }}>
+          backgroundColor: "#F2F2F0",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          marginTop: "4rem",
+        }}>
+        <div className="mx-auto py-16" style={{ width: "80%" }}>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {stats.map((stat, i) => (
               <motion.div
@@ -239,15 +409,21 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
+                transition={{ delay: i * 0.1 }}>
                 <p
                   className="font-bebas"
-                  style={{ fontSize: '3.5rem', color: '#C4FF00', lineHeight: 1, marginBottom: '0.25rem' }}
-                >
-                  {counts[i]}{stat.suffix}
+                  style={{
+                    fontSize: "3.5rem",
+                    color: "#C4FF00",
+                    lineHeight: 1,
+                    marginBottom: "0.25rem",
+                  }}>
+                  {counts[i]}
+                  {stat.suffix}
                 </p>
-                <p className="font-inter text-xs text-[#767676] uppercase tracking-widest">{stat.label}</p>
+                <p className="font-inter text-xs text-[#767676] uppercase tracking-widest">
+                  {stat.label}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -257,22 +433,28 @@ export default function Home() {
       {/* ─── HOW IT WORKS ─── */}
       <div
         className="w-full flex justify-center"
-        style={{ backgroundColor: '#F2F2F0', paddingTop: '4rem', paddingBottom: '4rem' }}
-      >
-        <div className="mx-auto" style={{ width: '80%' }}>
+        style={{
+          backgroundColor: "#F2F2F0",
+          paddingTop: "4rem",
+          paddingBottom: "4rem",
+        }}>
+        <div className="mx-auto" style={{ width: "80%" }}>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12"
-          >
-            <p className="font-inter text-#C4FF00 uppercase tracking-[0.2em] text-xs mb-2">Process</p>
+            className="mb-12">
+            <p className="font-inter text-#C4FF00 uppercase tracking-[0.2em] text-xs mb-2">
+              Process
+            </p>
             <h2 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
               How It <span className="text-#C4FF00">Works</span>
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6" style={{ marginBottom: '3rem' }}>
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            style={{ marginBottom: "3rem" }}>
             {steps.map((step, i) => (
               <motion.div
                 key={step.number}
@@ -281,31 +463,42 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.5 }}
                 style={{
-                  backgroundColor: '#FFFFFF',
-                  border: '1px solid rgba(255,255,255,0.06)',
-                  borderRadius: '1rem',
-                  padding: '2rem',
-                }}
-              >
+                  backgroundColor: "#FFFFFF",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: "1rem",
+                  padding: "2rem",
+                }}>
                 <div className="flex items-start justify-between mb-6">
                   <div
                     style={{
-                      width: '3rem', height: '3rem', borderRadius: '0.75rem',
-                      backgroundColor: 'rgba(29,78,216,0.1)', border: '1px solid rgba(29,78,216,0.2)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                    }}
-                  >
+                      width: "3rem",
+                      height: "3rem",
+                      borderRadius: "0.75rem",
+                      backgroundColor: "rgba(29,78,216,0.1)",
+                      border: "1px solid rgba(29,78,216,0.2)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                    }}>
                     <step.icon size={20} className="text-#C4FF00" />
                   </div>
                   <span
                     className="font-bebas"
-                    style={{ fontSize: '3.5rem', color: 'rgba(29,78,216,0.12)', lineHeight: 1 }}
-                  >
+                    style={{
+                      fontSize: "3.5rem",
+                      color: "rgba(29,78,216,0.12)",
+                      lineHeight: 1,
+                    }}>
                     {step.number}
                   </span>
                 </div>
-                <h3 className="font-bebas text-[#0D1B2A] tracking-wide mb-2">{step.title}</h3>
-                <p className="font-inter text-sm text-[#767676] leading-relaxed">{step.description}</p>
+                <h3 className="font-bebas text-[#0D1B2A] tracking-wide mb-2">
+                  {step.title}
+                </h3>
+                <p className="font-inter text-sm text-[#767676] leading-relaxed">
+                  {step.description}
+                </p>
               </motion.div>
             ))}
           </div>
@@ -316,36 +509,37 @@ export default function Home() {
       <div
         className="w-full flex justify-center"
         style={{
-          backgroundColor: '#F2F2F0',
-          borderTop: '1px solid rgba(255,255,255,0.05)',
-          paddingTop: '4rem',
-          paddingBottom: '6rem',
-        }}
-      >
+          backgroundColor: "#F2F2F0",
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          paddingTop: "4rem",
+          paddingBottom: "6rem",
+        }}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center px-4"
-        >
+          className="text-center px-4">
           <h2 className="font-bebas text-[#0D1B2A] tracking-wide mb-4">
             Ready to Find Your Car?
           </h2>
           <p className="font-inter text-[#767676] text-sm mb-10 max-w-xs mx-auto leading-relaxed">
-            Browse our full catalogue of 500+ quality vehicles with advanced filtering.
+            Browse our full catalogue of 500+ quality vehicles with advanced
+            filtering.
           </p>
           <Link
             to="/cars"
             className="font-inter font-bold text-base inline-flex items-center gap-2.5"
             style={{
-              background: '#1A1A1A', color: '#FFFFFF', padding: '1rem 2.5rem',
-              borderRadius: '0.625rem', letterSpacing: '0.04em',
-            }}
-          >
+              background: "#1A1A1A",
+              color: "#FFFFFF",
+              padding: "1rem 2.5rem",
+              borderRadius: "0.625rem",
+              letterSpacing: "0.04em",
+            }}>
             Browse All Cars →
           </Link>
         </motion.div>
       </div>
     </main>
-  )
+  );
 }

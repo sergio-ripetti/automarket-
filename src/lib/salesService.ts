@@ -88,12 +88,33 @@ export interface MechanicalInsurance {
   provider: string
 }
 
+// Canonical shape for an uploaded Sales document/photo. publicId + resourceType are required
+// to reliably delete the file from Cloudinary later (see cloudinaryService.deleteFile). Legacy
+// records may still contain plain strings (URL only, no publicId) - callers must handle both.
+export interface UploadedDocument {
+  url: string
+  publicId: string
+  resourceType: string
+  filename?: string
+  mimeType?: string
+}
+
 export interface Documents {
   vehiclePhotos?: string[]
   licensePhoto?: string
   signedContract?: string
   otherDocs?: string[]
-  uploadedDocuments?: string[]
+  uploadedDocuments?: (string | UploadedDocument)[]
+}
+
+// Normalizes a legacy plain-string document entry or a full UploadedDocument into a consistent
+// shape for rendering. Legacy string entries have no publicId, so they can never be deleted from
+// Cloudinary (no way to identify the asset) - they can only be removed from the Sale record itself.
+export function normalizeDocument(doc: string | UploadedDocument): UploadedDocument {
+  if (typeof doc === 'string') {
+    return { url: doc, publicId: '', resourceType: '' }
+  }
+  return doc
 }
 
 export interface Sale {
@@ -119,6 +140,17 @@ export interface Sale {
   mechanicalInsurance?: MechanicalInsurance
   documents?: Documents
   createdAt: Timestamp
+}
+
+export interface MarkPaymentPaidResult {
+  sale: Sale
+  allPaymentsPaid: boolean
+  saleCompleted: boolean
+}
+
+export interface MarkPaymentUnpaidResult {
+  sale: Sale
+  saleReopened: boolean
 }
 
 const COL = 'sales'
@@ -151,40 +183,101 @@ export async function updateSale(id: string, data: Partial<Sale>): Promise<void>
   await updateDoc(doc(db, COL, id), sanitizedData as Record<string, unknown>)
 }
 
-// Marks a specific payment in a sale's schedule as paid (sets paidDate to today) and persists the updated payments array to Firestore
-export async function markPaymentPaid(saleId: string, paymentId: string): Promise<void> {
+// Marks a payment as paid and synchronizes the sale status in a single operation
+// If all payments are now paid, automatically sets the sale status to 'completed'
+// Returns a typed result indicating whether all payments are paid and whether completion occurred
+export async function markPaymentPaidAndSyncSaleStatus(
+  saleId: string,
+  paymentId: string,
+): Promise<MarkPaymentPaidResult> {
   const sale = await getSaleById(saleId)
   if (!sale) throw new Error('Sale not found')
 
+  // Find and update the target payment
+  let paymentFound = false
   const updatedPayments = sale.payments.map((p) => {
     if (p.id === paymentId) {
+      paymentFound = true
       return { ...p, status: 'paid' as const, paidDate: new Date().toISOString().split('T')[0] }
     }
     return p
   })
 
-  await updateSale(saleId, { payments: updatedPayments })
+  if (!paymentFound) throw new Error('Payment not found')
+
+  // Check if all payments are now paid
+  const allPaymentsPaid = updatedPayments.every((p) => p.status === 'paid')
+
+  // Determine the new status
+  const saleCompleted = allPaymentsPaid && sale.status !== 'completed'
+  const newStatus = saleCompleted ? 'completed' : sale.status
+
+  // Single Firestore update for both payments and status
+  const updateData: Partial<Sale> = {
+    payments: updatedPayments,
+    status: newStatus,
+  }
+  await updateSale(saleId, updateData)
+
+  // Return the updated sale and completion information
+  const updatedSale: Sale = {
+    ...sale,
+    payments: updatedPayments,
+    status: newStatus,
+  }
+
+  return {
+    sale: updatedSale,
+    allPaymentsPaid,
+    saleCompleted,
+  }
 }
 
-// Reverts a specific payment in a sale's schedule back to pending (clears paidDate) and reopens the sale if it was completed; persists to Firestore
-export async function markPaymentUnpaid(saleId: string, paymentId: string): Promise<void> {
+// Marks a payment as unpaid and synchronizes the sale status in a single operation
+// If the sale is currently completed, automatically reopens it to active status
+// Returns a typed result indicating whether the sale was reopened
+export async function markPaymentUnpaidAndSyncSaleStatus(
+  saleId: string,
+  paymentId: string,
+): Promise<MarkPaymentUnpaidResult> {
   const sale = await getSaleById(saleId)
   if (!sale) throw new Error('Sale not found')
 
+  // Find and update the target payment
+  let paymentFound = false
   const updatedPayments = sale.payments.map((p) => {
     if (p.id === paymentId) {
-      const { paidDate, ...rest } = p
-      return { ...rest, status: 'pending' as const }
+      paymentFound = true
+      const { id, dueDate, amount } = p
+      return { id, dueDate, amount, status: 'pending' as const }
     }
     return p
   })
 
-  const updateData: Partial<Sale> = { payments: updatedPayments }
-  if (sale.status === 'completed') {
-    updateData.status = 'active'
+  if (!paymentFound) throw new Error('Payment not found')
+
+  // Determine if the sale should reopen
+  const saleReopened = sale.status === 'completed'
+  const newStatus = saleReopened ? 'active' : sale.status
+
+  // Single Firestore update for both payments and status
+  const updateData: Partial<Sale> = {
+    payments: updatedPayments,
+    status: newStatus,
+  }
+  await updateSale(saleId, updateData)
+
+  // Return the updated sale and reopening information
+  const updatedSale: Sale = {
+    ...sale,
+    payments: updatedPayments,
+    status: newStatus,
   }
 
-  await updateSale(saleId, updateData)
+  return {
+    sale: updatedSale,
+    saleReopened,
+  }
 }
 
 // Deletes a sale document from Firestore by id

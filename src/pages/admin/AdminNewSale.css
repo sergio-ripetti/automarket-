@@ -1,0 +1,1280 @@
+/* AdminNewSale Page Stylesheet - Complete Styling Migration */
+/* Semantic, page-scoped styling for the new sale form */
+
+/* Color tokens */
+:root {
+  --admin-new-sale-color-text-primary: #0D1B2A;
+  --admin-new-sale-color-text-secondary: #767676;
+  --admin-new-sale-color-text-light: #4A4A4A;
+  --admin-new-sale-color-background-dark: #1A1A1A;
+  --admin-new-sale-color-background-light: #F2F2F0;
+  --admin-new-sale-color-background-surface: transparent;
+  --admin-new-sale-color-border: #E0E0DC;
+  --admin-new-sale-color-border-overlay: rgba(29, 78, 216, 0.15);
+  --admin-new-sale-color-text-white: #FFFFFF;
+  --admin-new-sale-color-text-white-light: rgba(255, 255, 255, 0.2);
+  --admin-new-sale-color-overlay-light: rgba(29, 78, 216, 0.03);
+  --admin-new-sale-color-overlay-hover: rgba(29, 78, 216, 0.06);
+  --admin-new-sale-color-overlay-border-light: rgba(29, 78, 216, 0.3);
+  --admin-new-sale-color-overlay-border-hover: rgba(29, 78, 216, 0.6);
+}
+
+/* Form wrapper */
+.admin-new-sale__form {
+  display: block;
+}
+
+/* Success message container */
+.admin-new-sale__success-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  text-align: center;
+}
+
+.admin-new-sale__success-icon {
+  margin-bottom: 1.5rem;
+}
+
+.admin-new-sale__success-heading {
+  color: var(--admin-new-sale-color-text-primary);
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__success-message {
+  font-family: Outfit;
+  color: var(--admin-new-sale-color-text-secondary);
+  margin-bottom: 2rem;
+  max-width: 400px;
+}
+
+/* Step indicator */
+.admin-new-sale__step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 4vw, 2rem);
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+  flex-wrap: wrap;
+}
+
+.admin-new-sale__step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-new-sale__step-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.admin-new-sale__step-circle--inactive {
+  background-color: #E0E0DC;
+  color: #767676;
+}
+
+.admin-new-sale__step-circle--active {
+  background-color: var(--admin-new-sale-color-background-dark);
+  color: var(--admin-new-sale-color-text-white);
+}
+
+.admin-new-sale__step-circle--completed {
+  background-color: #22c55e;
+  color: white;
+}
+
+.admin-new-sale__step-label {
+  font-family: Bebas Neue, sans-serif;
+  font-size: 0.9rem;
+}
+
+.admin-new-sale__step-label--inactive {
+  color: #767676;
+}
+
+.admin-new-sale__step-label--active {
+  color: var(--admin-new-sale-color-text-primary);
+}
+
+/* Page heading */
+.admin-new-sale__page-heading {
+  color: var(--admin-new-sale-color-text-primary);
+  margin-bottom: 1.5rem;
+}
+
+/* Field group wrapper */
+.admin-new-sale__field-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Field wrapper */
+.admin-new-sale__field-wrapper {
+  width: 100%;
+}
+
+.admin-new-sale__field-wrapper--auto {
+  width: auto;
+}
+
+/* Label styling */
+.admin-new-sale__label {
+  display: block;
+  font-family: Outfit;
+  font-size: 0.7rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.admin-new-sale__label--large {
+  margin-bottom: 1rem;
+}
+
+/* Base field styling */
+.admin-new-sale__field {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 0 0.5rem 0;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--admin-new-sale-color-border);
+  color: var(--admin-new-sale-color-text-primary);
+  font-family: Outfit;
+  font-size: 0.875rem;
+  outline: none;
+}
+
+.admin-new-sale__field:focus-visible {
+  border-bottom-color: var(--admin-new-sale-color-background-dark);
+  border-bottom-width: 2px;
+}
+
+.admin-new-sale__field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-new-sale__field--invalid {
+  border-bottom-color: #ef4444;
+}
+
+/* Textarea styling */
+.admin-new-sale__textarea {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 0 0.5rem 0;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--admin-new-sale-color-border);
+  color: var(--admin-new-sale-color-text-primary);
+  font-family: Outfit;
+  font-size: 0.875rem;
+  outline: none;
+  resize: vertical;
+  min-height: 100px;
+}
+
+.admin-new-sale__textarea:focus-visible {
+  border-bottom-color: var(--admin-new-sale-color-background-dark);
+  border-bottom-width: 2px;
+}
+
+.admin-new-sale__textarea--invalid {
+  border-bottom-color: #ef4444;
+}
+
+/* Select styling */
+.admin-new-sale__select {
+  width: 100%;
+  padding: 0.75rem 0 0.5rem 0;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--admin-new-sale-color-border);
+  color: var(--admin-new-sale-color-text-primary);
+  font-family: Outfit;
+  font-size: 0.875rem;
+}
+
+.admin-new-sale__select:focus-visible {
+  border-bottom-color: var(--admin-new-sale-color-background-dark);
+  border-bottom-width: 2px;
+}
+
+.admin-new-sale__select--invalid {
+  border-bottom-color: #ef4444;
+}
+
+/* Button styling */
+.admin-new-sale__button {
+  padding: 0.75rem 2rem;
+  border-radius: 0;
+  font-family: Outfit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.admin-new-sale__button:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+.admin-new-sale__button--primary {
+  background-color: var(--admin-new-sale-color-background-dark);
+  border: 1px solid rgba(196,255,0,0.3);
+  color: var(--admin-new-sale-color-text-white);
+  font-weight: 600;
+  width: auto;
+  min-width: 180px;
+  max-width: 260px;
+  height: 48px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.admin-new-sale__button--primary:hover:not(:disabled) {
+  background-color: #2A2A2A;
+  border-color: #C4FF00;
+}
+
+.admin-new-sale__button--primary:focus-visible {
+  outline: 2px solid #C4FF00;
+  outline-offset: 2px;
+}
+
+.admin-new-sale__button--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-new-sale__button--primary--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-new-sale__button--secondary {
+  background-color: transparent;
+  border: 1px solid var(--admin-new-sale-color-border);
+  color: var(--admin-new-sale-color-text-primary);
+  border-radius: 0.5rem;
+  height: 48px;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.admin-new-sale__button--secondary:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: #C4FF00;
+}
+
+.admin-new-sale__button--secondary:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+.admin-new-sale__button--outline {
+  padding: 0 1.5rem;
+  height: 48px;
+  min-width: 120px;
+  border-radius: 0.5rem;
+  background-color: transparent;
+  border: 1px solid var(--admin-new-sale-color-border);
+  color: var(--admin-new-sale-color-text-primary);
+  font-family: Outfit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.admin-new-sale__button--outline:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: #C4FF00;
+}
+
+.admin-new-sale__button--outline:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+.admin-new-sale__button--term {
+  padding: 0.5rem 1.125rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--admin-new-sale-color-border);
+  font-family: Outfit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-new-sale__button--term--inactive {
+  background-color: #F2F2F0;
+  color: #4A4A4A;
+  font-weight: 400;
+}
+
+.admin-new-sale__button--term--inactive:hover {
+  background-color: var(--admin-new-sale-color-border);
+}
+
+.admin-new-sale__button--term--inactive:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+.admin-new-sale__button--term--active {
+  background-color: var(--admin-new-sale-color-background-dark);
+  border-color: var(--admin-new-sale-color-background-dark);
+  color: var(--admin-new-sale-color-text-white);
+}
+
+.admin-new-sale__button--term--active:focus-visible {
+  outline: 2px solid #C4FF00;
+  outline-offset: 2px;
+}
+
+/* Button group */
+.admin-new-sale__button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .admin-new-sale__button-group {
+    flex-direction: column-reverse;
+  }
+  .admin-new-sale__button-group .admin-new-sale__button--primary,
+  .admin-new-sale__button-group .admin-new-sale__button--secondary,
+  .admin-new-sale__button-group .admin-new-sale__button--outline {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* Section styling */
+.admin-new-sale__section {
+  margin-bottom: 1.5rem;
+  background-color: transparent;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.admin-new-sale__section-header {
+  width: 100%;
+  padding: 1rem;
+  background-color: transparent;
+  border: none;
+  color: var(--admin-new-sale-color-text-primary);
+  font-family: Outfit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.admin-new-sale__section-header:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.admin-new-sale__section-header:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+/* Section body */
+.admin-new-sale__section-body {
+  padding: 1rem;
+  background-color: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-new-sale__section-subtitle {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  font-weight: 400;
+  margin-top: 0.25rem;
+}
+
+/* Error styling */
+.admin-new-sale__error {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Radio/checkbox styling */
+.admin-new-sale__radio-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+  gap: clamp(0.5rem, 2vw, 1rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-new-sale__radio-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-new-sale__radio-option input[type="radio"],
+.admin-new-sale__checkbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.admin-new-sale__radio-option input[type="radio"]:focus-visible,
+.admin-new-sale__checkbox input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+/* Checkbox styling */
+.admin-new-sale__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.admin-new-sale__checkbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+/* Payment type selection */
+.admin-new-sale__payment-type {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 1rem;
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.admin-new-sale__payment-card {
+  background-color: #FFFFFF;
+  border: 2px solid transparent;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-new-sale__payment-card:hover {
+  border-color: rgba(29, 78, 216, 0.3);
+}
+
+.admin-new-sale__payment-card--selected {
+  background-color: rgba(29, 78, 216, 0.05);
+  border-color: var(--admin-new-sale-color-background-dark);
+}
+
+.admin-new-sale__payment-card-icon {
+  margin-bottom: 0.75rem;
+}
+
+.admin-new-sale__payment-card-title {
+  color: var(--admin-new-sale-color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.admin-new-sale__payment-card-desc {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: var(--admin-new-sale-color-text-secondary);
+}
+
+/* Loan term buttons */
+.admin-new-sale__term-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Rate info box */
+.admin-new-sale__rate-info {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--admin-new-sale-color-text-secondary);
+}
+
+.admin-new-sale__rate-info-highlight {
+  color: var(--admin-new-sale-color-text-primary);
+  font-weight: bold;
+}
+
+/* Summary card styling */
+.admin-new-sale__summary-card {
+  background-color: transparent;
+  border: 1px solid var(--admin-new-sale-color-overlay-border-light);
+  border-radius: 1rem;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.admin-new-sale__summary-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.admin-new-sale__summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-new-sale__summary-label {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.admin-new-sale__summary-value {
+  color: var(--admin-new-sale-color-text-primary);
+}
+
+.admin-new-sale__summary-divider {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-new-sale__summary-total {
+  margin-top: 1rem;
+}
+
+.admin-new-sale__summary-total-label {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.admin-new-sale__summary-total-value {
+  font-size: 2rem;
+  color: var(--admin-new-sale-color-text-primary);
+  line-height: 1;
+}
+
+/* Payment calculator styling */
+.admin-new-sale__payment-calculator {
+  background-color: transparent;
+  border: 1px solid var(--admin-new-sale-color-overlay-border-light);
+  border-radius: 1rem;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.admin-new-sale__payment-calculator-title {
+  font-family: Outfit;
+  font-size: 0.9rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__payment-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__payment-summary-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-new-sale__payment-summary-label {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.admin-new-sale__payment-summary-value {
+  color: var(--admin-new-sale-color-text-primary);
+}
+
+.admin-new-sale__payment-summary-interest {
+  color: #ef4444;
+  font-family: Outfit;
+  font-size: 0.95rem;
+}
+
+.admin-new-sale__payment-highlight {
+  background-color: #FFFFFF;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--admin-new-sale-color-border);
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 180px;
+  max-width: 260px;
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__payment-highlight-label {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.admin-new-sale__payment-highlight-value {
+  font-size: 1.5rem;
+  color: var(--admin-new-sale-color-text-primary);
+  line-height: 1;
+}
+
+.admin-new-sale__payment-highlight-footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* File progress styling */
+.admin-new-sale__file-progress {
+  height: 3px;
+  background-color: #333333;
+  width: 100%;
+}
+
+.admin-new-sale__file-progress-bar {
+  height: 100%;
+  background-color: var(--admin-new-sale-color-background-dark);
+  transition: width 0.3s ease;
+}
+
+/* Documents section styling */
+.admin-new-sale__documents-section {
+  margin-bottom: 2rem;
+}
+
+.admin-new-sale__documents-title {
+  font-family: Outfit;
+  font-size: 0.9rem;
+  color: #767676;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.admin-new-sale__documents-description {
+  font-family: Outfit;
+  font-size: 0.8rem;
+  color: #767676;
+  margin-bottom: 1.5rem;
+}
+
+/* Upload zone styling */
+.admin-new-sale__upload-zone {
+  border: 2px dashed var(--admin-new-sale-color-overlay-border-light);
+  border-radius: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--admin-new-sale-color-overlay-light);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.admin-new-sale__upload-zone:hover {
+  border-color: var(--admin-new-sale-color-overlay-border-hover);
+  background-color: var(--admin-new-sale-color-overlay-hover);
+}
+
+.admin-new-sale__upload-zone--dragactive {
+  border-color: var(--admin-new-sale-color-overlay-border-hover);
+  background-color: var(--admin-new-sale-color-overlay-hover);
+}
+
+/* Upload input and label */
+.admin-new-sale__upload-input {
+  display: none;
+}
+
+.admin-new-sale__upload-label {
+  cursor: pointer;
+  display: block;
+  width: 100%;
+}
+
+.admin-new-sale__upload-icon {
+  margin: 0 auto 1rem;
+  color: #1A1A1A;
+}
+
+.admin-new-sale__upload-text {
+  color: #0D1B2A;
+  margin-bottom: 0.5rem;
+}
+
+.admin-new-sale__upload-hint {
+  font-family: Outfit;
+  font-size: 0.8rem;
+  color: #767676;
+}
+
+/* Upload grid for files */
+.admin-new-sale__upload-grid {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+/* File card styling */
+.admin-new-sale__file-card {
+  background-color: #E4EAF0;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Uploading file preview */
+.admin-new-sale__file-preview {
+  height: 80px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.admin-new-sale__file-progress-wrapper {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #333333;
+}
+
+.admin-new-sale__file-progress-text {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: #767676;
+}
+
+/* Uploaded file image and placeholder */
+.admin-new-sale__file-image {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+}
+
+.admin-new-sale__file-placeholder {
+  height: 100px;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1A1A1A;
+}
+
+/* File name */
+.admin-new-sale__file-name {
+  color: #0D1B2A;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.75rem;
+  padding: 0.5rem;
+}
+
+/* Remove file button */
+.admin-new-sale__file-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(239,68,68,0.9);
+  color: #0D1B2A;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.admin-new-sale__file-remove:hover {
+  background-color: rgba(239,68,68,1);
+}
+
+.admin-new-sale__file-remove:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+/* View link */
+.admin-new-sale__file-view {
+  display: block;
+  padding: 0.5rem;
+  font-family: Outfit;
+  font-size: 0.65rem;
+  color: #1A1A1A;
+  text-decoration: none;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  transition: background-color 0.2s ease;
+}
+
+.admin-new-sale__file-view:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.admin-new-sale__file-view:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+/* Uploaded documents section */
+.admin-new-sale__uploaded-documents {
+  margin-top: 2rem;
+}
+
+.admin-new-sale__uploaded-count {
+  font-family: Outfit;
+  font-size: 0.85rem;
+  color: #767676;
+  margin-bottom: 1rem;
+}
+
+/* Grid utilities */
+.admin-new-sale__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: 1.5rem;
+}
+
+.admin-new-sale__grid--full {
+  grid-column: 1 / -1;
+}
+
+/* Financing section */
+.admin-new-sale__financing-section {
+  margin-bottom: 1.5rem;
+}
+
+/* Notes field */
+.admin-new-sale__notes-field {
+  grid-column: 1 / -1;
+}
+
+/* Helper text */
+.admin-new-sale__helper-text {
+  font-family: Outfit;
+  font-size: 0.65rem;
+  color: var(--admin-new-sale-color-text-secondary);
+  margin-top: 0.25rem;
+  margin: 0;
+}
+
+/* Chevron icon */
+.admin-new-sale__chevron {
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.admin-new-sale__chevron--expanded {
+  transform: rotate(180deg);
+}
+
+/* Search section */
+.admin-new-sale__search-wrapper {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.admin-new-sale__search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #C8D8E4;
+  pointer-events: none;
+}
+
+.admin-new-sale__search-input {
+  width: 100%;
+  padding: 0.75rem 0 0.5rem 2.5rem;
+  border-radius: 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #E0E0DC;
+  color: #0D1B2A;
+  font-family: Outfit;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.admin-new-sale__search-input:focus-visible {
+  border-bottom-color: #1A1A1A;
+  border-bottom-width: 2px;
+}
+
+/* Cars dropdown */
+.admin-new-sale__cars-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #E4EAF0;
+  border: 1px solid rgba(29,78,216,0.2);
+  border-radius: 0;
+  margin-top: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+/* Car item in dropdown */
+.admin-new-sale__car-item {
+  padding: 0.75rem 0 0.5rem 0;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.2s;
+}
+
+.admin-new-sale__car-item:hover {
+  background-color: rgba(29,78,216,0.05);
+}
+
+.admin-new-sale__car-item-content {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.admin-new-sale__car-item-image {
+  width: 50px;
+  height: 36px;
+  border-radius: 0.375rem;
+  object-fit: cover;
+}
+
+.admin-new-sale__car-item-info {
+  flex: 1;
+}
+
+.admin-new-sale__car-item-title {
+  color: #0D1B2A;
+}
+
+.admin-new-sale__car-item-meta {
+  font-family: Outfit;
+  font-size: 0.75rem;
+  color: #767676;
+}
+
+.admin-new-sale__car-item-price {
+  font-size: 0.9rem;
+  color: #1A1A1A;
+}
+
+/* Selected car display */
+.admin-new-sale__selected-car {
+  background-color: transparent;
+  border: 1px solid rgba(29,78,216,0.15);
+  border-radius: 1rem;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.admin-new-sale__selected-car-image {
+  width: 100%;
+  height: 180px;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__selected-car-title {
+  color: #0D1B2A;
+  margin-bottom: 0.5rem;
+}
+
+.admin-new-sale__selected-car-price {
+  font-size: 1.25rem;
+  color: #1A1A1A;
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__button--change-vehicle {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0;
+  background-color: transparent;
+  border: 1px solid rgba(29,78,216,0.3);
+  color: #1A1A1A;
+  font-family: Outfit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-new-sale__button--change-vehicle:hover {
+  background-color: rgba(29,78,216,0.05);
+}
+
+.admin-new-sale__button--change-vehicle:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+/* Vehicle details card */
+.admin-new-sale__vehicle-details-card {
+  background-color: transparent;
+  border: 1px solid rgba(29,78,216,0.15);
+  border-radius: 1rem;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.admin-new-sale__vehicle-details-title {
+  font-size: 1.25rem;
+  color: #1A1A1A;
+  margin-bottom: 1rem;
+}
+
+/* Radio option styling */
+.admin-new-sale__radio-option span {
+  color: #0D1B2A;
+}
+
+/* Binary buttons (Yes/No) */
+.admin-new-sale__binary-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.admin-new-sale__binary-button {
+  flex: 1;
+  padding: 0.75rem;
+  border-radius: 0;
+  background-color: #F2F2F0;
+  color: #4A4A4A;
+  font-family: Outfit;
+  font-size: 0.875rem;
+  border: none;
+  border-bottom: 1px solid #E0E0DC;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-new-sale__binary-button--active {
+  background-color: #1A1A1A;
+  color: #FFFFFF;
+}
+
+.admin-new-sale__binary-button:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+/* Accessories section */
+.admin-new-sale__accessories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__accessory-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 40px;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.admin-new-sale__accessory-remove {
+  padding: 0.75rem;
+  border-radius: 0;
+  background-color: rgba(239,68,68,0.2);
+  border: none;
+  cursor: pointer;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.admin-new-sale__accessory-remove:hover {
+  background-color: rgba(239,68,68,0.3);
+}
+
+.admin-new-sale__accessory-remove:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+.admin-new-sale__add-item-button {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0;
+  background-color: rgba(29,78,216,0.1);
+  border: 1px solid rgba(29,78,216,0.3);
+  color: #1A1A1A;
+  font-family: Outfit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: all 0.2s;
+  display: block;
+}
+
+.admin-new-sale__add-item-button:hover {
+  background-color: rgba(29,78,216,0.15);
+}
+
+.admin-new-sale__add-item-button:focus-visible {
+  outline: 2px solid var(--admin-new-sale-color-background-dark);
+  outline-offset: 2px;
+}
+
+.admin-new-sale__accessories-total {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-new-sale__accessories-total-value {
+  font-size: 1.5rem;
+  color: #1A1A1A;
+}
+
+/* Financing fees section */
+.admin-new-sale__financing-fees-total {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-new-sale__financing-fees-total-value {
+  font-size: 1.5rem;
+  color: #1A1A1A;
+}
+
+/* Warranty and insurance */
+.admin-new-sale__warranty-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-family: Outfit;
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__warranty-checkbox input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.admin-new-sale__warranty-checkbox-text {
+  color: #0D1B2A;
+  font-size: 0.875rem;
+}
+
+.admin-new-sale__warranty-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__mechanic-insurance-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: clamp(0.75rem, 2vw, 1rem);
+  margin-left: 1.5rem;
+}
+
+/* Checkbox group and label */
+.admin-new-sale__checkbox-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.admin-new-sale__checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-family: Outfit;
+}
+
+.admin-new-sale__checkbox-label input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.admin-new-sale__checkbox-label span {
+  color: #0D1B2A;
+  font-size: 0.875rem;
+}
+
+/* Registration grid */
+.admin-new-sale__registration-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 0.5rem;
+}
+
+/* ORC total section */
+.admin-new-sale__orc-total {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-new-sale__orc-total-value {
+  font-size: 1.5rem;
+  color: #1A1A1A;
+}

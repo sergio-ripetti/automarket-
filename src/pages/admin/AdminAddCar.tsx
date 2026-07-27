@@ -1,9 +1,6 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { collection, doc, setDoc } from 'firebase/firestore'
-import { Search } from 'lucide-react'
-import { db } from '../../lib/firebase'
-import { searchCars, type CarAPIResult } from '../../lib/carApiService'
+import { createCar } from '../../lib/adminCarsService'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
 import AdminInput from '../../components/admin/AdminInput'
@@ -11,6 +8,7 @@ import AdminSelect from '../../components/admin/AdminSelect'
 import AdminTextarea from '../../components/admin/AdminTextarea'
 import AdminButton from '../../components/admin/AdminButton'
 import AdminLabel from '../../components/admin/AdminLabel'
+import ImageUploadSection, { type UploadedImage } from '../../components/admin/ImageUploadSection'
 import type { Car } from '../../types'
 
 type CarInput = Omit<Car, 'id'>
@@ -21,7 +19,6 @@ interface FormState {
   transmission: 'manual' | 'automatico'
   fuel: 'gasolina' | 'diesel' | 'electrico' | 'hibrido'
   description: string; ownerDescription: string
-  image1: string; image2: string; image3: string
   featured: boolean; isOnSale: boolean
 }
 
@@ -30,7 +27,6 @@ const empty: FormState = {
   price: '', originalPrice: '', km: '',
   transmission: 'automatico', fuel: 'gasolina',
   description: '', ownerDescription: '',
-  image1: '', image2: '', image3: '',
   featured: false, isOnSale: false,
 }
 
@@ -56,17 +52,12 @@ function Toggle({ value, onChange, label }: { value: boolean; onChange: () => vo
   )
 }
 
-// Admin page for creating a new vehicle listing - supports manual entry or auto-fill via vehicle API search, then saves the record to Firestore
+// Admin page for creating a new vehicle listing via manual entry, then saves the record to Firestore
 export default function AdminAddCar() {
   const navigate = useNavigate()
   const [form, setForm] = useState<FormState>(empty)
+  const [images, setImages] = useState<UploadedImage[]>([])
   const [saving, setSaving] = useState(false)
-  const [searchMake, setSearchMake] = useState('')
-  const [searchModel, setSearchModel] = useState('')
-  const [searchYear, setSearchYear] = useState('')
-  const [searchResults, setSearchResults] = useState<CarAPIResult[]>([])
-  const [searching, setSearching] = useState(false)
-  const [showSuccess, setShowSuccess] = useState(false)
   const { toast, showToast, dismissToast } = useToast()
 
   // Updates a single field in the vehicle form state
@@ -75,73 +66,27 @@ export default function AdminAddCar() {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  // Searches the external vehicle API by make/model/year to auto-fill car specs
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!searchMake.trim() || !searchModel.trim()) return
-
-    setSearching(true)
-    try {
-      const results = await searchCars(
-        searchMake.trim(),
-        searchModel.trim(),
-        searchYear ? Number(searchYear) : undefined
-      )
-      setSearchResults(results)
-    } catch (err) {
-      console.error('Search error:', err)
-      showToast('Failed to search vehicles', 'error')
-    } finally {
-      setSearching(false)
-    }
-  }
-
-  // Applies a selected vehicle API search result to the form fields (brand, model, year, fuel, transmission, description)
-  const handleSelectCar = (result: CarAPIResult) => {
-    const fuelMap: Record<string, FormState['fuel']> = {
-      gas: 'gasolina',
-      diesel: 'diesel',
-      electricity: 'electrico',
-    }
-
-    const transmissionMap: Record<string, FormState['transmission']> = {
-      a: 'automatico',
-      automatic: 'automatico',
-      m: 'manual',
-      manual: 'manual',
-    }
-
-    const fuel = fuelMap[result.fuel_type.toLowerCase()] || 'gasolina'
-    const transmission = transmissionMap[result.transmission.toLowerCase()] || 'automatico'
-    const title = `${result.make} ${result.model} ${result.year}`
-    const description = `The ${result.year} ${result.make} ${result.model} features a ${result.displacement}L engine with ${result.cylinders} cylinders producing efficient performance. Fuel economy: ${result.city_mpg} city / ${result.highway_mpg} highway MPG. Vehicle class: ${result.class}. Transmission: ${transmission === 'automatico' ? 'Automatic' : 'Manual'}.`
-
-    setForm((prev) => ({
-      ...prev,
-      brand: result.make,
-      model: result.model,
-      year: String(result.year),
-      fuel,
-      transmission,
-      title,
-      description,
-    }))
-
-    setSearchResults([])
-    setSearchMake('')
-    setSearchModel('')
-    setSearchYear('')
-    setShowSuccess(true)
-    setTimeout(() => setShowSuccess(false), 4000)
-  }
-
-  // Validates and saves the new vehicle form to the Firestore "cars" collection
+  // Validates and saves the new vehicle form via backend API
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
     try {
-      const images = [form.image1, form.image2, form.image3].filter((u) => u.trim() !== '')
-      if (images.length === 0) { showToast('Add at least one image URL.', 'error'); setSaving(false); return }
+      // Check if uploads are still in progress
+      if (images.some((img) => img.isUploading)) {
+        showToast('Please wait for all images to finish uploading.', 'error')
+        setSaving(false)
+        return
+      }
+
+      // Get successful images only (exclude failed uploads)
+      const successfulImages = images.filter((img) => !img.error && img.url.startsWith('http'))
+      if (successfulImages.length === 0) {
+        showToast('Add at least one image.', 'error')
+        setSaving(false)
+        return
+      }
+
+      const imageUrls = successfulImages.map((img) => img.url)
 
       const carInput: CarInput = {
         title: form.title, brand: form.brand, model: form.model,
@@ -151,11 +96,14 @@ export default function AdminAddCar() {
         isOnSale: form.isOnSale, km: Number(form.km),
         transmission: form.transmission, fuel: form.fuel,
         description: form.description, ownerDescription: form.ownerDescription,
-        images, featured: form.featured,
+        images: imageUrls, featured: form.featured,
       }
 
-      const newRef = doc(collection(db, 'cars'))
-      await setDoc(newRef, { ...carInput, id: newRef.id })
+      const result = await createCar(carInput)
+      if (!result.success) {
+        showToast(result.error || 'Failed to add vehicle. Please try again.', 'error')
+        return
+      }
       showToast('Vehicle added successfully!', 'success')
       setTimeout(() => navigate('/admin/cars'), 1200)
     } catch (err) {
@@ -178,136 +126,6 @@ export default function AdminAddCar() {
         }}>
         Add New Vehicle
       </h1>
-
-      {/* Success Message */}
-      {showSuccess && (
-        <div style={{
-          backgroundColor: 'rgba(34,197,94,0.1)',
-          border: '1px solid rgba(34,197,94,0.3)',
-          color: '#86efac',
-          padding: '0.75rem 1rem',
-          borderRadius: '0.625rem',
-          fontFamily: 'Outfit',
-          fontSize: '0.875rem',
-          marginBottom: '1.5rem',
-        }}>
-          ✓ Vehicle data loaded from API — please complete the remaining fields (price, mileage, images)
-        </div>
-      )}
-
-      {/* Search Section */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h2 className="font-bebas" style={{ fontSize: '1.1rem', color: '#1A1A1A', marginBottom: '0.5rem' }}>
-          Search Vehicle Database
-        </h2>
-        <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676', marginBottom: '1rem' }}>
-          Search to auto-fill vehicle specifications
-        </p>
-
-        <form onSubmit={handleSearch} style={{ marginBottom: '1rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <AdminInput
-              label="Make"
-              type="text"
-              placeholder="e.g. Toyota"
-              value={searchMake}
-              onChange={(e) => setSearchMake(e.target.value)}
-            />
-            <AdminInput
-              label="Model"
-              type="text"
-              placeholder="e.g. Corolla"
-              value={searchModel}
-              onChange={(e) => setSearchModel(e.target.value)}
-            />
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-            <AdminInput
-              label="Year (Optional)"
-              type="number"
-              placeholder="e.g. 2022"
-              value={searchYear}
-              onChange={(e) => setSearchYear(e.target.value)}
-              min="1990"
-              max="2030"
-            />
-            <div />
-          </div>
-
-          <AdminButton
-            type="submit"
-            disabled={searching}
-            variant="secondary"
-            size="md"
-            isLoading={searching}
-            style={{ width: '100%', justifyContent: 'center', gap: '0.5rem' }}
-          >
-            <Search size={16} />
-            {searching ? 'Searching...' : 'Search API'}
-          </AdminButton>
-        </form>
-
-        {/* Results Dropdown */}
-        {searchResults.length > 0 && (
-          <div style={{
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #E0E0DC',
-            borderRadius: '0.75rem',
-            maxHeight: '300px',
-            overflowY: 'auto',
-            marginTop: '0.5rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          }}>
-            {searchResults.map((result, idx) => (
-              <div
-                key={idx}
-                onClick={() => handleSelectCar(result)}
-                style={{
-                  padding: '0.875rem 1rem',
-                  borderBottom: idx < searchResults.length - 1 ? '1px solid #F0F0EE' : 'none',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s',
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F9F9F8' }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent' }}
-              >
-                <div className="font-bebas" style={{color: "#0D1B2A", marginBottom: '0.25rem' }}>
-                  {result.make} {result.model} {result.year}
-                </div>
-                <div style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#767676' }}>
-                  {result.fuel_type} • {result.transmission} • {result.class}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Divider */}
-      <div style={{
-        borderTop: '1px solid #E0E0DC',
-        margin: '1.5rem 0',
-        textAlign: 'center',
-        position: 'relative',
-      }}>
-        <span style={{
-          position: 'absolute',
-          left: '50%',
-          top: '-8px',
-          transform: 'translateX(-50%)',
-          backgroundColor: '#FFFFFF',
-          padding: '0 0.75rem',
-          fontFamily: 'Outfit',
-          fontSize: '0.7rem',
-          color: '#767676',
-          letterSpacing: '0.15em',
-          textTransform: 'uppercase',
-          fontWeight: 500,
-        }}>
-          OR FILL MANUALLY
-        </span>
-      </div>
 
       <form onSubmit={handleSave}>
         <div
@@ -462,27 +280,10 @@ export default function AdminAddCar() {
             onChange={(e) => set("ownerDescription", e.target.value)}
             placeholder="Owner's personal note..."
           />
-          <AdminInput
-            label="Image URL 1"
-            required
-            type="text"
-            value={form.image1}
-            onChange={(e) => set("image1", e.target.value)}
-            placeholder="https://..."
-          />
-          <AdminInput
-            label="Image URL 2"
-            type="text"
-            value={form.image2}
-            onChange={(e) => set("image2", e.target.value)}
-            placeholder="https://..."
-          />
-          <AdminInput
-            label="Image URL 3"
-            type="text"
-            value={form.image3}
-            onChange={(e) => set("image3", e.target.value)}
-            placeholder="https://..."
+          <ImageUploadSection
+            images={images}
+            onImagesChange={setImages}
+            disabled={saving}
           />
         </div>
 
@@ -500,38 +301,33 @@ export default function AdminAddCar() {
           />
         </div>
 
-        {/* Buttons */}
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-          <style>{`
-            @media (max-width: 768px) {
-              .button-save-vehicle { flex: 1 1 100% !important; }
-              .button-cancel-add { flex: 1 1 100% !important; }
-            }
-            @media (min-width: 769px) {
-              .button-save-vehicle { flex: 1 1 auto !important; }
-              .button-cancel-add { flex: 1 1 auto !important; }
-            }
-          `}</style>
+        {/* Form Footer */}
+        <div style={{
+          display: "flex",
+          gap: "1rem",
+          justifyContent: "flex-end",
+          paddingTop: "2rem",
+          borderTop: "1px solid #E0E0DC",
+          flexWrap: "wrap",
+        }}>
+          <AdminButton
+            type="button"
+            variant="secondary"
+            size="md"
+            onClick={() => navigate("/admin/cars")}
+            style={{ minWidth: "120px", justifyContent: "center" }}
+          >
+            Cancel
+          </AdminButton>
           <AdminButton
             type="submit"
             variant="dark"
             size="md"
             disabled={saving}
             isLoading={saving}
-            className="button-save-vehicle"
-            style={{ minWidth: "140px" }}
+            style={{ minWidth: "140px", justifyContent: "center" }}
           >
-            {saving ? "Saving…" : "Save Vehicle"}
-          </AdminButton>
-          <AdminButton
-            type="button"
-            variant="secondary"
-            size="md"
-            onClick={() => navigate("/admin/cars")}
-            className="button-cancel-add"
-            style={{ minWidth: "120px" }}
-          >
-            Cancel
+            {saving ? "Saving…" : "Add Vehicle"}
           </AdminButton>
         </div>
       </form>

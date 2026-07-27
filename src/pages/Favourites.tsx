@@ -87,12 +87,12 @@ export default function Favourites() {
           <div style={{ textAlign: 'center', paddingTop: '5rem', paddingBottom: '5rem' }}>
             <div style={{
               width: 72, height: 72, borderRadius: '50%',
-              backgroundColor: 'rgba(29,78,216,0.08)',
-              border: '1px solid rgba(29,78,216,0.15)',
+              backgroundColor: 'rgba(220,38,38,0.08)',
+              border: '1px solid rgba(220,38,38,0.15)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               margin: '0 auto 1.5rem',
             }}>
-              <Heart size={32} color="#C4FF00" />
+              <Heart size={32} color="#DC2626" fill="#DC2626" />
             </div>
             <p
               className="font-bebas"
@@ -102,7 +102,7 @@ export default function Favourites() {
             </p>
             <p style={{
               fontFamily: 'Outfit', fontSize: '0.875rem',
-              color: 'rgba(255,255,255,0.4)', marginBottom: '2.5rem',
+              color: '#4A4A4A', marginBottom: '2.5rem',
             }}>
               Click the heart on any car to save it here
             </p>

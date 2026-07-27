@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu, X,
 } from 'lucide-react'
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
-import { logoutAdmin } from '../../lib/authService'
+import { logoutAdmin, authenticatedFetch } from '../../lib/authService'
 
 interface AdminLayoutProps { children: React.ReactNode }
 
@@ -30,6 +30,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   )
   const [unreadMessageCount, setUnreadMessageCount] = useState(0)
   const [pendingFinancingCount, setPendingFinancingCount] = useState(0)
+  const prevPathRef = useRef(location.pathname)
+  const prevScreenSizeRef = useRef(screenSize)
 
   // Detect screen size
   useEffect(() => {
@@ -44,12 +46,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   // Close sidebar on navigation
   useEffect(() => {
-    setSidebarOpen(false)
-  }, [location])
+    if (prevPathRef.current !== location.pathname) {
+      setSidebarOpen(false)
+      prevPathRef.current = location.pathname
+    }
+  }, [location.pathname])
 
   // Close sidebar on desktop
   useEffect(() => {
-    if (screenSize === 'desktop') setSidebarOpen(false)
+    if (prevScreenSizeRef.current !== screenSize && screenSize === 'desktop') {
+      setSidebarOpen(false)
+    }
+    prevScreenSizeRef.current = screenSize
   }, [screenSize])
 
   // Prevent body scroll when sidebar expanded on mobile/tablet
@@ -70,16 +78,35 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       setUnreadMessageCount(snap.size)
     })
 
-    // Listen for pending financing requests
-    const financingQuery = query(collection(db, 'financing'), where('status', '==', 'pending'))
-    const unsubscribeFinancing = onSnapshot(financingQuery, (snap) => {
-      setPendingFinancingCount(snap.size)
-    })
+    // Poll for pending financing requests (backend endpoint)
+    const fetchPendingFinancing = async () => {
+      try {
+        const response = await authenticatedFetch('/api/financing/applications')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && Array.isArray(data.applications)) {
+            const pending = data.applications.filter((f: Record<string, unknown>) => f.status === 'pending').length
+            setPendingFinancingCount(pending)
+          }
+        } else if (response.status === 401 || response.status === 403) {
+          // User logged out or lost admin access - stop polling
+          clearInterval(interval)
+        }
+      } catch (err) {
+        console.error('Failed to fetch pending financing count:', err)
+      }
+    }
+
+    // Initial fetch
+    fetchPendingFinancing()
+
+    // Poll every 30 seconds
+    const interval = setInterval(fetchPendingFinancing, 30000)
 
     // Cleanup listeners on unmount
     return () => {
       unsubscribeMessages()
-      unsubscribeFinancing()
+      clearInterval(interval)
     }
   }, [])
 

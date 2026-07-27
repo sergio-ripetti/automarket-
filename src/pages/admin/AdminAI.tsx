@@ -2,6 +2,10 @@
 import { Send, Bot, Trash2 } from 'lucide-react'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
+import { authenticatedFetch } from '../../lib/authService'
+import type { Car } from '../../types'
+import type { Sale } from '../../lib/salesService'
+import type { Message as FirebaseMessage } from '../../lib/messagesService'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -37,30 +41,30 @@ interface BusinessContext {
 async function getBusinessContext(): Promise<BusinessContext> {
   try {
     // Fetch all collections in parallel
-    const [carsSnap, salesSnap, financingSnap, messagesSnap] = await Promise.all([
+    const [carsSnap, salesSnap, financingRes, messagesSnap] = await Promise.all([
       getDocs(collection(db, 'cars')),
       getDocs(collection(db, 'sales')),
-      getDocs(collection(db, 'financing')),
+      authenticatedFetch('/api/financing/applications').then(r => r.json()),
       getDocs(collection(db, 'messages')),
     ])
 
-    const cars = carsSnap.docs.map((d) => d.data())
-    const sales = salesSnap.docs.map((d) => d.data())
-    const financing = financingSnap.docs.map((d) => d.data())
-    const messages = messagesSnap.docs.map((d) => d.data())
+    const cars = carsSnap.docs.map((d) => d.data() as Car)
+    const sales = salesSnap.docs.map((d) => d.data() as Sale)
+    const financing = financingRes.success ? (financingRes.applications || []) : ([] as Array<Record<string, unknown>>)
+    const messages = messagesSnap.docs.map((d) => d.data() as FirebaseMessage)
 
-    const availableCars = cars.filter((c: any) => !c.isOnSale).length
-    const featuredCars = cars.filter((c: any) => c.featured).length
-    const carsOnSaleCount = cars.filter((c: any) => c.isOnSale).length
-    const recentCarsArray = cars.slice(-5).map((c: any) => ({
+    const availableCars = cars.filter((c) => !c.isOnSale).length
+    const featuredCars = cars.filter((c) => c.featured).length
+    const carsOnSaleCount = cars.filter((c) => c.isOnSale).length
+    const recentCarsArray = cars.slice(-5).map((c) => ({
       title: c.title, brand: c.brand, model: c.model, year: c.year, price: c.price,
     }))
 
-    const totalRevenue = sales.reduce((sum: number, s: any) => sum + (s.paymentPlan?.salePrice || 0), 0)
-    const cashSalesCount = sales.filter((s: any) => s.paymentPlan?.type === 'cash').length
-    const financedSalesCount = sales.filter((s: any) => s.paymentPlan?.type === 'financing').length
-    const completedSalesCount = sales.filter((s: any) => s.status === 'completed').length
-    const recentSalesArray = sales.slice(-10).map((s: any) => ({
+    const totalRevenue = sales.reduce((sum: number, s) => sum + (s.paymentPlan?.salePrice || 0), 0)
+    const cashSalesCount = sales.filter((s) => s.paymentPlan?.type === 'cash').length
+    const financedSalesCount = sales.filter((s) => s.paymentPlan?.type === 'financing').length
+    const completedSalesCount = sales.filter((s) => s.status === 'completed').length
+    const recentSalesArray = sales.slice(-10).map((s) => ({
       carTitle: s.carTitle,
       carBrand: s.carBrand,
       carModel: s.carModel,
@@ -76,16 +80,16 @@ async function getBusinessContext(): Promise<BusinessContext> {
       createdAt: s.createdAt,
     }))
 
-    const pendingFinancingCount = financing.filter((f: any) => f.status === 'pending').length
-    const approvedFinancingCount = financing.filter((f: any) => f.status === 'approved').length
-    const activeFinancingCount = financing.filter((f: any) => f.status === 'active').length
-    const recentFinancingArray = financing.slice(-5).map((f: any) => ({
+    const pendingFinancingCount = financing.filter((f: Record<string, unknown>) => f.status === 'pending').length
+    const approvedFinancingCount = financing.filter((f: Record<string, unknown>) => f.status === 'approved').length
+    const activeFinancingCount = financing.filter((f: Record<string, unknown>) => f.status === 'paying').length
+    const recentFinancingArray = financing.slice(-5).map((f: Record<string, unknown>) => ({
       name: `${f.firstName} ${f.lastName}`, carTitle: f.carTitle, totalAmount: f.totalAmount, status: f.status,
     }))
 
-    const unreadMessagesCount = messages.filter((m: any) => !m.read).length
-    const offerMessagesCount = messages.filter((m: any) => m.type === 'offer').length
-    const contactMessagesCount = messages.filter((m: any) => m.type === 'contact').length
+    const unreadMessagesCount = messages.filter((m) => !m.read).length
+    const offerMessagesCount = messages.filter((m) => m.type === 'offer').length
+    const contactMessagesCount = messages.filter((m) => m.type === 'contact').length
 
     return {
       totalCars: cars.length,
@@ -138,7 +142,6 @@ export default function AdminAI() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [inputValue, setInputValue] = useState('')
   const [loading, setLoading] = useState(false)
-  const [isLoadingContext, setIsLoadingContext] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Logs message list changes for debugging and auto-scrolls chat to the latest message
@@ -188,24 +191,40 @@ export default function AdminAI() {
         console.log('  - Business Context:', JSON.stringify(context, null, 2))
         if (context.recentSalesJSON) {
           try {
-            const sales = JSON.parse(context.recentSalesJSON)
+            const sales = JSON.parse(context.recentSalesJSON) as Array<{
+              carBrand: string
+              carModel: string
+              buyerName?: string
+            }>
             console.log('  - Ventas recientes:', sales.length, 'sales')
-            sales.forEach((s: any, i: number) => {
+            sales.forEach((s, i: number) => {
               console.log(`    ${i + 1}. ${s.carBrand} ${s.carModel} - Comprador: ${s.buyerName}`)
             })
-          } catch (e) {
+          } catch {
             console.log('  - Error al parsear recentSalesJSON')
           }
         }
       }
 
-      // Send request to AI Assistant API with authentication
+      // Send request to AI Assistant API with Firebase ID token
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api'
+
+      // Get current user from Firebase Auth
+      const { auth } = await import('../../lib/firebase')
+      const currentUser = auth.currentUser
+
+      if (!currentUser) {
+        throw new Error('User not authenticated')
+      }
+
+      // Get Firebase ID token for this request
+      const idToken = await currentUser.getIdToken(true)
+
       const response = await fetch(`${apiBaseUrl}/aiAssistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_AI_ASSISTANT_API_KEY || 'test-key-123',
+          'Authorization': `Bearer ${idToken}`,
         },
         body: JSON.stringify({
           message: userMessage.content,
@@ -220,12 +239,21 @@ export default function AdminAI() {
       if (!response.ok) {
         console.error('❌ API returned error status:', response.status);
         console.error('❌ Raw error response:', responseText.substring(0, 500));
+
         let errorMessage = `Server error: ${response.status}`;
-        try {
-          const error = JSON.parse(responseText);
-          errorMessage = error.error || errorMessage;
-        } catch (jsonError) {
-          errorMessage = `Server error (${response.status}): ${responseText.substring(0, 100)}`;
+        if (response.status === 401) {
+          errorMessage = 'Authentication failed. Please log in again.';
+        } else if (response.status === 403) {
+          errorMessage = 'Access denied. You do not have permission to use the AI assistant.';
+        } else if (response.status === 429) {
+          errorMessage = 'Too many requests. Please wait before trying again.';
+        } else {
+          try {
+            const error = JSON.parse(responseText);
+            errorMessage = error.error || errorMessage;
+          } catch {
+            errorMessage = `Server error (${response.status}): ${responseText.substring(0, 100)}`;
+          }
         }
         throw new Error(errorMessage);
       }
@@ -233,7 +261,7 @@ export default function AdminAI() {
       let data;
       try {
         data = JSON.parse(responseText);
-      } catch (jsonError) {
+      } catch {
         console.error('❌ Failed to parse successful response as JSON');
         console.error('❌ Raw response:', responseText.substring(0, 500));
         throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}`);
@@ -279,33 +307,6 @@ export default function AdminAI() {
       setMessages([])
     }
   }
-
-  // Loads previously saved chat messages from localStorage on mount
-  useEffect(() => {
-    const savedMessages = localStorage.getItem('aiAssistantMessages')
-    if (savedMessages) {
-      try {
-        const parsed = JSON.parse(savedMessages)
-        const messagesWithDates = parsed.map((m: any) => ({
-          ...m,
-          timestamp: m.timestamp ? new Date(m.timestamp) : undefined
-        }))
-        setMessages(messagesWithDates)
-      } catch (e) {
-        if (import.meta.env.DEV) {
-          console.error('Error loading messages:', e)
-        }
-      }
-    }
-    setIsLoadingContext(false)
-  }, [])
-
-  // Persists messages to localStorage whenever the chat history changes
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('aiAssistantMessages', JSON.stringify(messages))
-    }
-  }, [messages])
 
   return (
     <div id="admin-ai-main-container" className="admin-ai-main-container" style={{
@@ -377,17 +378,7 @@ export default function AdminAI() {
         flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column',
         gap: '1rem', padding: '1.5rem',
       }}>
-        {isLoadingContext ? (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-            <div style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
-              color: '#767676',
-            }}>
-              <Bot size={32} />
-              <p style={{ fontFamily: 'Outfit', fontSize: '0.9rem' }}>Loading AI Assistant...</p>
-            </div>
-          </div>
-        ) : messages.length === 0 ? (
+        {messages.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1, gap: '2rem' }}>
             <div style={{ textAlign: 'center' }}>
               <Bot size={48} style={{ color: '#1A1A1A', opacity: 0.5, marginBottom: '1rem', marginLeft: 'auto', marginRight: 'auto' }} />

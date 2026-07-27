@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Car, ShoppingBag, DollarSign, CreditCard } from 'lucide-react'
-import { collection, getDocs, query, orderBy, limit, where } from 'firebase/firestore'
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { db } from '../../lib/firebase'
 import { getSales, type Sale } from '../../lib/salesService'
 import type { Message } from '../../lib/messagesService'
-import SeedButton from '../../components/admin/SeedButton'
+import { authenticatedFetch } from '../../lib/authService'
 
 interface Stats {
   totalCars: number
@@ -86,15 +86,18 @@ export default function AdminDashboard() {
   useEffect(() => {
     const run = async () => {
       try {
-        const [carsSnap, allSales, pendingSnap, messagesSnap] = await Promise.all([
+        const [carsSnap, allSales, financingRes, messagesSnap] = await Promise.all([
           getDocs(collection(db, 'cars')),
           getSales(),
-          getDocs(query(collection(db, 'financing'), where('status', '==', 'pending'))),
+          authenticatedFetch('/api/financing/applications').then(r => r.json()),
           getDocs(query(collection(db, 'messages'), orderBy('createdAt', 'desc'), limit(10))),
         ])
 
         const revenue = allSales.reduce((sum, s) => sum + (s.paymentPlan.salePrice || 0), 0)
         const activeFinancing = allSales.filter((s) => s.status === 'active' && s.paymentPlan.type !== 'cash').length
+        const pendingFinancing = financingRes.success
+          ? (financingRes.applications as Array<{ status: string }>).filter((f) => f.status === 'pending').length
+          : 0
 
         // Calculate monthly sales data for current year
         const currentYear = new Date().getFullYear()
@@ -107,7 +110,7 @@ export default function AdminDashboard() {
 
         allSales.forEach((sale) => {
           const saleDate = typeof sale.saleDate === 'object' && sale.saleDate !== null && 'toDate' in sale.saleDate
-            ? (sale.saleDate as any).toDate()
+            ? ((sale.saleDate as { toDate: () => Date }).toDate())
             : new Date(sale.saleDate as string)
           if (saleDate.getFullYear() === currentYear) {
             const monthIdx = saleDate.getMonth()
@@ -156,7 +159,7 @@ export default function AdminDashboard() {
           totalSales: allSales.length,
           totalRevenue: revenue,
           activeFinancing,
-          pendingFinancing: pendingSnap.size,
+          pendingFinancing,
         })
         setRecentSales(allSales.slice(0, 7))
         setRecentMessages(messages.slice(0, 5))
@@ -183,9 +186,6 @@ export default function AdminDashboard() {
           <p style={{ fontFamily: 'Outfit', fontSize: 'clamp(0.8rem, 2vw, 0.9rem)', color: '#767676', margin: 0 }}>
             {today}
           </p>
-        </div>
-        <div id="admin-dashboard-import-button" style={{ flexShrink: 0 }}>
-          <SeedButton position="inline" />
         </div>
       </div>
 

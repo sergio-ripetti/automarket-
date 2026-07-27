@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(npm test *)",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs kill -9)",
+      "Read(//tmp/**)",
+      "Bash(npx vitest *)"
+    ]
+  }
+}

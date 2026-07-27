@@ -84,7 +84,10 @@ export default function AdminButton({
     ...(props.style || {}),
   } as React.CSSProperties
 
-  const { style, ...restProps } = props
+  // Build button props, explicitly excluding the style prop (which is handled via mergedStyles)
+  const buttonProps = Object.fromEntries(
+    Object.entries(props).filter(([key]) => key !== 'style')
+  ) as Omit<typeof props, 'style'>
 
   return (
     <button
@@ -125,7 +128,7 @@ export default function AdminButton({
           target.style.borderColor = '#E0E0DC'
         }
       }}
-      {...restProps}
+      {...buttonProps}
     >
       {isLoading && <span>⏳</span>}
       {children}

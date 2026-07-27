@@ -23,7 +23,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Anthropic Claude API (AI assistant)
 - Firebase/Firestore (real-time data)
 - Cloudinary (image hosting)
-- API Ninjas (vehicle data enrichment)
 
 ### Development Commands
 
@@ -47,7 +46,7 @@ npm run lint
 npm run preview
 ```
 
-**Note:** `npm run dev` runs both Vite (client on 5173) and Express (server on 3001) concurrently via the `concurrently` package. The server is proxied at `/api` and `/ninjas-api` during development via Vite's dev server proxy configuration.
+**Note:** `npm run dev` runs both Vite (client on 5173) and Express (server on 3001) concurrently via the `concurrently` package. The server is proxied at `/api` during development via Vite's dev server proxy configuration.
 
 ## Project Structure
 
@@ -122,27 +121,45 @@ src/
 
 ## Authentication & Security
 
-**Admin Authentication:**
-- **Firebase Authentication** (UI): Admin login at `/admin/login` uses Firebase user credentials
-- **AuthContext** (`src/context/AuthContext`) manages user login state and provides auth headers
+**Frontend Authentication:**
+- **Firebase Authentication** (UI): Admin login at `/admin/login` uses Firebase email/password credentials
+- **AuthContext** (`src/context/AuthContext`) manages user login state
 - **ProtectedRoute** wrapper (`src/components/admin/ProtectedRoute`) prevents unauthorized access to `/admin/*` pages
-- Requires Firebase user to be signed in; unauthenticated users redirected to login
+- Requires Firebase-authenticated user; unauthenticated users redirected to login
 
-**API Authentication:**
-- All `/api/*` requests require `x-api-key` header (validated against `AI_ASSISTANT_API_KEY`)
-- Server returns 401 Unauthorized if key is missing or invalid
-- AuthContext passes the key automatically with API calls
+**AI Endpoint Authentication (Backend-Verified):**
+- **Endpoint:** `POST /api/aiAssistant` requires `Authorization: Bearer <Firebase ID Token>` header
+- **Flow:** 
+  1. Authenticated user requests ID token from Firebase Auth (`user.getIdToken()`)
+  2. Frontend sends token in Authorization header
+  3. Server middleware (`authenticate`) verifies token using Firebase Admin SDK
+  4. Server extracts user identity from token
+  5. Access allowed only to Firebase-authenticated users
+- **Errors:**
+  - Missing header → 401 Unauthorized
+  - Invalid/expired token → 401 Unauthorized
+  - Non-admin user → 403 Forbidden
+  - Firebase Admin unavailable → 503 Service Unavailable
+  - Role lookup failure → 500 Internal Server Error
+- **Rate Limiting:** 20 requests per minute per user (tracked by Firebase UID)
+
+**Firebase Admin SDK:**
+- Backend uses Firebase Admin SDK to verify ID tokens
+- Configuration via environment variables:
+  - `FIREBASE_ADMIN_SDK_DISABLED=true` for development (no verification)
+  - `FIREBASE_SERVICE_ACCOUNT=<JSON>` for production
+  - `GOOGLE_APPLICATION_CREDENTIALS=<path>` as alternative
+- See `src/lib/firebaseAdmin.js` for implementation
 
 **Sensitive Data**:
-- API keys in `.env` (VITE_ANTHROPIC_API_KEY, AI_ASSISTANT_API_KEY, VITE_CARAPI_TOKEN)
+- API keys in `.env` (VITE_ANTHROPIC_API_KEY)
 - Never commit `.env` files (listed in `.gitignore`)
 - Anthropic API key used for server-side chat completion
-- API Ninjas key is injected server-side via Vite proxy (not exposed to client)
+- Static API authentication removed; all backend routes use Firebase tokens
 
 **CORS & Proxy**:
-- Express CORS middleware allows all origins on server
-- Vite dev server proxies `/api` → localhost:3001 and `/ninjas-api` → api-ninjas.com
-- Vite proxy injects API Ninjas header automatically
+- Express CORS middleware allows configured frontend origins
+- Vite dev server proxies `/api` → localhost:3001
 
 ## Data Flow & Key Services
 
@@ -185,17 +202,22 @@ src/
 
 **Endpoints:**
 - `GET /health` — Server health check
-- `POST /api/aiAssistant` — AI chat endpoint (requires `x-api-key` header)
+- `POST /api/aiAssistant` — AI chat endpoint (Firebase-authenticated admins only, requires `Authorization: Bearer <token>`)
 
-**API Key Validation:**
-All `/api/*` requests are validated against `AI_ASSISTANT_API_KEY` (server-side). The key is passed as `x-api-key` header from the client. Fallback handling: if `AI_ASSISTANT_API_KEY` is not set, the server defaults to `'test-key-123'`.
+**AI Endpoint Authentication:**
+- Requires valid Firebase ID token in Authorization header
+- Middleware stack: CORS → body parsing → rate limiting → authentication → authorization → input validation → Anthropic
+- Token verification done server-side using Firebase Admin SDK
+- All user identity verified before request reaches application logic
 
 **AI Endpoint Details:**
 - Uses Anthropic's `claude-opus-4-8` model
-- Accepts `message`, `businessContext`, and `conversationHistory`
-- System prompt includes business stats and recent sales data
+- Accepts `message`, `businessContext`, and `conversationHistory` in request body
+- System prompt includes business stats (no PII: totalCars, totalRevenue, etc.)
+- PII automatically removed from business context before sending to Anthropic
 - Responds in the same language the user is writing in (multi-language support)
 - Max tokens: 1024
+- Rate limit: 20 requests/minute per authenticated user
 
 ## Important File Locations
 
@@ -204,7 +226,7 @@ All `/api/*` requests are validated against `AI_ASSISTANT_API_KEY` (server-side)
 - **Type definitions**: `src/types/index.ts` (Car, FinancingForm, OfferForm, FilterState)
 - **Firebase config**: `src/lib/firebase.ts`
 - **Tailwind theme**: `tailwind.config.js` (custom colors, spacing, shadows)
-- **Vite config**: `vite.config.ts` (proxy for `/api` and `/ninjas-api`, API Ninjas key injection)
+- **Vite config**: `vite.config.ts` (proxy for `/api`)
 - **Design system**: `DESIGN_SYSTEM.md` (color palette, typography, component patterns)
 
 ## Common Development Workflows
@@ -237,14 +259,21 @@ All `/api/*` requests are validated against `AI_ASSISTANT_API_KEY` (server-side)
 
 ## Environment Variables Required
 
+**Frontend (VITE_ prefix - exposed to browser):**
 ```
 VITE_ANTHROPIC_API_KEY=<Anthropic API key for frontend>
-VITE_AI_ASSISTANT_API_KEY=<AI assistant server key for frontend>
-ANTHROPIC_API_KEY=<Anthropic API key for backend>
-AI_ASSISTANT_API_KEY=<AI assistant server key for backend>
+VITE_API_BASE_URL=<Optional: API base URL for production>
 ```
 
-Both client and server need keys; prefix with `VITE_` for client-side access in Vite.
+**Backend (no VITE_ prefix - server-only):**
+```
+ANTHROPIC_API_KEY=<Anthropic API key for backend>
+FRONTEND_URL=<Frontend URL for CORS validation>
+FIREBASE_ADMIN_SDK_DISABLED=<true for development, omit for production>
+FIREBASE_SERVICE_ACCOUNT=<Base64 service account JSON (production)>
+```
+
+Note: AI endpoint authentication uses Firebase ID tokens, not static API keys. See Firebase Admin SDK configuration in Authentication & Security section above.
 
 ## Key Architecture Notes
 
@@ -256,7 +285,6 @@ Both client and server need keys; prefix with `VITE_` for client-side access in 
 **Runtime Behavior:**
 - Admin and public pages have different animation settings (admin: opacity only; public: y-movement)
 - Vite proxy intercepts `/api/*` calls to localhost:3001 during dev
-- API Ninjas requests proxied via Vite with custom header injection (X-Api-Key)
 - Scroll-to-top on every route via `ScrollToTop` component in App.tsx
 - `RouteChecker` determines whether to render navbar/footer based on route path
 
@@ -273,6 +301,5 @@ Both client and server need keys; prefix with `VITE_` for client-side access in 
 
 **Common Gotchas:**
 - Ensure both `VITE_ANTHROPIC_API_KEY` (frontend) and `ANTHROPIC_API_KEY` (backend) are set
-- API Ninjas key is hardcoded in `vite.config.ts` proxy config (security caveat: consider env var in prod)
 - Firebase must be initialized before routes render; check `src/lib/firebase.ts`
 - Admin routes require both Firebase auth AND API key in headers (dual authentication)

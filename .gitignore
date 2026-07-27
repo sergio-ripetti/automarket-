@@ -23,9 +23,17 @@ dist-ssr
 *.sln
 *.sw?
 .env
+.env.backup
+.env.*.backup
 
 # Firebase service account credentials (never commit)
 serviceAccountKey.json
 
 # Firestore migration backups (contain customer data, never commit)
 sales-backup-*.json
+backups/
+
+# Temporary and backup files
+*.tmp
+*.backup
+*.clean

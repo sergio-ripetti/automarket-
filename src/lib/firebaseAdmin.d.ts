@@ -1,0 +1,18 @@
+export declare function initializeFirebaseAdmin(): unknown;
+export declare function getAdminAuth(): unknown;
+export declare function getAdminFirestore(): unknown;
+export declare function verifyIdToken(idToken: string): Promise<Record<string, unknown> | null>;
+export declare function getUserByUid(uid: string): Promise<unknown | null>;
+export declare function saveFinancingApplication(financingData: Record<string, unknown>): Promise<string>;
+export declare function savePublicMessage(messageData: Record<string, unknown>): Promise<string>;
+export declare function createCarAdmin(carData: Record<string, unknown>): Promise<string>;
+export declare function updateCarAdmin(carId: string, updateData: Record<string, unknown>): Promise<void>;
+export declare function deleteCarAdmin(carId: string): Promise<void>;
+export declare function createSaleAdmin(saleData: Record<string, unknown>): Promise<string>;
+export declare function updateSaleAdmin(saleId: string, updateData: Record<string, unknown>): Promise<void>;
+export declare function updateSalePaymentAndStatusAdmin(saleId: string, updateData: Record<string, unknown>): Promise<void>;
+export declare function deleteSaleAdmin(saleId: string): Promise<void>;
+export declare function updateFinancingStatusAdmin(financingId: string, status: string): Promise<void>;
+export declare function deleteFinancingApplicationAdmin(financingId: string): Promise<void>;
+export declare function updateMessageReadStatusAdmin(messageId: string, read: boolean): Promise<void>;
+export declare function deleteMessageAdmin(messageId: string): Promise<void>;

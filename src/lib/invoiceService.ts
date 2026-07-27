@@ -2,6 +2,15 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import type { Sale } from './salesService'
 
+// Module augmentation for jsPDF to add lastAutoTable property
+declare module 'jspdf' {
+  interface jsPDF {
+    lastAutoTable?: {
+      finalY: number
+    }
+  }
+}
+
 function fmt(price: number): string {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
@@ -9,6 +18,14 @@ function fmt(price: number): string {
 function fmtDate(dateStr: string): string {
   const date = new Date(dateStr)
   return date.toLocaleDateString('en-NZ', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+// Type-safe wrapper to get the final Y position after autoTable
+function getAutoTableFinalY(doc: jsPDF): number {
+  if (!doc.lastAutoTable) {
+    throw new Error('autoTable has not been called yet')
+  }
+  return doc.lastAutoTable.finalY
 }
 
 function formatPaymentSchedule(sale: Sale, maxRows: number = 6): Array<[string, string, string, string]> {
@@ -105,12 +122,12 @@ export function generateInvoice(sale: Sale): void {
     bodyStyles: {
       textColor: [255, 255, 255],
       fillColor: [15, 15, 15],
-    } as any,
+    },
     rowPageBreak: 'avoid',
     didDrawPage: undefined,
   })
 
-  yPos = (doc as any).lastAutoTable.finalY + 8
+  yPos = getAutoTableFinalY(doc) + 8
 
   // ──── ORC SECTION ────
   if (sale.orc && (sale.orc.orcTotal > 0 || sale.orc.orcIncluded)) {
@@ -158,7 +175,7 @@ export function generateInvoice(sale: Sale): void {
       },
     })
 
-    yPos = (doc as any).lastAutoTable.finalY + 8
+    yPos = getAutoTableFinalY(doc) + 8
   }
 
   // ──── ACCESSORIES SECTION ────
@@ -200,7 +217,7 @@ export function generateInvoice(sale: Sale): void {
       },
     })
 
-    yPos = (doc as any).lastAutoTable.finalY + 8
+    yPos = getAutoTableFinalY(doc) + 8
   }
 
   // ──── FINANCING FEES SECTION ────
@@ -244,7 +261,7 @@ export function generateInvoice(sale: Sale): void {
       },
     })
 
-    yPos = (doc as any).lastAutoTable.finalY + 8
+    yPos = getAutoTableFinalY(doc) + 8
   }
 
   // ──── WARRANTY & INSURANCE SECTION ────
@@ -288,7 +305,7 @@ export function generateInvoice(sale: Sale): void {
       },
     })
 
-    yPos = (doc as any).lastAutoTable.finalY + 8
+    yPos = getAutoTableFinalY(doc) + 8
   }
 
   // ──── BUYER DETAILS ────
@@ -320,11 +337,11 @@ export function generateInvoice(sale: Sale): void {
     bodyStyles: {
       textColor: [255, 255, 255],
       fillColor: [15, 15, 15],
-    } as any,
+    },
     rowPageBreak: 'avoid',
   })
 
-  yPos = (doc as any).lastAutoTable.finalY + 8
+  yPos = getAutoTableFinalY(doc) + 8
 
   // ──── FINANCIAL SUMMARY TABLE ────
   doc.setFont('Helvetica', 'bold')
@@ -387,7 +404,7 @@ export function generateInvoice(sale: Sale): void {
     },
   })
 
-  yPos = (doc as any).lastAutoTable.finalY + 8
+  yPos = getAutoTableFinalY(doc) + 8
 
   // ──── FINANCING PLAN (if applicable) ────
   if (sale.paymentPlan.type !== 'cash') {
@@ -431,7 +448,7 @@ export function generateInvoice(sale: Sale): void {
       },
     })
 
-    yPos = (doc as any).lastAutoTable.finalY + 8
+    yPos = getAutoTableFinalY(doc) + 8
 
     // Payment Schedule
     if (sale.payments.length > 0) {
@@ -468,8 +485,6 @@ export function generateInvoice(sale: Sale): void {
           3: { cellWidth: contentWidth * 0.3 },
         },
       })
-
-      yPos = (doc as any).lastAutoTable.finalY
     }
   }
 
@@ -538,7 +553,7 @@ export function generateInvoice(sale: Sale): void {
     },
   })
 
-  yPos = (doc as any).lastAutoTable.finalY + 15
+  yPos = getAutoTableFinalY(doc) + 15
 
   // Footer text
   doc.setFont('Helvetica', 'normal')

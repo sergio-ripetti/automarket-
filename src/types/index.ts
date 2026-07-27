@@ -16,6 +16,8 @@ export interface Car {
   transmission: 'manual' | 'automatico'
   fuel: 'gasolina' | 'diesel' | 'electrico' | 'hibrido'
   color: string
+  createdAt?: { toMillis(): number } | Date | string | number // Firestore Timestamp or ISO string or epoch number
+  updatedAt?: { toMillis(): number } | Date | string | number // Firestore Timestamp or ISO string or epoch number
 }
 
 // Holds the current search/filter criteria used by the public car listing UI (FilterBar component)
@@ -64,4 +66,31 @@ export interface OfferForm {
   email: string
   phone: string
   message: string
+}
+
+// Public message submission payload (Contact and vehicle inquiry forms)
+export interface PublicMessageSubmission {
+  // Contact form
+  name?: string
+  firstName?: string
+  lastName?: string
+  // Both
+  email: string
+  phone: string
+  reason?: string
+  message: string
+  // Offer form
+  offerPrice?: number
+  carId?: string
+  carTitle?: string
+  carPrice?: number
+  // Server-generated
+  type: 'contact' | 'offer'
+}
+
+// Response from POST /api/messages/submit
+export interface PublicMessageSubmissionResponse {
+  success: boolean
+  messageId?: string
+  error?: string
 }

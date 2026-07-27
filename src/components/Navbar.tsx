@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Heart } from 'lucide-react'
@@ -15,6 +15,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const location = useLocation()
+  const prevPathRef = useRef(location.pathname)
 
   // Tracks page scroll position to toggle the navbar's background/blur styling
   useEffect(() => {
@@ -23,10 +24,15 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Closes the mobile menu automatically whenever the route changes
+  // Closes the mobile menu when the route changes
   useEffect(() => {
-    setMenuOpen(false)
-  }, [location])
+    if (prevPathRef.current !== location.pathname) {
+      setMenuOpen(false)
+      prevPathRef.current = location.pathname
+    }
+  }, [location.pathname])
+
+  const isActive = (path: string) => location.pathname === path
 
   return (
     <header
@@ -37,15 +43,15 @@ export default function Navbar() {
       }`}
       role="banner"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between" aria-label="Main navigation">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 sm:gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] rounded-lg px-2 py-1">
+      <nav className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 h-16 sm:h-20 flex items-center justify-between md:justify-start md:gap-4 lg:gap-6" aria-label="Main navigation">
+        {/* Logo - Always visible, responsive sizing */}
+        <Link to="/" className="flex items-center gap-1.5 sm:gap-2 md:gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] rounded-lg px-1 sm:px-2 py-1 shrink-0">
           <svg
-            width="28"
-            height="18"
+            width="24"
+            height="16"
             viewBox="0 0 32 20"
             fill="none"
-            className="text-[#C4FF00] transition-transform duration-md group-hover:scale-110 flex-shrink-0"
+            className="text-[#C4FF00] transition-transform duration-md group-hover:scale-110 shrink-0 sm:w-7 sm:h-4"
             aria-hidden="true"
           >
             <path d="M2 14L5 6H27L30 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -53,30 +59,46 @@ export default function Navbar() {
             <circle cx="8" cy="18" r="2" fill="currentColor" />
             <circle cx="24" cy="18" r="2" fill="currentColor" />
           </svg>
-          <span className="font-bebas text-[#FFFFFF] hidden sm:inline">
+          <span className="font-bebas text-[#FFFFFF] text-xs sm:text-sm md:text-base whitespace-nowrap">
             <span className="text-[#C4FF00]">AUTO</span>MARKET
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <ul className="hidden lg:flex items-center gap-8">
+        {/* Desktop & Tablet Navigation - Centered and responsive */}
+        <ul className="hidden md:flex flex-1 items-center justify-center gap-3 lg:gap-6">
           {navLinks.map((link) => (
             <li key={link.to}>
               <Link
                 to={link.to}
                 id={link.id}
-                className="font-inter text-sm font-medium text-white/65 hover:text-white transition-colors duration-sm relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] rounded px-2 py-1"
-                aria-current={location.pathname === link.to ? 'page' : undefined}
+                className={`font-inter text-xs sm:text-sm font-medium relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] rounded px-1.5 sm:px-2 md:px-2 py-1 transition-colors duration-300 whitespace-nowrap ${
+                  isActive(link.to)
+                    ? 'text-white'
+                    : 'text-white/65 hover:text-white'
+                }`}
+                aria-current={isActive(link.to) ? 'page' : undefined}
               >
-                {link.label}
-                <span className="absolute bottom-0 left-0 h-0.5 w-0 bg-[#C4FF00] group-hover:w-full transition-all duration-md" />
+                <span className="relative inline-block">
+                  {link.label}
+                  <motion.span
+                    className="absolute bottom-0 left-0 h-1 bg-[#C4FF00] rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{
+                      width: isActive(link.to) ? '100%' : 0
+                    }}
+                    whileHover={{
+                      width: isActive(link.to) ? '100%' : '100%'
+                    }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  />
+                </span>
               </Link>
             </li>
           ))}
         </ul>
 
-        {/* Desktop CTA */}
-        <div className="hidden lg:block">
+        {/* Tablet & Desktop CTA */}
+        <div className="hidden md:flex shrink-0">
           <Link
             to="/favourites"
             aria-label="Go to favorites"
@@ -88,18 +110,18 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button - Only visible on mobile */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00]"
+          className="md:hidden text-white w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] shrink-0"
           aria-expanded={menuOpen}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         >
-          {menuOpen ? <X size={24} /> : <Menu size={24} />}
+          {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Only on mobile */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -107,10 +129,10 @@ export default function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25 }}
-            className="lg:hidden bg-[#1A1A1A]/95 backdrop-blur-md border-t border-white/10 overflow-hidden"
+            className="md:hidden bg-[#1A1A1A]/95 backdrop-blur-md border-t border-white/10 overflow-hidden"
           >
-            <nav className="px-4 sm:px-6 py-4" aria-label="Mobile navigation">
-              <ul className="flex flex-col gap-1 mb-4">
+            <nav className="px-4 sm:px-6 py-4 sm:py-6" aria-label="Mobile navigation">
+              <ul className="flex flex-col gap-2 mb-4 w-full">
                 {navLinks.map((link, i) => (
                   <motion.li
                     key={link.to}
@@ -121,10 +143,27 @@ export default function Navbar() {
                     <Link
                       to={link.to}
                       id={`mobile-${link.id}`}
-                      className="block font-inter font-medium text-white/80 hover:text-[#C4FF00] py-3 px-4 rounded-lg transition-colors duration-sm active:bg-white/10"
-                      aria-current={location.pathname === link.to ? 'page' : undefined}
+                      className={`block font-inter font-medium rounded-lg transition-all duration-300 py-3 px-4 text-center relative group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00] ${
+                        isActive(link.to)
+                          ? 'text-white'
+                          : 'text-white/80 hover:text-white'
+                      }`}
+                      aria-current={isActive(link.to) ? 'page' : undefined}
                     >
-                      {link.label}
+                      <span className="relative inline-block">
+                        {link.label}
+                        <motion.span
+                          className="absolute bottom-0 left-0 h-1 bg-[#C4FF00] rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{
+                            width: isActive(link.to) ? '100%' : 0
+                          }}
+                          whileHover={{
+                            width: isActive(link.to) ? '100%' : '100%'
+                          }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        />
+                      </span>
                     </Link>
                   </motion.li>
                 ))}

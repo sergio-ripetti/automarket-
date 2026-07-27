@@ -10,6 +10,10 @@ interface FilterBarProps {
   onClear: () => void
 }
 
+// Filtra solo números (sin decimales)
+function formatNumericInput(value: string): string {
+  return value.replace(/[^\d]/g, '')
+}
 
 // Renders search/filter controls (brand, model, year range, fuel) for the car listing and reports changes to the parent via onFilterChange
 export default function FilterBar({ cars, filters, onFilterChange, onClear }: FilterBarProps) {
@@ -34,6 +38,16 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
   const handleChange = (field: keyof FilterState, value: string) => {
     if (field === 'brand') {
       onFilterChange({ ...filters, brand: value, model: '' })
+    } else if (field === 'yearMin' || field === 'yearMax') {
+      // Validate year range: min should not exceed max
+      const numValue = Number(value) || 0
+      if (field === 'yearMin' && filters.yearMax && numValue > Number(filters.yearMax)) {
+        return // Ignore invalid input
+      }
+      if (field === 'yearMax' && filters.yearMin && numValue < Number(filters.yearMin)) {
+        return // Ignore invalid input
+      }
+      onFilterChange({ ...filters, [field]: value })
     } else {
       onFilterChange({ ...filters, [field]: value })
     }
@@ -61,7 +75,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
         {/* Search — full width */}
         <div style={{ gridColumn: '1 / -1' }}>
           <FormLabel>Search</FormLabel>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', width: '100%' }}>
             <Search
               size={15}
               style={{
@@ -74,6 +88,7 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
               type="text"
               placeholder="Search by brand, model or title..."
               value={filters.search}
+              maxLength={100}
               onChange={(e) => handleChange('search', e.target.value)}
               style={{ paddingLeft: '1.75rem' }}
             />
@@ -115,12 +130,12 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
         <div>
           <FormLabel>Year From</FormLabel>
           <FormInput
-            type="number"
+            type="text"
+            inputMode="numeric"
             placeholder="2000"
             value={filters.yearMin}
-            onChange={(e) => handleChange('yearMin', e.target.value)}
-            min="2000"
-            max="2030"
+            maxLength={4}
+            onChange={(e) => handleChange('yearMin', formatNumericInput(e.target.value))}
           />
         </div>
 
@@ -128,12 +143,12 @@ export default function FilterBar({ cars, filters, onFilterChange, onClear }: Fi
         <div>
           <FormLabel>Year To</FormLabel>
           <FormInput
-            type="number"
+            type="text"
+            inputMode="numeric"
             placeholder="2025"
             value={filters.yearMax}
-            onChange={(e) => handleChange('yearMax', e.target.value)}
-            min="2000"
-            max="2030"
+            maxLength={4}
+            onChange={(e) => handleChange('yearMax', formatNumericInput(e.target.value))}
           />
         </div>
 

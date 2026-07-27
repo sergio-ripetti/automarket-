@@ -20,3 +20,22 @@ export async function logoutAdmin() {
 export function onAuthChange(callback: (user: User | null) => void) {
   return onAuthStateChanged(auth, callback)
 }
+
+// Fetches a resource from the API with Firebase ID token authentication
+export async function authenticatedFetch(url: string, options?: RequestInit) {
+  const user = auth.currentUser
+  if (!user) {
+    throw new Error('User not authenticated')
+  }
+
+  const idToken = await user.getIdToken(true)
+  const headers = {
+    ...options?.headers,
+    'Authorization': `Bearer ${idToken}`,
+  }
+
+  return fetch(url, {
+    ...options,
+    headers,
+  })
+}

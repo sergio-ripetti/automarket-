@@ -45,21 +45,41 @@ export default function Cars() {
   const displayed = hasActiveFilters ? filteredCars : allCars
 
   return (
-    <main style={{ paddingTop: '72px', minHeight: '100vh', backgroundColor: '#F2F2F0' }}>
+    <main
+      style={{
+        paddingTop: "7rem",
+        minHeight: "100vh",
+        backgroundColor: "#F2F2F0",
+      }}>
       <div className="w-full flex justify-center py-12">
-        <div className="mx-auto flex flex-col gap-10" style={{ width: '80%' }}>
-
+        <div className="mx-auto flex flex-col gap-10" style={{ width: "80%" }}>
           {/* Page header */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+              marginBottom: "1rem",
+            }}>
+            <div style={{ width: 40, height: 1, backgroundColor: "#E0E0DC" }} />
+            <span
+              className="font-bebas"
+              style={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.2em",
+                color: "#767676",
+              }}>
+              OUR VEHICLES
+            </span>
+            <div style={{ width: 40, height: 1, backgroundColor: "#E0E0DC" }} />
+          </div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <p className="font-inter text-#C4FF00 uppercase tracking-[0.2em] text-xs mb-2">Catalogue</p>
-            <h1 className="font-bebas text-[#0D1B2A] tracking-wide leading-none">
-              Our <span className="text-#C4FF00">Vehicles</span>
-            </h1>
-            <p className="font-inter text-[#767676] text-sm mt-2">Find your perfect match</p>
+            transition={{ duration: 0.5 }}>
+            <p className="font-inter text-[#767676] text-sm mt-2">
+              Find your perfect match
+            </p>
           </motion.div>
 
           {/* Filter bar */}
@@ -74,23 +94,49 @@ export default function Cars() {
           <div>
             {loading ? (
               <>
-                <div style={{ height: '2rem', width: '12rem', backgroundColor: '#FFFFFF', borderRadius: '0.5rem', marginBottom: '1.5rem' }} className="animate-pulse" />
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
+                <div
+                  style={{
+                    height: "2rem",
+                    width: "12rem",
+                    backgroundColor: "#FFFFFF",
+                    borderRadius: "0.5rem",
+                    marginBottom: "1.5rem",
+                  }}
+                  className="animate-pulse"
+                />
+                <div
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 pb-16"
+                  style={{ gap: "clamp(1rem, 3vw, 1.5rem)" }}>
                   {[...Array(8)].map((_, i) => (
                     <div
                       key={i}
                       className="animate-pulse"
-                      style={{ backgroundColor: '#FFFFFF', borderRadius: '1rem', height: '380px' }}
+                      style={{
+                        backgroundColor: "#FFFFFF",
+                        borderRadius: "1rem",
+                        height: "380px",
+                      }}
                     />
                   ))}
                 </div>
               </>
             ) : error ? (
-              <div style={{ textAlign: 'center', padding: '5rem 0' }}>
-                <p style={{ fontFamily: 'Outfit', color: '#767676', fontSize: '1rem', marginBottom: '0.5rem' }}>
+              <div style={{ textAlign: "center", padding: "5rem 0" }}>
+                <p
+                  style={{
+                    fontFamily: "Outfit",
+                    color: "#767676",
+                    fontSize: "1rem",
+                    marginBottom: "0.5rem",
+                  }}>
                   {error}
                 </p>
-                <p style={{ fontFamily: 'Outfit', color: '#C8D8E4', fontSize: '0.8rem' }}>
+                <p
+                  style={{
+                    fontFamily: "Outfit",
+                    color: "#C8D8E4",
+                    fontSize: "0.8rem",
+                  }}>
                   Make sure the database is seeded and try refreshing.
                 </p>
               </div>
@@ -98,9 +144,16 @@ export default function Cars() {
               <>
                 <h2 className="font-bebas text-[#0D1B2A] tracking-wide mb-6">
                   {hasActiveFilters ? (
-                    <><span className="text-#C4FF00">{filteredCars.length}</span> vehicles found</>
+                    <>
+                      <span className="text-#C4FF00">
+                        {filteredCars.length}
+                      </span>{" "}
+                      vehicles found
+                    </>
                   ) : (
-                    <>All <span className="text-#C4FF00">Vehicles</span></>
+                    <>
+                      All <span className="text-#C4FF00">Vehicles</span>
+                    </>
                   )}
                 </h2>
 
@@ -108,22 +161,26 @@ export default function Cars() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center py-32 text-center"
-                  >
+                    className="flex flex-col items-center justify-center py-32 text-center">
                     <SearchX size={56} className="text-[#C8D8E4] mb-4" />
-                    <p className="font-inter text-[#767676] text-lg">No vehicles found matching your criteria</p>
-                    <p className="font-inter text-[#767676] text-sm mt-1">Try adjusting your filters</p>
+                    <p className="font-inter text-[#767676] text-lg">
+                      No vehicles found matching your criteria
+                    </p>
+                    <p className="font-inter text-[#767676] text-sm mt-1">
+                      Try adjusting your filters
+                    </p>
                   </motion.div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-stretch pb-16" style={{ gap: 'clamp(1rem, 3vw, 1.5rem)' }}>
+                  <div
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 items-stretch pb-16"
+                    style={{ gap: "clamp(1rem, 3vw, 1.5rem)" }}>
                     {displayed.map((car, i) => (
                       <motion.div
                         key={car.id}
                         className="h-full"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.04, duration: 0.4 }}
-                      >
+                        transition={{ delay: i * 0.04, duration: 0.4 }}>
                         <CarCard car={car} />
                       </motion.div>
                     ))}
@@ -132,9 +189,8 @@ export default function Cars() {
               </>
             )}
           </div>
-
         </div>
       </div>
     </main>
-  )
+  );
 }

@@ -5,9 +5,8 @@ import {
   Calendar, Gauge, Fuel, Settings2, Palette,
   ArrowLeft, X, CheckCircle2, MessageCircle, Calculator, Heart,
 } from "lucide-react"
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
-import { db } from "../lib/firebase"
 import { getCarById } from "../lib/carsService"
+import { submitPublicMessage } from "../lib/messagesService"
 import { FormInput, FormLabel, FormTextarea } from "../components/shared"
 import type { Car, OfferForm } from "../types"
 
@@ -18,6 +17,21 @@ function formatPrice(price: number): string {
 // Formats a numeric odometer reading into a "X km" display string
 function formatKm(km: number): string {
   return km.toLocaleString("en-NZ") + " km"
+}
+
+// Filtra solo números y caracteres de formato (+, espacio, -)
+function formatPhoneInput(value: string): string {
+  return value.replace(/[^\d+\s\-()]/g, '')
+}
+
+// Filtra solo números (sin decimales)
+function formatNumericInput(value: string): string {
+  return value.replace(/[^\d]/g, '')
+}
+
+// Valida formato de email
+function isValidEmail(email: string): boolean {
+  return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)
 }
 
 const fuelLabel: Record<string, string> = {
@@ -131,32 +145,65 @@ export default function CarDetail() {
     } catch { /* silent */ }
   }
 
-  // Handles the "Make an Offer" form submission - takes offerForm state and car info, writes a new offer message document to Firestore, then shows a success toast and resets the form
+  // Validates offer form fields - name, email, phone, offer price
+  const validateOfferForm = (): boolean => {
+    if (!offerForm.firstName.trim()) {
+      alert('First name is required')
+      return false
+    }
+    if (!offerForm.lastName.trim()) {
+      alert('Last name is required')
+      return false
+    }
+    if (!offerForm.email.trim()) {
+      alert('Email is required')
+      return false
+    }
+    if (!isValidEmail(offerForm.email)) {
+      alert('Please enter a valid email')
+      return false
+    }
+    if (!offerForm.phone.trim()) {
+      alert('Phone is required')
+      return false
+    }
+    if (!offerForm.offerPrice.trim()) {
+      alert('Offer price is required')
+      return false
+    }
+    return true
+  }
+
+  // Handles the "Make an Offer" form submission - validates input, submits via backend API, shows success/failure feedback
   const handleOfferSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!validateOfferForm()) return
     try {
-      await addDoc(collection(db, 'messages'), {
-        senderName: offerForm.firstName + ' ' + offerForm.lastName,
+      const result = await submitPublicMessage({
         firstName: offerForm.firstName,
         lastName: offerForm.lastName,
         email: offerForm.email,
         phone: offerForm.phone,
-        reason: 'Vehicle Offer',
         message: offerForm.message || '',
         offerPrice: Number(offerForm.offerPrice),
         carId: car.id,
         carTitle: car.title,
         carPrice: car.price,
-        read: false,
         type: 'offer',
-        createdAt: serverTimestamp()
       })
-      setModalOpen(false)
-      setShowToast(true)
-      setTimeout(() => setShowToast(false), 3000)
-      setOfferForm({ firstName: '', lastName: '', email: '', phone: '', offerPrice: '', message: '' })
+
+      if (result.success) {
+        setModalOpen(false)
+        setShowToast(true)
+        setTimeout(() => setShowToast(false), 3000)
+        setOfferForm({ firstName: '', lastName: '', email: '', phone: '', offerPrice: '', message: '' })
+      } else {
+        console.error('Error saving offer:', result.error)
+        alert(result.error || 'Failed to send your offer. Please try again.')
+      }
     } catch (error) {
       console.error('Error saving offer:', error)
+      alert('Failed to send your offer. Please try again.')
     }
   }
 
@@ -299,11 +346,11 @@ export default function CarDetail() {
                     {formatPrice(car.originalPrice)}
                   </p>
                 )}
-                <p className="font-bebas" style={{ fontSize: "2.5rem", color: "#C4FF00", lineHeight: 1 }}>
+                <p className="font-bebas" style={{ fontSize: "2.5rem", color: "#0D1B2A", lineHeight: 1 }}>
                   {formatPrice(car.price)}
                 </p>
               </div>
-              <p style={{ fontFamily: "Outfit", fontSize: "0.7rem", color: "#767676", letterSpacing: "0.15em" }}>
+              <p style={{ fontFamily: "Outfit", fontSize: "0.7rem", color: "#4A4A4A", letterSpacing: "0.15em" }}>
                 NZD
               </p>
             </div>
@@ -496,6 +543,7 @@ export default function CarDetail() {
                     <FormLabel required>First Name</FormLabel>
                     <FormInput
                       value={offerForm.firstName}
+                      maxLength={50}
                       onChange={(e) => setOfferForm({ ...offerForm, firstName: e.target.value })}
                       placeholder="John"
                     />
@@ -506,6 +554,7 @@ export default function CarDetail() {
                     <FormLabel required>Last Name</FormLabel>
                     <FormInput
                       value={offerForm.lastName}
+                      maxLength={50}
                       onChange={(e) => setOfferForm({ ...offerForm, lastName: e.target.value })}
                       placeholder="Smith"
                     />
@@ -517,7 +566,8 @@ export default function CarDetail() {
                     <FormInput
                       type="tel"
                       value={offerForm.phone}
-                      onChange={(e) => setOfferForm({ ...offerForm, phone: e.target.value })}
+                      maxLength={20}
+                      onChange={(e) => setOfferForm({ ...offerForm, phone: formatPhoneInput(e.target.value) })}
                       placeholder="+64 21 123 4567"
                     />
                   </div>
@@ -528,6 +578,7 @@ export default function CarDetail() {
                     <FormInput
                       type="email"
                       value={offerForm.email}
+                      maxLength={100}
                       onChange={(e) => setOfferForm({ ...offerForm, email: e.target.value })}
                       placeholder="john@example.com"
                     />
@@ -537,9 +588,11 @@ export default function CarDetail() {
                   <div style={{ gridColumn: "1 / -1" }}>
                     <FormLabel required>Your Offer (NZD)</FormLabel>
                     <FormInput
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={7}
                       value={offerForm.offerPrice}
-                      onChange={(e) => setOfferForm({ ...offerForm, offerPrice: e.target.value })}
+                      onChange={(e) => setOfferForm({ ...offerForm, offerPrice: formatNumericInput(e.target.value) })}
                       placeholder="32000"
                     />
                   </div>
@@ -549,6 +602,7 @@ export default function CarDetail() {
                     <FormLabel>Message</FormLabel>
                     <FormTextarea
                       value={offerForm.message}
+                      maxLength={500}
                       onChange={(e) => setOfferForm({ ...offerForm, message: e.target.value })}
                       placeholder="Any questions or comments about this vehicle?"
                     />

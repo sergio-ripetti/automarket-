@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 // Guards admin routes - checks Firebase auth state from AuthContext and redirects unauthenticated users to login
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
