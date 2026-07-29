@@ -2,7 +2,7 @@
 
 A professional full-stack automotive marketplace platform with AI-driven business analytics, real-time inventory management, and comprehensive admin controls built with React, TypeScript, Firebase, and Node.js.
 
-**[Live Demo](https://automarket-ten.vercel.app)** | **[GitHub Repository](https://github.com/yourusername/automarket)**
+**[Live Demo](https://automarket-ten.vercel.app)** | **[GitHub Repository](https://github.com/sergio-ripetti/automarket-)**
 
 ---
 
@@ -33,11 +33,12 @@ The platform demonstrates full-stack engineering best practices including secure
 - **PDF Invoices** - Professional invoice generation with detailed financial breakdowns
 
 ### Security & Privacy
-- **Firebase Authentication** - Secure admin login with role-based access
-- **API Key Validation** - Server-side request authentication with rate limiting
-- **Privacy-First Design** - No customer PII logged or sent to external services
-- **CORS Protection** - Restricted cross-origin access
-- **Data Anonymization** - Customer data excluded from AI prompts
+- **Firebase Authentication** - Admin login via Firebase, verified server-side with Firebase ID tokens (not a static API key) plus a Firestore-backed admin role check
+- **Backend-Mediated Data Access** - Sales and Financing records deny all direct client Firestore access; every read/write goes through authenticated Express endpoints backed by the Firebase Admin SDK
+- **Public Sold-Vehicle Endpoint** - Home/Cars determine vehicle availability via a public endpoint that returns only sold vehicle IDs, never full sale records
+- **Rate Limiting** - Isolated rate limiter for the AI endpoint (separate from general API rate limiting), keyed per authenticated admin
+- **Privacy-First AI Context** - No buyer name, email, phone, address, or ID/licence data is included in the business context sent to the AI provider
+- **CORS Protection** - Restricted to trusted origins only
 
 ---
 
@@ -110,10 +111,9 @@ automarket/
 │   │   ├── messagesService.ts
 │   │   ├── cloudinaryService.ts
 │   │   ├── invoiceService.ts # PDF generation
-│   │   ├── carApiService.ts  # External API integration
 │   │   ├── sanitize.ts       # Data sanitization
 │   │   ├── formatting.ts     # Shared formatting utilities
-│   │   └── validation.ts     # Form validation utilities
+│   │   └── validators.js     # Shared frontend/backend validators (security, PII sanitization)
 │   ├── types/                # TypeScript interfaces
 │   │   └── index.ts
 │   ├── data/                 # Static data
@@ -143,8 +143,8 @@ automarket/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/automarket.git
-   cd automarket
+   git clone https://github.com/sergio-ripetti/automarket-.git
+   cd automarket-
    ```
 
 2. **Install dependencies**
@@ -208,13 +208,14 @@ ANTHROPIC_API_KEY=sk-ant-...
 - Anthropic API key for the backend
 - Get from: https://console.anthropic.com/
 
-**External APIs:**
+**Cloudinary (Admin API):**
 ```
-CARAPI_API_KEY=your_api_ninjas_key_here
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
 ```
-- API Ninjas key for vehicle data enrichment
-- Get from: https://api-ninjas.com/
-- Required for the `/api/cardata` endpoint
+- Required to delete Sales documents/photos from Cloudinary when removed in Edit Sale
+- Get from: https://console.cloudinary.com/settings/api-keys
 
 **Deployment:**
 ```
@@ -262,7 +263,25 @@ The application uses these Firestore collections:
 
 1. In Firebase Console: Authentication → Users
 2. Add a new user with email and password
-3. Use these credentials to log into the admin panel at `/admin/login`
+3. Grant that user the admin role in the `users/{uid}` Firestore document (see `scripts/bootstrap-admin.js`)
+4. Use these credentials to log into the admin panel at `/admin/login`
+
+---
+
+## 🔒 Firestore Rules
+
+`firestore.rules` denies all direct client access to `sales`, `financing`, and `users` (only the backend, via the Firebase Admin SDK, can read/write them - the Admin SDK bypasses client security rules by design). `cars` and `messages` allow public reads since that data is meant to be publicly browsable; all writes to every collection are backend-only.
+
+```bash
+# Point the Firebase CLI at the right project (or pass --project explicitly below)
+firebase use automarket-710a5
+
+# Run the rules test suite against the local emulator (requires JDK 21+)
+npm run test:firestore-rules
+
+# Deploy rules to the live project
+firebase deploy --only firestore:rules --project automarket-710a5
+```
 
 ---
 
@@ -313,22 +332,26 @@ npm run test
 
 ## 🔐 Security Architecture
 
-### Authentication
-- **Frontend:** Firebase Authentication with email/password
-- **Backend:** API key validation on every protected endpoint
-- **Rate Limiting:** 20 requests per minute per API key
-- **CORS:** Restricted to trusted origins only
+### Authentication & Authorization
+- **Frontend:** Firebase Authentication (email/password) for admin login
+- **Backend:** every protected endpoint verifies a Firebase ID token (`Authorization: Bearer <token>`) via the Firebase Admin SDK, then checks an admin role stored in Firestore (`users/{uid}`) - there is no static API key
+- **Rate Limiting:** the AI endpoint has its own isolated limiter (keyed per admin), separate from the general limiter shared by other admin routes
+- **CORS:** restricted to a fixed allowlist of trusted origins
 
 ### Data Protection
-- **Environment Variables:** All secrets in `.env` (never committed)
-- **No PII Logging:** Customer names, emails, phones never logged
-- **AI Privacy:** Customer data excluded from Claude API requests
-- **Storage:** Sensitive data only persisted server-side
+- **Backend-mediated Sales/Financing:** `firestore.rules` denies all direct client access to `sales` and `financing` (both can contain buyer/customer data); every read and write goes through an authenticated Express endpoint using the Firebase Admin SDK
+- **Public availability endpoint:** the public Home/Cars pages get vehicle availability from `GET /api/public/sold-vehicle-ids`, which returns only sold vehicle IDs - never buyer data, payment details, or full sale records
+- **Environment Variables:** all secrets in `.env` (never committed)
+- **No PII Logging:** customer names, emails, phones, IDs, and licence numbers are never logged, and are stripped before the business context reaches the AI endpoint
+- **AI Privacy:** the AI's business context is bounded (capped vehicle/sale counts) and validated server-side; buyer PII is excluded before it ever leaves the browser
 
 ### Input Validation
 - **Message Length:** 1–5000 characters
 - **Conversation Limit:** Maximum 50 messages per request
+- **Server-side validators:** required fields, string/array bounds, and status-value checks on every write endpoint, independent of frontend validation
 - **Type Checking:** Full TypeScript compile-time validation
+
+This is a portfolio project, not an audited production system - the security model above reflects deliberate design decisions, not a claim of exhaustive or bank-grade security review.
 
 ---
 
@@ -336,8 +359,8 @@ npm run test
 
 ### Environment Setup
 1. Update `FRONTEND_URL` to your deployed domain
-2. Update Firebase security rules (restrict Firestore access)
-3. Generate strong `AI_ASSISTANT_API_KEY`
+2. Deploy `firestore.rules` (see [Firestore Rules](#-firestore-rules) below)
+3. Configure Firebase Admin SDK for production (`FIREBASE_SERVICE_ACCOUNT` or `GOOGLE_APPLICATION_CREDENTIALS`)
 4. Ensure all required API keys are configured
 
 ### Deployment (Vercel)
@@ -376,6 +399,17 @@ dist/index.html         # Entry HTML
 - [ ] PDF invoice generates correctly
 - [ ] AI assistant responds to queries
 - [ ] Rate limiting blocks excessive requests
+
+### Automated Tests
+
+```bash
+npm test                     # Full Vitest suite (unit, integration, security, accessibility)
+npm run test:firestore-rules # Firestore security rules against the local emulator (requires JDK 21+)
+```
+
+The suite covers unit tests, integration tests, security/PII-sanitization tests, and accessibility checks for the admin panel, alongside a separate Firestore rules test file that verifies read/write access at the security-rule level.
+
+*As of the last full run (July 2026): 1,270+ automated tests across 83 test files, plus 28 Firestore rules tests. Exact counts will drift as the project evolves - run the commands above for the current numbers.*
 
 ---
 

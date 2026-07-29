@@ -37,3 +37,6 @@ backups/
 *.tmp
 *.backup
 *.clean
+
+# Local-only Claude Code settings (machine-specific tool permissions, absolute local paths)
+.claude/settings.local.json
