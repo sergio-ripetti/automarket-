@@ -436,4 +436,68 @@ describe('Firestore Security Rules - Real Emulator Tests', () => {
       expect(true).toBe(true);
     });
   });
+
+  // Sale documents can contain buyer PII (name, email, phone, address, ID/licence numbers).
+  // The public Home/Cars sold-status check now goes through a backend endpoint
+  // (/api/public/sold-vehicle-ids) instead of a direct client Firestore read, so this collection
+  // must deny every client access path - unauthenticated, authenticated ordinary user, and even
+  // an authenticated admin (the frontend has no legitimate direct-Firestore Sales access at all;
+  // Admin Sales/Dashboard/Inventory/New Sale go through authenticated backend endpoints).
+  describe('Sales Collection - Deny All Client Access (Rule: allow read, write: if false)', () => {
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().collection('sales').doc('sale-1').set({
+          carId: 'car-1',
+          status: 'active',
+          buyer: { name: 'John Doe', email: 'john@example.com' },
+        });
+      });
+    });
+
+    afterAll(async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().collection('sales').doc('sale-1').delete();
+      });
+    });
+
+    it('should deny unauthenticated read of a sale document', async () => {
+      const unauthedDb = testEnv.unauthenticatedContext().firestore();
+      await assertFails(unauthedDb.collection('sales').doc('sale-1').get());
+    });
+
+    it('should deny an authenticated ordinary (non-admin) user read of a sale document', async () => {
+      const userDb = testEnv.authenticatedContext('user-456').firestore();
+      await assertFails(userDb.collection('sales').doc('sale-1').get());
+    });
+
+    it('should deny an authenticated admin-context client read of a sale document (frontend has no direct Sales access, admin or not)', async () => {
+      const adminDb = testEnv.authenticatedContext('admin-123').firestore();
+      await assertFails(adminDb.collection('sales').doc('sale-1').get());
+    });
+
+    it('should deny unauthenticated create of a sale document', async () => {
+      const unauthedDb = testEnv.unauthenticatedContext().firestore();
+      await assertFails(
+        unauthedDb.collection('sales').doc('sale-2').set({ carId: 'car-2', status: 'active' })
+      );
+    });
+
+    it('should deny an authenticated admin-context client update of a sale document', async () => {
+      const adminDb = testEnv.authenticatedContext('admin-123').firestore();
+      await assertFails(adminDb.collection('sales').doc('sale-1').update({ status: 'cancelled' }));
+    });
+
+    it('should deny an authenticated admin-context client delete of a sale document', async () => {
+      const adminDb = testEnv.authenticatedContext('admin-123').firestore();
+      await assertFails(adminDb.collection('sales').doc('sale-1').delete());
+    });
+
+    it('should allow the backend Admin SDK to read sales (bypasses client rules)', async () => {
+      await assertSucceeds(
+        testEnv.withSecurityRulesDisabled(async (context) => {
+          await context.firestore().collection('sales').doc('sale-1').get();
+        })
+      );
+    });
+  });
 });

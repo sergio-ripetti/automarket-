@@ -1,9 +1,11 @@
 import {
-  collection, doc, getDocs, getDoc, addDoc, deleteDoc, updateDoc,
-  query, orderBy, serverTimestamp, type Timestamp,
+  collection, doc, addDoc, deleteDoc, updateDoc,
+  serverTimestamp, type Timestamp,
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { sanitizeForFirestore } from './sanitize'
+import { getSoldCarIdsFromSales } from './validators.js'
+import { authenticatedFetch } from './authService'
 
 export interface Buyer {
   name: string
@@ -153,21 +155,55 @@ export interface MarkPaymentUnpaidResult {
   saleReopened: boolean
 }
 
-const COL = 'sales'
-
-// Fetches all vehicle sales from the Firestore 'sales' collection, newest first
-export async function getSales(): Promise<Sale[]> {
-  const q = query(collection(db, COL), orderBy('createdAt', 'desc'))
-  const snap = await getDocs(q)
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Sale))
+// A vehicle is considered sold if it has any sale whose status is NOT 'cancelled' - both
+// 'active' and 'completed' sales count. This is a blocklist (not an allowlist of specific
+// statuses) so any future status value defaults to "sold" unless explicitly 'cancelled' -
+// the safer default for excluding a car from being sold twice. Sales with a missing/falsy
+// carId are ignored rather than corrupting the resulting set with an empty-string entry.
+// The actual rule lives in validators.js's getSoldCarIdsFromSales (shared with the backend's
+// public sold-vehicle-ids endpoint and the AI inventory context) - this is a thin typed
+// re-export so every existing caller here keeps working unchanged.
+export function getSoldCarIds(sales: Sale[]): Set<string> {
+  return getSoldCarIdsFromSales(sales)
 }
 
-// Fetches a single sale by document id from Firestore, returns null if it doesn't exist
+// Single source of truth for "is this car sold" - callers should always go through this
+// helper (backed by getSoldCarIds) rather than re-deriving the status !== 'cancelled' rule.
+export function isCarSold(carId: string, soldCarIds: Set<string>): boolean {
+  return soldCarIds.has(carId)
+}
+
+const COL = 'sales'
+
+// Fetches all vehicle sales, newest first. Sale documents can contain buyer PII, so
+// firestore.rules denies all client reads of the 'sales' collection - this goes through the
+// authenticated admin-only GET /api/sales endpoint (Firebase Admin SDK on the backend) instead
+// of reading Firestore directly from the browser. Callers (Admin Inventory, Dashboard, New Sale,
+// Sales list) are unaffected - the signature and return shape are unchanged.
+export async function getSales(): Promise<Sale[]> {
+  const response = await authenticatedFetch('/api/sales')
+  if (!response.ok) {
+    throw new Error('Failed to fetch sales')
+  }
+  const data = await response.json()
+  if (!data.success || !Array.isArray(data.sales)) {
+    throw new Error('Failed to fetch sales')
+  }
+  return data.sales as Sale[]
+}
+
+// Fetches a single sale by document id via the authenticated admin-only GET /api/sales/:id
+// endpoint, returns null if it doesn't exist. See getSales() for why this is no longer a direct
+// Firestore client read.
 export async function getSaleById(id: string): Promise<Sale | null> {
-  const docRef = doc(db, COL, id)
-  const docSnap = await getDoc(docRef)
-  if (!docSnap.exists()) return null
-  return { id: docSnap.id, ...docSnap.data() } as Sale
+  const response = await authenticatedFetch(`/api/sales/${encodeURIComponent(id)}`)
+  if (response.status === 404) return null
+  if (!response.ok) {
+    throw new Error('Failed to fetch sale')
+  }
+  const data = await response.json()
+  if (!data.success || !data.sale) return null
+  return data.sale as Sale
 }
 
 // Creates a new sale record in Firestore - sanitizes the data (strips undefined values) before writing and stamps a server-side createdAt

@@ -264,6 +264,24 @@ export async function createSaleAdmin(saleData) {
 }
 
 /**
+ * Reads only the {carId, status} pair from every sale, via the Admin SDK - backs the public
+ * sold-vehicle-ids endpoint. Deliberately does not select or return any other field (buyer info,
+ * payment info, documents, etc.) since this data ultimately reaches the public, unauthenticated
+ * browser; minimizing what's pulled out of Firestore in the first place is a second layer of
+ * protection on top of the endpoint only ever responding with derived vehicle IDs.
+ * @returns {Promise<Array<{ carId: unknown, status: unknown }>>}
+ */
+export async function getSalesCarIdAndStatusOnly() {
+  const db = getAdminFirestore();
+  if (!db) {
+    throw new Error('Firestore not available');
+  }
+
+  const snap = await db.collection('sales').select('carId', 'status').get();
+  return snap.docs.map((doc) => doc.data());
+}
+
+/**
  * Update an existing sale in the 'sales' collection using Admin SDK
  * Preserves createdAt, does not modify it
  * @param {string} saleId - Sale document ID

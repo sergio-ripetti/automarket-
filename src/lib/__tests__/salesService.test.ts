@@ -25,8 +25,24 @@ vi.mock('../sanitize', () => ({
   sanitizeForFirestore: (data: unknown) => data,
 }))
 
+// getSaleById now goes through authenticatedFetch('/api/sales/:id') instead of a direct Firestore
+// read (see the privacy fix removing the public/client Sales read). This shim keeps every
+// existing per-test `fb.getDoc` fixture below working unchanged by routing the mocked fetch
+// through the same mocked getDoc/doc calls the tests already configure.
+vi.mock('../authService', () => ({
+  authenticatedFetch: vi.fn(async (url: string) => {
+    const match = /^\/api\/sales\/([^/]+)$/.exec(url)
+    if (!match) throw new Error(`Unexpected fetch url in test: ${url}`)
+    const docSnap = await fb.getDoc(fb.doc({} as unknown as never, 'sales', match[1]))
+    if (!docSnap.exists()) {
+      return new Response(JSON.stringify({ success: false, error: 'Sale not found' }), { status: 404 })
+    }
+    return new Response(JSON.stringify({ success: true, sale: { id: docSnap.id, ...docSnap.data() } }))
+  }),
+}))
+
 // Import after mocking
-import { markPaymentPaidAndSyncSaleStatus, markPaymentUnpaidAndSyncSaleStatus } from '../salesService'
+import { markPaymentPaidAndSyncSaleStatus, markPaymentUnpaidAndSyncSaleStatus, getSoldCarIds, isCarSold } from '../salesService'
 
 // Test fixtures
 const createBuyer = () => ({
@@ -838,5 +854,58 @@ describe('markPaymentPaidAndSyncSaleStatus', () => {
         expect(payments).toEqual(paymentsBefore)
       })
     })
+  })
+})
+
+describe('getSoldCarIds / isCarSold (shared sold-status source of truth)', () => {
+  function sale(overrides: Partial<Sale>): Sale {
+    return { carId: 'car-1', status: 'active', ...overrides } as unknown as Sale
+  }
+
+  it('marks a car sold when it has an active sale', () => {
+    const soldIds = getSoldCarIds([sale({ carId: 'car-1', status: 'active' })])
+    expect(soldIds.has('car-1')).toBe(true)
+    expect(isCarSold('car-1', soldIds)).toBe(true)
+  })
+
+  it('marks a car sold when it has a completed sale', () => {
+    const soldIds = getSoldCarIds([sale({ carId: 'car-1', status: 'completed' })])
+    expect(soldIds.has('car-1')).toBe(true)
+  })
+
+  it('does not mark a car sold when its only sale is cancelled', () => {
+    const soldIds = getSoldCarIds([sale({ carId: 'car-1', status: 'cancelled' })])
+    expect(soldIds.has('car-1')).toBe(false)
+    expect(isCarSold('car-1', soldIds)).toBe(false)
+  })
+
+  it('ignores a sale with a missing/empty carId safely', () => {
+    const soldIds = getSoldCarIds([sale({ carId: '' as unknown as string, status: 'active' })])
+    expect(soldIds.size).toBe(0)
+    expect(soldIds.has('')).toBe(false)
+  })
+
+  it('produces a single sold ID for duplicate sales referencing the same car', () => {
+    const soldIds = getSoldCarIds([
+      sale({ carId: 'car-1', status: 'active' }),
+      sale({ carId: 'car-1', status: 'completed' }),
+    ])
+    expect(soldIds.size).toBe(1)
+    expect(soldIds.has('car-1')).toBe(true)
+  })
+
+  it('returns no sold IDs for an empty Sales collection', () => {
+    const soldIds = getSoldCarIds([])
+    expect(soldIds.size).toBe(0)
+  })
+
+  it('treats an unrecognized/future status as sold by default (blocklist rule, not an allowlist)', () => {
+    const soldIds = getSoldCarIds([sale({ carId: 'car-1', status: 'pending_review' as unknown as Sale['status'] })])
+    expect(soldIds.has('car-1')).toBe(true)
+  })
+
+  it('a car with no matching sale at all is not sold', () => {
+    const soldIds = getSoldCarIds([sale({ carId: 'other-car', status: 'active' })])
+    expect(isCarSold('car-1', soldIds)).toBe(false)
   })
 })

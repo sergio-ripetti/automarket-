@@ -1,4 +1,7 @@
 export declare function sanitizeBusinessContext(context: unknown): Record<string, unknown>;
+export declare function parseAvailableVehicles(json: unknown): Record<string, unknown>[];
+export declare function getSoldCarIdsFromSales(sales: unknown): Set<string>;
+export declare function parseRecentSales(json: unknown): Record<string, unknown>[];
 export declare function validateAIMessage(message: unknown): string | null;
 export declare function validateConversationHistory(history: unknown): string | null;
 export declare function validateCORSOrigin(origin: string | undefined, allowedOrigins: string[]): boolean;
@@ -12,6 +15,8 @@ export declare function validateMessageReadUpdate(payload: unknown): string | nu
 
 export declare class RateLimiter {
   constructor(windowMs?: number, maxRequests?: number, nowFn?: () => number);
+  maxRequests: number;
   isAllowed(key: string): boolean;
+  getRetryAfterSeconds(key: string): number;
   reset(): void;
 }

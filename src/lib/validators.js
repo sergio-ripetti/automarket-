@@ -19,6 +19,13 @@ function sanitizeBusinessContext(context) {
     featuredCars: context.featuredCars || 0,
     carsOnSale: context.carsOnSale || 0,
     recentCars: context.recentCars || '[]',
+    soldCars: context.soldCars || 0,
+    featuredAvailableCars: context.featuredAvailableCars || 0,
+    onSaleAvailableCars: context.onSaleAvailableCars || 0,
+    availableVehicleCount: context.availableVehicleCount || 0,
+    vehiclesIncludedInContext: context.vehiclesIncludedInContext || 0,
+    isInventoryTruncated: Boolean(context.isInventoryTruncated),
+    availableVehiclesJSON: context.availableVehiclesJSON || '[]',
     totalSales: context.totalSales || 0,
     totalRevenue: context.totalRevenue || 0,
     cashSales: context.cashSales || 0,
@@ -37,6 +44,137 @@ function sanitizeBusinessContext(context) {
   };
 
   return sanitized;
+}
+
+// Bounds for the per-vehicle inventory context sent to the AI - keeps the prompt size
+// predictable even if the client sends a larger payload than expected.
+const MAX_INVENTORY_VEHICLES = 150;
+const MAX_VEHICLE_STRING_LENGTH = 120;
+
+/**
+ * Normalizes and bounds a single available-vehicle entry to only the AI-safe scalar fields.
+ * Returns null for a malformed entry (missing id/title, wrong types) so it can be dropped
+ * rather than corrupting the list. Vehicle text fields are treated strictly as inert data -
+ * they are truncated to a bounded length and are never interpreted as instructions.
+ * @param {unknown} entry
+ * @returns {Record<string, unknown> | null}
+ */
+function sanitizeVehicleEntry(entry) {
+  if (!entry || typeof entry !== 'object') return null;
+
+  const id = typeof entry.id === 'string' && entry.id ? entry.id.slice(0, 100) : null;
+  const title = typeof entry.title === 'string' && entry.title ? entry.title.slice(0, MAX_VEHICLE_STRING_LENGTH) : null;
+  if (!id || !title) return null;
+
+  const asBoundedString = (value) => (typeof value === 'string' ? value.slice(0, MAX_VEHICLE_STRING_LENGTH) : '');
+  const asFiniteNumber = (value) => (typeof value === 'number' && Number.isFinite(value) ? value : null);
+
+  return {
+    id,
+    title,
+    brand: asBoundedString(entry.brand),
+    model: asBoundedString(entry.model),
+    year: asFiniteNumber(entry.year),
+    price: asFiniteNumber(entry.price),
+    km: asFiniteNumber(entry.km),
+    fuel: asBoundedString(entry.fuel),
+    transmission: asBoundedString(entry.transmission),
+    featured: Boolean(entry.featured),
+    onSale: Boolean(entry.onSale),
+  };
+}
+
+/**
+ * Safely parses and validates the available-vehicles JSON payload: bounds the array length,
+ * discards malformed entries, and never throws (a parse failure yields an empty list rather
+ * than a 500).
+ * @param {unknown} json
+ * @returns {Record<string, unknown>[]}
+ */
+function parseAvailableVehicles(json) {
+  if (typeof json !== 'string' || !json) return [];
+  let parsed;
+  try {
+    parsed = JSON.parse(json);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+  return parsed
+    .slice(0, MAX_INVENTORY_VEHICLES)
+    .map(sanitizeVehicleEntry)
+    .filter((v) => v !== null);
+}
+
+// Single source of truth for "which sales count as sold" - a Sale marks its car sold unless
+// its status is 'cancelled'. This mirrors src/lib/salesService.ts's getSoldCarIds exactly (that
+// module re-exports this function rather than re-implementing the rule) so Admin Inventory,
+// Record New Sale, the public sold-vehicle-ids endpoint, and the AI inventory context can never
+// diverge on what "sold" means.
+function getSoldCarIdsFromSales(sales) {
+  if (!Array.isArray(sales)) return new Set();
+  return new Set(
+    sales
+      .filter((s) => s && typeof s === 'object' && typeof s.carId === 'string' && s.carId && s.status !== 'cancelled')
+      .map((s) => s.carId)
+  );
+}
+
+const MAX_RECENT_SALES = 20;
+const MAX_SALE_STRING_LENGTH = 120;
+
+/**
+ * Normalizes a single recent-sale entry down to only the AI-safe business fields the prompt
+ * actually uses. No buyer/customer field (name, email, phone, address, id/licence number,
+ * documents) is ever read or forwarded, even if present on the input object - this protects the
+ * prompt even if an outdated or malicious client sends buyer data.
+ * @param {unknown} entry
+ * @returns {Record<string, unknown> | null}
+ */
+function sanitizeRecentSaleEntry(entry) {
+  if (!entry || typeof entry !== 'object') return null;
+
+  const asBoundedString = (value) => (typeof value === 'string' ? value.slice(0, MAX_SALE_STRING_LENGTH) : '');
+  const asFiniteNumber = (value) => (typeof value === 'number' && Number.isFinite(value) ? value : null);
+
+  const carTitle = asBoundedString(entry.carTitle);
+  const carBrand = asBoundedString(entry.carBrand);
+  const carModel = asBoundedString(entry.carModel);
+  if (!carTitle && !carBrand && !carModel) return null;
+
+  return {
+    carTitle,
+    carBrand,
+    carModel,
+    carYear: asFiniteNumber(entry.carYear),
+    salePrice: asFiniteNumber(entry.salePrice),
+    paymentType: asBoundedString(entry.paymentType),
+    downPayment: asFiniteNumber(entry.downPayment),
+    status: asBoundedString(entry.status),
+    createdAt: asBoundedString(entry.createdAt),
+  };
+}
+
+/**
+ * Safely parses and validates the recent-sales JSON payload for the AI business context: bounds
+ * the array length, allowlists only business fields (never buyer/customer data), and never
+ * throws (a parse failure yields an empty list).
+ * @param {unknown} json
+ * @returns {Record<string, unknown>[]}
+ */
+function parseRecentSales(json) {
+  if (typeof json !== 'string' || !json) return [];
+  let parsed;
+  try {
+    parsed = JSON.parse(json);
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+  return parsed
+    .slice(0, MAX_RECENT_SALES)
+    .map(sanitizeRecentSaleEntry)
+    .filter((v) => v !== null);
 }
 
 /**
@@ -149,6 +287,18 @@ class RateLimiter {
     validTimes.push(now);
     this.requestCounts.set(key, validTimes);
     return true;
+  }
+
+  // Seconds until the given key's oldest in-window request ages out and a new
+  // request would be allowed again. Used to populate a 429 response's retryAfter.
+  getRetryAfterSeconds(key) {
+    const times = this.requestCounts.get(key) || [];
+    const now = this.now();
+    const validTimes = times.filter((t) => now - t < this.windowMs);
+    if (validTimes.length === 0) return 0;
+    const oldest = Math.min(...validTimes);
+    const msRemaining = this.windowMs - (now - oldest);
+    return Math.max(1, Math.ceil(msRemaining / 1000));
   }
 
   reset() {
@@ -659,6 +809,9 @@ function validateMessageReadUpdate(payload) {
 
 export {
   sanitizeBusinessContext,
+  parseAvailableVehicles,
+  getSoldCarIdsFromSales,
+  parseRecentSales,
   validateAIMessage,
   validateConversationHistory,
   validateCORSOrigin,

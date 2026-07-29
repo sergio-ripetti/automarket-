@@ -3,15 +3,44 @@ import { Send, Bot, Trash2 } from 'lucide-react'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { authenticatedFetch } from '../../lib/authService'
+import { loadAIConversation, saveAIConversation, clearAIConversation, type ChatMessage } from '../../lib/aiConversationStorage'
+import { getSoldCarIds, getSales } from '../../lib/salesService'
 import type { Car } from '../../types'
-import type { Sale } from '../../lib/salesService'
 import type { Message as FirebaseMessage } from '../../lib/messagesService'
 
-interface ChatMessage {
-  role: 'user' | 'assistant'
-  content: string
-  timestamp?: Date
-  id?: string
+// Upper bound on how many available-vehicle records are sent to the AI in one request. The
+// project currently has ~50 cars (well under this), but the cap keeps the prompt bounded if
+// inventory grows; anything beyond it is dropped (not silently - isInventoryTruncated/
+// availableVehicleCount/vehiclesIncludedInContext report the true counts to both the AI and,
+// if needed, the admin).
+const MAX_INVENTORY_VEHICLES_IN_CONTEXT = 150
+
+const fuelDisplayLabel: Record<Car['fuel'], string> = {
+  gasolina: 'Petrol',
+  diesel: 'Diesel',
+  electrico: 'Electric',
+  hibrido: 'Hybrid',
+}
+
+const transmissionDisplayLabel: Record<Car['transmission'], string> = {
+  manual: 'Manual',
+  automatico: 'Automatic',
+}
+
+// A single available vehicle's AI-safe fields only - no images, description, ownerDescription,
+// VIN/licence plate (Car has none), or any other internal/admin-only data.
+interface AvailableVehicleContext {
+  id: string
+  title: string
+  brand: string
+  model: string
+  year: number
+  price: number
+  km: number
+  fuel: string
+  transmission: string
+  featured: boolean
+  onSale: boolean
 }
 
 interface BusinessContext {
@@ -20,6 +49,13 @@ interface BusinessContext {
   featuredCars: number
   carsOnSale: number
   recentCars: string
+  soldCars: number
+  featuredAvailableCars: number
+  onSaleAvailableCars: number
+  availableVehicleCount: number
+  vehiclesIncludedInContext: number
+  isInventoryTruncated: boolean
+  availableVehiclesJSON: string
   totalSales: number
   totalRevenue: number
   cashSales: number
@@ -40,43 +76,68 @@ interface BusinessContext {
 // Fetch business data from Firebase for AI context
 async function getBusinessContext(): Promise<BusinessContext> {
   try {
-    // Fetch all collections in parallel
-    const [carsSnap, salesSnap, financingRes, messagesSnap] = await Promise.all([
+    // Fetch all data sources in parallel. Sales can no longer be read directly from client-side
+    // Firestore (firestore.rules denies all client access to 'sales' - it can carry buyer PII),
+    // so this goes through getSales() (src/lib/salesService.ts), which itself calls the
+    // authenticated admin-only GET /api/sales backend endpoint. cars/messages remain direct
+    // reads since those collections still allow public Firestore reads.
+    const [carsSnap, sales, financingRes, messagesSnap] = await Promise.all([
       getDocs(collection(db, 'cars')),
-      getDocs(collection(db, 'sales')),
+      getSales(),
       authenticatedFetch('/api/financing/applications').then(r => r.json()),
       getDocs(collection(db, 'messages')),
     ])
 
-    const cars = carsSnap.docs.map((d) => d.data() as Car)
-    const sales = salesSnap.docs.map((d) => d.data() as Sale)
+    const cars = carsSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Car))
     const financing = financingRes.success ? (financingRes.applications || []) : ([] as Array<Record<string, unknown>>)
     const messages = messagesSnap.docs.map((d) => d.data() as FirebaseMessage)
 
-    const availableCars = cars.filter((c) => !c.isOnSale).length
+    // Reuses the same centralized sold-status source of truth as Admin Inventory, Record New
+    // Sale, and the public Home/Cars pages (Sale.status !== 'cancelled' => sold) instead of the
+    // unrelated `isOnSale` promotional-discount flag that was previously (incorrectly) used here.
+    const soldCarIds = getSoldCarIds(sales)
+    const availableCarsList = cars.filter((c) => c.id && !soldCarIds.has(c.id))
+
     const featuredCars = cars.filter((c) => c.featured).length
     const carsOnSaleCount = cars.filter((c) => c.isOnSale).length
     const recentCarsArray = cars.slice(-5).map((c) => ({
       title: c.title, brand: c.brand, model: c.model, year: c.year, price: c.price,
     }))
 
+    const sortedAvailableVehicles = [...availableCarsList].sort((a, b) => a.title.localeCompare(b.title))
+    const isInventoryTruncated = sortedAvailableVehicles.length > MAX_INVENTORY_VEHICLES_IN_CONTEXT
+    const availableVehicles: AvailableVehicleContext[] = sortedAvailableVehicles
+      .slice(0, MAX_INVENTORY_VEHICLES_IN_CONTEXT)
+      .map((c) => ({
+        id: c.id,
+        title: c.title,
+        brand: c.brand,
+        model: c.model,
+        year: c.year,
+        price: c.price,
+        km: c.km,
+        fuel: fuelDisplayLabel[c.fuel] || c.fuel,
+        transmission: transmissionDisplayLabel[c.transmission] || c.transmission,
+        featured: Boolean(c.featured),
+        onSale: Boolean(c.isOnSale),
+      }))
+
     const totalRevenue = sales.reduce((sum: number, s) => sum + (s.paymentPlan?.salePrice || 0), 0)
     const cashSalesCount = sales.filter((s) => s.paymentPlan?.type === 'cash').length
     const financedSalesCount = sales.filter((s) => s.paymentPlan?.type === 'financing').length
     const completedSalesCount = sales.filter((s) => s.status === 'completed').length
+    // Only business fields the AI prompt actually uses - no buyer name/email/phone/address/ID or
+    // licence number is ever included here, so it never leaves the browser in the first place
+    // (the backend's parseRecentSales also strips any such field defensively if somehow present).
     const recentSalesArray = sales.slice(-10).map((s) => ({
       carTitle: s.carTitle,
       carBrand: s.carBrand,
       carModel: s.carModel,
       carYear: s.carYear,
-      buyerName: s.buyer?.name,
-      buyerPhone: s.buyer?.phone,
-      buyerEmail: s.buyer?.email,
-      buyerAddress: s.buyer?.address,
-      buyerLicense: s.buyer?.licenseNumber,
       salePrice: s.paymentPlan?.salePrice,
       paymentType: s.paymentPlan?.type,
       downPayment: s.paymentPlan?.downPayment,
+      status: s.status,
       createdAt: s.createdAt,
     }))
 
@@ -93,10 +154,17 @@ async function getBusinessContext(): Promise<BusinessContext> {
 
     return {
       totalCars: cars.length,
-      availableCars,
+      availableCars: availableCarsList.length,
       featuredCars,
       carsOnSale: carsOnSaleCount,
       recentCars: JSON.stringify(recentCarsArray),
+      soldCars: soldCarIds.size,
+      featuredAvailableCars: availableCarsList.filter((c) => c.featured).length,
+      onSaleAvailableCars: availableCarsList.filter((c) => c.isOnSale).length,
+      availableVehicleCount: sortedAvailableVehicles.length,
+      vehiclesIncludedInContext: availableVehicles.length,
+      isInventoryTruncated,
+      availableVehiclesJSON: JSON.stringify(availableVehicles),
       totalSales: sales.length,
       totalRevenue,
       cashSales: cashSalesCount,
@@ -117,42 +185,58 @@ async function getBusinessContext(): Promise<BusinessContext> {
     if (import.meta.env.DEV) {
       console.error('Error fetching business context:', err)
     }
-    return {
-      totalCars: 0, availableCars: 0, featuredCars: 0, carsOnSale: 0, recentCars: '[]',
-      totalSales: 0, totalRevenue: 0, cashSales: 0, financedSales: 0, completedSales: 0, recentSalesJSON: '[]',
-      totalFinancing: 0, pendingFinancing: 0, approvedFinancing: 0, activeFinancing: 0, recentFinancingJSON: '[]',
-      totalMessages: 0, unreadMessages: 0, offerMessages: 0, contactMessages: 0,
-    }
+    // Re-throw rather than silently returning an all-zero context: a failed business-context
+    // fetch (e.g. a Firestore permission error, a network failure) must never be presented to the
+    // AI as if it were real data - that previously produced a confidently wrong answer like
+    // "0 cars sold" instead of a visible error. handleSendMessage's existing catch block turns
+    // this into a controlled assistant error message instead of sending a request at all.
+    throw new Error('Unable to load current business data. Please try again.', { cause: err })
   }
 }
 
 const suggestionQuestions = [
-  'How many cars have I sold?',
-  'What is my total revenue?',
-  'Show me pending financing requests',
-  'Which cars are still available?',
-  'Who are my recent buyers?',
-  'What was sold this month?',
-  'How many cars are in inventory?',
-  'Show me unread messages',
-]
+  "How many cars have I sold?",
+  "What is my total revenue?",
+  "How many vehicles are available, sold and featured?",
+  "Which cars are still available?",
+  "What is the average sale price?",
+  "What was sold this month?",
+  "How many cars are in inventory?",
+  "Which cars are currently on sale?",
+];
 
 // Admin AI Assistant chat page - lets the admin ask questions about business data; fetches Firestore stats for context and sends messages to the Claude AI backend
 export default function AdminAI() {
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  // Lazy initializer restores any conversation saved earlier in this tab session, so navigating
+  // to another admin page and back (which unmounts/remounts this component) does not lose it.
+  const [messages, setMessages] = useState<ChatMessage[]>(() => loadAIConversation())
   const [inputValue, setInputValue] = useState('')
   const [loading, setLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  // Logs message list changes for debugging and auto-scrolls chat to the latest message
+  // Guards state updates in handleSendMessage against firing after the component has unmounted
+  // mid-request (e.g. the admin navigates away while waiting on the AI response)
+  const isMountedRef = useRef(true)
   useEffect(() => {
-    if (import.meta.env.DEV) {
-      console.log('📊 Messages state updated:', messages.length, 'messages')
-      messages.forEach((m, i) => {
-        console.log(`  ${i}: ${m.role} - ${m.content.substring(0, 30)}...`)
-      })
+    isMountedRef.current = true
+    return () => {
+      isMountedRef.current = false
     }
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [])
+  // First scroll (covers a restored conversation) jumps straight to the bottom instead of
+  // animating through the whole history; later ones (new messages arriving) scroll smoothly.
+  const hasScrolledOnceRef = useRef(false)
+
+  // Keeps sessionStorage in sync with the visible conversation, and auto-scrolls to the latest
+  // message. An empty conversation removes the stored key entirely rather than persisting "[]",
+  // so Clear (and a session that never had messages) both leave no key behind.
+  useEffect(() => {
+    if (messages.length === 0) {
+      clearAIConversation()
+    } else {
+      saveAIConversation(messages)
+    }
+    messagesEndRef.current?.scrollIntoView({ behavior: hasScrolledOnceRef.current ? 'smooth' : 'auto' })
+    hasScrolledOnceRef.current = true
   }, [messages])
 
   // Fills the chat input with a preset suggestion question when clicked
@@ -185,27 +269,6 @@ export default function AdminAI() {
         content: m.content,
       }))
 
-      if (import.meta.env.DEV) {
-        console.log('📤 Enviando datos al servidor:')
-        console.log('  - Mensaje:', userMessage.content.substring(0, 50))
-        console.log('  - Business Context:', JSON.stringify(context, null, 2))
-        if (context.recentSalesJSON) {
-          try {
-            const sales = JSON.parse(context.recentSalesJSON) as Array<{
-              carBrand: string
-              carModel: string
-              buyerName?: string
-            }>
-            console.log('  - Ventas recientes:', sales.length, 'sales')
-            sales.forEach((s, i: number) => {
-              console.log(`    ${i + 1}. ${s.carBrand} ${s.carModel} - Comprador: ${s.buyerName}`)
-            })
-          } catch {
-            console.log('  - Error al parsear recentSalesJSON')
-          }
-        }
-      }
-
       // Send request to AI Assistant API with Firebase ID token
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api'
 
@@ -237,8 +300,12 @@ export default function AdminAI() {
       const responseText = await response.text();
 
       if (!response.ok) {
-        console.error('❌ API returned error status:', response.status);
-        console.error('❌ Raw error response:', responseText.substring(0, 500));
+        // 429 is an expected, controlled condition (not a bug) - only log genuinely
+        // unexpected failures to the console, and only in dev, to avoid noise.
+        if (response.status !== 429 && import.meta.env.DEV) {
+          console.error('❌ API returned error status:', response.status);
+          console.error('❌ Raw error response:', responseText.substring(0, 500));
+        }
 
         let errorMessage = `Server error: ${response.status}`;
         if (response.status === 401) {
@@ -247,6 +314,15 @@ export default function AdminAI() {
           errorMessage = 'Access denied. You do not have permission to use the AI assistant.';
         } else if (response.status === 429) {
           errorMessage = 'Too many requests. Please wait before trying again.';
+          try {
+            const error = JSON.parse(responseText);
+            const retryAfter = typeof error.retryAfter === 'number' ? error.retryAfter : null;
+            if (retryAfter && retryAfter > 0) {
+              errorMessage = `Too many requests. Please wait ${retryAfter}s before trying again.`;
+            }
+          } catch {
+            // Keep the default 429 message if the body isn't the expected JSON shape
+          }
         } else {
           try {
             const error = JSON.parse(responseText);
@@ -262,9 +338,10 @@ export default function AdminAI() {
       try {
         data = JSON.parse(responseText);
       } catch {
-        console.error('❌ Failed to parse successful response as JSON');
-        console.error('❌ Raw response:', responseText.substring(0, 500));
-        throw new Error(`Invalid JSON response: ${responseText.substring(0, 100)}`);
+        if (import.meta.env.DEV) {
+          console.error('❌ Failed to parse successful response as JSON');
+        }
+        throw new Error('Invalid response from server');
       }
       const assistantMessage: ChatMessage = {
         role: 'assistant',
@@ -273,23 +350,26 @@ export default function AdminAI() {
         id: Date.now() + '-assistant',
       }
 
-      if (import.meta.env.DEV) {
-        console.log('✅ Assistant message added:', assistantMessage)
+      if (isMountedRef.current) {
+        setMessages((prev) => [...prev, assistantMessage])
       }
-      setMessages((prev) => [...prev, assistantMessage])
     } catch (err) {
       if (import.meta.env.DEV) {
         console.error('Error:', err)
       }
-      const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: err instanceof Error ? err.message : 'Sorry, I couldn\'t process your request. Please try again.',
-        timestamp: new Date(),
-        id: Date.now() + '-error',
+      if (isMountedRef.current) {
+        const errorMessage: ChatMessage = {
+          role: 'assistant',
+          content: err instanceof Error ? err.message : 'Sorry, I couldn\'t process your request. Please try again.',
+          timestamp: new Date(),
+          id: Date.now() + '-error',
+        }
+        setMessages((prev) => [...prev, errorMessage])
       }
-      setMessages((prev) => [...prev, errorMessage])
     } finally {
-      setLoading(false)
+      if (isMountedRef.current) {
+        setLoading(false)
+      }
     }
   }
 
@@ -305,6 +385,7 @@ export default function AdminAI() {
   const handleClearConversation = () => {
     if (window.confirm('Clear all messages? This cannot be undone.')) {
       setMessages([])
+      clearAIConversation()
     }
   }
 
@@ -517,6 +598,7 @@ export default function AdminAI() {
             id="admin-ai-input-field"
             className="admin-ai-input-field"
             type="text"
+            aria-label="Ask the AI Assistant a question"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
