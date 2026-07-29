@@ -15,6 +15,7 @@ import { isValidNZLicence, normalizeLicenceInput } from "../../lib/financingVali
 import {
   generatePaymentSchedule,
   getSales,
+  getSoldCarIds,
   type Buyer,
   type PaymentPlan,
   type PaymentRecord,
@@ -130,10 +131,7 @@ export default function AdminNewSale() {
   // for a second sale once it's already been sold.
   useEffect(() => {
     getSales().then((existingSales) => {
-      const sold = new Set(
-        existingSales.filter((s) => s.status !== "cancelled").map((s) => s.carId)
-      );
-      setSoldCarIds(sold);
+      setSoldCarIds(getSoldCarIds(existingSales));
     });
   }, []);
 

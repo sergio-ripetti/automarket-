@@ -8,6 +8,7 @@ import { showToast } from '../../lib/toast'
 import { sanitizeDigits } from '../../lib/numericInput'
 import { isValidNZLicence, normalizeLicenceInput } from '../../lib/financingValidation'
 import { useFileAvailability } from '../../hooks/useFileAvailability'
+import { downloadSaleDocument, SaleDocumentDownloadError } from '../../lib/downloadSaleDocument'
 import AdminInput from '../../components/admin/AdminInput'
 import AdminTextarea from '../../components/admin/AdminTextarea'
 import AdminButton from '../../components/admin/AdminButton'
@@ -57,6 +58,13 @@ export default function AdminEditSale() {
   // Tracks which document URLs currently have a Cloudinary deletion in flight, so the Remove
   // button can be disabled per-item and repeated clicks can't fire overlapping delete requests.
   const [deletingFileUrls, setDeletingFileUrls] = useState<Set<string>>(new Set())
+  // URLs already persisted to this sale in Firestore at page load - only these can be routed
+  // through the protected server download proxy (which resolves attachments by matching the
+  // sale's own stored record). Newly added, not-yet-saved uploads fall back to a direct link
+  // until the sale is saved and the page is reloaded.
+  const [savedDocumentUrls, setSavedDocumentUrls] = useState<Set<string>>(new Set())
+  const [downloadingUrl, setDownloadingUrl] = useState<string | null>(null)
+  const [downloadErrors, setDownloadErrors] = useState<Record<string, string>>({})
   const [form, setForm] = useState<EditForm>({
     buyerName: '', buyerIdNumber: '', buyerLicense: '', buyerEmail: '', buyerPhone: '', buyerAddress: '',
     saleDate: '', paymentType: 'cash', salePrice: 0, downPayment: 0, loanTerm: 24,
@@ -123,6 +131,9 @@ export default function AdminEditSale() {
             uploadedDocuments: (Array.isArray(data.documents?.uploadedDocuments) ? data.documents.uploadedDocuments : [])
               .map((d) => (typeof d === 'string' ? { url: d, publicId: '', resourceType: '' } : d)),
           })
+          const persistedUrls = (Array.isArray(data.documents?.uploadedDocuments) ? data.documents.uploadedDocuments : [])
+            .map((d) => (typeof d === 'string' ? d : d.url))
+          setSavedDocumentUrls(new Set(persistedUrls))
         }
       } catch (err) {
         console.error(err)
@@ -254,6 +265,27 @@ export default function AdminEditSale() {
         next.delete(url)
         return next
       })
+    }
+  }
+
+  // Forces a real download for an already-saved attachment via the protected backend proxy.
+  // Not-yet-saved uploads (added this session, not in savedDocumentUrls) aren't resolvable by
+  // the proxy yet, so they keep using the plain link until the sale is saved and reloaded.
+  const handleDownloadFile = async (url: string, filename: string) => {
+    if (!id || downloadingUrl !== null) return
+    setDownloadErrors((prev) => {
+      const next = { ...prev }
+      delete next[url]
+      return next
+    })
+    setDownloadingUrl(url)
+    try {
+      await downloadSaleDocument(id, url, filename)
+    } catch (err) {
+      const message = err instanceof SaleDocumentDownloadError ? err.message : 'Download failed. Please try again.'
+      setDownloadErrors((prev) => ({ ...prev, [url]: message }))
+    } finally {
+      setDownloadingUrl(null)
     }
   }
 
@@ -728,6 +760,9 @@ export default function AdminEditSale() {
                       const isPdf = /\.pdf($|\?)/i.test(url)
                       const isUnavailable = isPdf && fileAvailability[url] === false
                       const isDeleting = deletingFileUrls.has(url)
+                      const canProxyDownload = savedDocumentUrls.has(url)
+                      const isDownloading = downloadingUrl === url
+                      const downloadError = downloadErrors[url]
                       return (
                       <div key={url} style={{
                         backgroundColor: '#E4EAF0',
@@ -813,14 +848,39 @@ export default function AdminEditSale() {
                           }}>
                             View
                           </a>
-                          <a href={url} download={filename} target="_blank" rel="noopener noreferrer" aria-label={`Download ${filename}`} style={{
-                            flex: 1, display: 'block', padding: '0.5rem', fontFamily: 'Outfit', fontSize: '0.65rem',
-                            color: '#1A1A1A', textDecoration: 'none', textAlign: 'center',
-                            borderTop: '1px solid rgba(255,255,255,0.06)', borderLeft: '1px solid rgba(255,255,255,0.06)',
-                          }}>
-                            Download
-                          </a>
+                          {canProxyDownload ? (
+                            <button
+                              type="button"
+                              onClick={() => handleDownloadFile(url, filename)}
+                              disabled={downloadingUrl !== null}
+                              aria-label={`Download ${filename}`}
+                              style={{
+                                flex: 1, display: 'block', padding: '0.5rem', fontFamily: 'Outfit', fontSize: '0.65rem',
+                                color: '#1A1A1A', background: 'none', border: 'none', textAlign: 'center',
+                                borderTop: '1px solid rgba(255,255,255,0.06)', borderLeft: '1px solid rgba(255,255,255,0.06)',
+                                cursor: downloadingUrl !== null ? 'default' : 'pointer',
+                                opacity: downloadingUrl !== null && !isDownloading ? 0.5 : 1,
+                              }}>
+                              {isDownloading ? 'Downloading…' : 'Download'}
+                            </button>
+                          ) : (
+                            <a href={url} download={filename} target="_blank" rel="noopener noreferrer" aria-label={`Download ${filename}`} style={{
+                              flex: 1, display: 'block', padding: '0.5rem', fontFamily: 'Outfit', fontSize: '0.65rem',
+                              color: '#1A1A1A', textDecoration: 'none', textAlign: 'center',
+                              borderTop: '1px solid rgba(255,255,255,0.06)', borderLeft: '1px solid rgba(255,255,255,0.06)',
+                            }}>
+                              Download
+                            </a>
+                          )}
                         </div>
+                        )}
+                        {downloadError && (
+                          <p role="alert" style={{
+                            fontFamily: 'Outfit', fontSize: '0.55rem', color: '#EF4444',
+                            textAlign: 'center', padding: '0.35rem 0.5rem', borderTop: '1px solid rgba(239,68,68,0.2)',
+                          }}>
+                            {downloadError}
+                          </p>
                         )}
                       </div>
                       )

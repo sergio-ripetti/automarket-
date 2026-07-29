@@ -1,5 +1,8 @@
 /// <reference types="node" />
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 
 type FakeDoc = Record<string, unknown> & { __subcollections?: Record<string, Record<string, FakeDoc>> };
 type FakeBucket = Record<string, FakeDoc>;
@@ -127,30 +130,96 @@ describe('reset-development-data script', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.doUnmock('../lib/firebaseAdmin.js');
     process.argv = originalArgv;
     delete process.env.RESET_EXPECTED_PROJECT_ID;
     delete process.env.RESET_CONFIRMATION_PHRASE;
+    for (const f of tempFiles) {
+      try { fs.unlinkSync(f); } catch { /* already gone */ }
+    }
+    tempFiles = [];
   });
 
+  const validBackup = JSON.stringify({
+    createdAt: '2026-07-27T10:15:43.938Z',
+    projectId: 'automarket-710a5',
+    collections: { cars: {}, sales: {}, financing: {}, messages: {}, users: {} },
+  });
+
+  // Writes a real, temporary backup file on disk (never touches the actual backups/
+  // directory or a real project) so main()'s file-reading logic can be exercised without
+  // fighting Vitest's inability to spy on Node's built-in `fs` ESM exports.
+  let tempFiles: string[] = [];
+  function writeTempBackup(content: string): string {
+    const filePath = path.join(os.tmpdir(), `reset-test-backup-${Date.now()}-${Math.random().toString(36).slice(2)}.json`);
+    fs.writeFileSync(filePath, content, 'utf8');
+    tempFiles.push(filePath);
+    return filePath;
+  }
+
+  function execArgv(backupFilePath: string) {
+    process.argv = [...process.argv.slice(0, 2), '--execute', '--backup-file', backupFilePath];
+  }
+
   describe('allowlist and denylist', () => {
-    it('only ever targets the four operational collections', () => {
-      expect(mod.DELETION_ALLOWLIST).toEqual(['cars', 'sales', 'financing', 'messages']);
+    it('only ever targets sales, financing and messages', () => {
+      expect(mod.DELETION_ALLOWLIST).toEqual(['sales', 'financing', 'messages']);
     });
 
-    it('always excludes the users collection', () => {
+    it('always excludes cars and users', () => {
+      expect(mod.PROTECTED_COLLECTIONS).toContain('cars');
       expect(mod.PROTECTED_COLLECTIONS).toContain('users');
+      expect(mod.DELETION_ALLOWLIST).not.toContain('cars');
       expect(mod.DELETION_ALLOWLIST).not.toContain('users');
     });
   });
 
   describe('argument parsing', () => {
     it('defaults to dry run (execute=false) with no flags', () => {
-      expect(mod.parseArgs([])).toEqual({ execute: false });
+      expect(mod.parseArgs([])).toEqual({ execute: false, backupFile: null });
     });
 
     it('sets execute=true only when --execute is passed', () => {
-      expect(mod.parseArgs(['--execute'])).toEqual({ execute: true });
+      expect(mod.parseArgs(['--execute'])).toEqual({ execute: true, backupFile: null });
+    });
+
+    it('captures the --backup-file value', () => {
+      expect(mod.parseArgs(['--execute', '--backup-file', 'path/to/backup.json'])).toEqual({
+        execute: true,
+        backupFile: 'path/to/backup.json',
+      });
+    });
+  });
+
+  describe('backup file validation', () => {
+    it('rejects a missing backup file argument', () => {
+      expect(mod.validateBackupFile(null, 'automarket-710a5')).toMatch(/--backup-file/);
+    });
+
+    it('rejects a backup file that does not exist', () => {
+      const readFileFn = vi.fn(() => { throw new Error('ENOENT'); });
+      expect(mod.validateBackupFile('missing.json', 'automarket-710a5', readFileFn)).toMatch(/not found|unreadable/);
+    });
+
+    it('rejects malformed JSON', () => {
+      const readFileFn = vi.fn(() => 'not json {{{');
+      expect(mod.validateBackupFile('bad.json', 'automarket-710a5', readFileFn)).toMatch(/not valid JSON/);
+    });
+
+    it('rejects a backup file missing the collections structure', () => {
+      const readFileFn = vi.fn(() => JSON.stringify({ projectId: 'automarket-710a5' }));
+      expect(mod.validateBackupFile('bad.json', 'automarket-710a5', readFileFn)).toMatch(/collections/);
+    });
+
+    it('rejects a backup file whose project ID does not match', () => {
+      const readFileFn = vi.fn(() => JSON.stringify({ projectId: 'other-project', collections: {} }));
+      expect(mod.validateBackupFile('mismatch.json', 'automarket-710a5', readFileFn)).toMatch(/does not match/);
+    });
+
+    it('accepts a valid, matching backup file', () => {
+      const readFileFn = vi.fn(() => validBackup);
+      expect(mod.validateBackupFile('good.json', 'automarket-710a5', readFileFn)).toBeNull();
     });
   });
 
@@ -168,6 +237,20 @@ describe('reset-development-data script', () => {
       expect(Object.keys(fakeDb.__state.messages)).toEqual(['msg1']);
       expect(Object.keys(fakeDb.__state.users)).toEqual(['admin1']);
     });
+
+    it('performs zero writes when --execute is omitted, even with valid env vars set', async () => {
+      const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+      process.env.RESET_EXPECTED_PROJECT_ID = 'automarket-710a5';
+      process.env.RESET_CONFIRMATION_PHRASE = mod.CONFIRMATION_PHRASE;
+
+      await mod.main();
+
+      expect(exitSpy).toHaveBeenCalledWith(0);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
+      expect(Object.keys(fakeDb.__state.financing)).toEqual(['fin1']);
+      expect(Object.keys(fakeDb.__state.messages)).toEqual(['msg1']);
+    });
   });
 
   describe('execute mode safety gates', () => {
@@ -175,12 +258,13 @@ describe('reset-development-data script', () => {
       const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
       vi.spyOn(console, 'error').mockImplementation(() => {});
       vi.spyOn(console, 'log').mockImplementation(() => {});
-      process.argv = [...process.argv.slice(0, 2), '--execute'];
+      execArgv('unused-not-reached.json');
 
       await mod.main();
 
       expect(exitSpy).toHaveBeenCalledWith(1);
       expect(Object.keys(fakeDb.__state.cars)).toEqual(['car1', 'car2']);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
     });
 
     it('aborts when the expected project ID does not match the resolved project', async () => {
@@ -189,12 +273,12 @@ describe('reset-development-data script', () => {
       vi.spyOn(console, 'log').mockImplementation(() => {});
       process.env.RESET_EXPECTED_PROJECT_ID = 'some-other-project';
       process.env.RESET_CONFIRMATION_PHRASE = mod.CONFIRMATION_PHRASE;
-      process.argv = [...process.argv.slice(0, 2), '--execute'];
+      execArgv('unused-not-reached.json');
 
       await mod.main();
 
       expect(exitSpy).toHaveBeenCalledWith(1);
-      expect(Object.keys(fakeDb.__state.cars)).toEqual(['car1', 'car2']);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
     });
 
     it('aborts when the confirmation phrase is missing or wrong', async () => {
@@ -203,16 +287,17 @@ describe('reset-development-data script', () => {
       vi.spyOn(console, 'log').mockImplementation(() => {});
       process.env.RESET_EXPECTED_PROJECT_ID = 'automarket-710a5';
       process.env.RESET_CONFIRMATION_PHRASE = 'not-the-right-phrase';
-      process.argv = [...process.argv.slice(0, 2), '--execute'];
+      execArgv('unused-not-reached.json');
 
       await mod.main();
 
       expect(exitSpy).toHaveBeenCalledWith(1);
-      expect(Object.keys(fakeDb.__state.cars)).toEqual(['car1', 'car2']);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
     });
 
-    it('proceeds with deletion only when project ID and confirmation phrase both match', async () => {
+    it('aborts when --execute is passed without a --backup-file, even with valid project/confirmation', async () => {
       const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
+      vi.spyOn(console, 'error').mockImplementation(() => {});
       vi.spyOn(console, 'log').mockImplementation(() => {});
       process.env.RESET_EXPECTED_PROJECT_ID = 'automarket-710a5';
       process.env.RESET_CONFIRMATION_PHRASE = mod.CONFIRMATION_PHRASE;
@@ -220,13 +305,57 @@ describe('reset-development-data script', () => {
 
       await mod.main();
 
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
+    });
+
+    it('aborts when the backup file is malformed', async () => {
+      const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+      process.env.RESET_EXPECTED_PROJECT_ID = 'automarket-710a5';
+      process.env.RESET_CONFIRMATION_PHRASE = mod.CONFIRMATION_PHRASE;
+      const backupPath = writeTempBackup('not json {{{');
+      execArgv(backupPath);
+
+      await mod.main();
+
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
+    });
+
+    it('aborts when the backup file project ID does not match', async () => {
+      const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+      process.env.RESET_EXPECTED_PROJECT_ID = 'automarket-710a5';
+      process.env.RESET_CONFIRMATION_PHRASE = mod.CONFIRMATION_PHRASE;
+      const backupPath = writeTempBackup(JSON.stringify({ projectId: 'wrong-project', collections: {} }));
+      execArgv(backupPath);
+
+      await mod.main();
+
+      expect(exitSpy).toHaveBeenCalledWith(1);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
+    });
+
+    it('proceeds with deletion only when project ID, confirmation phrase, and a valid backup file all match', async () => {
+      const exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as never);
+      vi.spyOn(console, 'log').mockImplementation(() => {});
+      process.env.RESET_EXPECTED_PROJECT_ID = 'automarket-710a5';
+      process.env.RESET_CONFIRMATION_PHRASE = mod.CONFIRMATION_PHRASE;
+      const backupPath = writeTempBackup(validBackup);
+      execArgv(backupPath);
+
+      await mod.main();
+
       expect(exitSpy).toHaveBeenCalledWith(0);
-      expect(Object.keys(fakeDb.__state.cars)).toEqual([]);
+      // cars and users must survive even a fully authorized execute run
+      expect(Object.keys(fakeDb.__state.cars)).toEqual(['car1', 'car2']);
+      expect(Object.keys(fakeDb.__state.users)).toEqual(['admin1']);
       expect(Object.keys(fakeDb.__state.sales)).toEqual([]);
       expect(Object.keys(fakeDb.__state.financing)).toEqual([]);
       expect(Object.keys(fakeDb.__state.messages)).toEqual([]);
-      // users must survive even a fully authorized execute run
-      expect(Object.keys(fakeDb.__state.users)).toEqual(['admin1']);
     });
   });
 
@@ -240,7 +369,8 @@ describe('reset-development-data script', () => {
       vi.spyOn(console, 'log').mockImplementation(() => {});
       process.env.RESET_EXPECTED_PROJECT_ID = 'automarket-710a5';
       process.env.RESET_CONFIRMATION_PHRASE = mod.CONFIRMATION_PHRASE;
-      process.argv = [...process.argv.slice(0, 2), '--execute'];
+      const backupPath = writeTempBackup(validBackup);
+      execArgv(backupPath);
 
       await mod.main();
 
@@ -249,11 +379,11 @@ describe('reset-development-data script', () => {
     });
 
     it('collectDeletionPlan reports subcollection counts without deleting anything', async () => {
-      fakeDb.__state.cars.car1.__subcollections = { history: { h1: {} } };
-      const plan = await mod.collectDeletionPlan(fakeDb, 'cars');
-      expect(plan.documentCount).toBe(2);
+      fakeDb.__state.sales.sale1.__subcollections = { history: { h1: {} } };
+      const plan = await mod.collectDeletionPlan(fakeDb, 'sales');
+      expect(plan.documentCount).toBe(1);
       expect(plan.subcollectionCount).toBe(1);
-      expect(Object.keys(fakeDb.__state.cars)).toEqual(['car1', 'car2']);
+      expect(Object.keys(fakeDb.__state.sales)).toEqual(['sale1']);
     });
   });
 
@@ -329,6 +459,15 @@ describe('reset-development-data script', () => {
 
       expect(exitSpy).toHaveBeenCalledWith(0);
       expect(getAdminAuth).not.toHaveBeenCalled();
+    });
+
+    it('never imports or calls any Cloudinary deletion method', () => {
+      // The reset script only ever touches Firestore documents - it has no dependency
+      // on cloudinaryService at all, so Cloudinary assets can never be reachable from it.
+      const scriptPath = path.join(process.cwd(), 'scripts', 'reset-development-data.js');
+      const source = fs.readFileSync(scriptPath, 'utf8');
+      expect(source).not.toMatch(/cloudinaryService/i);
+      expect(source).not.toMatch(/deleteFile|destroy\(/);
     });
   });
 });

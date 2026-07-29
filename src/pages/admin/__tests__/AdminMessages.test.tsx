@@ -362,4 +362,55 @@ describe('AdminMessages - Backend Integration', () => {
       expect(adminMessagesService.deleteMessage).not.toHaveBeenCalled()
     })
   })
+
+  describe('Contact message reason badge', () => {
+    beforeEach(() => {
+      vi.clearAllMocks()
+    })
+
+    it('renders a known reason ("financing") as an uppercase badge instead of plain text', async () => {
+      mockSubscription([createMessage({ reason: 'financing' })])
+      render(<AdminMessages />)
+
+      await waitFor(() => {
+        expect(screen.getByText('FINANCING')).toBeInTheDocument()
+      })
+    })
+
+    it('renders distinct categories with different badge colors', async () => {
+      mockSubscription([
+        createMessage({ id: 'p1', senderName: 'Purchase Person', reason: 'purchase' }),
+        createMessage({ id: 's1', senderName: 'Sale Person', reason: 'sale' }),
+      ])
+      render(<AdminMessages />)
+
+      await waitFor(() => {
+        expect(screen.getByText('CAR PURCHASE')).toBeInTheDocument()
+        expect(screen.getByText('CAR SALE')).toBeInTheDocument()
+      })
+
+      const purchaseBadge = screen.getByText('CAR PURCHASE')
+      const saleBadge = screen.getByText('CAR SALE')
+      expect(purchaseBadge.style.backgroundColor).not.toBe(saleBadge.style.backgroundColor)
+    })
+
+    it('falls back to an uppercased badge for an unrecognized/legacy reason value, without dropping the original wording', async () => {
+      mockSubscription([createMessage({ reason: 'General Inquiry' })])
+      render(<AdminMessages />)
+
+      await waitFor(() => {
+        expect(screen.getByText('GENERAL INQUIRY')).toBeInTheDocument()
+      })
+    })
+
+    it('does not render a reason badge for offer-type messages (offers keep their own OFFER badge)', async () => {
+      mockSubscription([createMessage({ type: 'offer', reason: 'purchase', offerPrice: 20000, carTitle: 'Toyota Camry', carPrice: 25000 })])
+      render(<AdminMessages />)
+
+      await waitFor(() => {
+        expect(screen.getByText('OFFER')).toBeInTheDocument()
+      })
+      expect(screen.queryByText('CAR PURCHASE')).not.toBeInTheDocument()
+    })
+  })
 })

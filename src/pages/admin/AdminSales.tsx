@@ -376,6 +376,7 @@ export default function AdminSales() {
           id="admin-sales-search-bar"
           className="admin-sales-search-input"
           type="text"
+          aria-label="Search sales by buyer, car, or ID number"
           placeholder="Search by buyer, car, or ID number..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}

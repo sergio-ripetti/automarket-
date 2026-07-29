@@ -42,79 +42,135 @@ export default function Favourites() {
   const savedCars = allCars.filter((c) => favIds.includes(c.id))
 
   return (
-    <main style={{ paddingTop: '7rem', paddingBottom: '4rem', backgroundColor: '#F2F2F0', minHeight: '100vh' }}>
-      <div style={{ width: '80%', margin: '0 auto' }}>
-
+    <main
+      style={{
+        paddingTop: "7rem",
+        paddingBottom: "4rem",
+        backgroundColor: "#F2F2F0",
+        minHeight: "100vh",
+      }}>
+      <div style={{ width: "80%", margin: "0 auto" }}>
         {/* ── Page Header ── */}
-        <div style={{ marginBottom: '3rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
+        <div style={{ marginBottom: "3rem" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "1rem",
+              marginBottom: "1rem",
+            }}>
+            <div style={{ width: 40, height: 1, backgroundColor: "#E0E0DC" }} />
             <span
               className="font-bebas"
-              style={{ fontSize: '0.75rem', letterSpacing: '0.2em', color: '#C4FF00' }}
-            >
+              style={{
+                fontSize: "0.75rem",
+                letterSpacing: "0.2em",
+                color: "#767676",
+              }}>
               YOUR COLLECTION
             </span>
-            <div style={{ width: 40, height: 1, backgroundColor: '#C4FF00' }} />
+            <div style={{ width: 40, height: 1, backgroundColor: "#E0E0DC" }} />
           </div>
           <h1
             className="font-bebas"
-            style={{color: "#0D1B2A", lineHeight: 1, marginBottom: '0.5rem', letterSpacing: '0.02em' }}
-          >
+            style={{
+              color: "#0D1B2A",
+              lineHeight: 1,
+              marginBottom: "0.5rem",
+              letterSpacing: "0.02em",
+            }}>
             Saved Vehicles
           </h1>
-          <p style={{ fontFamily: 'Outfit', color: 'rgba(255,255,255,0.4)', fontSize: '1rem' }}>
+          <p
+            style={{
+              fontFamily: "Outfit",
+              color: "#0D1B2A",
+              fontSize: "1rem",
+            }}>
             {loadingCars
-              ? 'Loading your saved vehicles...'
+              ? "Loading your saved vehicles..."
               : savedCars.length > 0
-                ? `${savedCars.length} vehicle${savedCars.length !== 1 ? 's' : ''} saved`
-                : 'Your saved vehicles will appear here'}
+                ? `${savedCars.length} vehicle${savedCars.length !== 1 ? "s" : ""} saved`
+                : "Your saved vehicles will appear here"}
           </p>
         </div>
 
         {loadingCars ? (
           /* ── Loading skeleton ── */
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.5rem' }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              gap: "1.5rem",
+            }}>
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                style={{ height: '380px', backgroundColor: '#FFFFFF', borderRadius: '0.75rem', animation: 'pulse 1.5s infinite' }}
+                style={{
+                  height: "380px",
+                  backgroundColor: "#FFFFFF",
+                  borderRadius: "0.75rem",
+                  animation: "pulse 1.5s infinite",
+                }}
               />
             ))}
           </div>
         ) : savedCars.length === 0 ? (
           /* ── Empty state ── */
-          <div style={{ textAlign: 'center', paddingTop: '5rem', paddingBottom: '5rem' }}>
-            <div style={{
-              width: 72, height: 72, borderRadius: '50%',
-              backgroundColor: 'rgba(220,38,38,0.08)',
-              border: '1px solid rgba(220,38,38,0.15)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 1.5rem',
+          <div
+            style={{
+              textAlign: "center",
+              paddingTop: "5rem",
+              paddingBottom: "5rem",
             }}>
+            <div
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: "50%",
+                backgroundColor: "rgba(220,38,38,0.08)",
+                border: "1px solid rgba(220,38,38,0.15)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 1.5rem",
+              }}>
               <Heart size={32} color="#DC2626" fill="#DC2626" />
             </div>
             <p
               className="font-bebas"
-              style={{color: "#0D1B2A", letterSpacing: '0.05em', marginBottom: '0.5rem' }}
-            >
+              style={{
+                color: "#0D1B2A",
+                letterSpacing: "0.05em",
+                marginBottom: "0.5rem",
+              }}>
               No Saved Vehicles Yet
             </p>
-            <p style={{
-              fontFamily: 'Outfit', fontSize: '0.875rem',
-              color: '#4A4A4A', marginBottom: '2.5rem',
-            }}>
+            <p
+              style={{
+                fontFamily: "Outfit",
+                fontSize: "0.875rem",
+                color: "#4A4A4A",
+                marginBottom: "2.5rem",
+              }}>
               Click the heart on any car to save it here
             </p>
             <Link
               to="/cars"
               style={{
-                display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-                background: '#1A1A1A', color: '#FFFFFF', fontFamily: 'Outfit', fontWeight: 700, fontSize: '0.875rem',
-                padding: '0.875rem 2rem', borderRadius: '0.625rem',
-                textDecoration: 'none', letterSpacing: '0.04em',
-              }}
-            >
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                background: "#1A1A1A",
+                color: "#FFFFFF",
+                fontFamily: "Outfit",
+                fontWeight: 700,
+                fontSize: "0.875rem",
+                padding: "0.875rem 2rem",
+                borderRadius: "0.625rem",
+                textDecoration: "none",
+                letterSpacing: "0.04em",
+              }}>
               Browse Cars <ArrowRight size={16} />
             </Link>
           </div>
@@ -127,8 +183,7 @@ export default function Favourites() {
                 className="h-full"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06, duration: 0.4 }}
-              >
+                transition={{ delay: i * 0.06, duration: 0.4 }}>
                 <CarCard car={car} />
               </motion.div>
             ))}
@@ -136,5 +191,5 @@ export default function Favourites() {
         )}
       </div>
     </main>
-  )
+  );
 }

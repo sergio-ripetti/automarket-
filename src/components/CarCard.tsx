@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, Gauge, Settings, Fuel, Zap, ArrowRight, Heart } from 'lucide-react'
+import { Calendar, Gauge, Settings, Fuel, Zap, ArrowRight, Heart, Tag, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
+import VehicleStatusBadge from './ui/VehicleStatusBadge'
 import type { Car } from '../types'
 
 interface CarCardProps {
@@ -88,24 +89,11 @@ export default function CarCard({ car }: CarCardProps) {
           loading="lazy"
         />
 
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex gap-1.5">
-          {car.isOnSale && (
-            <span
-              className="bg-[#D64545] text-white font-bebas rounded"
-              style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', padding: '3px 10px' }}
-            >
-              SALE
-            </span>
-          )}
-          {car.featured && (
-            <span
-              className="bg-[#C4FF00] text-[#1A1A1A] font-bebas rounded"
-              style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em', padding: '3px 10px' }}
-            >
-              FEATURED
-            </span>
-          )}
+        {/* Badges - same shared visual system as Admin Inventory (VehicleStatusBadge), so
+            customer-facing cards and the admin dashboard read as one design language */}
+        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
+          {car.isOnSale && <VehicleStatusBadge icon={Tag} label="SALE" tone="sale" />}
+          {car.featured && <VehicleStatusBadge icon={Star} label="FEATURED" tone="featured" />}
         </div>
 
         {/* Favorite Button */}

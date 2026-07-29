@@ -21,6 +21,20 @@ function fmt(price: number) {
   return price.toLocaleString('en-NZ', { style: 'currency', currency: 'NZD', maximumFractionDigits: 0 })
 }
 
+// Category-specific badge colors for a contact message's "reason" field, mirroring the
+// visual language of the OFFER badge (colored pill + label) instead of plain text.
+const REASON_BADGES: Record<string, { label: string; backgroundColor: string; color: string }> = {
+  purchase: { label: 'CAR PURCHASE', backgroundColor: '#DBEAFE', color: '#1E40AF' },
+  sale: { label: 'CAR SALE', backgroundColor: '#D1FAE5', color: '#065F46' },
+  financing: { label: 'FINANCING', backgroundColor: '#EDE9FE', color: '#5B21B6' },
+  other: { label: 'OTHER', backgroundColor: '#F3F4F6', color: '#374151' },
+}
+
+function reasonBadge(reason: string | undefined) {
+  if (reason && REASON_BADGES[reason]) return REASON_BADGES[reason]
+  return { label: (reason || 'OTHER').toUpperCase(), backgroundColor: '#F3F4F6', color: '#374151' }
+}
+
 const tabs: { id: TypeFilter; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'contact', label: 'Contact' },
@@ -291,9 +305,33 @@ export default function AdminMessages() {
                     </>
                   ) : (
                     <>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '0.8rem', color: '#1A1A1A', marginBottom: '0.25rem' }}>
-                        {msg.reason}
-                      </p>
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <span
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '6px 12px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            fontFamily: 'Poppins',
+                            backgroundColor: reasonBadge(msg.reason).backgroundColor,
+                            color: reasonBadge(msg.reason).color,
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: '6px',
+                              height: '6px',
+                              borderRadius: '50%',
+                              backgroundColor: 'currentColor',
+                              opacity: 0.6,
+                            }}
+                          />
+                          {reasonBadge(msg.reason).label}
+                        </span>
+                      </div>
                       <p style={{
                         fontFamily: 'Outfit', fontSize: '0.8rem', color: '#767676',
                         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: expandedId === msg.id ? 'normal' : 'nowrap',

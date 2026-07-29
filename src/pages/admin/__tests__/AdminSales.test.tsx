@@ -129,4 +129,13 @@ describe('AdminSales - Visual consistency pass', () => {
       expect(screen.getAllByText('$25,000').length).toBeGreaterThan(0)
     })
   })
+
+  it('the search field has a programmatic accessible name (fixed: was placeholder-only)', async () => {
+    renderPage()
+    await screen.findByText('Sales Records')
+    const search = screen.getByRole('textbox', { name: 'Search sales by buyer, car, or ID number' })
+    expect(search).toHaveAttribute('id', 'admin-sales-search-bar')
+    // No duplicate id in the document
+    expect(document.querySelectorAll('#admin-sales-search-bar')).toHaveLength(1)
+  })
 })

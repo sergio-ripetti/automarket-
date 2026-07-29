@@ -5,6 +5,7 @@ import { sortByCreatedAtDesc } from '../../lib/timestampUtils'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
 import { DocumentGrid } from '../../components/shared/DocumentGrid'
+import { downloadFinancingDocument } from '../../lib/downloadFinancingDocument'
 import type { FinancingRequest } from '../../lib/financingService'
 
 // Background refresh interval - within the required 10-30s bound
@@ -250,6 +251,9 @@ export default function AdminFinancing() {
             box-shadow: none !important;
             border: none !important;
           }
+          .financing-modal-body {
+            overflow: visible !important;
+          }
           .financing-print-hide {
             display: none !important;
           }
@@ -456,8 +460,8 @@ export default function AdminFinancing() {
           background: #FEE2E2;
         }
         .modal-section {
-          padding-bottom: 24px;
-          margin-bottom: 24px;
+          padding-bottom: clamp(16px, 4vw, 24px);
+          margin-bottom: clamp(16px, 4vw, 24px);
           border-bottom: 1px solid #E5E7EB;
         }
         .modal-section:last-child {
@@ -472,10 +476,10 @@ export default function AdminFinancing() {
           text-transform: uppercase;
           letter-spacing: 0.1em;
           color: #6B7280;
-          margin-bottom: 16px;
+          margin-bottom: clamp(10px, 2.5vw, 16px);
         }
         .modal-field {
-          margin-bottom: 16px;
+          margin-bottom: clamp(10px, 2.5vw, 16px);
         }
         .modal-field-label {
           font-family: 'Poppins', sans-serif;
@@ -604,6 +608,34 @@ export default function AdminFinancing() {
           border: 1px solid #E5E7EB !important;
           border-radius: 16px !important;
           box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15) !important;
+          width: 100%;
+          max-width: calc(100vw - 24px);
+          max-height: 90vh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+        }
+        @media (min-width: 768px) {
+          .financing-modal-content {
+            max-width: 42rem;
+          }
+        }
+        .financing-modal-header {
+          position: sticky;
+          top: 0;
+          z-index: 10;
+          background: #FFFFFF;
+          padding: clamp(16px, 4vw, 32px) clamp(16px, 4vw, 32px) clamp(12px, 3vw, 20px);
+          border-bottom: 1px solid #E5E7EB;
+          flex-shrink: 0;
+        }
+        .financing-modal-title {
+          font-size: clamp(19px, 4.5vw, 24px);
+        }
+        .financing-modal-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: clamp(16px, 4vw, 32px);
         }
       `}</style>
 
@@ -810,19 +842,19 @@ export default function AdminFinancing() {
           onClick={() => setSelectedRequest(null)}>
           <div
             id="admin-financing-modal-detail"
-            className="financing-modal-content financing-print-area w-full max-w-2xl max-h-[90vh] overflow-y-auto"
-            style={{ padding: "32px", backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: "16px" }}
+            className="financing-modal-content financing-print-area"
+            style={{ backgroundColor: "#FFFFFF", border: "1px solid #E5E7EB", borderRadius: "16px" }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="admin-financing-modal-title"
             onClick={(e) => e.stopPropagation()}>
-            {/* Header */}
-            <div className="financing-print-hide" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px", gap: "16px" }}>
+            {/* Header (sticky on mobile so the close action stays reachable without scrolling) */}
+            <div className="financing-modal-header financing-print-hide" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "16px" }}>
               <div style={{ minWidth: 0, flex: 1 }}>
-                <h2 id="admin-financing-modal-title" style={{ fontFamily: "'Poppins', sans-serif", fontSize: "24px", fontWeight: 700, color: "#0D1B2A", lineHeight: 1.2, margin: "0 0 8px 0" }}>
+                <h2 id="admin-financing-modal-title" className="financing-modal-title" style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 700, color: "#0D1B2A", lineHeight: 1.2, margin: "0 0 4px 0" }}>
                   Financing Application
                 </h2>
-                <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: "15px", color: "#6B7280", margin: 0 }}>
+                <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: "14px", color: "#6B7280", margin: 0 }}>
                   {safeText(selectedRequest.firstName)} {safeText(selectedRequest.lastName)}
                 </p>
               </div>
@@ -830,13 +862,15 @@ export default function AdminFinancing() {
                 ref={modalCloseButtonRef}
                 onClick={() => setSelectedRequest(null)}
                 aria-label="Close application details"
-                style={{ backgroundColor: "transparent", border: "none", color: "#D1D5DB", cursor: "pointer", fontSize: "1.5rem", padding: 0, display: "flex", alignItems: "center", justifyContent: "center", transition: "color 0.2s ease" }}
+                style={{ backgroundColor: "transparent", border: "none", color: "#D1D5DB", cursor: "pointer", fontSize: "1.5rem", padding: "8px", margin: "-8px", display: "flex", alignItems: "center", justifyContent: "center", transition: "color 0.2s ease", minWidth: "40px", minHeight: "40px" }}
                 onMouseEnter={(e) => e.currentTarget.style.color = "#374151"}
                 onMouseLeave={(e) => e.currentTarget.style.color = "#D1D5DB"}>
-                <X size={24} />
+                <X size={22} />
               </button>
             </div>
 
+            {/* Scrollable body */}
+            <div className="financing-modal-body">
             {/* Print-only heading (visible only in the printed output, not on screen) */}
             <div className="financing-print-only" style={{ display: 'none', marginBottom: '20px' }}>
               <h2 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 4px 0' }}>Financing Application</h2>
@@ -971,6 +1005,7 @@ export default function AdminFinancing() {
               documents={(selectedRequest.documents || [])
                 .filter((doc) => doc.url)
                 .map((doc) => ({ url: doc.url, filename: doc.filename }))}
+              onDownload={(doc) => downloadFinancingDocument(selectedRequest.id, doc.url, doc.filename)}
             />
 
             {/* Actions (hidden when printing) */}
@@ -1019,6 +1054,7 @@ export default function AdminFinancing() {
                 <Printer size={16} />
                 Print Application
               </button>
+            </div>
             </div>
           </div>
         </div>

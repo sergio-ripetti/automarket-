@@ -10,6 +10,12 @@ vi.mock('../../../components/admin/AdminToast', () => ({
   default: () => null,
 }))
 
+const downloadFinancingDocumentMock = vi.fn().mockResolvedValue(undefined)
+vi.mock('../../../lib/downloadFinancingDocument', () => ({
+  downloadFinancingDocument: (...args: unknown[]) => downloadFinancingDocumentMock(...args),
+  FinancingDocumentDownloadError: class FinancingDocumentDownloadError extends Error {},
+}))
+
 const createRequest = (overrides?: Partial<FinancingRequest>): FinancingRequest => ({
   id: 'fin-123',
   carId: 'car-1',
@@ -596,6 +602,17 @@ describe('AdminFinancing - Details modal', () => {
     expect(downloadLinks.length).toBe(2)
   })
 
+  it('routes Download through the protected downloadFinancingDocument helper with the application id and the doc url', async () => {
+    downloadFinancingDocumentMock.mockClear()
+    await renderWithRequest({
+      documents: [{ url: 'https://res.cloudinary.com/demo/doc1.pdf', type: 'payslip', filename: 'payslip.pdf' }],
+    })
+
+    fireEvent.click(screen.getByText('Download'))
+
+    expect(downloadFinancingDocumentMock).toHaveBeenCalledWith('fin-123', 'https://res.cloudinary.com/demo/doc1.pdf', 'payslip.pdf')
+  })
+
   it('shows "No supporting documents provided" when there are no documents', async () => {
     await renderWithRequest({ documents: [] })
     expect(screen.getByText('No supporting documents provided')).toBeInTheDocument()
@@ -660,5 +677,35 @@ describe('AdminFinancing - Details modal', () => {
     await waitFor(() => {
       expect(adminFinancingService.updateFinancingStatus).toHaveBeenCalledWith('fin-123', 'approved')
     })
+  })
+
+  it('separates the dialog into a header and a scrollable body so the close button stays reachable without scrolling', async () => {
+    await renderWithRequest()
+    const dialog = screen.getByRole('dialog')
+    const header = dialog.querySelector('.financing-modal-header')
+    const body = dialog.querySelector('.financing-modal-body')
+    expect(header).toBeInTheDocument()
+    expect(body).toBeInTheDocument()
+    // the close button and title live in the header, outside the scrollable body
+    expect(header?.contains(screen.getByLabelText('Close application details'))).toBe(true)
+    expect(body?.contains(screen.getByText('Applicant Information'))).toBe(true)
+  })
+
+  it('still renders all application content inside the scrollable body on a narrow (mobile) viewport', async () => {
+    await renderWithRequest({
+      documents: [{ url: 'https://res.cloudinary.com/demo/doc1.pdf', type: 'payslip', filename: 'payslip.pdf' }],
+    })
+    const dialog = screen.getByRole('dialog')
+    expect(dialog).toHaveAttribute('aria-modal', 'true')
+    expect(dialog).toHaveAttribute('aria-labelledby', 'admin-financing-modal-title')
+    expect(screen.getByLabelText('Close application details')).toBeInTheDocument()
+    expect(screen.getByText('Applicant Information')).toBeInTheDocument()
+    expect(screen.getByText('Employment Information')).toBeInTheDocument()
+    expect(screen.getByText('Financial Information')).toBeInTheDocument()
+    expect(screen.getByText('Vehicle and Financing Information')).toBeInTheDocument()
+    expect(screen.getByText(/Supporting Documents/)).toBeInTheDocument()
+    expect(screen.getByText('payslip.pdf')).toBeInTheDocument()
+    expect(screen.getAllByText('Approve').length).toBeGreaterThan(0)
+    expect(screen.getByText('Print Application')).toBeInTheDocument()
   })
 })

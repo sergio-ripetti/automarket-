@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FileText, File as FileIcon } from 'lucide-react'
 import { detectDocumentKind } from '../../lib/documentKind'
 import { useFileAvailability } from '../../hooks/useFileAvailability'
@@ -18,16 +19,43 @@ interface DocumentGridProps {
   title: string
   documents: NormalizedDocument[]
   emptyMessage: string
+  // When provided, Download routes through this handler (e.g. the protected Sales download
+  // proxy) instead of a plain `<a href download>`, which cross-origin Cloudinary URLs often
+  // ignore. Callers that don't pass this (Financing) keep the original anchor-based behavior.
+  onDownload?: (doc: NormalizedDocument, index: number) => Promise<void>
 }
 
 // Shared compact document/photo grid used by both Sale Detail's "Documents & Photos" card and the
 // Admin Financing "Supporting Documents" section, so both present the same visual language instead
 // of maintaining two separate card implementations.
-export function DocumentGrid({ title, documents, emptyMessage }: DocumentGridProps) {
+export function DocumentGrid({ title, documents, emptyMessage, onDownload }: DocumentGridProps) {
+  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null)
+  const [downloadErrors, setDownloadErrors] = useState<Record<number, string>>({})
+
   const nonImageUrls = documents
     .filter((doc) => detectDocumentKind(doc) !== 'image')
     .map((doc) => doc.url)
   const availability = useFileAvailability(nonImageUrls)
+
+  const handleDownloadClick = async (doc: NormalizedDocument, index: number) => {
+    if (!onDownload || downloadingIndex !== null) return
+    setDownloadErrors((prev) => {
+      const next = { ...prev }
+      delete next[index]
+      return next
+    })
+    setDownloadingIndex(index)
+    try {
+      await onDownload(doc, index)
+    } catch (err) {
+      setDownloadErrors((prev) => ({
+        ...prev,
+        [index]: err instanceof Error ? err.message : 'Download failed. Please try again.',
+      }))
+    } finally {
+      setDownloadingIndex(null)
+    }
+  }
 
   return (
     <div
@@ -178,35 +206,81 @@ export function DocumentGrid({ title, documents, emptyMessage }: DocumentGridPro
                       }}>
                       View
                     </a>
-                    <a
-                      href={doc.url}
-                      download={filename}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Download ${filename}`}
-                      style={{
-                        flex: 1,
-                        display: "block",
-                        padding: "0.5rem",
-                        fontFamily: "Outfit",
-                        fontSize: "0.65rem",
-                        color: "#1A1A1A",
-                        textDecoration: "none",
-                        textAlign: "center",
-                        borderTop: "1px solid rgba(29,78,216,0.2)",
-                        borderLeft: "1px solid rgba(29,78,216,0.2)",
-                        cursor: "pointer",
-                        transition: "all 0.2s",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(29,78,216,0.05)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }}>
-                      Download
-                    </a>
+                    {onDownload ? (
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadClick(doc, i)}
+                        disabled={downloadingIndex !== null}
+                        aria-label={`Download ${filename}`}
+                        style={{
+                          flex: 1,
+                          display: "block",
+                          padding: "0.5rem",
+                          fontFamily: "Outfit",
+                          fontSize: "0.65rem",
+                          color: "#1A1A1A",
+                          background: "none",
+                          border: "none",
+                          textAlign: "center",
+                          borderTop: "1px solid rgba(29,78,216,0.2)",
+                          borderLeft: "1px solid rgba(29,78,216,0.2)",
+                          cursor: downloadingIndex !== null ? "default" : "pointer",
+                          opacity: downloadingIndex !== null && downloadingIndex !== i ? 0.5 : 1,
+                          transition: "all 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (downloadingIndex === null) e.currentTarget.style.backgroundColor = "rgba(29,78,216,0.05)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}>
+                        {downloadingIndex === i ? "Downloading…" : "Download"}
+                      </button>
+                    ) : (
+                      <a
+                        href={doc.url}
+                        download={filename}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Download ${filename}`}
+                        style={{
+                          flex: 1,
+                          display: "block",
+                          padding: "0.5rem",
+                          fontFamily: "Outfit",
+                          fontSize: "0.65rem",
+                          color: "#1A1A1A",
+                          textDecoration: "none",
+                          textAlign: "center",
+                          borderTop: "1px solid rgba(29,78,216,0.2)",
+                          borderLeft: "1px solid rgba(29,78,216,0.2)",
+                          cursor: "pointer",
+                          transition: "all 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = "rgba(29,78,216,0.05)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }}>
+                        Download
+                      </a>
+                    )}
                   </div>
+                )}
+                {downloadErrors[i] && (
+                  <p
+                    role="alert"
+                    style={{
+                      fontFamily: "Outfit",
+                      fontSize: "0.6rem",
+                      color: "#EF4444",
+                      textAlign: "center",
+                      padding: "0.35rem 0.5rem",
+                      borderTop: "1px solid rgba(239,68,68,0.2)",
+                    }}>
+                    {downloadErrors[i]}
+                  </p>
                 )}
               </div>
             )

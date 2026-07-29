@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { SearchX } from 'lucide-react'
 import FilterBar from '../components/FilterBar'
 import CarCard from '../components/CarCard'
 import { useCars } from '../hooks/useCars'
+import { useSoldCarIds } from '../hooks/useSoldCarIds'
 import type { FilterState } from '../types'
 
 const emptyFilters: FilterState = {
@@ -20,12 +21,20 @@ const emptyFilters: FilterState = {
 // Displays the full car catalogue with search/filter controls - fetches cars via useCars hook and filters them client-side based on FilterState (search, brand, model, year, price, fuel)
 export default function Cars() {
   const [filters, setFilters] = useState<FilterState>(emptyFilters)
-  const { cars: allCars, loading, error } = useCars()
+  const { cars: allCars, loading: carsLoading, error: carsError } = useCars()
+  const { soldCarIds, loading: salesLoading, error: salesError } = useSoldCarIds()
+
+  // Sold vehicles are excluded BEFORE search/filters are applied, so no filter combination -
+  // including clearing all filters - can ever reintroduce a sold car into the results.
+  const availableCars = useMemo(
+    () => allCars.filter((c) => !soldCarIds.has(c.id)),
+    [allCars, soldCarIds]
+  )
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== '')
 
-  // Applies all active filter criteria to the full car list and returns only matching cars
-  const filteredCars = allCars.filter((car) => {
+  // Applies all active filter criteria to the available (already sold-excluded) car list
+  const filteredCars = availableCars.filter((car) => {
     if (
       filters.search &&
       !car.title.toLowerCase().includes(filters.search.toLowerCase()) &&
@@ -42,7 +51,12 @@ export default function Cars() {
     return true
   })
 
-  const displayed = hasActiveFilters ? filteredCars : allCars
+  const displayed = hasActiveFilters ? filteredCars : availableCars
+
+  // Combined loading/error: never render vehicle results until BOTH cars and sold-status data
+  // have resolved - a Sales-fetch failure must not silently expose potentially sold vehicles.
+  const loading = carsLoading || salesLoading
+  const error = carsError || salesError
 
   return (
     <main

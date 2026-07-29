@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
-import { NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu, X,
 } from 'lucide-react'
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { logoutAdmin, authenticatedFetch } from '../../lib/authService'
-
-interface AdminLayoutProps { children: React.ReactNode }
+import { clearAIConversation } from '../../lib/aiConversationStorage'
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard',    to: '/admin',             end: true },
@@ -18,8 +17,11 @@ const navItems = [
   { icon: Mail,            label: 'Messages',     to: '/admin/messages',    end: false },
 ]
 
-// Renders the admin dashboard shell - collapsible sidebar nav, responsive layout, and logout control wrapping page content
-export default function AdminLayout({ children }: AdminLayoutProps) {
+// Renders the admin dashboard shell - collapsible sidebar nav, responsive layout, and logout control wrapping routed page content via <Outlet/>.
+// Mounted ONCE around all nested /admin/* routes (see App.tsx) so the sidebar, its Firestore
+// listeners, and its polling interval persist across admin navigation instead of tearing down
+// and rebuilding on every route change.
+export default function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -32,6 +34,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [pendingFinancingCount, setPendingFinancingCount] = useState(0)
   const prevPathRef = useRef(location.pathname)
   const prevScreenSizeRef = useRef(screenSize)
+  const mainContentRef = useRef<HTMLElement>(null)
+
+  // Resets the scrollable main-content pane to the top on every nested route change. This is
+  // now required because AdminLayout (and its <main> element) persists across admin navigation
+  // instead of remounting - previously a fresh <main> happened to start at scrollTop 0 by
+  // accident of full remounting; that side effect is gone now that the DOM node is reused.
+  useEffect(() => {
+    if (mainContentRef.current) mainContentRef.current.scrollTop = 0
+  }, [location.pathname])
 
   // Detect screen size
   useEffect(() => {
@@ -110,8 +121,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     }
   }, [])
 
-  // Signs the admin out via Firebase auth and redirects to the login page
+  // Signs the admin out via Firebase auth and redirects to the login page. Also clears the AI
+  // Assistant's session-scoped chat history (business data may have been discussed) - this is
+  // the single central logout path in the app, so it's the right place for that cleanup.
   const handleLogout = async () => {
+    clearAIConversation()
     await logoutAdmin()
     navigate('/admin/login')
   }
@@ -235,7 +249,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.75rem',
-                  padding: screenSize === 'desktop' ? '0.75rem 1rem' : '1rem',
+                  paddingTop: screenSize === 'desktop' ? '0.75rem' : '1rem',
+                  paddingBottom: screenSize === 'desktop' ? '0.75rem' : '1rem',
+                  paddingRight: '1rem',
                   borderRadius: screenSize === 'desktop' ? '0.625rem' : '0',
                   fontFamily: 'Inter, sans-serif',
                   fontSize: isExpanded ? '0.875rem' : '0.75rem',
@@ -381,6 +397,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
       {/* MAIN CONTENT - SCROLLABLE (margin-left FIXED - sidebar overlays ON TOP) */}
       <main
+        ref={mainContentRef}
         id="admin-main-content"
         className="admin-main-content"
         style={{
@@ -394,7 +411,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           padding: screenSize === 'desktop' ? '2rem' : screenSize === 'tablet' ? '1.25rem' : '1rem',
         }}
       >
-        {children}
+        <Outlet />
       </main>
     </div>
   )

@@ -2,6 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Heart } from 'lucide-react'
+import { useFavoritesCount } from '../hooks/useFavoritesCount'
+
+// Caps the visible badge at "99+" so a very large count never stretches the nav button
+function formatFavoritesCount(count: number): string {
+  return count > 99 ? '99+' : String(count)
+}
 
 const navLinks = [
   { label: 'Home', to: '/', id: 'nav-home' },
@@ -33,6 +39,11 @@ export default function Navbar() {
   }, [location.pathname])
 
   const isActive = (path: string) => location.pathname === path
+  const favoritesCount = useFavoritesCount()
+  const hasFavorites = favoritesCount > 0
+  const favoritesLabel = hasFavorites
+    ? `Favorites, ${favoritesCount} saved vehicle${favoritesCount !== 1 ? 's' : ''}`
+    : 'Favorites'
 
   return (
     <header
@@ -101,12 +112,21 @@ export default function Navbar() {
         <div className="hidden md:flex shrink-0">
           <Link
             to="/favourites"
-            aria-label="Go to favorites"
+            aria-label={favoritesLabel}
             className="inline-flex items-center gap-2 font-inter text-white rounded-lg cursor-pointer transition-all duration-200 bg-[#1A1A1A] hover:bg-[#2A2A2A] hover:shadow-[0_4px_15px_rgba(26,26,26,0.4)] hover:-translate-y-px focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C4FF00]"
             style={{ padding: '0.625rem 1.25rem', fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.04em' }}
           >
-            <Heart size={16} />
+            <Heart size={16} className={hasFavorites ? 'text-red-500' : undefined} fill={hasFavorites ? 'currentColor' : 'none'} />
             Favorites
+            {hasFavorites && (
+              <span
+                className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white leading-none"
+                style={{ fontSize: '0.65rem', fontWeight: 700 }}
+                aria-hidden="true"
+              >
+                {formatFavoritesCount(favoritesCount)}
+              </span>
+            )}
           </Link>
         </div>
 
@@ -175,12 +195,21 @@ export default function Navbar() {
               >
                 <Link
                   to="/favourites"
-                  aria-label="Go to favorites"
+                  aria-label={favoritesLabel}
                   className="w-full flex items-center justify-center gap-2 font-inter text-white rounded-lg cursor-pointer transition-all duration-200 bg-[#1A1A1A] hover:bg-[#2A2A2A] hover:shadow-[0_4px_15px_rgba(26,26,26,0.4)]"
                   style={{ height: '48px', fontWeight: 700, fontSize: '0.9rem', letterSpacing: '0.04em' }}
                 >
-                  <Heart size={16} />
-                  My Favorites
+                  <Heart size={16} className={hasFavorites ? 'text-red-500' : undefined} fill={hasFavorites ? 'currentColor' : 'none'} />
+                  Favorites
+                  {hasFavorites && (
+                    <span
+                      className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-red-600 text-white leading-none"
+                      style={{ fontSize: '0.65rem', fontWeight: 700 }}
+                      aria-hidden="true"
+                    >
+                      {formatFavoritesCount(favoritesCount)}
+                    </span>
+                  )}
                 </Link>
               </motion.div>
             </nav>

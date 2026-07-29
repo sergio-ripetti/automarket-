@@ -6,19 +6,21 @@
  * SAFETY-CRITICAL. Deletes only the explicit operational-data collections below,
  * against the exact Firebase project resolved from the current credentials.
  * Defaults to a read-only dry run; real deletion requires --execute plus the
- * expected project ID plus an exact confirmation phrase.
+ * expected project ID plus an exact confirmation phrase plus a valid backup file.
  *
  * Usage:
  *   node scripts/reset-development-data.js                 (dry run, no writes)
- *   node scripts/reset-development-data.js --execute        (performs deletion, with confirmations)
+ *   node scripts/reset-development-data.js --execute --backup-file <path>   (performs deletion, with confirmations)
  *
  * NEVER deletes:
  *   - Firebase Authentication users
+ *   - the `cars` collection (vehicle inventory)
  *   - the `users` collection (admin roles)
  *   - Firestore rules / indexes / project configuration
  *   - Cloudinary assets
  */
 
+import fs from 'fs';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { initializeFirebaseAdmin, getAdminFirestore } from '../src/lib/firebaseAdmin.js';
@@ -28,11 +30,12 @@ dotenv.config();
 // Only these collections may ever be targeted by this script. This is a fixed
 // allowlist, not a dynamic "every top-level collection" sweep - new collections
 // added to the project in the future are NOT deleted unless explicitly added here
-// after owner review.
-export const DELETION_ALLOWLIST = Object.freeze(['cars', 'sales', 'financing', 'messages']);
+// after owner review. `cars` is deliberately excluded - vehicle inventory is
+// preserved, only transactional/operational test data is reset.
+export const DELETION_ALLOWLIST = Object.freeze(['sales', 'financing', 'messages']);
 
 // Collections that must never be touched by this script, regardless of flags.
-export const PROTECTED_COLLECTIONS = Object.freeze(['users']);
+export const PROTECTED_COLLECTIONS = Object.freeze(['cars', 'users']);
 
 export const EXPECTED_PROJECT_ID_ENV = 'RESET_EXPECTED_PROJECT_ID';
 export const CONFIRMATION_PHRASE = 'RESET_AUTOMARKET_DEVELOPMENT_DATA';
@@ -40,9 +43,52 @@ export const CONFIRMATION_ENV = 'RESET_CONFIRMATION_PHRASE';
 export const BATCH_SIZE = 400; // Firestore hard limit is 500 writes per batch; stay comfortably under it.
 
 export function parseArgs(argv) {
+  const backupFlagIndex = argv.indexOf('--backup-file');
+  const backupFile = backupFlagIndex !== -1 ? argv[backupFlagIndex + 1] : null;
   return {
     execute: argv.includes('--execute'),
+    backupFile: backupFile || null,
   };
+}
+
+// Validates that a backup file exists, is well-formed JSON produced by
+// scripts/backup-firestore.js, and was taken against the same project we're
+// about to delete data from. Returns an error message, or null if valid.
+export function validateBackupFile(backupFilePath, expectedProjectId, readFileFn = fs.readFileSync) {
+  if (!backupFilePath) {
+    return 'No backup file provided. --execute requires --backup-file <path> pointing to a valid Firestore backup.';
+  }
+
+  let raw;
+  try {
+    raw = readFileFn(backupFilePath, 'utf8');
+  } catch {
+    return `Backup file not found or unreadable: ${backupFilePath}`;
+  }
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return `Backup file is not valid JSON: ${backupFilePath}`;
+  }
+
+  if (!parsed || typeof parsed !== 'object' || !parsed.collections || typeof parsed.collections !== 'object') {
+    return `Backup file is missing the expected "collections" structure: ${backupFilePath}`;
+  }
+
+  if (!parsed.projectId) {
+    return `Backup file has no projectId recorded: ${backupFilePath}`;
+  }
+
+  if (parsed.projectId !== expectedProjectId) {
+    return (
+      `Backup file's projectId ("${parsed.projectId}") does not match the resolved ` +
+      `Firebase project ("${expectedProjectId}"). Refusing to proceed with a backup from a different project.`
+    );
+  }
+
+  return null;
 }
 
 // The Admin SDK resolves the project ID lazily when credentials come from
@@ -113,7 +159,7 @@ export async function deleteSubcollectionRecursive(db, docRef, subcollectionId, 
 }
 
 export async function main() {
-  const { execute } = parseArgs(process.argv.slice(2));
+  const { execute, backupFile } = parseArgs(process.argv.slice(2));
 
   console.log('AutoMarket Development Data Reset');
   console.log('==================================\n');
@@ -181,18 +227,27 @@ export async function main() {
       process.exit(1);
       return;
     }
+
+    const backupError = validateBackupFile(backupFile, projectId);
+    if (backupError) {
+      console.error(`ERROR: ${backupError}`);
+      process.exit(1);
+      return;
+    }
+    console.log(`Backup file verified: ${backupFile}\n`);
   }
 
-  // Verify the admin user document is present and intact before doing anything else.
-  // This is a sanity check only - this script never writes to `users` and never
-  // touches Firebase Authentication.
+  // Verify the protected collections are present and intact before doing anything else.
+  // This is a read-only sanity check - this script never writes to `cars` or `users`,
+  // and never touches Firebase Authentication.
   console.log('Protected collections (never touched):', PROTECTED_COLLECTIONS.join(', '));
   const usersSnap = await db.collection('users').get();
   const adminDocs = usersSnap.docs.filter((d) => d.data().role === 'admin');
   console.log(
-    `Admin role check: ${usersSnap.size} user document(s) found, ` +
-    `${adminDocs.length} with role="admin".\n`
+    `  users: ${usersSnap.size} document(s), ${adminDocs.length} with role="admin"`
   );
+  const carsSnap = await db.collection('cars').get();
+  console.log(`  cars: ${carsSnap.size} document(s) (preserved)\n`);
 
   console.log('Deletion allowlist:', DELETION_ALLOWLIST.join(', '));
   console.log(`Mode: ${execute ? 'EXECUTE (irreversible deletion)' : 'DRY RUN (no writes)'}\n`);
@@ -230,9 +285,10 @@ export async function main() {
 
   if (!execute) {
     console.log('Dry run complete. No documents were deleted.');
-    console.log('To execute, re-run with --execute plus the required environment variables:');
+    console.log('To execute, re-run with --execute, a --backup-file, and the required environment variables:');
     console.log(`  ${EXPECTED_PROJECT_ID_ENV}=${projectId}`);
     console.log(`  ${CONFIRMATION_ENV}=${CONFIRMATION_PHRASE}`);
+    console.log('  node scripts/reset-development-data.js --execute --backup-file <path-to-backup.json>');
     process.exit(0);
     return;
   }
@@ -256,7 +312,7 @@ export async function main() {
   }
 
   console.log(`\n✅ Reset complete. ${grandTotalDeleted} total document(s) deleted.`);
-  console.log('Preserved: users collection, Firebase Authentication, Firestore rules/indexes, Cloudinary assets.');
+  console.log('Preserved: cars collection, users collection, Firebase Authentication, Firestore rules/indexes, Cloudinary assets.');
   process.exit(0);
 }
 

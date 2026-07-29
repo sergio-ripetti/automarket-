@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { DocumentGrid } from './DocumentGrid'
 
 const originalFetch = globalThis.fetch
@@ -204,5 +204,119 @@ describe('DocumentGrid', () => {
     )
     await waitFor(() => screen.getByText('View'))
     expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  describe('onDownload (protected download path)', () => {
+    it('falls back to a plain anchor download when onDownload is not provided (Financing behavior unchanged)', () => {
+      render(
+        <DocumentGrid
+          title="Documents"
+          emptyMessage="None"
+          documents={[{ url: 'https://example.com/a.jpg', filename: 'a.jpg', mimeType: 'image/jpeg' }]}
+        />
+      )
+      const downloadLink = screen.getByText('Download')
+      expect(downloadLink.tagName).toBe('A')
+      expect(downloadLink).toHaveAttribute('href', 'https://example.com/a.jpg')
+      expect(downloadLink).toHaveAttribute('download', 'a.jpg')
+    })
+
+    it('routes Download through onDownload as a button, not a direct link, when provided', () => {
+      const onDownload = vi.fn().mockResolvedValue(undefined)
+      render(
+        <DocumentGrid
+          title="Documents"
+          emptyMessage="None"
+          documents={[{ url: 'https://example.com/a.jpg', filename: 'a.jpg', mimeType: 'image/jpeg' }]}
+          onDownload={onDownload}
+        />
+      )
+      const downloadButton = screen.getByText('Download')
+      expect(downloadButton.tagName).toBe('BUTTON')
+      fireEvent.click(downloadButton)
+      expect(onDownload).toHaveBeenCalledTimes(1)
+    })
+
+    it('shows a loading state and disables the button while a download is in flight', async () => {
+      let resolveDownload: () => void = () => {}
+      const onDownload = vi.fn(() => new Promise<void>((resolve) => { resolveDownload = resolve }))
+      render(
+        <DocumentGrid
+          title="Documents"
+          emptyMessage="None"
+          documents={[{ url: 'https://example.com/a.jpg', filename: 'a.jpg', mimeType: 'image/jpeg' }]}
+          onDownload={onDownload}
+        />
+      )
+      fireEvent.click(screen.getByText('Download'))
+      expect(await screen.findByText('Downloading…')).toBeInTheDocument()
+      expect(screen.getByText('Downloading…')).toBeDisabled()
+      resolveDownload()
+      await waitFor(() => expect(screen.getByText('Download')).toBeInTheDocument())
+    })
+
+    it('prevents duplicate clicks from firing overlapping downloads', async () => {
+      let resolveDownload: () => void = () => {}
+      const onDownload = vi.fn(() => new Promise<void>((resolve) => { resolveDownload = resolve }))
+      render(
+        <DocumentGrid
+          title="Documents"
+          emptyMessage="None"
+          documents={[{ url: 'https://example.com/a.jpg', filename: 'a.jpg', mimeType: 'image/jpeg' }]}
+          onDownload={onDownload}
+        />
+      )
+      const button = await screen.findByText('Download')
+      fireEvent.click(button)
+      fireEvent.click(await screen.findByText('Downloading…'))
+      fireEvent.click(await screen.findByText('Downloading…'))
+      expect(onDownload).toHaveBeenCalledTimes(1)
+      resolveDownload()
+    })
+
+    it('shows a controlled inline error when the download fails, without crashing the page', async () => {
+      const onDownload = vi.fn().mockRejectedValue(new Error('Attachment not found on this sale'))
+      render(
+        <DocumentGrid
+          title="Documents"
+          emptyMessage="None"
+          documents={[{ url: 'https://example.com/a.jpg', filename: 'a.jpg', mimeType: 'image/jpeg' }]}
+          onDownload={onDownload}
+        />
+      )
+      fireEvent.click(screen.getByText('Download'))
+      expect(await screen.findByText('Attachment not found on this sale')).toBeInTheDocument()
+      // View must still work after a Download failure
+      expect(screen.getByText('View')).toBeInTheDocument()
+      expect(screen.getByText('Download')).not.toBeDisabled()
+    })
+
+    it('renders View with target=_blank and rel=noopener noreferrer regardless of onDownload', () => {
+      render(
+        <DocumentGrid
+          title="Documents"
+          emptyMessage="None"
+          documents={[{ url: 'https://example.com/a.jpg', filename: 'a.jpg', mimeType: 'image/jpeg' }]}
+          onDownload={vi.fn()}
+        />
+      )
+      const viewLink = screen.getByText('View')
+      expect(viewLink).toHaveAttribute('target', '_blank')
+      expect(viewLink).toHaveAttribute('rel', 'noopener noreferrer')
+      expect(viewLink).toHaveAttribute('href', 'https://example.com/a.jpg')
+    })
+  })
+
+  describe('malformed / legacy documents', () => {
+    it('does not crash when a document is missing filename and mimeType (legacy URL-only record)', () => {
+      render(
+        <DocumentGrid
+          title="Documents"
+          emptyMessage="None"
+          documents={[{ url: 'https://example.com/legacy-file' }]}
+        />
+      )
+      expect(screen.getByText('View')).toBeInTheDocument()
+    })
   })
 })

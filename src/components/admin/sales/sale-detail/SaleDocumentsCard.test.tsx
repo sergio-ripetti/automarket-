@@ -1,8 +1,14 @@
 import '@testing-library/jest-dom'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, fireEvent } from '@testing-library/react'
 import { SaleDocumentsCard } from './SaleDocumentsCard'
 import type { Sale, Documents } from '../../../../lib/salesService'
+
+const downloadSaleDocumentMock = vi.fn().mockResolvedValue(undefined)
+vi.mock('../../../../lib/downloadSaleDocument', () => ({
+  downloadSaleDocument: (...args: unknown[]) => downloadSaleDocumentMock(...args),
+  SaleDocumentDownloadError: class SaleDocumentDownloadError extends Error {},
+}))
 
 const originalFetch = globalThis.fetch
 
@@ -204,5 +210,13 @@ describe('SaleDocumentsCard', () => {
     })
     expect(screen.getByText('Download')).toBeInTheDocument()
     expect(screen.queryByText('File unavailable')).not.toBeInTheDocument()
+  })
+
+  it('routes Download through the protected downloadSaleDocument helper with this sale id and the doc url', () => {
+    downloadSaleDocumentMock.mockClear()
+    const sale = createSale({ uploadedDocuments: [{ url: 'https://example.com/image1.jpg', publicId: 'p1', resourceType: 'image', filename: 'image1.jpg' }] })
+    render(<SaleDocumentsCard sale={sale} />)
+    fireEvent.click(screen.getByText('Download'))
+    expect(downloadSaleDocumentMock).toHaveBeenCalledWith(sale.id, 'https://example.com/image1.jpg', 'image1.jpg')
   })
 })

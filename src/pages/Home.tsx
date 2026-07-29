@@ -1,9 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ChevronDown, Search, Car, CheckCircle2, ArrowRight } from 'lucide-react'
 import CarCard from '../components/CarCard'
 import { useCars } from '../hooks/useCars'
+import { useSoldCarIds } from '../hooks/useSoldCarIds'
+
+// Home is a curated preview, not the complete catalog - capped at 12 (three full rows at the
+// section's own lg:grid-cols-4 layout), per explicit product direction rather than an arbitrary
+// number. Fewer than 12 available vehicles render exactly however many exist - never padded.
+const HOME_VEHICLE_LIMIT = 12
 
 const stats = [
   { end: 500,  suffix: '+', label: 'Cars Available' },
@@ -60,7 +66,36 @@ function useCountUp(end: number, duration: number = 2000, started: boolean = fal
 // Renders the public landing page - hero banner, featured cars fetched via useCars, animated stats counters, and how-it-works steps
 export default function Home() {
   const { cars: allCars, loading: carsLoading, error: carsError } = useCars()
-  const featuredCars = allCars.filter((c) => c.featured)
+  // Sold status is derived from Sales (single source of truth, same helper used in Admin
+  // Inventory / Record New Sale). Public pages fail CLOSED: while sold-status is still loading,
+  // or if it failed to load, vehicle results are not rendered at all (see combined `loading`/
+  // `error` below) - never silently expose a potentially-sold vehicle.
+  const { soldCarIds, loading: salesLoading, error: salesError } = useSoldCarIds()
+
+  // Deterministic selection: available Featured vehicles first, then available On Sale vehicles
+  // not already selected, then any other available vehicles - each group preserves the existing
+  // fetch order (getCars() sorts newest-first), so "preserve existing sort" / "newest first" both
+  // fall out of the same underlying array order rather than a separate invented ranking. No
+  // popularity/views/favorites-based ordering is used - this data doesn't exist in the app today.
+  const homeCars = useMemo(() => {
+    const available = allCars.filter((c) => !soldCarIds.has(c.id))
+    const featured = available.filter((c) => c.featured)
+    const onSaleFallback = available.filter((c) => !c.featured && c.isOnSale)
+    const generalFallback = available.filter((c) => !c.featured && !c.isOnSale)
+    return [...featured, ...onSaleFallback, ...generalFallback].slice(0, HOME_VEHICLE_LIMIT)
+  }, [allCars, soldCarIds])
+
+  // The heading must stay truthful: only call the section "Featured Vehicles" when every
+  // rendered car is actually marked featured. As soon as On Sale/general fallback vehicles are
+  // mixed in, switch to a neutral, accurate title instead of misrepresenting them as hand-picked.
+  const allRenderedAreFeatured = homeCars.length > 0 && homeCars.every((c) => c.featured)
+  const sectionTitle = allRenderedAreFeatured ? 'Featured Vehicles' : 'Recommended Vehicles'
+  const sectionSubtitle = allRenderedAreFeatured ? 'Hand-picked by our team' : 'Featured picks and available vehicles'
+
+  // Never render vehicle results until BOTH cars and sold-status data have resolved, and never
+  // treat a Sales-fetch failure as "no sold vehicles" - both fail closed for public safety.
+  const loading = carsLoading || salesLoading
+  const combinedError = carsError || salesError
 
   const statsRef = useRef<HTMLDivElement>(null)
   const [statsStarted, setStatsStarted] = useState(false)
@@ -343,14 +378,14 @@ export default function Home() {
               Selection
             </p> */}
             <h2 className="font-bebas text-[#1A1A1A] tracking-wide leading-none ">
-              Featured Vehicles
+              {sectionTitle}
             </h2>
             <p className="font-inter text-[#767676] text-sm mt-4">
-              Hand-picked by our team
+              {sectionSubtitle}
             </p>
           </motion.div>
 
-          {carsLoading ? (
+          {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {[...Array(4)].map((_, i) => (
                 <div
@@ -364,18 +399,31 @@ export default function Home() {
                 />
               ))}
             </div>
-          ) : carsError ? (
+          ) : combinedError ? (
             <p
               style={{
                 fontFamily: "Outfit",
                 color: "#767676",
                 fontSize: "0.9rem",
               }}>
-              {carsError} Please try again later.
+              {combinedError} Please try again later.
+            </p>
+          ) : homeCars.length === 0 ? (
+            <p
+              style={{
+                fontFamily: "Outfit",
+                color: "#767676",
+                fontSize: "0.9rem",
+              }}>
+              No vehicles available right now.{" "}
+              <Link to="/cars" style={{ color: "#1A1A1A", textDecoration: "underline" }}>
+                Browse all vehicles
+              </Link>
+              .
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
-              {featuredCars.map((car, i) => (
+              {homeCars.map((car, i) => (
                 <motion.div
                   key={car.id}
                   className="h-full"

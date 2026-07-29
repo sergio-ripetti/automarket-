@@ -16,6 +16,12 @@ vi.mock('../../../lib/adminSalesService')
 vi.mock('../../../lib/cloudinaryService')
 vi.mock('../../../lib/toast')
 
+const downloadSaleDocumentMock = vi.fn().mockResolvedValue(undefined)
+vi.mock('../../../lib/downloadSaleDocument', () => ({
+  downloadSaleDocument: (...args: unknown[]) => downloadSaleDocumentMock(...args),
+  SaleDocumentDownloadError: class SaleDocumentDownloadError extends Error {},
+}))
+
 const mockNavigate = vi.fn()
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
@@ -389,5 +395,46 @@ describe('AdminEditSale', () => {
     await waitFor(() => {
       expect(cloudinaryService.uploadSalesDocument).toHaveBeenCalledWith(file, 'sales')
     })
+  })
+
+  it('routes Download for an already-saved attachment through the protected download proxy', async () => {
+    const sale = createSale({
+      documents: {
+        uploadedDocuments: [
+          { url: 'https://res.cloudinary.com/dlfgvbtzz/image/upload/v1/doc.pdf', publicId: 'automarket/sales/doc', resourceType: 'image', filename: 'doc.pdf' },
+        ],
+      },
+    })
+    vi.mocked(salesService.getSaleById).mockResolvedValue(sale)
+    renderPage()
+    await waitFor(() => screen.getByText('doc.pdf'))
+
+    fireEvent.click(screen.getByLabelText('Download doc.pdf'))
+
+    expect(downloadSaleDocumentMock).toHaveBeenCalledWith(
+      'sale-123',
+      'https://res.cloudinary.com/dlfgvbtzz/image/upload/v1/doc.pdf',
+      'doc.pdf'
+    )
+  })
+
+  it('falls back to a direct link for a newly added, not-yet-saved attachment (no proxy call)', async () => {
+    vi.mocked(salesService.getSaleById).mockResolvedValue(createSale())
+    vi.mocked(cloudinaryService.uploadSalesDocument).mockResolvedValue({
+      url: 'https://res.cloudinary.com/dlfgvbtzz/image/upload/v1/new.pdf',
+      publicId: 'automarket/sales/new',
+      resourceType: 'image',
+    })
+    renderPage()
+    await waitFor(() => screen.getByText('Payment Type'))
+
+    const file = new File(['content'], 'new.pdf', { type: 'application/pdf' })
+    const input = document.getElementById('edit-unified-upload') as HTMLInputElement
+    fireEvent.change(input, { target: { files: [file] } })
+
+    const downloadLink = await screen.findByLabelText('Download new.pdf')
+    expect(downloadLink.tagName).toBe('A')
+    expect(downloadLink).toHaveAttribute('href', 'https://res.cloudinary.com/dlfgvbtzz/image/upload/v1/new.pdf')
+    expect(downloadSaleDocumentMock).not.toHaveBeenCalled()
   })
 })

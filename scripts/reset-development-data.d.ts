@@ -5,8 +5,13 @@ export declare const CONFIRMATION_PHRASE: string;
 export declare const CONFIRMATION_ENV: string;
 export declare const BATCH_SIZE: number;
 
-export declare function parseArgs(argv: string[]): { execute: boolean };
+export declare function parseArgs(argv: string[]): { execute: boolean; backupFile: string | null };
 export declare function resolveProjectId(app: unknown, db?: unknown): string | null;
+export declare function validateBackupFile(
+  backupFilePath: string | null,
+  expectedProjectId: string | null,
+  readFileFn?: (path: string, encoding: string) => string
+): string | null;
 
 export interface DeletionPlanDocEntry {
   id: string;
