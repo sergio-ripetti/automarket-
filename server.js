@@ -59,8 +59,15 @@ const corsOptions = {
       callback(new Error('CORS not allowed'));
     }
   },
-  methods: ['POST', 'GET'],
-  allowedHeaders: ['Content-Type', 'x-api-key'],
+  // Every admin route below uses one of these verbs (GET/POST/PATCH/DELETE); PUT is included for
+  // completeness. OPTIONS itself doesn't need to be listed - the cors package answers preflight
+  // requests directly.
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+  // Authorization carries the Firebase ID token on every protected request - omitting it here
+  // was the actual preflight failure: the browser sends "Access-Control-Request-Headers:
+  // authorization,content-type" ahead of any authenticated request, and blocks the real request
+  // once the preflight response's Access-Control-Allow-Headers doesn't echo it back.
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
   credentials: false,
 };
 
