@@ -7,6 +7,7 @@ import { db } from '../../lib/firebase'
 import { getSales, type Sale } from '../../lib/salesService'
 import type { Message } from '../../lib/messagesService'
 import { authenticatedFetch } from '../../lib/authService'
+import { parseJsonResponse } from '../../lib/apiClient'
 
 interface Stats {
   totalCars: number
@@ -89,7 +90,7 @@ export default function AdminDashboard() {
         const [carsSnap, allSales, financingRes, messagesSnap] = await Promise.all([
           getDocs(collection(db, 'cars')),
           getSales(),
-          authenticatedFetch('/api/financing/applications').then(r => r.json()),
+          authenticatedFetch('/api/financing/applications').then((r) => parseJsonResponse<{ success: boolean; applications?: unknown[] }>(r)),
           getDocs(query(collection(db, 'messages'), orderBy('createdAt', 'desc'), limit(10))),
         ])
 

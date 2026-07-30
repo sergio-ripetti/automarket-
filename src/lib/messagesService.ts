@@ -3,6 +3,7 @@ import {
   query, orderBy, onSnapshot, type Timestamp, type Unsubscribe,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { apiUrl, parseJsonResponse } from './apiClient'
 
 export interface Message {
   id: string
@@ -69,7 +70,7 @@ export async function deleteMessage(id: string): Promise<void> {
 // The backend handles validation, sanitization, and Firestore persistence
 export async function submitPublicMessage(payload: Record<string, unknown>): Promise<{ success: boolean; messageId?: string; error?: string }> {
   try {
-    const response = await fetch('/api/messages/submit', {
+    const response = await fetch(apiUrl('/api/messages/submit'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -77,15 +78,14 @@ export async function submitPublicMessage(payload: Record<string, unknown>): Pro
       body: JSON.stringify(payload),
     })
 
+    const data = await parseJsonResponse<{ success: boolean; messageId?: string; error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return {
         success: false,
         error: data.error || 'Failed to submit message',
       }
     }
 
-    const data = await response.json()
     return data
   } catch (err) {
     console.error('Failed to submit public message:', err)

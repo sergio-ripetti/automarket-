@@ -6,6 +6,7 @@ import { db } from './firebase'
 import { sanitizeForFirestore } from './sanitize'
 import { getSoldCarIdsFromSales } from './validators.js'
 import { authenticatedFetch } from './authService'
+import { parseJsonResponse } from './apiClient'
 
 export interface Buyer {
   name: string
@@ -182,14 +183,11 @@ const COL = 'sales'
 // Sales list) are unaffected - the signature and return shape are unchanged.
 export async function getSales(): Promise<Sale[]> {
   const response = await authenticatedFetch('/api/sales')
-  if (!response.ok) {
+  const data = await parseJsonResponse<{ success: boolean; sales?: Sale[] }>(response)
+  if (!response.ok || !data.success || !Array.isArray(data.sales)) {
     throw new Error('Failed to fetch sales')
   }
-  const data = await response.json()
-  if (!data.success || !Array.isArray(data.sales)) {
-    throw new Error('Failed to fetch sales')
-  }
-  return data.sales as Sale[]
+  return data.sales
 }
 
 // Fetches a single sale by document id via the authenticated admin-only GET /api/sales/:id
@@ -201,9 +199,9 @@ export async function getSaleById(id: string): Promise<Sale | null> {
   if (!response.ok) {
     throw new Error('Failed to fetch sale')
   }
-  const data = await response.json()
+  const data = await parseJsonResponse<{ success: boolean; sale?: Sale }>(response)
   if (!data.success || !data.sale) return null
-  return data.sale as Sale
+  return data.sale
 }
 
 // Creates a new sale record in Firestore - sanitizes the data (strips undefined values) before writing and stamps a server-side createdAt

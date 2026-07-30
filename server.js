@@ -41,7 +41,7 @@ dotenv.config();
 initializeFirebaseAdmin();
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // CORS configuration - allow only trusted frontend origins
 const allowedOrigins = [

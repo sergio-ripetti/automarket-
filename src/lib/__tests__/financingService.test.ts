@@ -110,7 +110,7 @@ describe('submitFinancingApplication', () => {
     }
   })
 
-  it('handles malformed JSON response', async () => {
+  it('handles a malformed (non-JSON) response with a controlled error, not a raw SyntaxError', async () => {
     const mockFetch = globalThis.fetch as unknown as ReturnType<typeof vi.fn>
     mockFetch.mockResolvedValueOnce(
       new Response('invalid json', { status: 200 }),
@@ -120,7 +120,8 @@ describe('submitFinancingApplication', () => {
       await submitFinancingApplication(mockPayload)
       throw new Error('Should have thrown')
     } catch (err) {
-      expect((err as Error).message).toContain('JSON')
+      expect((err as Error).message).not.toContain('Unexpected token')
+      expect((err as Error).message).toMatch(/unavailable or misconfigured/i)
     }
   })
 

@@ -5,6 +5,7 @@ import {
   type User,
 } from 'firebase/auth'
 import { auth } from './firebase'
+import { apiUrl } from './apiClient'
 
 // Signs in an admin user with email/password credentials via Firebase Authentication
 export async function loginAdmin(email: string, password: string) {
@@ -34,7 +35,7 @@ export async function authenticatedFetch(url: string, options?: RequestInit) {
     'Authorization': `Bearer ${idToken}`,
   }
 
-  return fetch(url, {
+  return fetch(apiUrl(url), {
     ...options,
     headers,
   })

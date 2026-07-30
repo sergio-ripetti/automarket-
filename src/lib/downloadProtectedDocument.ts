@@ -1,4 +1,5 @@
 import { auth } from './firebase'
+import { apiUrl } from './apiClient'
 
 export class ProtectedDocumentDownloadError extends Error {}
 
@@ -18,9 +19,8 @@ export async function downloadProtectedDocument(
   }
 
   const idToken = await currentUser.getIdToken()
-  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api'
 
-  const response = await fetch(`${apiBaseUrl}/${endpointPath}?url=${encodeURIComponent(url)}`, {
+  const response = await fetch(apiUrl(`/api/${endpointPath}?url=${encodeURIComponent(url)}`), {
     headers: { Authorization: `Bearer ${idToken}` },
   })
 

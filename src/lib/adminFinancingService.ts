@@ -1,5 +1,6 @@
 import { getAuth } from 'firebase/auth'
 import type { FinancingRequest } from './financingService'
+import { apiUrl, parseJsonResponse } from './apiClient'
 
 interface GetApplicationsResponse {
   success: boolean
@@ -31,7 +32,7 @@ export async function getFinancingApplications(): Promise<GetApplicationsRespons
       return { success: false, error: 'Not authenticated', status: 401 }
     }
 
-    const response = await fetch('/api/financing/applications', {
+    const response = await fetch(apiUrl('/api/financing/applications'), {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -39,7 +40,7 @@ export async function getFinancingApplications(): Promise<GetApplicationsRespons
       },
     })
 
-    const data = await response.json()
+    const data = await parseJsonResponse<GetApplicationsResponse>(response)
 
     if (!response.ok) {
       return {
@@ -74,7 +75,7 @@ export async function updateFinancingStatus(
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch(`/api/financing/${id}/status`, {
+    const response = await fetch(apiUrl(`/api/financing/${id}/status`), {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -83,7 +84,7 @@ export async function updateFinancingStatus(
       body: JSON.stringify({ status }),
     })
 
-    const data = await response.json()
+    const data = await parseJsonResponse<{ error?: string }>(response)
 
     if (!response.ok) {
       return {
@@ -114,7 +115,7 @@ export async function deleteFinancingApplication(id: string): Promise<DeleteFina
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch(`/api/financing/${id}`, {
+    const response = await fetch(apiUrl(`/api/financing/${id}`), {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -122,7 +123,7 @@ export async function deleteFinancingApplication(id: string): Promise<DeleteFina
       },
     })
 
-    const data = await response.json()
+    const data = await parseJsonResponse<{ error?: string }>(response)
 
     if (!response.ok) {
       return {

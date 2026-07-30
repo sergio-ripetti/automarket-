@@ -1,5 +1,6 @@
 import { getAuth } from 'firebase/auth'
 import type { PaymentRecord, UploadedDocument } from './salesService'
+import { apiUrl, parseJsonResponse } from './apiClient'
 
 export interface AdminSalePayload {
   // Required by the backend validator as a top-level field (validateSalePayload in
@@ -125,7 +126,7 @@ export async function createSale(payload: AdminSalePayload): Promise<AdminSaleRe
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch('/api/sales', {
+    const response = await fetch(apiUrl('/api/sales'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -134,12 +135,11 @@ export async function createSale(payload: AdminSalePayload): Promise<AdminSaleRe
       body: JSON.stringify(payload),
     })
 
+    const data = await parseJsonResponse<{ id?: string; error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return { success: false, error: data.error || 'Failed to create sale' }
     }
 
-    const data = await response.json()
     return { success: true, id: data.id }
   } catch (err) {
     console.error('Error creating sale:', err)
@@ -158,7 +158,7 @@ export async function updateSale(
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch(`/api/sales/${id}`, {
+    const response = await fetch(apiUrl(`/api/sales/${id}`), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -167,8 +167,8 @@ export async function updateSale(
       body: JSON.stringify(payload),
     })
 
+    const data = await parseJsonResponse<{ error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return { success: false, error: data.error || 'Failed to update sale' }
     }
 
@@ -191,7 +191,7 @@ export async function updatePaymentStatus(
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch(`/api/sales/${saleId}/payments/${paymentId}`, {
+    const response = await fetch(apiUrl(`/api/sales/${saleId}/payments/${paymentId}`), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -200,8 +200,8 @@ export async function updatePaymentStatus(
       body: JSON.stringify({ status }),
     })
 
+    const data = await parseJsonResponse<{ error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return { success: false, error: data.error || 'Failed to update payment' }
     }
 
@@ -220,15 +220,15 @@ export async function deleteSale(id: string): Promise<AdminSaleDeleteResponse> {
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch(`/api/sales/${id}`, {
+    const response = await fetch(apiUrl(`/api/sales/${id}`), {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     })
 
+    const data = await parseJsonResponse<{ error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return { success: false, error: data.error || 'Failed to delete sale' }
     }
 
@@ -253,7 +253,7 @@ export async function deleteCloudinaryFile(publicId: string, resourceType: strin
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch('/api/cloudinary/delete', {
+    const response = await fetch(apiUrl('/api/cloudinary/delete'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -262,7 +262,7 @@ export async function deleteCloudinaryFile(publicId: string, resourceType: strin
       body: JSON.stringify({ publicId, resourceType }),
     })
 
-    const data = await response.json()
+    const data = await parseJsonResponse<{ success: boolean; error?: string }>(response)
     if (!response.ok || !data.success) {
       return { success: false, error: data.error || 'Failed to delete file from Cloudinary' }
     }

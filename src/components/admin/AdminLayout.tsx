@@ -6,6 +6,7 @@ import {
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { logoutAdmin, authenticatedFetch } from '../../lib/authService'
+import { parseJsonResponse } from '../../lib/apiClient'
 import { clearAIConversation } from '../../lib/aiConversationStorage'
 
 const navItems = [
@@ -94,7 +95,7 @@ export default function AdminLayout() {
       try {
         const response = await authenticatedFetch('/api/financing/applications')
         if (response.ok) {
-          const data = await response.json()
+          const data = await parseJsonResponse<{ success: boolean; applications?: Array<Record<string, unknown>> }>(response)
           if (data.success && Array.isArray(data.applications)) {
             const pending = data.applications.filter((f: Record<string, unknown>) => f.status === 'pending').length
             setPendingFinancingCount(pending)

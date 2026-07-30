@@ -3,6 +3,7 @@ import {
   query, orderBy, type Timestamp,
 } from 'firebase/firestore'
 import { db } from './firebase'
+import { apiUrl, parseJsonResponse } from './apiClient'
 
 export interface FinancingSubmissionPayload {
   carId: string
@@ -91,7 +92,7 @@ export async function deleteFinancingRequest(id: string): Promise<void> {
 // Submits a new financing application via backend API endpoint
 // The backend handles validation, recalculation, and Firestore persistence
 export async function submitFinancingApplication(payload: FinancingSubmissionPayload): Promise<FinancingSubmissionResponse> {
-  const response = await fetch('/api/financing/submit', {
+  const response = await fetch(apiUrl('/api/financing/submit'), {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -99,14 +100,13 @@ export async function submitFinancingApplication(payload: FinancingSubmissionPay
     body: JSON.stringify(payload),
   })
 
+  const data = await parseJsonResponse<FinancingSubmissionResponse>(response)
   if (!response.ok) {
-    const data = await response.json()
     return {
       success: false,
       error: data.error || 'Failed to submit financing application',
     }
   }
 
-  const data = await response.json()
   return data
 }

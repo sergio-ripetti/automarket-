@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiUrl, parseJsonResponse } from '../lib/apiClient'
 
 interface UseSoldCarIdsResult {
   soldCarIds: Set<string>
@@ -18,12 +19,9 @@ interface SoldVehicleIdsResponse {
 // rule (getSoldCarIdsFromSales, shared with Admin Inventory/Record New Sale/the AI context) and
 // returns only an array of vehicle ids.
 async function fetchSoldVehicleIds(): Promise<string[]> {
-  const response = await fetch('/api/public/sold-vehicle-ids')
-  if (!response.ok) {
-    throw new Error('Unable to verify vehicle availability right now.')
-  }
-  const data: SoldVehicleIdsResponse = await response.json()
-  if (!data.success || !Array.isArray(data.soldVehicleIds)) {
+  const response = await fetch(apiUrl('/api/public/sold-vehicle-ids'))
+  const data = await parseJsonResponse<SoldVehicleIdsResponse>(response)
+  if (!response.ok || !data.success || !Array.isArray(data.soldVehicleIds)) {
     throw new Error('Unable to verify vehicle availability right now.')
   }
   return data.soldVehicleIds.filter((id): id is string => typeof id === 'string')

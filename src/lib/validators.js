@@ -231,7 +231,13 @@ function validateCORSOrigin(origin, allowedOrigins) {
     return true;
   }
 
-  return allowedOrigins.includes(origin);
+  // Browsers never send a trailing slash in the Origin header, but an operator could
+  // accidentally set FRONTEND_URL with one (e.g. "https://example.com/") - strip it from both
+  // sides so that harmless difference doesn't cause a false CORS rejection.
+  const normalize = (value) => value.replace(/\/+$/, '');
+  const normalizedOrigin = normalize(origin);
+
+  return allowedOrigins.some((allowed) => normalize(allowed) === normalizedOrigin);
 }
 
 /**

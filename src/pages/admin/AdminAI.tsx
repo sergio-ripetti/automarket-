@@ -3,6 +3,7 @@ import { Send, Bot, Trash2 } from 'lucide-react'
 import { collection, getDocs } from 'firebase/firestore'
 import { db } from '../../lib/firebase'
 import { authenticatedFetch } from '../../lib/authService'
+import { apiUrl, parseJsonResponse } from '../../lib/apiClient'
 import { loadAIConversation, saveAIConversation, clearAIConversation, type ChatMessage } from '../../lib/aiConversationStorage'
 import { getSoldCarIds, getSales } from '../../lib/salesService'
 import type { Car } from '../../types'
@@ -84,7 +85,7 @@ async function getBusinessContext(): Promise<BusinessContext> {
     const [carsSnap, sales, financingRes, messagesSnap] = await Promise.all([
       getDocs(collection(db, 'cars')),
       getSales(),
-      authenticatedFetch('/api/financing/applications').then(r => r.json()),
+      authenticatedFetch('/api/financing/applications').then((r) => parseJsonResponse<{ success: boolean; applications?: Array<Record<string, unknown>> }>(r)),
       getDocs(collection(db, 'messages')),
     ])
 
@@ -269,9 +270,6 @@ export default function AdminAI() {
         content: m.content,
       }))
 
-      // Send request to AI Assistant API with Firebase ID token
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '/api'
-
       // Get current user from Firebase Auth
       const { auth } = await import('../../lib/firebase')
       const currentUser = auth.currentUser
@@ -283,7 +281,7 @@ export default function AdminAI() {
       // Get Firebase ID token for this request
       const idToken = await currentUser.getIdToken(true)
 
-      const response = await fetch(`${apiBaseUrl}/aiAssistant`, {
+      const response = await fetch(apiUrl('/api/aiAssistant'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

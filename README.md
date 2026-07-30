@@ -184,7 +184,12 @@ VITE_ANTHROPIC_API_KEY=sk-ant-...
 VITE_API_BASE_URL=
 ```
 - Leave empty for development (uses Vite proxy)
-- Set to your backend URL for production
+- **Required in Vercel Production/Preview**: set to the deployed backend's origin, e.g.
+  `https://your-backend-host.example.com` - no trailing slash, and do **not** append `/api`
+  (every request already includes `/api/...` in its path)
+- Without this set in production, `/api/...` requests fall through to Vercel's SPA rewrite and
+  receive `index.html` instead of JSON
+- Redeploy after changing this - Vite environment variables are baked in at build time
 
 ### Backend Variables (Required)
 
@@ -224,6 +229,12 @@ FRONTEND_URL=https://yourdomain.com
 - Frontend URL for CORS validation
 - Defaults to `https://automarket-ten.vercel.app`
 - Update this for your production deployment
+
+**Render (backend runtime, optional):**
+```
+NODE_VERSION=22
+```
+- Only relevant if deploying via `render.yaml` (see Deployment section below)
 
 ---
 
@@ -363,11 +374,27 @@ This is a portfolio project, not an audited production system - the security mod
 3. Configure Firebase Admin SDK for production (`FIREBASE_SERVICE_ACCOUNT` or `GOOGLE_APPLICATION_CREDENTIALS`)
 4. Ensure all required API keys are configured
 
-### Deployment (Vercel)
+### Deployment (Vercel frontend + Render backend)
 
-1. **Frontend:** Automatically deployed from GitHub
-2. **Backend:** Deploy `server.js` separately or use serverless functions
-3. **Environment:** Set all variables in Vercel deployment settings
+The frontend (Vercel) and backend (`server.js`, a separate Express host) are deployed
+independently - Vercel's rewrites only serve the SPA, so there is **no** `/api/*` proxy
+configured there. The frontend must be told the backend's real origin via `VITE_API_BASE_URL`.
+
+1. **Backend (Render):**
+   - `render.yaml` in the repo root defines the service (Node, `npm install` / `npm start`,
+     health check at `/health`)
+   - Render Dashboard → New → Blueprint → connect this repository → select `render.yaml`
+   - Set the required secret environment variables in the Render UI (never commit them):
+     `FRONTEND_URL`, `FIREBASE_SERVICE_ACCOUNT` (or `GOOGLE_APPLICATION_CREDENTIALS`),
+     `ANTHROPIC_API_KEY`, `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+   - Once live, note the service's HTTPS origin (e.g. `https://automarket-api.onrender.com`)
+2. **Frontend (Vercel):**
+   - Automatically deployed from GitHub
+   - Project → Settings → Environment Variables → add `VITE_API_BASE_URL` = the Render backend
+     origin from step 1 (Production, and Preview if previews should hit the same backend)
+   - Redeploy the latest commit after setting/changing this variable
+3. **CORS:** the backend's `FRONTEND_URL` must match the Vercel production domain exactly (a
+   trailing slash is tolerated) or the browser will reject cross-origin responses
 
 ### Build Output
 ```

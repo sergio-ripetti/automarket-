@@ -1,4 +1,5 @@
 import { getAuth } from 'firebase/auth'
+import { apiUrl, parseJsonResponse } from './apiClient'
 
 export interface AdminCarPayload {
   title: string
@@ -49,7 +50,7 @@ export async function createCar(payload: AdminCarPayload): Promise<AdminCarRespo
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch('/api/cars', {
+    const response = await fetch(apiUrl('/api/cars'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -58,12 +59,11 @@ export async function createCar(payload: AdminCarPayload): Promise<AdminCarRespo
       body: JSON.stringify(payload),
     })
 
+    const data = await parseJsonResponse<{ id?: string; error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return { success: false, error: data.error || 'Failed to create car' }
     }
 
-    const data = await response.json()
     return { success: true, id: data.id }
   } catch (err) {
     console.error('Error creating car:', err)
@@ -82,7 +82,7 @@ export async function updateCar(
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch(`/api/cars/${id}`, {
+    const response = await fetch(apiUrl(`/api/cars/${id}`), {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -91,8 +91,8 @@ export async function updateCar(
       body: JSON.stringify(payload),
     })
 
+    const data = await parseJsonResponse<{ error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return { success: false, error: data.error || 'Failed to update car' }
     }
 
@@ -111,15 +111,15 @@ export async function deleteCar(id: string): Promise<AdminCarDeleteResponse> {
       return { success: false, error: 'Not authenticated' }
     }
 
-    const response = await fetch(`/api/cars/${id}`, {
+    const response = await fetch(apiUrl(`/api/cars/${id}`), {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
     })
 
+    const data = await parseJsonResponse<{ error?: string }>(response)
     if (!response.ok) {
-      const data = await response.json()
       return { success: false, error: data.error || 'Failed to delete car' }
     }
 
