@@ -119,9 +119,17 @@ describe('VehicleInfoCard', () => {
     expect(swatch).toHaveStyle({ backgroundColor: '#f5f5f5', borderRadius: '50%' })
   })
 
-  it('still shows the color value as secondary text next to the swatch', () => {
+  it('shows a human-readable colour name instead of the raw hex value', () => {
     const sale = { ...createSale(), carColor: '#f5f5f5' }
     render(<VehicleInfoCard sale={sale} />)
-    expect(screen.getByText('#f5f5f5')).toBeInTheDocument()
+    expect(screen.getByText('White')).toBeInTheDocument()
+    expect(screen.queryByText('#f5f5f5')).not.toBeInTheDocument()
+  })
+
+  it('keeps the raw hex value available via the swatch tooltip/aria-label', () => {
+    const sale = { ...createSale(), carColor: '#f5f5f5' }
+    render(<VehicleInfoCard sale={sale} />)
+    const swatch = screen.getByLabelText('Vehicle color: #f5f5f5')
+    expect(swatch).toHaveAttribute('title', '#f5f5f5')
   })
 })

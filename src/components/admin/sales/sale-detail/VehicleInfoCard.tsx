@@ -1,4 +1,5 @@
 import type { Sale } from '../../../../lib/salesService'
+import { getVehicleColourName } from '../../../../lib/colorNames'
 
 interface VehicleInfoCardProps {
   sale: Sale
@@ -74,7 +75,7 @@ export function VehicleInfoCard({ sale }: VehicleInfoCardProps) {
                 flexShrink: 0,
               }}
             />
-            <p style={{ color: "#1A1A1A" }}>{sale.carColor}</p>
+            <p style={{ color: "#1A1A1A" }}>{getVehicleColourName(sale.carColor)}</p>
           </div>
         </div>
       </div>

@@ -40,3 +40,6 @@ backups/
 
 # Local-only Claude Code settings (machine-specific tool permissions, absolute local paths)
 .claude/settings.local.json
+
+# Generated invoice PDFs (test/manual-QA artifacts produced at the repo root, never commit)
+/Invoice_*.pdf
