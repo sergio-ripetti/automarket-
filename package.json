@@ -14,7 +14,8 @@
     "test": "vitest run --exclude src/test/firestore-rules.test.ts",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "test:firestore-rules": "firebase emulators:exec --only firestore \"vitest run src/test/firestore-rules.test.ts\""
+    "test:firestore-rules": "firebase emulators:exec --only firestore \"vitest run src/test/firestore-rules.test.ts\"",
+    "bootstrap:demo-user": "node scripts/bootstrap-demo-user.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.101.0",

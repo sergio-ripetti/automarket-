@@ -500,4 +500,73 @@ describe('Firestore Security Rules - Real Emulator Tests', () => {
       );
     });
   });
+
+  // Messages can contain sender name/email/phone and free-text content. The public contact/offer
+  // form goes through POST /api/messages/submit (backend, Firebase Admin SDK) and Admin Messages
+  // now reads via GET /api/messages (backend, requireAdminOrDemo) instead of a direct client
+  // Firestore read - so this collection must deny every client access path, including an
+  // authenticated admin-context client (the frontend has no legitimate direct-Firestore access).
+  describe('Messages Collection - Deny All Client Access (Rule: allow read, write: if false)', () => {
+    beforeEach(async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().collection('messages').doc('msg-1').set({
+          senderName: 'Jane Doe',
+          email: 'jane@example.com',
+          message: 'Interested in this vehicle',
+          read: false,
+        });
+      });
+    });
+
+    afterAll(async () => {
+      await testEnv.withSecurityRulesDisabled(async (context) => {
+        await context.firestore().collection('messages').doc('msg-1').delete();
+      });
+    });
+
+    it('should deny unauthenticated read of a message document', async () => {
+      const unauthedDb = testEnv.unauthenticatedContext().firestore();
+      await assertFails(unauthedDb.collection('messages').doc('msg-1').get());
+    });
+
+    it('should deny an authenticated ordinary (non-admin) user read of a message document', async () => {
+      const userDb = testEnv.authenticatedContext('user-456').firestore();
+      await assertFails(userDb.collection('messages').doc('msg-1').get());
+    });
+
+    it('should deny an authenticated demo-context client read of a message document', async () => {
+      const demoDb = testEnv.authenticatedContext('demo-999').firestore();
+      await assertFails(demoDb.collection('messages').doc('msg-1').get());
+    });
+
+    it('should deny an authenticated admin-context client read of a message document (frontend has no direct Messages access, admin or not)', async () => {
+      const adminDb = testEnv.authenticatedContext('admin-123').firestore();
+      await assertFails(adminDb.collection('messages').doc('msg-1').get());
+    });
+
+    it('should deny unauthenticated create of a message document (public submission must go through POST /api/messages/submit instead)', async () => {
+      const unauthedDb = testEnv.unauthenticatedContext().firestore();
+      await assertFails(
+        unauthedDb.collection('messages').doc('msg-2').set({ senderName: 'Attacker', message: 'x' })
+      );
+    });
+
+    it('should deny an authenticated admin-context client update of a message document', async () => {
+      const adminDb = testEnv.authenticatedContext('admin-123').firestore();
+      await assertFails(adminDb.collection('messages').doc('msg-1').update({ read: true }));
+    });
+
+    it('should deny an authenticated admin-context client delete of a message document', async () => {
+      const adminDb = testEnv.authenticatedContext('admin-123').firestore();
+      await assertFails(adminDb.collection('messages').doc('msg-1').delete());
+    });
+
+    it('should allow the backend Admin SDK to read messages (bypasses client rules)', async () => {
+      await assertSucceeds(
+        testEnv.withSecurityRulesDisabled(async (context) => {
+          await context.firestore().collection('messages').doc('msg-1').get();
+        })
+      );
+    });
+  });
 });

@@ -3,11 +3,10 @@ import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Car, CreditCard, ShoppingBag, Mail, Bot, ExternalLink, LogOut, Menu, X,
 } from 'lucide-react'
-import { collection, query, where, onSnapshot } from 'firebase/firestore'
-import { db } from '../../lib/firebase'
 import { logoutAdmin, authenticatedFetch } from '../../lib/authService'
 import { parseJsonResponse } from '../../lib/apiClient'
 import { clearAIConversation } from '../../lib/aiConversationStorage'
+import { useUserRole } from '../../hooks/useUserRole'
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard',    to: '/admin',             end: true },
@@ -25,6 +24,7 @@ const navItems = [
 export default function AdminLayout() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { isDemo } = useUserRole()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>(
     typeof window !== 'undefined'
@@ -82,16 +82,38 @@ export default function AdminLayout() {
     return () => { document.body.style.overflow = 'unset' }
   }, [sidebarOpen, screenSize])
 
-  // Real-time listeners for unread messages and pending financing
+  // Poll for unread messages and pending financing via the authenticated backend (Firestore's
+  // 'messages'/'financing' rules deny all direct client reads - see firestore.rules). Each fetch
+  // has its own in-flight guard so a slow response can never overlap with the next poll tick, and
+  // both are skipped entirely while the tab is hidden/backgrounded (no point polling a sidebar
+  // badge nobody can see, and it avoids competing with a foreground page's own fetch for the
+  // same endpoint - e.g. AdminMessages/AdminFinancing polling their own full lists).
   useEffect(() => {
-    // Listen for unread messages
-    const messagesQuery = query(collection(db, 'messages'), where('read', '==', false))
-    const unsubscribeMessages = onSnapshot(messagesQuery, (snap) => {
-      setUnreadMessageCount(snap.size)
-    })
+    let messagesFetchInFlight = false
+    let financingFetchInFlight = false
+
+    const fetchUnreadMessages = async () => {
+      if (messagesFetchInFlight || document.hidden) return
+      messagesFetchInFlight = true
+      try {
+        const response = await authenticatedFetch('/api/messages')
+        if (response.ok) {
+          const data = await parseJsonResponse<{ success: boolean; messages?: Array<{ read: boolean }> }>(response)
+          if (data.success && Array.isArray(data.messages)) {
+            setUnreadMessageCount(data.messages.filter((m) => !m.read).length)
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch unread message count:', err)
+      } finally {
+        messagesFetchInFlight = false
+      }
+    }
 
     // Poll for pending financing requests (backend endpoint)
     const fetchPendingFinancing = async () => {
+      if (financingFetchInFlight || document.hidden) return
+      financingFetchInFlight = true
       try {
         const response = await authenticatedFetch('/api/financing/applications')
         if (response.ok) {
@@ -106,18 +128,22 @@ export default function AdminLayout() {
         }
       } catch (err) {
         console.error('Failed to fetch pending financing count:', err)
+      } finally {
+        financingFetchInFlight = false
       }
     }
 
     // Initial fetch
+    fetchUnreadMessages()
     fetchPendingFinancing()
 
     // Poll every 30 seconds
-    const interval = setInterval(fetchPendingFinancing, 30000)
+    const interval = setInterval(() => {
+      fetchUnreadMessages()
+      fetchPendingFinancing()
+    }, 30000)
 
-    // Cleanup listeners on unmount
     return () => {
-      unsubscribeMessages()
       clearInterval(interval)
     }
   }, [])
@@ -231,6 +257,20 @@ export default function AdminLayout() {
             <span style={{ fontFamily: 'Outfit', fontSize: '0.65rem', color: 'rgba(255,255,255,0.65)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Admin Panel
             </span>
+            {isDemo && (
+              <span
+                id="admin-demo-mode-badge"
+                style={{
+                  display: 'inline-block', marginTop: '0.6rem',
+                  backgroundColor: 'rgba(196,255,0,0.12)', color: '#C4FF00',
+                  border: '1px solid rgba(196,255,0,0.35)', borderRadius: '999px',
+                  padding: '0.2rem 0.6rem', fontFamily: 'Outfit', fontSize: '0.65rem',
+                  fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+                }}
+              >
+                Demo Mode
+              </span>
+            )}
           </div>
         )}
 

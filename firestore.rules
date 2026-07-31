@@ -41,10 +41,11 @@ service cloud.firestore {
     }
 
     match /messages/{document=**} {
-      // Public read
-      allow read: if true;
-      // Write restricted to backend
-      allow write: if false;
+      // Messages can contain sender name/email/phone and free-text content. All client reads and
+      // writes are denied - the public contact/offer form goes through POST /api/messages/submit
+      // (backend, Firebase Admin SDK) and the admin panel now reads via GET /api/messages
+      // (backend, requireAdminOrDemo) instead of a direct client Firestore read.
+      allow read, write: if false;
     }
   }
 }

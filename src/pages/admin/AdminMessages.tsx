@@ -1,11 +1,12 @@
 ﻿import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Trash2, Mail, Eye, X } from 'lucide-react'
-import { subscribeToMessages } from '../../lib/messagesService'
+import { getMessages } from '../../lib/messagesService'
 import { markAsRead, markAsUnread, deleteMessage } from '../../lib/adminMessagesService'
 import { sortByCreatedAtDesc } from '../../lib/timestampUtils'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
+import { useUserRole } from '../../hooks/useUserRole'
 import type { Message } from '../../lib/messagesService'
 
 type TypeFilter = 'all' | 'contact' | 'offer' | 'unread'
@@ -51,29 +52,48 @@ export default function AdminMessages() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null)
   const { toast, showToast, dismissToast } = useToast()
+  const { isDemo } = useUserRole()
   // Ensures a persistent listener error only toasts once, not on every re-delivery
   const hasNotifiedErrorRef = useRef(false)
 
-  // Subscribes to real-time updates on the messages collection on mount. This keeps the visible
-  // list in sync with the sidebar's own onSnapshot-based unread badge (AdminLayout.tsx) without a
-  // separate polling lifecycle - both listen to the same collection/field and always agree.
+  // Fetches messages via the authenticated backend endpoint (GET /api/messages) on mount, then
+  // polls every 30s - matching the same poll cadence AdminLayout.tsx already uses for pending
+  // financing, since Firestore's 'messages' rule now denies all direct client reads (including
+  // the onSnapshot listener this used to use) and everything goes through the backend instead.
   useEffect(() => {
-    const unsubscribe = subscribeToMessages(
-      (data) => {
+    let cancelled = false
+    let fetchInFlight = false
+
+    const load = async () => {
+      // Skip while backgrounded/hidden (nothing to refresh on an unwatched tab) and guard
+      // against a slow response overlapping with the next poll tick.
+      if (fetchInFlight || document.hidden) return
+      fetchInFlight = true
+      try {
+        const data = await getMessages()
+        if (cancelled) return
         setMessages(sortByCreatedAtDesc(data))
         setLoading(false)
         hasNotifiedErrorRef.current = false
-      },
-      (err) => {
+      } catch (err) {
+        if (cancelled) return
         console.error(err)
         setLoading(false)
         if (!hasNotifiedErrorRef.current) {
           showToast('Failed to load messages.', 'error')
           hasNotifiedErrorRef.current = true
         }
-      },
-    )
-    return () => unsubscribe()
+      } finally {
+        fetchInFlight = false
+      }
+    }
+
+    load()
+    const interval = setInterval(load, 30000)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
   }, [showToast])
 
   const filtered = messages
@@ -111,6 +131,10 @@ export default function AdminMessages() {
 
   // Deletes a message via backend after user confirmation, then removes it from local state
   const handleDelete = async (id: string) => {
+    if (isDemo) {
+      showToast('Demo mode: deleting data is disabled.', 'error')
+      return
+    }
     if (!window.confirm('Delete this message? This cannot be undone.')) return
     try {
       const result = await deleteMessage(id)
@@ -452,8 +476,11 @@ export default function AdminMessages() {
                     id={`admin-messages-delete-button-${idx}`}
                     className="admin-messages-delete-button delete-btn"
                     onClick={(e) => { e.stopPropagation(); handleDelete(msg.id) }}
+                    disabled={isDemo}
+                    title={isDemo ? 'Demo mode: deleting data is disabled.' : undefined}
                     style={{
                       border: '1px solid #EF4444', color: '#EF4444', backgroundColor: '#FFFFFF',
+                      opacity: isDemo ? 0.5 : 1, cursor: isDemo ? 'not-allowed' : 'pointer',
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = '#FEE2E2'

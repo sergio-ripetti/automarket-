@@ -1,9 +1,6 @@
-import {
-  collection, doc, getDocs, updateDoc, deleteDoc,
-  query, orderBy, onSnapshot, type Timestamp, type Unsubscribe,
-} from 'firebase/firestore'
-import { db } from './firebase'
+import type { Timestamp } from 'firebase/firestore'
 import { apiUrl, parseJsonResponse } from './apiClient'
+import { authenticatedFetch } from './authService'
 
 export interface Message {
   id: string
@@ -23,47 +20,17 @@ export interface Message {
   offerPrice?: number
 }
 
-const COL = 'messages'
-
-// Fetches all contact/financing/offer messages from the Firestore 'messages' collection, newest first
+// Fetches all contact/financing/offer messages via the authenticated admin/demo-safe backend
+// endpoint (GET /api/messages), newest first. Firestore's own 'messages' rule denies all client
+// reads (see firestore.rules) - the backend (Firebase Admin SDK, which bypasses those rules) is
+// the only path. Demo-role responses have sender PII masked server-side; admin gets full data.
 export async function getMessages(): Promise<Message[]> {
-  const q = query(collection(db, COL), orderBy('createdAt', 'desc'))
-  const snap = await getDocs(q)
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Message))
-}
-
-// Subscribes to real-time updates on the messages collection, newest first. Reads are allowed
-// directly by Firestore rules (writes still go through the authenticated backend), so this uses
-// onSnapshot instead of polling - the admin inbox and the sidebar's own onSnapshot-based unread
-// badge then share the same live-listener lifecycle and always report consistent counts.
-// Returns an unsubscribe function; callers must invoke it on unmount to avoid leaking listeners.
-export function subscribeToMessages(
-  onData: (messages: Message[]) => void,
-  onError: (error: Error) => void,
-): Unsubscribe {
-  const q = query(collection(db, COL), orderBy('createdAt', 'desc'))
-  return onSnapshot(
-    q,
-    (snap) => {
-      onData(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Message)))
-    },
-    (err) => onError(err),
-  )
-}
-
-// Marks a message as read in Firestore
-export async function markAsRead(id: string): Promise<void> {
-  await updateDoc(doc(db, COL, id), { read: true })
-}
-
-// Marks a message as unread in Firestore
-export async function markAsUnread(id: string): Promise<void> {
-  await updateDoc(doc(db, COL, id), { read: false })
-}
-
-// Deletes a message document from Firestore by id
-export async function deleteMessage(id: string): Promise<void> {
-  await deleteDoc(doc(db, COL, id))
+  const response = await authenticatedFetch('/api/messages')
+  const data = await parseJsonResponse<{ success: boolean; messages?: Message[] }>(response)
+  if (!response.ok || !data.success || !Array.isArray(data.messages)) {
+    throw new Error('Failed to fetch messages')
+  }
+  return data.messages
 }
 
 // Submits a public message (contact form or vehicle inquiry) via backend API

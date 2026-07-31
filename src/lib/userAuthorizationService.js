@@ -31,6 +31,11 @@ export async function getUserRole(uid) {
   }
 }
 
+// The three roles the app recognizes. 'user' (or any other/missing value) has no admin-panel
+// access at all - it exists only so getUserRole()'s result can be validated/reported, not
+// because ordinary users have a distinct permission set today.
+export const ROLES = Object.freeze({ ADMIN: 'admin', DEMO: 'demo', USER: 'user' });
+
 /**
  * Check if user is admin
  * Role must be 'admin' in users/{uid} document
@@ -39,7 +44,53 @@ export async function getUserRole(uid) {
  */
 export async function isUserAdmin(uid) {
   const role = await getUserRole(uid);
-  return role === 'admin';
+  return role === ROLES.ADMIN;
+}
+
+/**
+ * Check if user is the restricted demo/portfolio-review account.
+ * Role must be exactly 'demo' - never treated as admin.
+ * @param {string} uid - Firebase user UID
+ * @returns {Promise<boolean>}
+ */
+export async function isUserDemo(uid) {
+  const role = await getUserRole(uid);
+  return role === ROLES.DEMO;
+}
+
+/**
+ * Check if user is authorized for admin-panel read/create/update access - either the real admin
+ * or the restricted demo account. Callers that grant this must never treat 'demo' as 'admin' for
+ * delete/user-management purposes; use the resolved role to decide what data/actions to allow.
+ * @param {string} uid - Firebase user UID
+ * @returns {Promise<{ authorized: boolean, role: string | null }>}
+ */
+export async function resolveAdminOrDemoRole(uid) {
+  const role = await getUserRole(uid);
+  return { authorized: role === ROLES.ADMIN || role === ROLES.DEMO, role };
+}
+
+/**
+ * Portfolio permission model, expressed as pure functions of a resolved role string (not a
+ * uid - callers already have the role from requireAdmin/requireAdminOrDemo's req.userRole, or
+ * from resolveAdminOrDemoRole/getUserRole). Centralizes the read/create/update/delete matrix so
+ * it isn't re-derived as scattered `role === 'demo'` checks across routes or components.
+ *   admin: canModifyData = true,  canDeleteData = true
+ *   demo:  canModifyData = true,  canDeleteData = false
+ *   other: canModifyData = false, canDeleteData = false
+ * @param {string | null | undefined} role
+ * @returns {boolean}
+ */
+export function canModifyData(role) {
+  return role === ROLES.ADMIN || role === ROLES.DEMO;
+}
+
+/**
+ * @param {string | null | undefined} role
+ * @returns {boolean}
+ */
+export function canDeleteData(role) {
+  return role === ROLES.ADMIN;
 }
 
 /**

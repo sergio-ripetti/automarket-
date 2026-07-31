@@ -1,7 +1,9 @@
-﻿import { useState } from 'react'
+﻿import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { KeyRound } from 'lucide-react'
 import { loginAdmin } from '../../lib/authService'
 import { FormInput, FormLabel } from '../../components/shared'
+import DemoAccessModal from '../../components/admin/DemoAccessModal'
 
 // Admin login page - renders the sign-in form and delegates credential verification to Firebase Authentication
 export default function AdminLogin() {
@@ -10,6 +12,8 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [demoModalOpen, setDemoModalOpen] = useState(false)
+  const demoTriggerRef = useRef<HTMLButtonElement>(null)
 
 
   // Handles admin login form submission - takes email/password, authenticates via Firebase, and redirects to the admin dashboard on success
@@ -99,7 +103,36 @@ export default function AdminLogin() {
             {loading ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
+
+        <button
+          ref={demoTriggerRef}
+          type="button"
+          onClick={() => setDemoModalOpen(true)}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
+            marginTop: '1.25rem', background: 'transparent', border: 'none',
+            color: '#767676', fontFamily: 'Outfit', fontSize: '0.8rem', fontWeight: 600,
+            cursor: 'pointer', padding: '0.4rem', borderRadius: '0.5rem', transition: 'color 0.15s ease',
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = '#1A1A1A' }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = '#767676' }}
+        >
+          <KeyRound size={14} />
+          Demo Access
+        </button>
       </div>
+
+      {demoModalOpen && (
+        <DemoAccessModal
+          onClose={() => setDemoModalOpen(false)}
+          triggerRef={demoTriggerRef}
+          onFillCredentials={(demoEmail, demoPassword) => {
+            setEmail(demoEmail)
+            setPassword(demoPassword)
+            setDemoModalOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }

@@ -29,6 +29,7 @@ import {
 import { createSale, deleteCloudinaryFile, type AdminSalePayload } from "../../lib/adminSalesService";
 import { uploadSalesDocument } from "../../lib/cloudinaryService";
 import { showToast } from "../../lib/toast";
+import { useUserRole } from "../../hooks/useUserRole";
 import type { Car } from "../../types";
 import type { FormData } from "../../types/saleForm";
 import { VehicleSelectionStep } from "../../components/admin/sales/new-sale/VehicleSelectionStep";
@@ -49,6 +50,7 @@ function fmt(price: number) {
 // uploads supporting documents to Cloudinary, and saves the completed sale record to Firestore
 export default function AdminNewSale() {
   const navigate = useNavigate();
+  const { isDemo } = useUserRole();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [cars, setCars] = useState<Car[]>([]);
   // Tracks which document URLs currently have a Cloudinary deletion in flight, so Remove can be
@@ -323,6 +325,10 @@ export default function AdminNewSale() {
   // If deletion fails, the file is kept in the list so the user can retry rather than silently
   // losing track of an asset that still exists in Cloudinary.
   const handleRemoveFile = async (url: string) => {
+    if (isDemo) {
+      showToast('Demo mode: deleting data is disabled.', 'error');
+      return;
+    }
     if (deletingFileUrls.has(url)) return; // already in flight - ignore repeated clicks
     const doc = form.uploadedDocuments.find((d) => d.url === url);
     if (!doc?.publicId) {

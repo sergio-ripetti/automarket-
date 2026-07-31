@@ -4,6 +4,7 @@ import { PlusCircle, Eye, Trash2, ShoppingBag } from 'lucide-react'
 import { getSales, type Sale } from '../../lib/salesService'
 import { deleteSale } from '../../lib/adminSalesService'
 import { showToast } from '../../lib/toast'
+import { useUserRole } from '../../hooks/useUserRole'
 
 // Formats a number as NZD currency for display
 function fmt(price: number) {
@@ -21,6 +22,7 @@ type FilterType = 'all' | 'cash' | 'financing' | 'mixed' | 'completed'
 // Admin page listing all recorded sales - lets staff filter by payment type/status, search by buyer/car,
 // and drill into or delete individual sales; data is loaded from and written back to Firestore
 export default function AdminSales() {
+  const { isDemo } = useUserRole()
   const [sales, setSales] = useState<Sale[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<FilterType>('all')
@@ -70,6 +72,10 @@ export default function AdminSales() {
 
   // Deletes a sale via backend endpoint after user confirmation
   const handleDelete = async (id: string) => {
+    if (isDemo) {
+      showToast('Demo mode: deleting data is disabled.', 'error')
+      return
+    }
     if (!window.confirm('Are you sure you want to delete this sale?')) return
     try {
       const result = await deleteSale(id)
@@ -515,9 +521,10 @@ export default function AdminSales() {
                       </Link>
                       <button
                         onClick={() => handleDelete(sale.id)}
+                        disabled={isDemo}
                         className="inline-flex items-center justify-center rounded bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
-                        style={{ minWidth: '44px', minHeight: '44px', width: '44px', height: '44px' }}
-                        title="Delete sale"
+                        style={{ minWidth: '44px', minHeight: '44px', width: '44px', height: '44px', opacity: isDemo ? 0.5 : 1, cursor: isDemo ? 'not-allowed' : 'pointer' }}
+                        title={isDemo ? 'Demo mode: deleting data is disabled.' : 'Delete sale'}
                       >
                         <Trash2 size={18} />
                       </button>

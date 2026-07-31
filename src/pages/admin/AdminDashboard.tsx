@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Car, ShoppingBag, DollarSign, CreditCard } from 'lucide-react'
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 import { AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { db } from '../../lib/firebase'
 import { getSales, type Sale } from '../../lib/salesService'
-import type { Message } from '../../lib/messagesService'
+import { getMessages, type Message } from '../../lib/messagesService'
 import { authenticatedFetch } from '../../lib/authService'
 import { parseJsonResponse } from '../../lib/apiClient'
 
@@ -83,22 +83,37 @@ export default function AdminDashboard() {
   const [salesByType, setSalesByType] = useState<SalesByTypeData[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Fetches dashboard stats (cars, sales, pending financing, recent messages) from Firestore in parallel on mount
+  // Fetches dashboard stats (cars, sales, pending financing, recent messages) on mount. Each data
+  // source is independent - Promise.allSettled means a single source failing (e.g. Messages)
+  // degrades only the metrics/section derived from that source, instead of resetting the entire
+  // Dashboard to zero (the previous Promise.all behavior: any one rejection skipped every
+  // setState call). Each failure is logged once, not retried/repeated (this effect runs only on
+  // mount), so there's no console/toast flood.
   useEffect(() => {
     const run = async () => {
-      try {
-        const [carsSnap, allSales, financingRes, messagesSnap] = await Promise.all([
-          getDocs(collection(db, 'cars')),
-          getSales(),
-          authenticatedFetch('/api/financing/applications').then((r) => parseJsonResponse<{ success: boolean; applications?: unknown[] }>(r)),
-          getDocs(query(collection(db, 'messages'), orderBy('createdAt', 'desc'), limit(10))),
-        ])
+      const [carsResult, salesResult, financingResult, messagesResult] = await Promise.allSettled([
+        getDocs(collection(db, 'cars')),
+        getSales(),
+        authenticatedFetch('/api/financing/applications').then((r) => parseJsonResponse<{ success: boolean; applications?: unknown[] }>(r)),
+        getMessages(),
+      ])
 
+      if (carsResult.status === 'rejected') console.error('Dashboard: failed to load cars:', carsResult.reason)
+      if (salesResult.status === 'rejected') console.error('Dashboard: failed to load sales:', salesResult.reason)
+      if (financingResult.status === 'rejected') console.error('Dashboard: failed to load financing:', financingResult.reason)
+      if (messagesResult.status === 'rejected') console.error('Dashboard: failed to load messages:', messagesResult.reason)
+
+      const totalCars = carsResult.status === 'fulfilled' ? carsResult.value.size : 0
+      const allSales = salesResult.status === 'fulfilled' ? salesResult.value : []
+      const financingApplications = financingResult.status === 'fulfilled' && financingResult.value.success
+        ? (financingResult.value.applications as Array<{ status: string }> | undefined) || []
+        : []
+      const messages = messagesResult.status === 'fulfilled' ? messagesResult.value : []
+
+      try {
         const revenue = allSales.reduce((sum, s) => sum + (s.paymentPlan.salePrice || 0), 0)
         const activeFinancing = allSales.filter((s) => s.status === 'active' && s.paymentPlan.type !== 'cash').length
-        const pendingFinancing = financingRes.success
-          ? (financingRes.applications as Array<{ status: string }>).filter((f) => f.status === 'pending').length
-          : 0
+        const pendingFinancing = financingApplications.filter((f) => f.status === 'pending').length
 
         // Calculate monthly sales data for current year
         const currentYear = new Date().getFullYear()
@@ -153,10 +168,8 @@ export default function AdminDashboard() {
             color: typeColors[type],
           }))
 
-        const messages = messagesSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Message))
-
         setStats({
-          totalCars: carsSnap.size,
+          totalCars,
           totalSales: allSales.length,
           totalRevenue: revenue,
           activeFinancing,
@@ -167,7 +180,7 @@ export default function AdminDashboard() {
         setMonthlySalesData(chartData)
         setSalesByType(chartTypeData)
       } catch (err) {
-        console.error('Dashboard error:', err)
+        console.error('Dashboard: failed to compute derived stats:', err)
       } finally {
         setLoading(false)
       }

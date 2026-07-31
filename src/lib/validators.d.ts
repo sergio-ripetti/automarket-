@@ -4,7 +4,11 @@ export declare function getSoldCarIdsFromSales(sales: unknown): Set<string>;
 export declare function parseRecentSales(json: unknown): Record<string, unknown>[];
 export declare function validateAIMessage(message: unknown): string | null;
 export declare function validateConversationHistory(history: unknown): string | null;
-export declare function validateCORSOrigin(origin: string | undefined, allowedOrigins: string[]): boolean;
+export declare function validateCORSOrigin(
+  origin: string | undefined,
+  allowedOrigins: string[],
+  options?: { allowDevLocalhost?: boolean }
+): boolean;
 export declare function getSafeErrorMessage(error: unknown): string;
 export declare function validateFinancingSubmission(payload: unknown): string | null;
 export declare function validatePublicMessageSubmission(payload: unknown): string | null;

@@ -6,8 +6,8 @@ import { authenticatedFetch } from '../../lib/authService'
 import { apiUrl, parseJsonResponse } from '../../lib/apiClient'
 import { loadAIConversation, saveAIConversation, clearAIConversation, type ChatMessage } from '../../lib/aiConversationStorage'
 import { getSoldCarIds, getSales } from '../../lib/salesService'
+import { getMessages } from '../../lib/messagesService'
 import type { Car } from '../../types'
-import type { Message as FirebaseMessage } from '../../lib/messagesService'
 
 // Upper bound on how many available-vehicle records are sent to the AI in one request. The
 // project currently has ~50 cars (well under this), but the cap keeps the prompt bounded if
@@ -77,21 +77,21 @@ interface BusinessContext {
 // Fetch business data from Firebase for AI context
 async function getBusinessContext(): Promise<BusinessContext> {
   try {
-    // Fetch all data sources in parallel. Sales can no longer be read directly from client-side
-    // Firestore (firestore.rules denies all client access to 'sales' - it can carry buyer PII),
-    // so this goes through getSales() (src/lib/salesService.ts), which itself calls the
-    // authenticated admin-only GET /api/sales backend endpoint. cars/messages remain direct
-    // reads since those collections still allow public Firestore reads.
-    const [carsSnap, sales, financingRes, messagesSnap] = await Promise.all([
+    // Fetch all data sources in parallel. Sales/Messages can no longer be read directly from
+    // client-side Firestore (firestore.rules denies all client access to both collections - they
+    // can carry buyer/sender PII), so these go through getSales()/getMessages()
+    // (src/lib/{sales,messages}Service.ts), which call the authenticated GET /api/sales and
+    // GET /api/messages backend endpoints. cars remains a direct read since that collection
+    // still allows public Firestore reads (no PII).
+    const [carsSnap, sales, financingRes, messages] = await Promise.all([
       getDocs(collection(db, 'cars')),
       getSales(),
       authenticatedFetch('/api/financing/applications').then((r) => parseJsonResponse<{ success: boolean; applications?: Array<Record<string, unknown>> }>(r)),
-      getDocs(collection(db, 'messages')),
+      getMessages(),
     ])
 
     const cars = carsSnap.docs.map((d) => ({ id: d.id, ...d.data() } as Car))
     const financing = financingRes.success ? (financingRes.applications || []) : ([] as Array<Record<string, unknown>>)
-    const messages = messagesSnap.docs.map((d) => d.data() as FirebaseMessage)
 
     // Reuses the same centralized sold-status source of truth as Admin Inventory, Record New
     // Sale, and the public Home/Cars pages (Sale.status !== 'cancelled' => sold) instead of the

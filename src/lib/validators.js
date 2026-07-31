@@ -226,7 +226,20 @@ function validateConversationHistory(history) {
  * @param {string[]} allowedOrigins
  * @returns {boolean}
  */
-function validateCORSOrigin(origin, allowedOrigins) {
+// Matches http://localhost:<port> or http://127.0.0.1:<port> for any 2-5 digit port - Vite picks
+// the next free port (5173, 5174, 5175, ...) when the default is already in use, so a fixed
+// allowlist entry per port is unreliable in local development. Only ever consulted when the
+// caller explicitly opts in via options.allowDevLocalhost (i.e. NODE_ENV !== 'production').
+const DEV_LOCALHOST_ORIGIN_PATTERN = /^https?:\/\/(localhost|127\.0\.0\.1):\d{2,5}$/;
+
+/**
+ * Validates CORS origin against allowed list
+ * @param {string | undefined} origin
+ * @param {string[]} allowedOrigins
+ * @param {{ allowDevLocalhost?: boolean }} [options]
+ * @returns {boolean}
+ */
+function validateCORSOrigin(origin, allowedOrigins, options = {}) {
   if (!origin) {
     return true;
   }
@@ -237,7 +250,15 @@ function validateCORSOrigin(origin, allowedOrigins) {
   const normalize = (value) => value.replace(/\/+$/, '');
   const normalizedOrigin = normalize(origin);
 
-  return allowedOrigins.some((allowed) => normalize(allowed) === normalizedOrigin);
+  if (allowedOrigins.some((allowed) => normalize(allowed) === normalizedOrigin)) {
+    return true;
+  }
+
+  if (options.allowDevLocalhost && DEV_LOCALHOST_ORIGIN_PATTERN.test(normalizedOrigin)) {
+    return true;
+  }
+
+  return false;
 }
 
 /**

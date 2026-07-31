@@ -53,6 +53,11 @@ vi.mock('../../../lib/authService', () => ({
       }
       return new Response(JSON.stringify({ success: true, sales: firestoreFixtures.sales.map((r) => ({ id: r.id, ...r.data })) }))
     }
+    // getMessages() (src/lib/messagesService.ts) now calls authenticatedFetch('/api/messages')
+    // instead of reading Firestore directly (firestore.rules denies all client Messages reads).
+    if (String(url).includes('/api/messages')) {
+      return new Response(JSON.stringify({ success: true, messages: firestoreFixtures.messages.map((r) => ({ id: r.id, ...r.data })) }))
+    }
     return new Response(JSON.stringify({ success: true, applications: [] }))
   }),
 }))

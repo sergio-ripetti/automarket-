@@ -12,6 +12,7 @@ import { downloadSaleDocument, SaleDocumentDownloadError } from '../../lib/downl
 import AdminInput from '../../components/admin/AdminInput'
 import AdminTextarea from '../../components/admin/AdminTextarea'
 import AdminButton from '../../components/admin/AdminButton'
+import { useUserRole } from '../../hooks/useUserRole'
 
 // Same phone-formatting behavior used in BuyerInformationStep.tsx (Record New Sale) - keeps
 // digits and common formatting characters so Edit Sale enforces the same input shape as Create.
@@ -52,6 +53,7 @@ interface EditForm {
 export default function AdminEditSale() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const { isDemo } = useUserRole()
   const [sale, setSale] = useState<Sale | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -237,6 +239,10 @@ export default function AdminEditSale() {
   // Cloudinary can never be deleted automatically for them - the user is asked to confirm that
   // explicitly and told to remove the asset from Cloudinary manually.
   const handleRemoveFile = async (url: string) => {
+    if (isDemo) {
+      showToast('Demo mode: deleting data is disabled.', 'error')
+      return
+    }
     if (deletingFileUrls.has(url)) return // already in flight - ignore repeated clicks
     const doc = form.uploadedDocuments.find((d) => d.url === url)
     if (!doc) return
@@ -805,8 +811,9 @@ export default function AdminEditSale() {
                         )}
                         <button
                           onClick={() => handleRemoveFile(url)}
-                          disabled={isDeleting}
-                          aria-label={isDeleting ? `Deleting ${filename}...` : `Remove ${filename}`}
+                          disabled={isDeleting || isDemo}
+                          title={isDemo ? 'Demo mode: deleting data is disabled.' : undefined}
+                          aria-label={isDemo ? 'Demo mode: deleting data is disabled.' : isDeleting ? `Deleting ${filename}...` : `Remove ${filename}`}
                           style={{
                             position: 'absolute',
                             top: '4px',

@@ -7,7 +7,9 @@ import { initializeFirebaseAdmin, getAdminFirestore, savePublicMessage, createCa
 import {
   authenticate,
   requireAdmin,
+  requireAdminOrDemo,
 } from './src/lib/authMiddleware.js';
+import { getUserRole } from './src/lib/userAuthorizationService.js';
 import {
   sanitizeBusinessContext,
   parseAvailableVehicles,
@@ -43,7 +45,12 @@ initializeFirebaseAdmin();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration - allow only trusted frontend origins
+// CORS configuration - allow only trusted frontend origins.
+// In production, ONLY the configured production frontend origin (FRONTEND_URL) is allowed - no
+// localhost, no wildcard. In development, any http://localhost:<port> or http://127.0.0.1:<port>
+// is additionally allowed (see validateCORSOrigin's allowDevLocalhost option), since Vite picks
+// the next free port (5173, 5174, 5175, ...) whenever the default is already in use locally.
+const isProduction = process.env.NODE_ENV === 'production';
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5174',
@@ -53,10 +60,10 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (validateCORSOrigin(origin, allowedOrigins)) {
+    if (validateCORSOrigin(origin, allowedOrigins, { allowDevLocalhost: !isProduction })) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed'));
+      callback(new Error('Origin not allowed'));
     }
   },
   // Every admin route below uses one of these verbs (GET/POST/PATCH/DELETE); PUT is included for
@@ -107,14 +114,50 @@ if (cloudinaryConfigured) {
 
 const client = new Anthropic({ apiKey: anthropicKey });
 
-// Rate limiting with RateLimiter class from validators
+// Rate limiting with RateLimiter class from validators. This bucket is for the truly
+// abuse-sensitive PUBLIC endpoints only (unauthenticated, keyed by IP): the sold-vehicle-ids
+// lookup and the two public submission forms. It intentionally stays tight - anonymous traffic
+// is where spam/scraping risk actually lives.
 const rateLimiter = new RateLimiter(60000, 20);
 
-// Rate limiting middleware - tracks requests per user UID
+// Rate limiting middleware - tracks requests per IP (these routes are unauthenticated, so there
+// is no req.user.uid to key by).
 const rateLimit = (req, res, next) => {
-  const key = req.user?.uid || req.ip;
+  const key = req.ip;
   if (!rateLimiter.isAllowed(key)) {
     return res.status(429).json({ success: false, error: 'Rate limit exceeded - maximum 20 requests per minute' });
+  }
+  next();
+};
+
+// Every authenticated admin/demo route (reads AND writes across cars/sales/financing/messages,
+// document downloads, Cloudinary deletion) shares this bucket, keyed by uid. It used to share
+// `rateLimiter` above (20 req/60s) - that budget was sized for anonymous public traffic, not for
+// a signed-in admin browsing the dashboard: a single Dashboard mount alone fires 3+ concurrent
+// authenticated requests (sales/messages/financing), AdminLayout separately polls
+// messages+financing every 30s, and almost every page also calls GET /api/me on mount. Ordinary
+// navigation between admin routes - Dashboard, Inventory, Financing, Sales, Messages - burns
+// through 20 requests/min within a couple of page visits with no abuse involved at all, which
+// surfaced as intermittent "Failed to fetch sales/messages"/"Failed to load financing requests"
+// errors once the shared bucket was exhausted (confirmed via reproduction: HTTP 429 responses,
+// not a network/CORS failure). A generous per-admin budget here still meaningfully rate-limits a
+// runaway script or scraping loop while comfortably covering real interactive use - the same
+// isolation already applied to the AI Assistant route below for the identical reason.
+const adminRateLimiter = new RateLimiter(60000, 100);
+
+const adminRateLimit = (req, res, next) => {
+  const key = req.user.uid;
+  if (!adminRateLimiter.isAllowed(key)) {
+    const retryAfter = adminRateLimiter.getRetryAfterSeconds(key);
+    res.set('Retry-After', String(retryAfter));
+    res.set('RateLimit-Limit', String(adminRateLimiter.maxRequests));
+    res.set('RateLimit-Remaining', '0');
+    return res.status(429).json({
+      success: false,
+      error: 'Too many requests. Please wait a moment and try again.',
+      code: 'RATE_LIMIT_EXCEEDED',
+      retryAfter,
+    });
   }
   next();
 };
@@ -166,8 +209,26 @@ app.get('/api/public/sold-vehicle-ids', rateLimit, async (req, res) => {
   }
 });
 
-// POST /api/aiAssistant - Authenticated admin only. Takes a chat message plus business context/history from the client, builds a system prompt with live business data, and forwards the conversation to the Anthropic Claude API
-app.post('/api/aiAssistant', authenticate, requireAdmin, aiRateLimit, async (req, res) => {
+// GET /api/me - Authenticated (any role, including 'demo' or an unrecognized role). Lets the
+// frontend learn its own resolved role (e.g. to show the "Demo Mode" indicator or disable
+// destructive controls) without being able to read anyone else's - the uid comes from the
+// verified Firebase ID token, never from client input, and no role is ever inferred client-side.
+app.get('/api/me', authenticate, async (req, res) => {
+  try {
+    const role = await getUserRole(req.user.uid);
+    res.json({ success: true, role: role || null });
+  } catch (error) {
+    console.error('Failed to resolve user role:', getSafeErrorMessage(error));
+    res.status(500).json({ success: false, error: 'Failed to resolve user role' });
+  }
+});
+
+// POST /api/aiAssistant - Authenticated admin or demo. Takes a chat message plus business
+// context/history from the client, builds a system prompt with live business data, and forwards
+// the conversation to the Anthropic Claude API. The demo role never sees real buyer PII here
+// because the business context it's built from (getSales()/financing applications) is already
+// sanitized server-side for that role - see GET /api/sales and GET /api/financing/applications.
+app.post('/api/aiAssistant', authenticate, requireAdminOrDemo, aiRateLimit, async (req, res) => {
   try {
     const { message, businessContext, conversationHistory } = req.body;
 
@@ -413,9 +474,10 @@ app.post('/api/financing/submit', rateLimit, async (req, res) => {
   }
 });
 
-// GET /api/financing/applications - Admin-only endpoint to fetch financing applications
-// Requires Firebase authentication and admin authorization
-app.get('/api/financing/applications', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// GET /api/financing/applications - Admin and demo: full data. The demo role uses this same
+// data set (confirmed fictional/sample records) - only destructive/user-management operations
+// are restricted for demo, not read access to portfolio content.
+app.get('/api/financing/applications', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const db = getAdminFirestore();
     if (!db) {
@@ -455,9 +517,9 @@ app.get('/api/financing/applications', authenticate, requireAdmin, rateLimit, as
   }
 });
 
-// PATCH /api/financing/:id/status - Admin-only endpoint to update financing application status
+// PATCH /api/financing/:id/status - Admin and demo endpoint to update financing application status
 // Requires Firebase authentication and admin authorization
-app.patch('/api/financing/:id/status', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.patch('/api/financing/:id/status', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const payload = req.body;
@@ -486,7 +548,7 @@ app.patch('/api/financing/:id/status', authenticate, requireAdmin, rateLimit, as
 
 // DELETE /api/financing/:id - Admin-only endpoint to delete a financing application
 // Requires Firebase authentication and admin authorization
-app.delete('/api/financing/:id', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.delete('/api/financing/:id', authenticate, requireAdmin, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -565,9 +627,31 @@ app.post('/api/messages/submit', rateLimit, async (req, res) => {
   }
 });
 
-// PATCH /api/messages/:id/read - Admin-only endpoint to update message read status
-// Requires Firebase authentication and admin authorization
-app.patch('/api/messages/:id/read', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// GET /api/messages - Admin and demo: full message data (confirmed fictional/sample records).
+// Firestore's own `messages` rule denies all client reads (see firestore.rules), so this is the
+// only path the admin frontend uses to list messages - messagesService.ts's getMessages() calls
+// this instead of reading Firestore directly.
+app.get('/api/messages', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
+  try {
+    const db = getAdminFirestore();
+    if (!db) {
+      return res.status(503).json({ success: false, error: 'Firestore service unavailable' });
+    }
+
+    const snapshot = await db.collection('messages').orderBy('createdAt', 'desc').get();
+    const messages = sortByCreatedAtDesc(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+
+    res.json({ success: true, messages });
+  } catch (error) {
+    const safeMessage = getSafeErrorMessage(error);
+    console.error('Messages fetch error:', safeMessage);
+    res.status(500).json({ success: false, error: 'Failed to fetch messages' });
+  }
+});
+
+// PATCH /api/messages/:id/read - Admin and demo endpoint to update message read status
+// (non-destructive; deleting a message remains admin-only, see DELETE below)
+app.patch('/api/messages/:id/read', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const payload = req.body;
@@ -596,7 +680,7 @@ app.patch('/api/messages/:id/read', authenticate, requireAdmin, rateLimit, async
 
 // DELETE /api/messages/:id - Admin-only endpoint to delete a message
 // Requires Firebase authentication and admin authorization
-app.delete('/api/messages/:id', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.delete('/api/messages/:id', authenticate, requireAdmin, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -615,8 +699,8 @@ app.delete('/api/messages/:id', authenticate, requireAdmin, rateLimit, async (re
 // Admin Car CRUD Endpoints
 // ============================================================================
 
-// POST /api/cars - Create a new vehicle (admin only)
-app.post('/api/cars', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// POST /api/cars - Create a new vehicle (admin and demo)
+app.post('/api/cars', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const payload = req.body;
 
@@ -664,8 +748,8 @@ app.post('/api/cars', authenticate, requireAdmin, rateLimit, async (req, res) =>
   }
 });
 
-// PATCH /api/cars/:id - Update an existing vehicle (admin only)
-app.patch('/api/cars/:id', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// PATCH /api/cars/:id - Update an existing vehicle (admin and demo)
+app.patch('/api/cars/:id', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const payload = req.body;
@@ -708,7 +792,7 @@ app.patch('/api/cars/:id', authenticate, requireAdmin, rateLimit, async (req, re
 });
 
 // DELETE /api/cars/:id - Delete a vehicle (admin only)
-app.delete('/api/cars/:id', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.delete('/api/cars/:id', authenticate, requireAdmin, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -729,11 +813,11 @@ app.delete('/api/cars/:id', authenticate, requireAdmin, rateLimit, async (req, r
 // Admin Sales CRUD Endpoints
 // ============================================================================
 
-// GET /api/sales - Admin-only endpoint to fetch full sale records (including buyer data).
-// Firestore's own `sales` rule denies all client reads (see firestore.rules), so this is now the
-// only path the admin frontend uses to list sales - salesService.ts's getSales() calls this
-// instead of reading Firestore directly from the browser.
-app.get('/api/sales', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// GET /api/sales - Admin and demo: full sale records, including buyer data (confirmed
+// fictional/sample records in this portfolio environment). Firestore's own `sales` rule denies
+// all client reads (see firestore.rules), so this is the only path the admin frontend uses to
+// list sales - salesService.ts's getSales() calls this instead of reading Firestore directly.
+app.get('/api/sales', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const db = getAdminFirestore();
     if (!db) {
@@ -741,9 +825,9 @@ app.get('/api/sales', authenticate, requireAdmin, rateLimit, async (req, res) =>
     }
 
     const snapshot = await db.collection('sales').orderBy('createdAt', 'desc').get();
-    const sales = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const sales = sortByCreatedAtDesc(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
 
-    res.json({ success: true, sales: sortByCreatedAtDesc(sales) });
+    res.json({ success: true, sales });
   } catch (error) {
     const safeMessage = getSafeErrorMessage(error);
     console.error('Sales fetch error:', safeMessage);
@@ -751,8 +835,8 @@ app.get('/api/sales', authenticate, requireAdmin, rateLimit, async (req, res) =>
   }
 });
 
-// GET /api/sales/:id - Admin-only endpoint to fetch a single sale record by id
-app.get('/api/sales/:id', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// GET /api/sales/:id - Admin and demo: full record (see GET /api/sales above).
+app.get('/api/sales/:id', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const db = getAdminFirestore();
@@ -765,7 +849,9 @@ app.get('/api/sales/:id', authenticate, requireAdmin, rateLimit, async (req, res
       return res.status(404).json({ success: false, error: 'Sale not found' });
     }
 
-    res.json({ success: true, sale: { id: docSnap.id, ...docSnap.data() } });
+    const sale = { id: docSnap.id, ...docSnap.data() };
+
+    res.json({ success: true, sale });
   } catch (error) {
     const safeMessage = getSafeErrorMessage(error);
     console.error('Sale fetch error:', safeMessage);
@@ -773,8 +859,8 @@ app.get('/api/sales/:id', authenticate, requireAdmin, rateLimit, async (req, res
   }
 });
 
-// POST /api/sales - Create a new sale (admin only)
-app.post('/api/sales', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// POST /api/sales - Create a new sale (admin and demo)
+app.post('/api/sales', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const payload = req.body;
 
@@ -832,8 +918,8 @@ app.post('/api/sales', authenticate, requireAdmin, rateLimit, async (req, res) =
   }
 });
 
-// PATCH /api/sales/:id - Update an existing sale (admin only)
-app.patch('/api/sales/:id', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// PATCH /api/sales/:id - Update an existing sale (admin and demo)
+app.patch('/api/sales/:id', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const payload = req.body;
@@ -877,8 +963,8 @@ app.patch('/api/sales/:id', authenticate, requireAdmin, rateLimit, async (req, r
   }
 });
 
-// PATCH /api/sales/:id/payments/:paymentId - Mark payment paid/unpaid (admin only)
-app.patch('/api/sales/:id/payments/:paymentId', authenticate, requireAdmin, rateLimit, async (req, res) => {
+// PATCH /api/sales/:id/payments/:paymentId - Mark payment paid/unpaid (admin and demo)
+app.patch('/api/sales/:id/payments/:paymentId', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id, paymentId } = req.params;
     const payload = req.body;
@@ -953,7 +1039,7 @@ app.patch('/api/sales/:id/payments/:paymentId', authenticate, requireAdmin, rate
 // POST /api/cloudinary/delete - Delete a single Cloudinary asset (admin only)
 // Used when a Sales document/photo is removed during Edit Sale, so orphaned test/removed
 // files don't accumulate in Cloudinary indefinitely.
-app.post('/api/cloudinary/delete', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.post('/api/cloudinary/delete', authenticate, requireAdmin, adminRateLimit, async (req, res) => {
   try {
     const { publicId, resourceType } = req.body || {};
 
@@ -1010,7 +1096,7 @@ app.post('/api/cloudinary/delete', authenticate, requireAdmin, rateLimit, async 
 // array. If no exact match exists there, the request is rejected, so this can never be used to
 // proxy an arbitrary external URL. Matching by URL (rather than array index) also stays correct
 // while Edit Sale has added/removed/reordered attachments locally before saving.
-app.get('/api/sales/:id/documents/download', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.get('/api/sales/:id/documents/download', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const requestedUrl = typeof req.query.url === 'string' ? req.query.url : '';
@@ -1114,7 +1200,7 @@ app.get('/api/sales/:id/documents/download', authenticate, requireAdmin, rateLim
 // documents have a simpler, distinct shape ({url, type, filename} - no publicId/resourceType),
 // normalized via normalizeFinancingDocument, but reuse the identical generic URL-validation,
 // filename-sanitization, and streaming logic rather than duplicating it.
-app.get('/api/financing/:id/documents/download', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.get('/api/financing/:id/documents/download', authenticate, requireAdminOrDemo, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
     const requestedUrl = typeof req.query.url === 'string' ? req.query.url : '';
@@ -1214,7 +1300,7 @@ app.get('/api/financing/:id/documents/download', authenticate, requireAdmin, rat
 });
 
 // DELETE /api/sales/:id - Delete a sale (admin only)
-app.delete('/api/sales/:id', authenticate, requireAdmin, rateLimit, async (req, res) => {
+app.delete('/api/sales/:id', authenticate, requireAdmin, adminRateLimit, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -1229,6 +1315,26 @@ app.delete('/api/sales/:id', authenticate, requireAdmin, rateLimit, async (req, 
       error: 'Failed to delete sale',
     });
   }
+});
+
+// Final error-handling middleware (4 args - Express only treats this as an error handler with
+// exactly this signature). Catches CORS rejections (thrown via corsOptions.origin's callback)
+// and any other uncaught error from route handlers, and always responds with controlled JSON -
+// never Express's default HTML error page, which would otherwise leak a stack trace and file
+// paths, and which apiClient.parseJsonResponse cannot parse as JSON.
+app.use((err, req, res, next) => {
+  const safeMessage = getSafeErrorMessage(err);
+  console.error('Unhandled request error:', safeMessage);
+
+  if (res.headersSent) {
+    return;
+  }
+
+  if (err && err.message === 'Origin not allowed') {
+    return res.status(403).json({ success: false, error: 'Origin not allowed' });
+  }
+
+  res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
 // Start server with error handling

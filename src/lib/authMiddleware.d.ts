@@ -7,6 +7,7 @@ declare global {
         uid: string;
         email: string | null;
       };
+      userRole?: string;
     }
   }
 }
@@ -21,4 +22,13 @@ export declare function requireAdmin(
   req: Request,
   res: Response,
   next: NextFunction
-): void;
+): Promise<void> | void;
+
+export declare function requireAdminOrDemo(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> | void;
+
+export declare const requireCanWrite: typeof requireAdminOrDemo;
+export declare const requireCanDelete: typeof requireAdmin;

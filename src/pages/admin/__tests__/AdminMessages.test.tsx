@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import type { Message } from '../../../lib/messagesService'
 import * as messagesService from '../../../lib/messagesService'
 import * as adminMessagesService from '../../../lib/adminMessagesService'
@@ -10,6 +10,12 @@ vi.mock('../../../lib/messagesService')
 vi.mock('../../../lib/adminMessagesService')
 vi.mock('../../../components/admin/AdminToast', () => ({
   default: () => null,
+}))
+const mockUseUserRole = vi.fn<() => { role: 'admin' | 'demo'; isDemo: boolean; loading: boolean }>(
+  () => ({ role: 'admin', isDemo: false, loading: false })
+)
+vi.mock('../../../hooks/useUserRole', () => ({
+  useUserRole: () => mockUseUserRole(),
 }))
 
 const createMessage = (overrides?: Partial<Message>): Message => ({
@@ -30,50 +36,51 @@ function expandCard(name = 'Jane Smith') {
   fireEvent.click(screen.getByText(name))
 }
 
-// Simulates messagesService.subscribeToMessages: the component calls it once on mount with
-// (onData, onError). This helper captures those callbacks so a test can push new "snapshot"
-// data (simulating a new message arriving in real time) or an error, and exposes the
-// unsubscribe spy so cleanup-on-unmount can be verified.
-function mockSubscription(initialMessages: Message[]) {
-  let capturedOnData: ((messages: Message[]) => void) | null = null
-  let capturedOnError: ((err: Error) => void) | null = null
-  const unsubscribeSpy = vi.fn()
-
-  vi.mocked(messagesService.subscribeToMessages).mockImplementation((onData, onError) => {
-    capturedOnData = onData
-    capturedOnError = onError
-    onData(initialMessages)
-    return unsubscribeSpy
-  })
-
+// AdminMessages now fetches via messagesService.getMessages() (GET /api/messages backend
+// endpoint) on mount and polls every 30s, instead of a Firestore onSnapshot subscription -
+// Firestore's 'messages' rule denies all direct client reads (see firestore.rules). This helper
+// mocks getMessages() to resolve with the given list, and exposes a way to change what the next
+// poll tick resolves with (simulating a new message having arrived).
+function mockGetMessages(initialMessages: Message[]) {
+  let current = initialMessages
+  vi.mocked(messagesService.getMessages).mockImplementation(async () => current)
   return {
-    unsubscribeSpy,
-    emit: (messages: Message[]) => capturedOnData?.(messages),
-    emitError: (err: Error) => capturedOnError?.(err),
+    setNext: (messages: Message[]) => { current = messages },
   }
 }
 
-describe('AdminMessages - Real-time subscription', () => {
+describe('AdminMessages - backend polling', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(window, 'confirm').mockReturnValue(true)
   })
 
-  it('subscribes exactly once on mount and unsubscribes on unmount (no duplicate subscriptions, no leak)', async () => {
-    const { unsubscribeSpy } = mockSubscription([createMessage()])
+  it('fetches exactly once on mount', async () => {
+    mockGetMessages([createMessage()])
 
-    const { unmount } = render(<AdminMessages />)
+    render(<AdminMessages />)
 
     await waitFor(() => {
-      expect(messagesService.subscribeToMessages).toHaveBeenCalledTimes(1)
+      expect(messagesService.getMessages).toHaveBeenCalledTimes(1)
     })
+  })
+
+  it('stops polling after unmount', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    mockGetMessages([createMessage()])
+
+    const { unmount } = render(<AdminMessages />)
+    await vi.waitFor(() => expect(messagesService.getMessages).toHaveBeenCalledTimes(1))
 
     unmount()
-    expect(unsubscribeSpy).toHaveBeenCalledTimes(1)
+    const callsAtUnmount = vi.mocked(messagesService.getMessages).mock.calls.length
+    await act(async () => { await vi.advanceTimersByTimeAsync(60000) })
+    expect(messagesService.getMessages).toHaveBeenCalledTimes(callsAtUnmount)
+    vi.useRealTimers()
   })
 
   it('renders both Contact and Offer message types', async () => {
-    mockSubscription([
+    mockGetMessages([
       createMessage({ id: 'c1', senderName: 'Contact Person', type: 'contact' }),
       createMessage({ id: 'o1', senderName: 'Offer Person', type: 'offer', offerPrice: 20000, carTitle: 'Toyota Camry', carPrice: 25000 }),
     ])
@@ -87,7 +94,7 @@ describe('AdminMessages - Real-time subscription', () => {
   })
 
   it('messages render newest first', async () => {
-    mockSubscription([
+    mockGetMessages([
       createMessage({ id: 'old', senderName: 'Old Sender', createdAt: { toDate: () => new Date('2025-01-01') } as unknown as Message['createdAt'] }),
       createMessage({ id: 'new', senderName: 'New Sender', createdAt: { toDate: () => new Date('2025-06-01') } as unknown as Message['createdAt'] }),
     ])
@@ -102,47 +109,45 @@ describe('AdminMessages - Real-time subscription', () => {
     expect(names).toEqual(['New Sender', 'Old Sender'])
   })
 
-  it('a new snapshot delivery (simulating a newly submitted message) appears automatically at the top, without remounting', async () => {
-    const { emit } = mockSubscription([createMessage({ id: 'existing', senderName: 'Existing Sender' })])
+  it('a new poll tick (simulating a newly submitted message) surfaces it at the top', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const { setNext } = mockGetMessages([createMessage({ id: 'existing', senderName: 'Existing Sender' })])
 
     render(<AdminMessages />)
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(screen.getByText('Existing Sender')).toBeInTheDocument()
     })
 
-    // Simulate Firestore delivering a new snapshot after a new public submission
-    emit([
+    setNext([
       createMessage({ id: 'brand-new', senderName: 'Brand New Sender', createdAt: { toDate: () => new Date('2030-01-01') } as unknown as Message['createdAt'] }),
       createMessage({ id: 'existing', senderName: 'Existing Sender', createdAt: { toDate: () => new Date('2025-01-01') } as unknown as Message['createdAt'] }),
     ])
+    await act(async () => { await vi.advanceTimersByTimeAsync(30000) })
 
-    await waitFor(() => {
+    await vi.waitFor(() => {
       expect(screen.getByText('Brand New Sender')).toBeInTheDocument()
     })
 
     const names = screen.getAllByText(/Sender$/).map((el) => el.textContent)
     expect(names[0]).toBe('Brand New Sender')
-    // Still only one subscription was ever created for this new data to arrive through
-    expect(messagesService.subscribeToMessages).toHaveBeenCalledTimes(1)
+    vi.useRealTimers()
   })
 
-  it('a persistent listener error does not loop or repeatedly toast', async () => {
-    const { emitError } = mockSubscription([])
+  it('a persistent fetch error does not loop or repeatedly toast', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    vi.mocked(messagesService.getMessages).mockRejectedValue(new Error('Fetch failed'))
 
     render(<AdminMessages />)
+    await vi.waitFor(() => expect(messagesService.getMessages).toHaveBeenCalledTimes(1))
 
-    await waitFor(() => {
-      expect(messagesService.subscribeToMessages).toHaveBeenCalledTimes(1)
-    })
+    await act(async () => { await vi.advanceTimersByTimeAsync(30000) })
+    await act(async () => { await vi.advanceTimersByTimeAsync(30000) })
 
-    emitError(new Error('Listener failed'))
-    emitError(new Error('Listener failed again'))
-    emitError(new Error('Listener failed a third time'))
-
-    // Only a single subscription was ever created, regardless of how many times the
-    // listener's error callback fires
-    expect(messagesService.subscribeToMessages).toHaveBeenCalledTimes(1)
+    // Fetch keeps being retried on each poll tick, but the toast-dedup ref means only the first
+    // failure (of a consecutive run) would have toasted - no crash, no unbounded toast queue.
+    expect(messagesService.getMessages).toHaveBeenCalledTimes(3)
+    vi.useRealTimers()
   })
 })
 
@@ -152,8 +157,8 @@ describe('AdminMessages - Backend Integration', () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true)
   })
 
-  it('renders the message list delivered by the subscription', async () => {
-    mockSubscription([createMessage()])
+  it('renders the message list delivered by getMessages', async () => {
+    mockGetMessages([createMessage()])
 
     render(<AdminMessages />)
 
@@ -164,7 +169,7 @@ describe('AdminMessages - Backend Integration', () => {
 
   describe('Mark Read / Unread', () => {
     it('calls markAsRead exactly once when unread message toggle clicked', async () => {
-      mockSubscription([createMessage({ read: false })])
+      mockGetMessages([createMessage({ read: false })])
       vi.mocked(adminMessagesService.markAsRead).mockResolvedValue({ success: true })
 
       render(<AdminMessages />)
@@ -189,7 +194,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('calls markAsUnread exactly once when read message toggle clicked', async () => {
-      mockSubscription([createMessage({ read: true })])
+      mockGetMessages([createMessage({ read: true })])
       vi.mocked(adminMessagesService.markAsUnread).mockResolvedValue({ success: true })
 
       render(<AdminMessages />)
@@ -214,7 +219,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('preserves original read state when backend update fails', async () => {
-      mockSubscription([createMessage({ read: false })])
+      mockGetMessages([createMessage({ read: false })])
       vi.mocked(adminMessagesService.markAsRead).mockResolvedValue({
         success: false,
         error: 'Update failed',
@@ -243,7 +248,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('the unread badge count stays consistent with the visible unread records after marking read', async () => {
-      mockSubscription([
+      mockGetMessages([
         createMessage({ id: 'm1', senderName: 'One', read: false }),
         createMessage({ id: 'm2', senderName: 'Two', read: false }),
       ])
@@ -266,7 +271,7 @@ describe('AdminMessages - Backend Integration', () => {
 
   describe('Delete', () => {
     it('calls deleteMessage exactly once with correct id when Delete confirmed', async () => {
-      mockSubscription([createMessage()])
+      mockGetMessages([createMessage()])
       vi.mocked(adminMessagesService.deleteMessage).mockResolvedValue({ success: true })
 
       render(<AdminMessages />)
@@ -290,7 +295,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('removes message from list after successful delete', async () => {
-      mockSubscription([createMessage()])
+      mockGetMessages([createMessage()])
       vi.mocked(adminMessagesService.deleteMessage).mockResolvedValue({ success: true })
 
       render(<AdminMessages />)
@@ -313,7 +318,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('preserves message in list when backend delete fails (no false success)', async () => {
-      mockSubscription([createMessage()])
+      mockGetMessages([createMessage()])
       vi.mocked(adminMessagesService.deleteMessage).mockResolvedValue({
         success: false,
         error: 'Delete failed',
@@ -343,7 +348,7 @@ describe('AdminMessages - Backend Integration', () => {
 
     it('does not call deleteMessage when confirm is cancelled', async () => {
       vi.spyOn(window, 'confirm').mockReturnValue(false)
-      mockSubscription([createMessage()])
+      mockGetMessages([createMessage()])
 
       render(<AdminMessages />)
 
@@ -369,7 +374,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('renders a known reason ("financing") as an uppercase badge instead of plain text', async () => {
-      mockSubscription([createMessage({ reason: 'financing' })])
+      mockGetMessages([createMessage({ reason: 'financing' })])
       render(<AdminMessages />)
 
       await waitFor(() => {
@@ -378,7 +383,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('renders distinct categories with different badge colors', async () => {
-      mockSubscription([
+      mockGetMessages([
         createMessage({ id: 'p1', senderName: 'Purchase Person', reason: 'purchase' }),
         createMessage({ id: 's1', senderName: 'Sale Person', reason: 'sale' }),
       ])
@@ -395,7 +400,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('falls back to an uppercased badge for an unrecognized/legacy reason value, without dropping the original wording', async () => {
-      mockSubscription([createMessage({ reason: 'General Inquiry' })])
+      mockGetMessages([createMessage({ reason: 'General Inquiry' })])
       render(<AdminMessages />)
 
       await waitFor(() => {
@@ -404,7 +409,7 @@ describe('AdminMessages - Backend Integration', () => {
     })
 
     it('does not render a reason badge for offer-type messages (offers keep their own OFFER badge)', async () => {
-      mockSubscription([createMessage({ type: 'offer', reason: 'purchase', offerPrice: 20000, carTitle: 'Toyota Camry', carPrice: 25000 })])
+      mockGetMessages([createMessage({ type: 'offer', reason: 'purchase', offerPrice: 20000, carTitle: 'Toyota Camry', carPrice: 25000 })])
       render(<AdminMessages />)
 
       await waitFor(() => {
@@ -412,5 +417,49 @@ describe('AdminMessages - Backend Integration', () => {
       })
       expect(screen.queryByText('CAR PURCHASE')).not.toBeInTheDocument()
     })
+  })
+})
+
+describe('AdminMessages - demo mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseUserRole.mockReturnValue({ role: 'demo', isDemo: true, loading: false })
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+  })
+
+  afterEach(() => {
+    mockUseUserRole.mockReturnValue({ role: 'admin', isDemo: false, loading: false })
+  })
+
+  it('allows Mark Read (portfolio data is fictional/sample) but keeps Delete disabled with an accessible explanation', async () => {
+    mockGetMessages([createMessage()])
+    vi.mocked(adminMessagesService.markAsRead).mockResolvedValue({ success: true })
+
+    render(<AdminMessages />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument()
+    })
+
+    expandCard()
+
+    await waitFor(() => {
+      expect(document.getElementById('admin-messages-read-button-0')).toBeInTheDocument()
+    })
+
+    const readButton = document.getElementById('admin-messages-read-button-0') as HTMLButtonElement
+    const deleteButton = document.getElementById('admin-messages-delete-button-0') as HTMLButtonElement
+
+    expect(readButton).not.toBeDisabled()
+    expect(deleteButton).toBeDisabled()
+    expect(deleteButton).toHaveAttribute('title', 'Demo mode: deleting data is disabled.')
+
+    fireEvent.click(readButton)
+    await waitFor(() => {
+      expect(adminMessagesService.markAsRead).toHaveBeenCalledTimes(1)
+    })
+
+    fireEvent.click(deleteButton)
+    expect(adminMessagesService.deleteMessage).not.toHaveBeenCalled()
   })
 })

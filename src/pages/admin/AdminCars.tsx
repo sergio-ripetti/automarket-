@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom'
 import { PlusCircle, Pencil, Trash2, Calendar, Gauge, Tag, Star, Ban } from "lucide-react";
 import { useCars } from '../../hooks/useCars'
+import { useUserRole } from '../../hooks/useUserRole'
 import { updateCar, deleteCar } from "../../lib/adminCarsService";
 import { getSales, getSoldCarIds } from "../../lib/salesService";
 import AdminToast from '../../components/admin/AdminToast'
@@ -35,6 +36,7 @@ export default function AdminCars() {
   const [soldCarIds, setSoldCarIds] = useState<Set<string>>(new Set());
   const [salesError, setSalesError] = useState(false);
   const { toast, showToast, dismissToast } = useToast();
+  const { isDemo } = useUserRole();
 
   if (!initialized && !loading && firestoreCars.length > 0) {
     setLocalCars(firestoreCars);
@@ -92,6 +94,10 @@ export default function AdminCars() {
 
   // Deletes a vehicle via backend API after user confirmation
   const handleDelete = async (car: Car) => {
+    if (isDemo) {
+      showToast("Demo mode: deleting data is disabled.", "error");
+      return;
+    }
     if (!window.confirm(`Delete "${car.title}"? This cannot be undone.`))
       return;
     try {
@@ -506,6 +512,8 @@ export default function AdminCars() {
                   </button>
                   <button
                     onClick={() => handleDelete(car)}
+                    disabled={isDemo}
+                    title={isDemo ? "Demo mode: deleting data is disabled." : undefined}
                     style={{
                       flex: 1,
                       display: "flex",
@@ -520,7 +528,8 @@ export default function AdminCars() {
                       fontSize: "0.8rem",
                       fontWeight: 500,
                       fontFamily: "Inter, sans-serif",
-                      cursor: "pointer",
+                      cursor: isDemo ? "not-allowed" : "pointer",
+                      opacity: isDemo ? 0.5 : 1,
                       transition: "all 0.2s ease",
                       minHeight: "36px",
                     }}

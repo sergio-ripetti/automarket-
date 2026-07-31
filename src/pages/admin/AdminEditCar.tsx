@@ -6,6 +6,7 @@ import { db } from "../../lib/firebase";
 import { updateCar, deleteCar } from "../../lib/adminCarsService";
 import AdminToast from "../../components/admin/AdminToast";
 import { useToast } from "../../hooks/useToast";
+import { useUserRole } from "../../hooks/useUserRole";
 import AdminInput from "../../components/admin/AdminInput";
 import AdminSelect from "../../components/admin/AdminSelect";
 import AdminTextarea from "../../components/admin/AdminTextarea";
@@ -45,6 +46,7 @@ export default function AdminEditCar() {
   const [deleting, setDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
   const { toast, showToast, dismissToast } = useToast();
+  const { isDemo } = useUserRole();
 
   // Loads the vehicle to edit from Firestore by id and populates the form
   useEffect(() => {
@@ -169,6 +171,10 @@ const set = (field: keyof FormState, val: string | boolean) => {
 
   // Deletes the current vehicle via backend API after user confirmation
   const handleDelete = async () => {
+    if (isDemo) {
+      showToast('Demo mode: deleting data is disabled.', 'error');
+      return;
+    }
     if (!id || !window.confirm("Delete this vehicle? This cannot be undone."))
       return;
     setDeleting(true);
@@ -410,7 +416,8 @@ const set = (field: keyof FormState, val: string | boolean) => {
             variant="danger"
             size="md"
             onClick={handleDelete}
-            disabled={deleting}
+            disabled={deleting || isDemo}
+            title={isDemo ? 'Demo mode: deleting data is disabled.' : undefined}
             isLoading={deleting}
             style={{
               minWidth: "140px",

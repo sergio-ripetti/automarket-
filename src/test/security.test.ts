@@ -404,6 +404,66 @@ describe('CORS Validation', () => {
 });
 
 // ============================================================================
+// CORS DEV-LOCALHOST POLICY TESTS
+// ============================================================================
+// Vite picks the next free port (5173, 5174, 5175, 5176, ...) when the default is already in
+// use, so a fixed per-port allowlist entry is unreliable in local development. These tests
+// confirm the allowDevLocalhost option only relaxes the check for localhost/127.0.0.1 origins,
+// only when explicitly opted into (i.e. NODE_ENV !== 'production' in server.js), and never for
+// production or for arbitrary external origins.
+describe('CORS - development localhost policy', () => {
+  const prodAllowedOrigins = ['https://automarket-ten.vercel.app'];
+
+  it('allows http://localhost:5173 in development', () => {
+    expect(
+      validateCORSOrigin('http://localhost:5173', prodAllowedOrigins, { allowDevLocalhost: true })
+    ).toBe(true);
+  });
+
+  it('allows http://localhost:5176 in development (a Vite auto-selected port not in the allowlist)', () => {
+    expect(
+      validateCORSOrigin('http://localhost:5176', prodAllowedOrigins, { allowDevLocalhost: true })
+    ).toBe(true);
+  });
+
+  it('allows a 127.0.0.1 development origin', () => {
+    expect(
+      validateCORSOrigin('http://127.0.0.1:5180', prodAllowedOrigins, { allowDevLocalhost: true })
+    ).toBe(true);
+  });
+
+  it('still allows the configured production origin in development mode', () => {
+    expect(
+      validateCORSOrigin('https://automarket-ten.vercel.app', prodAllowedOrigins, { allowDevLocalhost: true })
+    ).toBe(true);
+  });
+
+  it('still denies a malicious external origin even with allowDevLocalhost enabled', () => {
+    expect(
+      validateCORSOrigin('https://malicious.example.com', prodAllowedOrigins, { allowDevLocalhost: true })
+    ).toBe(false);
+  });
+
+  it('denies an arbitrary localhost origin in production (allowDevLocalhost not set)', () => {
+    expect(validateCORSOrigin('http://localhost:5176', prodAllowedOrigins)).toBe(false);
+    expect(validateCORSOrigin('http://localhost:5176', prodAllowedOrigins, { allowDevLocalhost: false })).toBe(false);
+  });
+
+  it('still allows the configured production origin when allowDevLocalhost is off', () => {
+    expect(validateCORSOrigin('https://automarket-ten.vercel.app', prodAllowedOrigins, { allowDevLocalhost: false })).toBe(true);
+  });
+
+  it('does not treat a lookalike hostname (not exactly localhost/127.0.0.1) as a dev origin', () => {
+    expect(
+      validateCORSOrigin('http://localhost.evil.com:5173', prodAllowedOrigins, { allowDevLocalhost: true })
+    ).toBe(false);
+    expect(
+      validateCORSOrigin('http://notlocalhost:5173', prodAllowedOrigins, { allowDevLocalhost: true })
+    ).toBe(false);
+  });
+});
+
+// ============================================================================
 // RATE LIMITING TESTS
 // ============================================================================
 

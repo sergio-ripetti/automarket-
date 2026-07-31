@@ -4,6 +4,7 @@ import { getFinancingApplications, updateFinancingStatus, deleteFinancingApplica
 import { sortByCreatedAtDesc } from '../../lib/timestampUtils'
 import AdminToast from '../../components/admin/AdminToast'
 import { useToast } from '../../hooks/useToast'
+import { useUserRole } from '../../hooks/useUserRole'
 import { DocumentGrid } from '../../components/shared/DocumentGrid'
 import { downloadFinancingDocument } from '../../lib/downloadFinancingDocument'
 import type { FinancingRequest } from '../../lib/financingService'
@@ -86,6 +87,7 @@ export default function AdminFinancing() {
   const [activeTab, setActiveTab] = useState<StatusFilter>('all')
   const [selectedRequest, setSelectedRequest] = useState<FinancingRequest | null>(null)
   const { toast, showToast, dismissToast } = useToast()
+  const { isDemo } = useUserRole()
 
   // Guards against overlapping requests (a slow response must not race a poll tick)
   const isFetchingRef = useRef(false)
@@ -145,6 +147,9 @@ export default function AdminFinancing() {
     let intervalId: ReturnType<typeof setInterval> | undefined
 
     const run = async (isBackgroundRefresh: boolean) => {
+      // Skip background poll ticks while the tab is hidden - nothing to refresh on an unwatched
+      // tab (the initial, non-background load always runs regardless).
+      if (isBackgroundRefresh && document.hidden) return
       const outcome = await load(isBackgroundRefresh)
       if (cancelled) return
       if (outcome.stopPolling && intervalId !== undefined) {
@@ -182,6 +187,10 @@ export default function AdminFinancing() {
   }
 
   const handleDelete = async (id: string) => {
+    if (isDemo) {
+      showToast('Demo mode: deleting data is disabled.', 'error')
+      return
+    }
     if (!window.confirm('Delete this financing request? This cannot be undone.')) return
     try {
       const result = await deleteFinancingApplication(id)
@@ -823,7 +832,9 @@ export default function AdminFinancing() {
                 <button
                   className="financing-btn financing-btn-delete"
                   onClick={() => handleDelete(req.id)}
-                  title="Delete this request">
+                  disabled={isDemo}
+                  style={isDemo ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+                  title={isDemo ? 'Demo mode: deleting data is disabled.' : 'Delete this request'}>
                   <Trash2 size={16} />
                   <span>Delete</span>
                 </button>
