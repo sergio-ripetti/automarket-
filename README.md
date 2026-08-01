@@ -6,11 +6,27 @@ A professional full-stack automotive marketplace platform with AI-driven busines
 
 ---
 
+## 🎬 Try it now — recruiter/reviewer Demo Access
+
+No account needed. Open the [live admin login](https://automarket-ten.vercel.app/admin/login) and click
+**"Demo Access"** to reveal a restricted, read-mostly demo account (all data shown is fictional/sample).
+The demo account can:
+
+- browse the full Dashboard, Inventory, Financing, Sales, and Messages;
+- create and edit ordinary records, change payment/workflow statuses, mark messages read/unread;
+- use the AI Assistant and view sample invoices/documents.
+
+It **cannot** delete anything or manage users/roles — every destructive/admin-only backend route
+independently rejects the demo role's token server-side, regardless of what the UI shows. A
+**Demo Mode** badge is shown in the sidebar for the whole session.
+
+---
+
 ## 📋 Overview
 
 AutoMarket is a complete automotive marketplace solution designed for dealership owners and sales teams. It provides a modern, responsive customer portal for browsing vehicles and applying for financing, combined with a powerful admin dashboard for managing inventory, sales, customer communications, and AI-assisted business analytics.
 
-The platform demonstrates full-stack engineering best practices including secure API authentication, privacy-conscious data handling, real-time database operations, and professional component architecture.
+The platform demonstrates full-stack engineering best practices including secure API authentication, privacy-conscious data handling, real-time database operations, role-based authorization (admin/demo/user), and professional component architecture.
 
 ---
 
@@ -32,13 +48,56 @@ The platform demonstrates full-stack engineering best practices including secure
 - **AI Assistant** - Claude-powered business insights with secure, privacy-respecting data handling
 - **PDF Invoices** - Professional invoice generation with detailed financial breakdowns
 
+### Recruiter-Facing Demo Mode
+- **Demo Access login** - A dedicated, restricted `demo`-role Firebase account, surfaced via a "Demo Access" modal on the admin login screen (credentials are public by design, shown only to explore the portfolio - never the real administrator)
+- **Full read + ordinary write access** - the demo role can read all (fictional) business data, create/update cars/sales/financing records, change payment/workflow statuses, mark messages read/unread, and use the AI Assistant
+- **No destructive access** - delete routes and user/role management are enforced admin-only on the backend (`requireAdmin`), independent of what the UI shows - the demo role's token is rejected server-side even if a delete request is crafted directly
+
 ### Security & Privacy
-- **Firebase Authentication** - Admin login via Firebase, verified server-side with Firebase ID tokens (not a static API key) plus a Firestore-backed admin role check
-- **Backend-Mediated Data Access** - Sales and Financing records deny all direct client Firestore access; every read/write goes through authenticated Express endpoints backed by the Firebase Admin SDK
+- **Firebase Authentication** - Admin login via Firebase, verified server-side with Firebase ID tokens (not a static API key) plus a Firestore-backed role check (`admin` / `demo` / `user`)
+- **Backend-Mediated Data Access** - Sales, Financing, Messages, and user-role documents deny all direct client Firestore access; every read/write goes through authenticated Express endpoints backed by the Firebase Admin SDK
 - **Public Sold-Vehicle Endpoint** - Home/Cars determine vehicle availability via a public endpoint that returns only sold vehicle IDs, never full sale records
-- **Rate Limiting** - Isolated rate limiter for the AI endpoint (separate from general API rate limiting), keyed per authenticated admin
+- **Rate Limiting** - Three isolated buckets: a public/IP-keyed limiter for anonymous form submissions and the sold-vehicle lookup, a separate uid-keyed limiter for authenticated admin/demo routes, and its own isolated bucket for the AI endpoint - so normal admin navigation can never exhaust the AI assistant's allowance (or vice versa)
 - **Privacy-First AI Context** - No buyer name, email, phone, address, or ID/licence data is included in the business context sent to the AI provider
 - **CORS Protection** - Restricted to trusted origins only
+
+---
+
+## 📸 Public Screenshots
+
+> Admin-panel screenshots live in [`README-ADMIN.md`](README-ADMIN.md#-admin-screenshots) instead.
+> See [`docs/screenshots/SCREENSHOT-GUIDE.md`](docs/screenshots/SCREENSHOT-GUIDE.md) for capture
+> requirements if these ever need to be recaptured.
+
+### Public Home
+Homepage hero, featured vehicles, and primary marketplace navigation.
+
+![AutoMarket public homepage](docs/screenshots/public/01-public-home.png)
+
+### Vehicle Catalog
+Full vehicle catalog with filters applied (brand, price, year, fuel type, transmission).
+
+![AutoMarket vehicle catalog with filters](docs/screenshots/public/02-vehicle-catalog.png)
+
+### Vehicle Detail
+Individual vehicle detail page with images, specifications, and pricing.
+
+![AutoMarket vehicle detail page](docs/screenshots/public/03-vehicle-detail.png)
+
+### Favorites
+Saved-vehicle list with cross-session persistence.
+
+![AutoMarket favorites list](docs/screenshots/public/04-favorites.png)
+
+### Public Financing
+Loan calculator with adjustable terms and real-time recalculation.
+
+![AutoMarket public financing calculator](docs/screenshots/public/05-public-financing.png)
+
+### Contact / Vehicle Inquiry
+Contact form and vehicle-offer inquiry submission.
+
+![AutoMarket contact and inquiry form](docs/screenshots/public/06-contact-inquiry.png)
 
 ---
 
@@ -81,17 +140,17 @@ automarket/
 │   │   ├── Financing.tsx      # Financing application
 │   │   ├── Contact.tsx        # Contact/offer form
 │   │   └── admin/             # Protected admin pages
-│   │       ├── AdminLogin.tsx
+│   │       ├── AdminLogin.tsx (includes recruiter-facing "Demo Access" modal)
 │   │       ├── AdminDashboard.tsx
-│   │       ├── AdminCars.tsx
-│   │       ├── AdminNewSale.tsx (multi-step sale creation)
+│   │       ├── AdminCars.tsx / AdminEditCar.tsx
+│   │       ├── AdminNewSale.tsx (multi-step sale creation) / AdminEditSale.tsx
 │   │       ├── AdminSaleDetail.tsx
 │   │       ├── AdminFinancing.tsx
 │   │       ├── AdminMessages.tsx
 │   │       └── AdminAI.tsx    # AI analytics assistant
 │   ├── components/            # Reusable UI components
 │   │   ├── ui/               # Foundational components (Button, Card, Input, Badge)
-│   │   ├── admin/            # Admin-specific components
+│   │   ├── admin/            # Admin-specific components (AdminLayout, DemoAccessModal, ProtectedRoute)
 │   │   ├── shared/           # Shared form components
 │   │   ├── Navbar.tsx
 │   │   ├── Footer.tsx
@@ -99,16 +158,20 @@ automarket/
 │   │   └── FilterBar.tsx     # Search and filter controls
 │   ├── hooks/                # Custom React hooks
 │   │   ├── useCars.ts        # Firestore car queries
+│   │   ├── useUserRole.ts    # Resolves admin/demo/user role via GET /api/me
 │   │   └── useToast.ts       # Toast notifications
 │   ├── context/              # React Context
 │   │   └── AuthContext.tsx   # Authentication state
 │   ├── lib/                  # Utilities and services
 │   │   ├── firebase.ts       # Firebase initialization
 │   │   ├── authService.ts    # Auth operations
+│   │   ├── demoAccessConfig.ts # Public demo credentials (env-driven, fails safe)
 │   │   ├── carsService.ts    # Car database operations
 │   │   ├── salesService.ts   # Sales management (types, validation)
 │   │   ├── financingService.ts
 │   │   ├── messagesService.ts
+│   │   ├── userAuthorizationService.js # Role resolution + admin/demo permission matrix
+│   │   ├── authMiddleware.js # Express middleware: authenticate, requireAdmin, requireAdminOrDemo
 │   │   ├── cloudinaryService.ts
 │   │   ├── invoiceService.ts # PDF generation
 │   │   ├── sanitize.ts       # Data sanitization
@@ -121,6 +184,14 @@ automarket/
 │   ├── App.tsx               # Main router
 │   └── main.tsx              # Entry point
 ├── server.js                 # Express backend
+├── scripts/
+│   ├── bootstrap-admin.js       # Grants the admin role to an existing Firebase Auth user
+│   └── bootstrap-demo-user.js   # Creates/aligns the restricted recruiter-facing demo account
+├── docs/
+│   ├── USER_ROLES_AND_SECURITY.md
+│   ├── OWNER_VERIFICATION_CHECKLIST.md
+│   └── screenshots/             # README screenshot assets (see docs/screenshots/README.md)
+├── firestore.rules           # Firestore security rules (backend-mediated access)
 ├── package.json              # Dependencies
 ├── tsconfig.json             # TypeScript configuration
 ├── vite.config.ts            # Vite configuration
@@ -274,14 +345,35 @@ The application uses these Firestore collections:
 
 1. In Firebase Console: Authentication → Users
 2. Add a new user with email and password
-3. Grant that user the admin role in the `users/{uid}` Firestore document (see `scripts/bootstrap-admin.js`)
+3. Grant that user the admin role in the `users/{uid}` Firestore document:
+   ```bash
+   node scripts/bootstrap-admin.js "firebase-uid-123" "you@example.com"
+   ```
 4. Use these credentials to log into the admin panel at `/admin/login`
+
+### Create the Recruiter-Facing Demo User (optional)
+
+To offer the same "Demo Access" experience this project's own live demo uses, bootstrap a
+dedicated, restricted `demo`-role account (idempotent - safe to re-run):
+
+```bash
+# Dry run (default) - reports what would happen, no mutation
+node scripts/bootstrap-demo-user.js --email demo@example.com --password '<choose one>'
+
+# Apply it
+node scripts/bootstrap-demo-user.js --email demo@example.com --password '<choose one>' --execute
+```
+
+The script refuses to run against any account whose role is already `admin`, and never resets the
+password or `createdAt` of an existing demo account. Set `VITE_DEMO_ADMIN_EMAIL` /
+`VITE_DEMO_ADMIN_PASSWORD` in `.env` to surface those credentials in the login page's "Demo
+Access" modal.
 
 ---
 
 ## 🔒 Firestore Rules
 
-`firestore.rules` denies all direct client access to `sales`, `financing`, and `users` (only the backend, via the Firebase Admin SDK, can read/write them - the Admin SDK bypasses client security rules by design). `cars` and `messages` allow public reads since that data is meant to be publicly browsable; all writes to every collection are backend-only.
+`firestore.rules` denies all direct client access to `sales`, `financing`, `messages`, and `users` (only the backend, via the Firebase Admin SDK, can read/write them - the Admin SDK bypasses client security rules by design). `cars` allows public reads since that data is meant to be publicly browsable; all writes to every collection are backend-only.
 
 ```bash
 # Point the Firebase CLI at the right project (or pass --project explicitly below)
@@ -337,6 +429,9 @@ npm run lint
 
 # Run automated tests
 npm run test
+
+# Bootstrap the recruiter-facing demo account (dry run by default; --execute to apply)
+npm run bootstrap:demo-user -- --email demo@example.com --password '<choose one>'
 ```
 
 ---
@@ -344,9 +439,10 @@ npm run test
 ## 🔐 Security Architecture
 
 ### Authentication & Authorization
-- **Frontend:** Firebase Authentication (email/password) for admin login
-- **Backend:** every protected endpoint verifies a Firebase ID token (`Authorization: Bearer <token>`) via the Firebase Admin SDK, then checks an admin role stored in Firestore (`users/{uid}`) - there is no static API key
-- **Rate Limiting:** the AI endpoint has its own isolated limiter (keyed per admin), separate from the general limiter shared by other admin routes
+- **Frontend:** Firebase Authentication (email/password) for admin/demo login
+- **Backend:** every protected endpoint verifies a Firebase ID token (`Authorization: Bearer <token>`) via the Firebase Admin SDK, then checks the role stored in Firestore (`users/{uid}.role`) - there is no static API key
+- **Roles:** `admin` (full access), `demo` (read/create/update, never delete or user/role management), `user`/unset (no admin-panel access)
+- **Rate Limiting:** three isolated buckets - a public/IP-keyed limiter for anonymous routes, a uid-keyed limiter for authenticated admin/demo routes, and a separate uid-keyed limiter for the AI endpoint, so ordinary navigation can never exhaust another bucket's allowance
 - **CORS:** restricted to a fixed allowlist of trusted origins
 
 ### Data Protection
@@ -427,6 +523,13 @@ dist/index.html         # Entry HTML
 - [ ] AI assistant responds to queries
 - [ ] Rate limiting blocks excessive requests
 
+**Demo Access (recruiter-facing):**
+- [ ] "Demo Access" modal on `/admin/login` shows working credentials and fills the form on click
+- [ ] Demo login succeeds and shows the **Demo Mode** badge in the sidebar
+- [ ] Dashboard, Inventory, Financing, Sales, Messages all load real (fictional) data while signed in as demo
+- [ ] Demo can create/edit records, change statuses, mark messages read/unread, and use the AI Assistant
+- [ ] Every delete button is disabled/hidden for the demo role, and a direct delete request still gets rejected server-side (403)
+
 ### Automated Tests
 
 ```bash
@@ -436,7 +539,7 @@ npm run test:firestore-rules # Firestore security rules against the local emulat
 
 The suite covers unit tests, integration tests, security/PII-sanitization tests, and accessibility checks for the admin panel, alongside a separate Firestore rules test file that verifies read/write access at the security-rule level.
 
-*As of the last full run (July 2026): 1,270+ automated tests across 83 test files, plus 28 Firestore rules tests. Exact counts will drift as the project evolves - run the commands above for the current numbers.*
+*As of the last full run (July 2026): 1,407 automated tests across 94 test files, plus 36 Firestore rules tests. Exact counts will drift as the project evolves - run the commands above for the current numbers.*
 
 ---
 
@@ -496,7 +599,7 @@ This is a portfolio project. For improvements or bug reports:
 ## 📞 Support & Questions
 
 - **Issues:** Open a GitHub issue for bugs or feature requests
-- **Documentation:** See [CLAUDE.md](CLAUDE.md) for project context
+- **Documentation:** See [`docs/USER_ROLES_AND_SECURITY.md`](docs/USER_ROLES_AND_SECURITY.md) and [`docs/OWNER_VERIFICATION_CHECKLIST.md`](docs/OWNER_VERIFICATION_CHECKLIST.md)
 - **Email:** [Your contact email]
 
 ---

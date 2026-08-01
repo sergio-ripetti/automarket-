@@ -38,8 +38,13 @@ backups/
 *.backup
 *.clean
 
-# Local-only Claude Code settings (machine-specific tool permissions, absolute local paths)
-.claude/settings.local.json
+# Local-only AI coding-agent tooling (dev-environment config and bundled agent skills - not part
+# of the AutoMarket application, never required to build/run/deploy it). Kept locally for whoever
+# is using an agent tool against this repo, but not published to the public repository.
+.agents/
+.claude/
+CLAUDE.md
+skills-lock.json
 
 # Generated invoice PDFs (test/manual-QA artifacts produced at the repo root, never commit)
 /Invoice_*.pdf
